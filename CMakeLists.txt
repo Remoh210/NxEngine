@@ -69,12 +69,23 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      imgui)
 
 
-#Create virtual folders to make it look nicer in VS
+# Create virtual folders to make it look nicer in VS
 if(MSVC_IDE)
-foreach(source IN LISTS SRCS HDRS)
-  get_filename_component(source_path "${source}" PATH)
-  string(REPLACE "${CGFX5_SOURCE_DIR}" "" relative_source_path "${source_path}")
-  string(REPLACE "/" "\\" source_path_msvc "${relative_source_path}")
-  source_group("${source_path_msvc}" FILES "${source}")
-endforeach()
+	# Macro to preserve source files hierarchy in the IDE
+	macro(GroupSources curdir)
+		file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
+
+		foreach(child ${children})
+			if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+				GroupSources(${curdir}/${child})
+			else()
+				string(REPLACE "/" "\\" groupname ${curdir})
+				string(REPLACE "src" "Sources" groupname ${groupname})
+				source_group(${groupname} FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+			endif()
+		endforeach()
+	endmacro()
+
+	# Run macro
+	GroupSources(src)
 endif()
