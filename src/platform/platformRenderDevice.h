@@ -1,4 +1,4 @@
 #pragma once
 
-#include "opengl/openGLRenderDevice.hpp"
+#include "opengl/OpenGLRenderDevice.h"
 typedef OpenGLRenderDevice PlatformRenderDevice;

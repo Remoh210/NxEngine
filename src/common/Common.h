@@ -7,6 +7,8 @@ typedef int32_t int32;
 typedef uint32_t uint32;
 typedef uint8_t uint8;
 typedef std::string string;
+typedef intptr_t intptr;
+typedef uintptr_t uintptr;
 
 #define NULL_COPY_AND_ASSIGN(T) \
 	T(const T& other) {(void)other;} \
