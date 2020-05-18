@@ -67,3 +67,14 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      soil 
                      glm 
                      imgui)
+
+
+#Create virtual folders to make it look nicer in VS
+if(MSVC_IDE)
+foreach(source IN LISTS SRCS HDRS)
+  get_filename_component(source_path "${source}" PATH)
+  string(REPLACE "${CGFX5_SOURCE_DIR}" "" relative_source_path "${source_path}")
+  string(REPLACE "/" "\\" source_path_msvc "${relative_source_path}")
+  source_group("${source_path_msvc}" FILES "${source}")
+endforeach()
+endif()

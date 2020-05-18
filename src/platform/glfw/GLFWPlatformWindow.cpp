@@ -1,18 +1,14 @@
 #include "GLFWPlatformWindow.h"
 
-// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-// ---------------------------------------------------------------------------------------------
+#define LOG_TYPE_WINDOW "Window"
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    // make sure the viewport matches the new window dimensions; note that width and
-    // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
 }
 
-GLFWPlatformWindow::GLFWPlatformWindow(int width, int height, const char* title)
+GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* title)
 {
-    // glfw: initialize and configure
-    // ------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -23,13 +19,11 @@ GLFWPlatformWindow::GLFWPlatformWindow(int width, int height, const char* title)
 #endif
 
     // glfw window creation
-    // --------------------
     window = glfwCreateWindow(width, height, "PlatformWindow", NULL, NULL);
     if (window == NULL)
     {
-        //std::cout << "Failed to create GLFW window" << std::endl;
+        DEBUG_LOG(LOG_TYPE_WINDOW, LOG_ERROR, "Failed to create GLFW window");
         glfwTerminate();
-        return -1;
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
