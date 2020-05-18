@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.10)
 project(NxEngine)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -69,23 +69,20 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      imgui)
 
 
-# Create virtual folders to make it look nicer in VS
-if(MSVC_IDE)
-	# Macro to preserve source files hierarchy in the IDE
-	macro(GroupSources curdir)
-		file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
 
-		foreach(child ${children})
-			if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
-				GroupSources(${curdir}/${child})
-			else()
-				string(REPLACE "/" "\\" groupname ${curdir})
-				string(REPLACE "src" "Sources" groupname ${groupname})
-				source_group(${groupname} FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
-			endif()
-		endforeach()
-	endmacro()
+# Macro to preserve source files hierarchy in the IDE
+macro(GroupSources curdir)
+	file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
+	foreach(child ${children})
+		if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+			GroupSources(${curdir}/${child})
+		else()
+			string(REPLACE "/" "\\" groupname ${curdir})
+			string(REPLACE "src" "Sources" groupname ${groupname})
+			source_group(${groupname} FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+		endif()
+	endforeach()
+endmacro()
 
-	# Run macro
-	GroupSources(src)
-endif()
+# Run macro
+GroupSources(src)

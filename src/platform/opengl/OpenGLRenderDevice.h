@@ -7,6 +7,6 @@ public:
     OpenGLRenderDevice();
     ~OpenGLRenderDevice();
 private:
-    /* data */
+    
 };
 
