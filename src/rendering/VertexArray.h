@@ -10,11 +10,11 @@ public:
     
     inline uint32 GetId() {return Id;}
     inline uint32 GetNumIndices() {return NumIndices;}
-    inline void VertexArray::updateBuffer(uint32 bufferIndex,
+    inline void UpdateBuffer(uint32 bufferIndex,
 		const void* data, uintptr dataSize)
-{
+	{
 	//return Device->updateVertexArrayBuffer(Id, bufferIndex, data, dataSize);
-}
+	}
 
 private:
 	RenderDevice* Device;
