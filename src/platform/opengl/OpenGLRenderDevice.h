@@ -2,7 +2,7 @@
 #include "common/Common.h"
 #include "glad/gl.h"
 
-enum SamplerFilter
+	enum SamplerFilter
 	{
 		FILTER_NEAREST = GL_NEAREST,
 		FILTER_LINEAR = GL_LINEAR,
@@ -54,8 +54,8 @@ public:
     uint32 CreateTexture2D(int32 width, int32 height, enum PixelFormat dataFormat,
                const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
     void ReleaseTexture2D(uint32 texture2D);
-	static GLint getOpenGLFormat(PixelFormat format);
-	static GLint getOpenGLInternalFormat(enum PixelFormat format, bool bCompress);
+	static GLint GetOpenGLFormat(enum PixelFormat format);
+	static GLint GetOpenGLInternalFormat(enum PixelFormat format, bool bCompress);
 private:
     
 };

@@ -15,8 +15,8 @@ OpenGLRenderDevice::OpenGLRenderDevice()
 uint32 OpenGLRenderDevice::CreateTexture2D(int32 width, int32 height, enum PixelFormat dataFormat, 
            const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress) 
 {
-    GLint format = getOpenGLFormat(dataFormat);
-	GLint TexinternalFormat = getOpenGLInternalFormat(internalFormat, bCompress);
+    GLint format = GetOpenGLFormat(dataFormat);
+	GLint TexinternalFormat = GetOpenGLInternalFormat(internalFormat, bCompress);
 	GLenum textureTarget = GL_TEXTURE_2D;
 	GLuint textureHandle;
 
@@ -47,7 +47,7 @@ void OpenGLRenderDevice::ReleaseTexture2D(uint32 texture2D)
 	glDeleteTextures(1, &texture2D);
 }
 
-static GLint getOpenGLFormat(enum PixelFormat format)
+GLint OpenGLRenderDevice::GetOpenGLFormat(enum PixelFormat format)
 {
 	switch(format) {
 	case PixelFormat::FORMAT_R: return GL_RED;
@@ -63,7 +63,7 @@ static GLint getOpenGLFormat(enum PixelFormat format)
 	};
 }
 
-static GLint getOpenGLInternalFormat(enum PixelFormat format, bool bCompress)
+GLint OpenGLRenderDevice::GetOpenGLInternalFormat(enum PixelFormat format, bool bCompress)
 {
 	switch(format) {
 	case PixelFormat::FORMAT_R: return GL_RED;
