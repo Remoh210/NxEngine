@@ -20,5 +20,4 @@ private:
 	RenderDevice* Device;
 	uint32 Id;
 	uint32 NumIndices;
-      
 };

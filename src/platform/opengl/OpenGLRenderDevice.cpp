@@ -11,6 +11,26 @@ OpenGLRenderDevice::OpenGLRenderDevice()
     
 }
 
+uint32 OpenGLRenderDevice::createRenderTarget(uint32 texture,
+		int32 width, int32 height,
+		enum FramebufferAttachment attachment,
+		uint32 attachmentNumber, uint32 mipLevel)
+{
+	uint32 fbo;
+	glGenFramebuffers(1, &fbo);
+	SetFBO(fbo);
+
+	GLenum attachmentTypeGL = attachment + attachmentNumber;
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentTypeGL,
+			GL_TEXTURE_2D, texture, mipLevel);
+
+	struct FBOData data;
+	data.width = width;
+	data.height = height;
+	fboMap[fbo] = data;
+
+	return fbo;
+}
 
 uint32 OpenGLRenderDevice::CreateTexture2D(int32 width, int32 height, enum PixelFormat dataFormat, 
            const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress) 
@@ -93,4 +113,15 @@ GLint OpenGLRenderDevice::GetOpenGLInternalFormat(enum PixelFormat format, bool 
 				format);
 		return 0;
 	};
+}
+
+void OpenGLRenderDevice::SetFBO(uint32 fbo)
+{
+	if(fbo == boundFBO) 
+	{
+		return;
+	}
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	boundFBO = fbo;
 }
