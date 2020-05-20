@@ -49,7 +49,15 @@ unsigned int TextureFromFile(String path)
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-String testTexFile = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/test.png";
+String testTexFile = "../res/textures/test.png";
+
+#ifdef __APPLE__
+	testTexFile = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/test.png";
+#endif
+
+
+
+
 
 const char *vertexShaderSource ="#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
@@ -157,7 +165,8 @@ int main()
 
     //Testing Texture
     RenderDevice renderDevice;
-    ArrayBitmap testBitmap(testTexFile);
+    ArrayBitmap testBitmap;
+	testBitmap.Load(testTexFile);
     Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
     
     uint32 dbgTex = TextureFromFile(testTexFile);
@@ -175,10 +184,11 @@ int main()
         
         ImGui::ShowDemoWindow();
         
+		ImVec2 sizeP(350, 350);
         ImVec2 sizeW(400, 400);
         ImGui::SetNextWindowSize(sizeW);
         ImGui::Begin("TestImageWindow");
-        ImGui::Image((void*)testtex.GetId(), sizeW);
+        ImGui::Image((void*)testtex.GetId(), sizeP);
         ImGui::End();
         // render
         // ------

@@ -13,7 +13,7 @@ OpenGLRenderDevice::OpenGLRenderDevice()
 }
 
 uint32 OpenGLRenderDevice::createRenderTarget(uint32 texture,
-		int32 width, int32 height,
+		uint32 width, uint32 height,
 		enum FramebufferAttachment attachment,
 		uint32 attachmentNumber, uint32 mipLevel)
 {
@@ -33,28 +33,18 @@ uint32 OpenGLRenderDevice::createRenderTarget(uint32 texture,
 	return fbo;
 }
 
-uint32 OpenGLRenderDevice::CreateTexture2D(int32 width, int32 height, enum PixelFormat dataFormat, 
+uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum PixelFormat dataFormat, 
            const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress)
 {
  
-    String path = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/test.png";
-    unsigned int textureID;
+    uint32 textureID;
     glGenTextures(1, &textureID);
 
-    int width2, height2, nrComponents;
-    uint8 *data2 = stbi_load(path.c_str(), &width2, &height2, &nrComponents, 0);
     if (data)
     {
-        GLenum format;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
+		GLenum format = GetOpenGLInternalFormat(internalFormat, bCompress);
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width2, height2, 0, format, GL_UNSIGNED_BYTE, data2);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, height, width, 0, format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -62,12 +52,20 @@ uint32 OpenGLRenderDevice::CreateTexture2D(int32 width, int32 height, enum Pixel
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        stbi_image_free(data2);
+		if (bGenerateMipmaps)
+		{
+			glGenerateMipmap(GL_TEXTURE_2D);
+		}
+		else
+		{
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+		}
+
     }
     else
     {
-       
-        stbi_image_free(data2);
+       DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "Missing data");
     }
 
     return textureID;

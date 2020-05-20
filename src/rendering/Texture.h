@@ -7,14 +7,16 @@ class Texture
 {
 
 public:
-    inline Texture(RenderDevice& deviceIn, const ArrayBitmap& texData, PixelFormat interalPixelFormat,
+    inline Texture(RenderDevice& deviceIn, ArrayBitmap& texData, PixelFormat interalPixelFormat,
             bool bGenerateMipMaps = true, bool bCompress = true)
             :device(&deviceIn),
             width(texData.GetWidth()), height(texData.GetHeight()),
             bIsCompressed(bCompress), bHasMipmaps(bGenerateMipMaps), 
-            id(deviceIn.CreateTexture2D(width, height, PixelFormat::FORMAT_RGBA,
+            id(deviceIn.CreateTexture2D(texData.GetWidth(), texData.GetHeight(), PixelFormat::FORMAT_RGBA,
             texData.GetData(), interalPixelFormat, bCompress, bGenerateMipMaps))
-            {}
+    {
+		texData.Clean();
+	}
     inline uint32 GetId() { return id; };
 
     ~Texture() {};
