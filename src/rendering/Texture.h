@@ -7,17 +7,12 @@ class Texture
 {
 
 public:
-    Texture();
+    inline Texture(RenderDevice& deviceIn, const ArrayBitmap& texData, PixelFormat interalPixelFormat,
+            bool bGenerateMipMaps, bool bCompress);
     ~Texture();
 
 private:
     /* data */
 };
 
-Texture::Texture(/* args */)
-{
-}
 
-Texture::~Texture()
-{
-}

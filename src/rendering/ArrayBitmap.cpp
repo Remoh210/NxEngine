@@ -1,14 +1,14 @@
 #include "ArrayBitmap.h"
 #include "stb_image.h"
 
-#define LOG_TYPE_TEXTURE "Texture"
+#define LOG_TYPE_ArrayBitmap "ArrayBitmap"
 
-Texture::Texture(const string& fileName) 
+ArrayBitmap::ArrayBitmap(const string& fileName) 
 {
     Load(fileName);
 }
 
-bool Texture::Load(const string& fileName) 
+bool ArrayBitmap::Load(const string& fileName) 
 {
 	bool bResult = false;
 	int width, height, nrComponents;
@@ -26,9 +26,14 @@ bool Texture::Load(const string& fileName)
 	}
 	else
 	{
-		DEBUG_LOG(LOG_TYPE_TEXTURE, LOG_ERROR, "Failed to load texture: %s", fileName);
+		DEBUG_LOG(LOG_TYPE_ArrayBitmap, LOG_ERROR, "Failed to load ArrayBitmap: %s", fileName.c_str());
 	}
 	stbi_image_free(data);
 
 	return bResult;
+}
+
+ArrayBitmap::~ArrayBitmap() 
+{
+    delete data;
 }
