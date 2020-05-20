@@ -8,9 +8,9 @@ class ArrayBitmap
 public:
     ArrayBitmap(const string& fileName);
 
-    inline uint8* GetData() { return data; };
-    inline int32 GetWidth() { return width; };
-    inline int32 GetHeight() { return height; };
+    inline uint8* GetData() const { return data; };
+    inline int32 GetWidth() const { return width; };
+    inline int32 GetHeight() const { return height; };
     ~ArrayBitmap();
 private:
     bool Load(const string& fileName);

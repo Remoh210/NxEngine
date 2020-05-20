@@ -52,7 +52,8 @@ uint32 OpenGLRenderDevice::CreateTexture2D(int32 width, int32 height, enum Pixel
     if(bGenerateMipmaps)
     {
 		glGenerateMipmap(textureTarget);
-	} else 
+	} 
+	else 
     {
 		glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
 		glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, 0);
