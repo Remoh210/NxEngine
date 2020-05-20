@@ -78,7 +78,7 @@ class OpenGLRenderDevice
 public:
     static bool GlobalInit();
     OpenGLRenderDevice();
-    ~OpenGLRenderDevice();
+    ~OpenGLRenderDevice(){};
 
 	uint32 createRenderTarget(uint32 texture, int32 width, int32 height,
 			enum FramebufferAttachment attachment, uint32

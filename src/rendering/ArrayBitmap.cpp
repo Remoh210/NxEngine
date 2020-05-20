@@ -12,7 +12,7 @@ bool ArrayBitmap::Load(const string& fileName)
 {
 	bool bResult = false;
 	int width, height, nrComponents;
-	data = stbi_load(fileName.c_str(), &width, &height, &nrComponents, 0);
+	data = stbi_load(fileName.c_str(), &width, &height, &nrComponents, 4);
 	if (data)
 	{
 		// GLenum format;

@@ -1,5 +1,6 @@
 
 #include "OpenGLRenderDevice.h"
+#include <stb_image.h>
 
 bool OpenGLRenderDevice::GlobalInit() 
 {
@@ -33,33 +34,69 @@ uint32 OpenGLRenderDevice::createRenderTarget(uint32 texture,
 }
 
 uint32 OpenGLRenderDevice::CreateTexture2D(int32 width, int32 height, enum PixelFormat dataFormat, 
-           const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress) 
+           const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress)
 {
-    GLint format = GetOpenGLFormat(dataFormat);
-	GLint TexinternalFormat = GetOpenGLInternalFormat(internalFormat, bCompress);
-	GLenum textureTarget = GL_TEXTURE_2D;
-	GLuint textureHandle;
+ 
+    String path = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/test.png";
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
 
-    glGenTextures(1, &textureHandle);
-	glBindTexture(textureTarget, textureHandle);
-	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(textureTarget, 0, TexinternalFormat, width, height, 0, format,
-			GL_UNSIGNED_BYTE, data);
-
-    if(bGenerateMipmaps)
+    int width2, height2, nrComponents;
+    uint8 *data2 = stbi_load(path.c_str(), &width2, &height2, &nrComponents, 0);
+    if (data)
     {
-		glGenerateMipmap(textureTarget);
-	} 
-	else 
-    {
-		glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
-		glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, 0);
-	}
+        GLenum format;
+        if (nrComponents == 1)
+            format = GL_RED;
+        else if (nrComponents == 3)
+            format = GL_RGB;
+        else if (nrComponents == 4)
+            format = GL_RGBA;
 
-	return textureHandle;
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, width2, height2, 0, format, GL_UNSIGNED_BYTE, data2);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data2);
+    }
+    else
+    {
+       
+        stbi_image_free(data2);
+    }
+
+    return textureID;
+    
+//    GLint format = GetOpenGLFormat(dataFormat);
+//	GLint TexinternalFormat = GetOpenGLInternalFormat(internalFormat, bCompress);
+//	GLenum textureTarget = GL_TEXTURE_2D;
+//	GLuint textureHandle;
+//
+//    glGenTextures(1, &textureHandle);
+//	glBindTexture(textureTarget, textureHandle);
+//	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+//	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+//	glTexImage2D(textureTarget, 0, TexinternalFormat, width, height, 0, format,
+//			GL_UNSIGNED_BYTE, data);
+//
+//    if(bGenerateMipmaps)
+//    {
+//		glGenerateMipmap(textureTarget);
+//	}
+//	else
+//    {
+//		glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
+//		glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, 0);
+//	}
+//
+//	return textureHandle;
 
 }
 
