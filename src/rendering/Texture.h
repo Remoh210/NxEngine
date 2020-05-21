@@ -13,11 +13,13 @@ public:
             width(texData.GetWidth()), height(texData.GetHeight()),
             bIsCompressed(bCompress), bHasMipmaps(bGenerateMipMaps), 
             id(deviceIn.CreateTexture2D(texData.GetWidth(), texData.GetHeight(), PixelFormat::FORMAT_RGBA,
-            texData.GetData(), interalPixelFormat, bCompress, bGenerateMipMaps))
+            texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress))
     {
-		texData.Clean();
+		//texData.Clean();
 	}
     inline uint32 GetId() { return id; };
+    inline uint32 GetWidth() { return width; };
+    inline uint32 GetHeight() { return height; };
 
     ~Texture() {};
 

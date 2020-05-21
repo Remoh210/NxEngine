@@ -44,7 +44,7 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
     {
 		GLenum format = GetOpenGLInternalFormat(internalFormat, bCompress);
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, height, width, 0, format, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, format, height, width, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
@@ -58,6 +58,7 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
 		}
 		else
 		{
+            //glGenerateMipmap(GL_TEXTURE_2D);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 		}
@@ -127,7 +128,7 @@ GLint OpenGLRenderDevice::GetOpenGLInternalFormat(enum PixelFormat format, bool 
 	case PixelFormat::FORMAT_RGB: 
 		if(bCompress) 
         {
-			return GL_COMPRESSED_SRGB;
+			return GL_COMPRESSED_RGB;
 		} 
         else 
         {
@@ -137,8 +138,9 @@ GLint OpenGLRenderDevice::GetOpenGLInternalFormat(enum PixelFormat format, bool 
 	case PixelFormat::FORMAT_RGBA:
 		if(bCompress) 
         {
-			return GL_COMPRESSED_SRGB_ALPHA;
-		} else 
+			return GL_COMPRESSED_RGBA;
+		}
+        else
         {
 			return GL_RGBA;
 		}

@@ -49,12 +49,13 @@ unsigned int TextureFromFile(String path)
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-String testTexFile = "../res/textures/test.png";
+
 
 #ifdef __APPLE__
-	testTexFile = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/test.png";
+	String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/stmpnk2.png";
+#else
+   String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
 #endif
-
 
 
 
@@ -166,10 +167,10 @@ int main()
     //Testing Texture
     RenderDevice renderDevice;
     ArrayBitmap testBitmap;
-	testBitmap.Load(testTexFile);
+	testBitmap.Load(TEST_TEXTURE_FILE);
     Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
     
-    uint32 dbgTex = TextureFromFile(testTexFile);
+    uint32 dbgTex = TextureFromFile(TEST_TEXTURE_FILE);
     
     while (!window.ShouldClose())
     {
@@ -188,7 +189,7 @@ int main()
         ImVec2 sizeW(400, 400);
         ImGui::SetNextWindowSize(sizeW);
         ImGui::Begin("TestImageWindow");
-        ImGui::Image((void*)testtex.GetId(), sizeP);
+        ImGui::Image((void*)testtex.GetId(), ImVec2(testtex.GetWidth(), testtex.GetHeight()));
         ImGui::End();
         // render
         // ------

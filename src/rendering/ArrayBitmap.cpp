@@ -1,3 +1,4 @@
+#define STB_IMAGE_IMPLEMENTATION
 #include "ArrayBitmap.h"
 #include "stb_image.h"
 
@@ -23,6 +24,7 @@ bool ArrayBitmap::Load(const string& fileName)
 	{
 		DEBUG_LOG(LOG_TYPE_ArrayBitmap, LOG_ERROR, "Failed to load ArrayBitmap: %s", fileName.c_str());
 	}
+	//::free(data);
 	//stbi_image_free(imageData);
 
 	return bResult;
@@ -35,5 +37,6 @@ void ArrayBitmap::Clean()
 
 ArrayBitmap::~ArrayBitmap() 
 {
-	Clean();
+	DEBUG_LOG_TEMP("ArrayBitmap destructor has been called");
+	//Clean();
 }
