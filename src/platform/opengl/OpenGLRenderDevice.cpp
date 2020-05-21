@@ -46,7 +46,6 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
     {
         glBindTexture(GL_TEXTURE_2D, textureID);
         glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -59,9 +58,8 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
 		}
 		else
 		{
-            //glGenerateMipmap(GL_TEXTURE_2D);
-			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-			//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 		}
 
     }

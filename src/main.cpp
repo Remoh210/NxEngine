@@ -168,7 +168,7 @@ int main()
     RenderDevice renderDevice;
     ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
-    Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, true, false);
+    Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
     
     uint32 dbgTex = TextureFromFile(TEST_TEXTURE_FILE);
     
@@ -185,11 +185,11 @@ int main()
         
         ImGui::ShowDemoWindow();
         
-		ImVec2 sizeP(350, 350);
+		ImVec2 sizeP(250, 350);
         ImVec2 sizeW(400, 400);
         ImGui::SetNextWindowSize(sizeW);
         ImGui::Begin("TestImageWindow");
-        ImGui::Image((void*)testtex.GetId(), ImVec2(testtex.GetWidth(), testtex.GetHeight()));
+        ImGui::Image((void*)testtex.GetId(), sizeP);
         ImGui::End();
         // render
         // ------
