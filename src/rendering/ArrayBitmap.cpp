@@ -14,10 +14,18 @@ bool ArrayBitmap::Load(const string& fileName)
 {
 	bool bResult = false;
 	int nrComponents;
-	data = stbi_load(fileName.c_str(), &width, &height, &nrComponents, 4);
+	data = stbi_load(fileName.c_str(), &width, &height, &nrComponents, 0);
 	
 	if (data)
 	{
+
+		if (nrComponents == 1)
+		format = PixelFormat::FORMAT_R;
+		else if (nrComponents == 3)
+		format = PixelFormat::FORMAT_RGB;
+		else if (nrComponents == 4)
+		format = PixelFormat::FORMAT_RGBA;
+
 		bResult = true;
 	}
 	else
@@ -25,6 +33,7 @@ bool ArrayBitmap::Load(const string& fileName)
 		DEBUG_LOG(LOG_TYPE_ArrayBitmap, LOG_ERROR, "Failed to load ArrayBitmap: %s", fileName.c_str());
 	}
 	//::free(data);
+	
 	//stbi_image_free(imageData);
 
 	return bResult;

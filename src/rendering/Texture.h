@@ -12,7 +12,7 @@ public:
             :device(&deviceIn),
             width(texData.GetWidth()), height(texData.GetHeight()),
             bIsCompressed(bCompress), bHasMipmaps(bGenerateMipMaps), 
-            id(deviceIn.CreateTexture2D(texData.GetWidth(), texData.GetHeight(), PixelFormat::FORMAT_RGBA,
+            id(deviceIn.CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
             texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress))
     {
 		//texData.Clean();

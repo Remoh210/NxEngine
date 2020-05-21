@@ -168,7 +168,7 @@ int main()
     RenderDevice renderDevice;
     ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
-    Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
+    Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, true, false);
     
     uint32 dbgTex = TextureFromFile(TEST_TEXTURE_FILE);
     
