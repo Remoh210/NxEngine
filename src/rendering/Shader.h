@@ -4,12 +4,15 @@
 class Shader
 {
 public:
-    Shader(RenderDevice& deviceIn, const String& shaderText);
+    Shader(RenderDevice& deviceIn, const String& shaderText):
+            mRenderDevice(&deviceIn),
+            mProgramId(deviceIn.CreateShaderProgram(shaderText))
+            {}
     inline uint32 GetId() { return mProgramId; };
     ~Shader();
     inline ~Shader()
 	{
-		//mRenderDevice->releaseShaderProgram(deviceId);
+		//mRenderDevice->ReleaseShaderProgram(deviceId);
 	}
 
 	//inline void setUniformBuffer(const String& name, UniformBuffer& buffer)

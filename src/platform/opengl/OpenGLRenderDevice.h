@@ -99,14 +99,18 @@ public:
     OpenGLRenderDevice();
     ~OpenGLRenderDevice(){};
 
-	uint32 createRenderTarget(uint32 texture, uint32 width, uint32 height,
+	uint32 CreateRenderTarget(uint32 texture, uint32 width, uint32 height,
 			enum FramebufferAttachment attachment, uint32
 			attachmentNumber, uint32 mipLevel);
-	uint32 releaseRenderTarget(uint32 fbo);
+	uint32 ReleaseRenderTarget(uint32 fbo);
 
     uint32 CreateTexture2D(uint32 width, uint32 height, enum PixelFormat dataFormat,
 			const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
     void ReleaseTexture2D(uint32 texture2D);
+	uint32 CreateShaderProgram(const String& shaderText);
+	uint32 GetVersion();
+	String GetShaderVersion();
+
 	static GLint GetOpenGLFormat(enum PixelFormat format);
 	static GLint GetOpenGLInternalFormat(enum PixelFormat format, bool bCompress);
 private:
@@ -137,7 +141,7 @@ private:
 	//Functions
 	void SetFBO(uint32 fbo);
 
-	static bool isInitialized;
+	static bool bIsInitialized;
 	//DeviceContext context;
 	String shaderVersion;
 	uint32 version;

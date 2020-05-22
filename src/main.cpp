@@ -171,6 +171,7 @@ int main()
     Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
     
     uint32 dbgTex = TextureFromFile(TEST_TEXTURE_FILE);
+    std::cout << (uint32)-1;
     
     while (!window.ShouldClose())
     {

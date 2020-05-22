@@ -15,7 +15,7 @@ public:
     { 
         if(mRenderDevice)
         {
-            mRenderDevice->releaseRenderTarget(id);
+            mRenderDevice->ReleaseRenderTarget(id);
         } 
     };
 
@@ -23,14 +23,14 @@ public:
             uint32 width, uint32 height, 
             FramebufferAttachment attachmentType = FramebufferAttachment::ATTACHMENT_COLOR,
             uint32 attachmentNumber = 0, uint32 mipLevel = 0):
-            mRenderDevice(&deviceIn), id(deviceIn.createRenderTarget(width, height, 
+            mRenderDevice(&deviceIn), id(deviceIn.CreateRenderTarget(width, height, 
             texture.GetHeight(), attachmentType, attachmentNumber, mipLevel))
             {}
 
     inline RenderTarget(RenderDevice& deviceIn, Texture& texture,
             FramebufferAttachment attachmentType = FramebufferAttachment::ATTACHMENT_COLOR,
             uint32 attachmentNumber = 0, uint32 mipLevel = 0):
-            mRenderDevice(&deviceIn), id(deviceIn.createRenderTarget(texture.GetId(), texture.GetWidth(), 
+            mRenderDevice(&deviceIn), id(deviceIn.CreateRenderTarget(texture.GetId(), texture.GetWidth(), 
             texture.GetHeight(), attachmentType, attachmentNumber, mipLevel))
             {}
     
