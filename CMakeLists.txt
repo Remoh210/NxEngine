@@ -62,6 +62,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/
 #Stb_image
 add_library(stb_image STATIC ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.h ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.c)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/stb_image)
+set_target_properties(stb_image PROPERTIES FOLDER external/stb_image)
 
 # finally, link libs
 target_link_libraries(${PROJECT_NAME} PRIVATE 
