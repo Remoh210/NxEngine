@@ -6,18 +6,30 @@
 class VertexArray
 {
 public:
-    VertexArray(RenderDevice& deviceIn, const IndexedModel& model);
-    
-    inline uint32 GetId() {return Id;}
-    inline uint32 GetNumIndices() {return NumIndices;}
-    inline void UpdateBuffer(uint32 bufferIndex,
-		const void* data, uintptr dataSize)
+	inline VertexArray(RenderDevice& deviceIn, const IndexedModel& model,
+			BufferUsage usage) :
+		device(&deviceIn),
+		id(model.CreateVertexArray(deviceIn, usage)),
+		numIndices(model.GetNumIndices()) 
+		{}
+
+	inline ~VertexArray()
 	{
-	//return Device->updateVertexArrayBuffer(Id, bufferIndex, data, dataSize);
+		//id = device->ReleaseVertexArray(id);
 	}
 
+	inline void UpdateBuffer(uint32 bufferIndex, const void* data, uintptr dataSize)
+	{
+		return device->UpdateVertexArrayBuffer(id, bufferIndex, data, dataSize);
+	}
+
+	inline uint32 GetId() { return id; };
+	inline uint32 GetNumIndices(){ return numIndices; };
 private:
-	RenderDevice* Device;
-	uint32 Id;
-	uint32 NumIndices;
+	RenderDevice* device;
+	uint32 id;
+	uint32 numIndices;
+
+	//NULL_COPY_AND_ASSIGN(VertexArray);
 };
+

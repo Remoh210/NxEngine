@@ -14,6 +14,11 @@ typedef uintptr_t uintptr;
 	T(const T& other) {(void)other;} \
 	void operator=(const T& other) { (void)other; 
 
+#ifdef DEBUG
+	#define AssertCheck assert
+#else
+	#define AssertCheck (void)
+#endif
 
 
 #define LOG_ERROR "Error"

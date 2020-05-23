@@ -7,7 +7,7 @@ bool OpenGLRenderDevice::bIsInitialized = false;
 
 static bool AddShader(GLuint shaderProgram, const String& text, GLenum type,
 		Array<GLuint>* shaders);
-//static void addAllAttributes(GLuint program, const String& vertexShaderText, uint32 version);
+static void AddAllAttributes(GLuint program, const String& vertexShaderText, uint32 version);
 static bool CheckShaderError(GLuint shader, int flag,
 		bool isProgram, const String& errorMessage);
 static void AddShaderUniforms(GLuint shaderProgram, const String& shaderText,
@@ -67,6 +67,202 @@ OpenGLRenderDevice::OpenGLRenderDevice() :
 {
     
 }
+
+void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
+		const DrawParams& drawParams,
+		uint32 numInstances, uint32 numElements)
+{
+	if(numInstances == 0) 
+	{
+		return;
+	}
+
+	SetFBO(fbo);
+	SetViewport(fbo);
+	SetBlending(drawParams.sourceBlend, drawParams.destBlend);
+	SetScissorTest(drawParams.useScissorTest,
+			drawParams.scissorStartX, drawParams.scissorStartY,
+			drawParams.scissorWidth, drawParams.scissorHeight);
+	SetFaceCulling(drawParams.faceCulling);
+	SetDepthTest(drawParams.shouldWriteDepth, drawParams.depthFunc);
+	SetShader(shader);
+	SetVAO(vao);
+
+	if(numInstances == 1) 
+	{
+		glDrawElements(drawParams.primitiveType, (GLsizei)numElements, GL_UNSIGNED_INT, 0);
+	} 
+	else 
+	{
+		glDrawElementsInstanced(drawParams.primitiveType, (GLsizei)numElements, GL_UNSIGNED_INT, 0,
+				numInstances);
+	}
+}
+
+void OpenGLRenderDevice::UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
+			const void* data, uintptr dataSize)
+{
+	if(vao == 0) {
+		return;
+	}
+
+	Map<uint32, VertexArray>::iterator it = vaoMap.find(vao);
+	if(it == vaoMap.end()) {
+		return;
+	}
+	const struct VertexArray* vaoData = &it->second;
+	enum BufferUsage usage;
+	if(bufferIndex >= vaoData->instanceComponentsStartIndex) {
+		usage = USAGE_DYNAMIC_DRAW;
+	} else {
+		usage = vaoData->usage;
+	}
+
+	SetVAO(vao);
+	glBindBuffer(GL_ARRAY_BUFFER, vaoData->buffers[bufferIndex]);
+	if(vaoData->bufferSizes[bufferIndex] >= dataSize) {
+		glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, data);
+	} else {
+		glBufferData(GL_ARRAY_BUFFER, dataSize, data, usage);
+		vaoData->bufferSizes[bufferIndex] = dataSize;
+	}	
+}
+
+void OpenGLRenderDevice::SetShader(uint32 shader)
+{
+	if(shader == boundShader) 
+	{
+		return;
+	}
+	glUseProgram(shader);
+	boundShader = shader;
+}
+
+
+void OpenGLRenderDevice::SetStencilTest(bool bEnable, DrawFunc stencilFunc,
+		uint32 stencilTestMask, uint32 stencilWriteMask, int32 stencilComparisonVal,
+		StencilOp stencilFail, StencilOp stencilPassButDepthFail,
+		StencilOp stencilPass)
+{
+	if(bEnable != bStencilTestEnabled) 
+	{
+		if(bEnable) 
+		{
+			glEnable(GL_STENCIL_TEST);
+		} else 
+		{
+			glDisable(GL_STENCIL_TEST);
+		}
+		bStencilTestEnabled = bEnable;
+	}
+
+	if(stencilFunc != currentStencilFunc || stencilTestMask != currentStencilTestMask
+			|| stencilComparisonVal != currentStencilComparisonVal) 
+	{
+		glStencilFunc(stencilFunc, stencilTestMask, stencilComparisonVal);
+		currentStencilComparisonVal = stencilComparisonVal;
+		currentStencilTestMask = stencilTestMask;
+		currentStencilFunc = stencilFunc;
+	}
+
+	if(stencilFail != currentStencilFail || stencilPass != currentStencilPass
+			|| stencilPassButDepthFail != currentStencilPassButDepthFail)
+	{
+		glStencilOp(stencilFail, stencilPassButDepthFail, stencilPass);
+		currentStencilFail = stencilFail;
+		currentStencilPass = stencilPass;
+		currentStencilPassButDepthFail = stencilPassButDepthFail;
+	}
+
+	SetStencilWriteMask(stencilWriteMask);
+}
+
+void OpenGLRenderDevice::SetStencilWriteMask(uint32 mask)
+{
+	if(currentStencilWriteMask == mask) 
+	{
+		return;
+	}
+	glStencilMask(mask);
+	currentStencilWriteMask = mask;
+}
+
+void OpenGLRenderDevice::SetDepthTest(bool bShouldWrite, DrawFunc depthFunc)
+{
+	if(bShouldWrite != bShouldWriteDepth) {
+		glDepthMask(bShouldWrite ? GL_TRUE : GL_FALSE);
+		bShouldWriteDepth = bShouldWrite;
+	}
+
+	if(depthFunc == currentDepthFunc) {
+		return;
+	}
+	glDepthFunc(depthFunc);
+	currentDepthFunc = depthFunc;
+}
+
+void OpenGLRenderDevice::SetFaceCulling(FaceCulling cullingMode)
+{
+	if(cullingMode == currentFaceCulling) {
+		return;
+	}
+	
+	if(cullingMode == FACE_CULL_NONE) { // Face culling is enabled, but needs to be disabled
+		glDisable(GL_CULL_FACE);
+	} else if(currentFaceCulling == FACE_CULL_NONE) { // Face culling is disabled but needs to be enabled
+		glEnable(GL_CULL_FACE);
+		glCullFace(cullingMode);
+	} else { // Only need to change culling state
+		glCullFace(cullingMode);
+	}
+	currentFaceCulling = cullingMode;
+}
+
+void OpenGLRenderDevice::SetScissorTest(bool bEnable, uint32 startX, uint32 startY,
+			uint32 width, uint32 height)
+{
+	if(!bEnable) {
+		if(!bScissorTestEnabled) {
+			return;
+		} else {
+			glDisable(GL_SCISSOR_TEST);
+			bScissorTestEnabled = false;
+			return;
+		}
+	}
+	if(!bScissorTestEnabled) {
+		glEnable(GL_SCISSOR_TEST);
+	}
+	glScissor(startX, startY, width, height);
+	bScissorTestEnabled = true;
+}
+
+void OpenGLRenderDevice::SetBlending(BlendFunc sourceBlend, BlendFunc destBlend)
+{
+	if(sourceBlend == currentSourceBlend && destBlend == currentDestBlend) {
+		return;
+	} else if(sourceBlend == BLEND_FUNC_NONE || destBlend == BLEND_FUNC_NONE) {
+		glDisable(GL_BLEND);
+	} else if(currentSourceBlend == BLEND_FUNC_NONE || currentDestBlend == BLEND_FUNC_NONE) {
+		glEnable(GL_BLEND);
+		glBlendFunc(sourceBlend, destBlend);
+	} else {
+		glBlendFunc(sourceBlend, destBlend);
+	}
+
+	currentSourceBlend = sourceBlend;
+	currentDestBlend = destBlend;
+}
+
+void OpenGLRenderDevice::SetViewport(uint32 fbo)
+{
+	if(fbo == viewportFBO) {
+		return;
+	}
+	glViewport(0, 0, fboMap[fbo].width, fboMap[fbo].height);
+	viewportFBO = fbo;
+}
+
 
 uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 		uint32 width, uint32 height,
@@ -213,13 +409,85 @@ uint32 OpenGLRenderDevice::CreateShaderProgram(const String& shaderText)
 		return (uint32)-1;
 	}
 
-	//addAllAttributes(shaderProgram, vertexShaderText, getVersion());
+	AddAllAttributes(shaderProgram, vertexShaderText, GetVersion());
 	AddShaderUniforms(shaderProgram, shaderText, programData.uniformMap,
 			programData.samplerMap);
 
 	shaderProgramMap[shaderProgram] = programData;
 	return shaderProgram;
 
+}
+
+uint32 OpenGLRenderDevice::CreateVertexArray(const float** vertexData,
+	const uint32* vertexElementSizes, uint32 numVertexComponents,
+	uint32 numInstanceComponents, uint32 numVertices, const uint32* indices,
+	uint32 numIndices, BufferUsage usage)
+{
+	unsigned int numBuffers = numVertexComponents + numInstanceComponents + 1;
+
+	GLuint VAO;
+	GLuint* buffers = new GLuint[numBuffers];
+	uintptr* bufferSizes = new uintptr[numBuffers];
+
+	glGenVertexArrays(1, &VAO);
+	SetVAO(VAO);
+
+	glGenBuffers(numBuffers, buffers);
+	for(uint32 i = 0, attribute = 0; i < numBuffers-1; i++) {
+		BufferUsage attribUsage = usage;
+		bool inInstancedMode = false;
+		if(i >= numVertexComponents) {
+			attribUsage = USAGE_DYNAMIC_DRAW;
+			inInstancedMode = true;
+		}
+
+		uint32 elementSize = vertexElementSizes[i];
+		const void* bufferData = inInstancedMode ? nullptr : vertexData[i];
+		uintptr dataSize = inInstancedMode
+			? elementSize * sizeof(float)
+			: elementSize * sizeof(float) * numVertices;
+		
+		glBindBuffer(GL_ARRAY_BUFFER, buffers[i]);
+		glBufferData(GL_ARRAY_BUFFER, dataSize, bufferData, attribUsage);
+		bufferSizes[i] = dataSize;
+
+		// Because OpenGL doesn't support attributes with more than 4
+		// elements, each set of 4 elements gets its own attribute.
+		uint32 elementSizeDiv = elementSize/4;
+		uint32 elementSizeRem = elementSize%4;
+		for(uint32 j = 0; j < elementSizeDiv; j++) {
+			glEnableVertexAttribArray(attribute);
+			glVertexAttribPointer(attribute, 4, GL_FLOAT, GL_FALSE,
+					elementSize * sizeof(GLfloat),
+					(const GLvoid*)(sizeof(GLfloat) * j * 4));
+			if(inInstancedMode) {
+				glVertexAttribDivisor(attribute, 1);
+			}
+			attribute++;
+		}
+		if(elementSizeRem != 0) {
+			glEnableVertexAttribArray(attribute);
+			glVertexAttribPointer(attribute, elementSize, GL_FLOAT, GL_FALSE,
+					elementSize * sizeof(GLfloat),
+					(const GLvoid*)(sizeof(GLfloat) * elementSizeDiv * 4));
+			if(inInstancedMode) {
+				glVertexAttribDivisor(attribute, 1);
+			}
+			attribute++;
+		}
+
+	}
+
+}
+
+
+void OpenGLRenderDevice::SetVAO(uint32 vao)
+{
+	if(vao == boundVAO) {
+		return;
+	}
+	glBindVertexArray(vao);
+	boundVAO = vao;
 }
 
 static bool AddShader(GLuint shaderProgram, const String& text, GLenum type,
@@ -292,6 +560,38 @@ static void AddShaderUniforms(GLuint shaderProgram, const String& shaderText,
 		}
 		String name((char*)&uniformName[0], actualLength - 1);
 		samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
+	}
+}
+
+static void AddAllAttributes(GLuint program, const String& vertexShaderText, uint32 version)
+{
+	if(version >= 320) {
+		// Layout is enabled. Return.
+		return;
+	}
+
+	// FIXME: This code assumes attributes are listed in order, which isn't
+	// true for all compilers. It's safe to ignore for now because OpenGL versions
+	// requiring this aren't being used.
+	GLint numActiveAttribs = 0;
+	GLint maxAttribNameLength = 0;
+
+	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTES, &numActiveAttribs);
+	glGetProgramiv(program, GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, &maxAttribNameLength);
+
+//	DEBUG_LOG_TEMP2("Adding attributes!");
+//	DEBUG_LOG_TEMP("%i %i", numActiveAttribs, maxAttribNameLength);
+	Array<GLchar> nameData(maxAttribNameLength);
+	for(GLint attrib = 0; attrib < numActiveAttribs; ++attrib) {
+		GLint arraySize = 0;
+		GLenum type = 0;
+		GLsizei actualLength = 0;
+
+		glGetActiveAttrib(program, attrib, nameData.size(),
+				&actualLength, &arraySize, &type, &nameData[0]);
+		glBindAttribLocation(program, attrib, (char*)&nameData[0]);
+//		DEBUG_LOG_TEMP2("Adding attribute!");
+//		DEBUG_LOG_TEMP("%s: %d", (char*)&nameData[0], attrib);
 	}
 }
 

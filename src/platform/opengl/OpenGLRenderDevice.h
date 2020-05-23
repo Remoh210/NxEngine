@@ -68,28 +68,67 @@ enum FramebufferAttachment
 	ATTACHMENT_STENCIL = GL_STENCIL_ATTACHMENT
 };
 
+enum FaceCulling
+{
+	FACE_CULL_NONE,
+	FACE_CULL_BACK = GL_BACK,
+	FACE_CULL_FRONT = GL_FRONT,
+	FACE_CULL_FRONT_AND_BACK = GL_FRONT_AND_BACK,
+};
+enum DrawFunc
+{
+	DRAW_FUNC_NEVER = GL_NEVER,
+	DRAW_FUNC_ALWAYS = GL_ALWAYS,
+	DRAW_FUNC_LESS = GL_LESS,
+	DRAW_FUNC_GREATER = GL_GREATER,
+	DRAW_FUNC_LEQUAL = GL_LEQUAL,
+	DRAW_FUNC_GEQUAL = GL_GEQUAL,
+	DRAW_FUNC_EQUAL = GL_EQUAL,
+	DRAW_FUNC_NOT_EQUAL = GL_NOTEQUAL,
+};
+	enum BlendFunc
+{
+	BLEND_FUNC_NONE,
+	BLEND_FUNC_ONE = GL_ONE,
+	BLEND_FUNC_SRC_ALPHA = GL_SRC_ALPHA,
+	BLEND_FUNC_ONE_MINUS_SRC_ALPHA = GL_ONE_MINUS_SRC_ALPHA,
+	BLEND_FUNC_ONE_MINUS_DST_ALPHA = GL_ONE_MINUS_DST_ALPHA,
+	BLEND_FUNC_DST_ALPHA = GL_DST_ALPHA,
+};
+enum StencilOp
+{
+	STENCIL_KEEP = GL_KEEP,
+	STENCIL_ZERO = GL_ZERO,
+	STENCIL_REPLACE = GL_REPLACE,
+	STENICL_INCR = GL_INCR,
+	STENCIL_INCR_WRAP = GL_INCR_WRAP,
+	STENCIL_DECR_WRAP = GL_DECR_WRAP,
+	STENCIL_DECR = GL_DECR,
+	STENCIL_INVERT = GL_INVERT,
+};
+
 
 struct DrawParams
 {
 	PrimitiveType primitiveType = PRIMITIVE_TRIANGLES;
-	//enum FaceCulling faceCulling = FACE_CULL_NONE;
-	//enum DrawFunc depthFunc = DRAW_FUNC_ALWAYS;
+	FaceCulling faceCulling = FACE_CULL_NONE;
+	DrawFunc depthFunc = DRAW_FUNC_ALWAYS;
 	bool shouldWriteDepth = true;
 	bool useStencilTest = false;
-	//enum DrawFunc stencilFunc = DRAW_FUNC_ALWAYS;
+	DrawFunc stencilFunc = DRAW_FUNC_ALWAYS;
 	uint32 stencilTestMask = 0;
 	uint32 stencilWriteMask = 0;
 	int32 stencilComparisonVal = 0;
-	//enum StencilOp stencilFail = STENCIL_KEEP;
-	//enum StencilOp stencilPassButDepthFail = STENCIL_KEEP;
-	//enum StencilOp stencilPass = STENCIL_KEEP;
+	StencilOp stencilFail = STENCIL_KEEP;
+	StencilOp stencilPassButDepthFail = STENCIL_KEEP;
+	StencilOp stencilPass = STENCIL_KEEP;
 	bool useScissorTest = false;
 	uint32 scissorStartX = 0;
 	uint32 scissorStartY = 0;
 	uint32 scissorWidth = 0;
 	uint32 scissorHeight = 0;
-	//enum BlendFunc sourceBlend = BLEND_FUNC_NONE;
-	//enum BlendFunc destBlend = BLEND_FUNC_NONE;
+	BlendFunc sourceBlend = BLEND_FUNC_NONE;
+	BlendFunc destBlend = BLEND_FUNC_NONE;
 };
 
 class OpenGLRenderDevice
@@ -98,6 +137,13 @@ public:
     static bool GlobalInit();
     OpenGLRenderDevice();
     ~OpenGLRenderDevice(){};
+
+	void Draw(uint32 fbo, uint32 shader, uint32 vao,
+		const DrawParams& drawParams,
+		uint32 numInstances, uint32 numElements);
+
+	void UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
+			const void* data, uintptr dataSize);
 
 	uint32 CreateRenderTarget(uint32 texture, uint32 width, uint32 height,
 			enum FramebufferAttachment attachment, uint32
@@ -108,12 +154,22 @@ public:
 			const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
     void ReleaseTexture2D(uint32 texture2D);
 	uint32 CreateShaderProgram(const String& shaderText);
+
+	uint32 CreateVertexArray(const float** vertexData,
+		const uint32* vertexElementSizes, uint32 numVertexComponents,
+		uint32 numInstanceComponents, uint32 numVertices, const uint32* indices,
+		uint32 numIndices, BufferUsage usage);
+
+	void SetVAO(uint32 vao);
+
 	uint32 GetVersion();
 	String GetShaderVersion();
 
-	static GLint GetOpenGLFormat(enum PixelFormat format);
-	static GLint GetOpenGLInternalFormat(enum PixelFormat format, bool bCompress);
+	static GLint GetOpenGLFormat(PixelFormat format);
+	static GLint GetOpenGLInternalFormat(PixelFormat format, bool bCompress);
 private:
+	
+	
 	//Types
 	struct VertexArray
 	{
@@ -122,7 +178,7 @@ private:
 		uint32  numBuffers;
 		uint32  numElements;
 		uint32  instanceComponentsStartIndex;
-		enum BufferUsage usage;
+		BufferUsage usage;
 	};
 
 	struct ShaderProgram
@@ -139,7 +195,20 @@ private:
 	};
 	
 	//Functions
+	void SetShader(uint32 shader);
+	void SetStencilTest(bool bEnable, DrawFunc stencilFunc,
+		uint32 stencilTestMask, uint32 stencilWriteMask, int32 stencilComparisonVal,
+		StencilOp stencilFail, StencilOp stencilPassButDepthFail,
+		StencilOp stencilPass);
+	void SetStencilWriteMask(uint32 mask);
+	void SetDepthTest(bool bShouldWrite, DrawFunc depthFunc);
+	void SetFaceCulling(FaceCulling cullingMode);
 	void SetFBO(uint32 fbo);
+	void SetBlending(BlendFunc sourceBlend, BlendFunc destBlend);
+	void SetScissorTest(bool bEnable, uint32 startX, uint32 startY,
+			uint32 width, uint32 height);
+	void SetViewport(uint32 fbo);
+	
 
 	static bool bIsInitialized;
 	//DeviceContext context;
@@ -150,6 +219,25 @@ private:
 	Map<uint32, ShaderProgram> shaderProgramMap;
 
 	uint32 boundFBO;
+	uint32 viewportFBO;
+	uint32 boundVAO;
+	uint32 boundShader;
+
+	FaceCulling currentFaceCulling;
+	DrawFunc currentDepthFunc;
+	BlendFunc currentSourceBlend;
+	BlendFunc currentDestBlend;
+	DrawFunc currentStencilFunc;
+	uint32 currentStencilTestMask;
+	uint32 currentStencilWriteMask;
+	int32 currentStencilComparisonVal;
+	StencilOp currentStencilFail;
+	StencilOp currentStencilPassButDepthFail;
+	StencilOp currentStencilPass;
+	bool bBlendingEnabled;
+	bool bShouldWriteDepth;
+	bool bStencilTestEnabled;
+	bool bScissorTestEnabled;
 
 
 };
