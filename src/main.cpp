@@ -5,6 +5,8 @@
 #include <iostream>
 #include <stb_image.h>
 #include "rendering/Texture.h"
+#include "rendering/RenderDevice.h"
+#include "rendering/RenderDevice.h"
 
 void processInput(GLFWwindow *window);
 
@@ -172,6 +174,10 @@ int main()
     
     uint32 dbgTex = TextureFromFile(TEST_TEXTURE_FILE);
     std::cout << (uint32)-1;
+
+    //Asset load test
+    //RenderDevice device(window);
+	//Sampler sampler(device, RenderDevice::FILTER_LINEAR_MIPMAP_LINEAR);
     
     while (!window.ShouldClose())
     {

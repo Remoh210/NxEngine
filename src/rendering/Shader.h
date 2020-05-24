@@ -1,5 +1,7 @@
+#pragma once
 #include "RenderDevice.h"
 #include "Texture.h"
+#include "Sampler.h"
 
 class Shader
 {
@@ -9,7 +11,6 @@ public:
             mProgramId(deviceIn.CreateShaderProgram(shaderText))
             {}
     inline uint32 GetId() { return mProgramId; };
-    ~Shader();
     inline ~Shader()
 	{
 		//mRenderDevice->ReleaseShaderProgram(deviceId);
@@ -19,8 +20,11 @@ public:
     //{
     //    
     //}
-	//inline void setSampler(const String& name, Texture& texture, Sampler& sampler,
-	//		uint32 unit);
+    inline void SetSampler(const String& name, Texture& texture, Sampler& sampler,
+            uint32 unit)
+    {
+        mRenderDevice->SetShaderSampler(mProgramId, name, texture.GetId(), sampler.GetId(), unit);
+    }
 
 private:
     RenderDevice* mRenderDevice;

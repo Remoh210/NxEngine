@@ -111,7 +111,7 @@ void OpenGLRenderDevice::UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
 		return;
 	}
 	const struct VertexArray* vaoData = &it->second;
-	enum BufferUsage usage;
+	BufferUsage usage;
 	if(bufferIndex >= vaoData->instanceComponentsStartIndex) {
 		usage = USAGE_DYNAMIC_DRAW;
 	} else {
@@ -266,7 +266,7 @@ void OpenGLRenderDevice::SetViewport(uint32 fbo)
 
 uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 		uint32 width, uint32 height,
-		enum FramebufferAttachment attachment,
+		FramebufferAttachment attachment,
 		uint32 attachmentNumber, uint32 mipLevel)
 {
 	uint32 fbo;
@@ -286,7 +286,7 @@ uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 }
 
 uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum PixelFormat dataFormat, 
-           const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress)
+           const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress)
 {
  
     uint32 textureID;
@@ -355,7 +355,32 @@ void OpenGLRenderDevice::ReleaseTexture2D(uint32 texture2D)
 	glDeleteTextures(1, &texture2D);
 }
 
-GLint OpenGLRenderDevice::GetOpenGLFormat(enum PixelFormat format)
+uint32 OpenGLRenderDevice::CreateSampler(SamplerFilter minFilter, SamplerFilter magFilter,
+			SamplerWrapMode wrapU, SamplerWrapMode wrapV, float anisotropy)
+{
+	uint32 result = 0;
+	glGenSamplers(1, &result);
+	glSamplerParameteri(result, GL_TEXTURE_WRAP_S, wrapU);
+	glSamplerParameteri(result, GL_TEXTURE_WRAP_T, wrapV);
+	glSamplerParameteri(result, GL_TEXTURE_MAG_FILTER, magFilter);
+	glSamplerParameteri(result, GL_TEXTURE_MIN_FILTER, minFilter);
+	// if(anisotropy != 0.0f && minFilter != FILTER_NEAREST && minFilter != FILTER_LINEAR) {
+	// 	glSamplerParameterf(result, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+	// }
+	return result;
+}
+
+
+uint32 OpenGLRenderDevice::ReleaseSampler(uint32 sampler)
+{
+	if(sampler == 0) {
+		return 0;
+	}
+	glDeleteSamplers(1, &sampler);
+	return 0;
+}
+
+GLint OpenGLRenderDevice::GetOpenGLFormat(PixelFormat format)
 {
 	switch(format) {
 	case PixelFormat::FORMAT_R: return GL_RED;
@@ -720,4 +745,14 @@ void OpenGLRenderDevice::SetFBO(uint32 fbo)
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 	boundFBO = fbo;
 }
+
+void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samplerName, uint32 texture, uint32 sampler, uint32 unit)
+{
+    SetShader(shader);
+    glActiveTexture(GL_TEXTURE0 + unit);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glBindSampler(unit, sampler);
+    glUniform1i(shaderProgramMap[shader].samplerMap[samplerName], unit);
+}
+
 

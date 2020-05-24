@@ -146,13 +146,22 @@ public:
 			const void* data, uintptr dataSize);
 
 	uint32 CreateRenderTarget(uint32 texture, uint32 width, uint32 height,
-			enum FramebufferAttachment attachment, uint32
+			FramebufferAttachment attachment, uint32
 			attachmentNumber, uint32 mipLevel);
 	uint32 ReleaseRenderTarget(uint32 fbo);
 
-    uint32 CreateTexture2D(uint32 width, uint32 height, enum PixelFormat dataFormat,
-			const void* data, enum PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
+    uint32 CreateTexture2D(uint32 width, uint32 height, PixelFormat dataFormat,
+			const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
     void ReleaseTexture2D(uint32 texture2D);
+
+	uint32 CreateSampler(SamplerFilter minFilter, SamplerFilter magFilter,
+			SamplerWrapMode wrapU, SamplerWrapMode wrapV, float anisotropy);
+	
+	uint32 ReleaseSampler(uint32 sampler);
+    
+    void SetShaderSampler(uint32 shader, const String& samplerName,
+            uint32 texture, uint32 sampler, uint32 unit);
+
 	uint32 CreateShaderProgram(const String& shaderText);
 
 	uint32 CreateVertexArray(const float** vertexData,

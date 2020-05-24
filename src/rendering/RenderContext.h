@@ -12,26 +12,28 @@ public:
             mRenderDevice(&deviceIn), mRenderTarget(mRenderTarget)
             {}
     
-    inline void clear(bool shouldClearColor, bool shouldClearDepth,
+    inline void Clear(bool shouldClearColor, bool shouldClearDepth,
 			bool shouldClearStencil, const vec3& color, uint32 stencil)
             
     {
         //device->clear
     }
-	inline void clear(const vec3& color, bool shouldClearDepth=false)
+	inline void Clear(const vec3& color, bool shouldClearDepth=false)
     {
         //device->clear()
     }
-	inline void draw(Shader& shader, VertexArray& vertexArray, 
+	inline void Draw(Shader& shader, VertexArray& vertexArray,
 			const DrawParams& drawParams, uint32 numInstances=1)
     {
-        //
+        mRenderDevice->Draw(mRenderTarget->GetId(), shader.GetId(), vertexArray.GetId(),
+                     drawParams, numInstances, vertexArray.GetNumIndices());
     }
-	inline void draw(Shader& shader, VertexArray& vertexArray, 
+	inline void Draw(Shader& shader, VertexArray& vertexArray,
 			const DrawParams& drawParams, uint32 numInstances,
 			uint32 numIndices)
     {
-        //
+        mRenderDevice->Draw(mRenderTarget->GetId(), shader.GetId(), vertexArray.GetId(),
+                drawParams, numInstances, numIndices);
     }
 
     ~RenderContext();
