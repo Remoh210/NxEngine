@@ -6,7 +6,7 @@
 #include "common/dataStructs/Map.h"
 #include "common/dataStructs/Array.h"
 #include "common/dataStructs/String.h"
-
+#include "rendering/Window.h"
 
 
 
@@ -134,8 +134,10 @@ struct DrawParams
 class OpenGLRenderDevice
 {
 public:
-    static bool GlobalInit();
-    OpenGLRenderDevice();
+    
+    OpenGLRenderDevice(Window& window);
+	static bool GlobalInit();
+
     ~OpenGLRenderDevice(){};
 
 	void Draw(uint32 fbo, uint32 shader, uint32 vao,

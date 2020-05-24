@@ -6,9 +6,53 @@
 #include <stb_image.h>
 #include "rendering/Texture.h"
 #include "rendering/RenderDevice.h"
-#include "rendering/RenderDevice.h"
+#include "rendering/RenderTarget.h"
+#include "rendering/Sampler.h"
+#include "rendering/Window.h"
+#include "rendering/Shader.h"
+#include "EditorRenderContext.h"
+#include "common/CommonTypes.h"
+#include <fstream>
+#include <sstream>
 
 void processInput(GLFWwindow *window);
+
+bool loadTextFileWithIncludes(String& output, const String& fileName,
+		const String& includeKeyword)
+{
+	std::ifstream file;
+	file.open(fileName.c_str());
+
+	String filePath = StringFuncs::getFilePath(fileName);
+	std::stringstream ss;
+	String line;
+
+	if(file.is_open()) {
+		while(file.good()) {
+			getline(file, line);
+			
+			if(line.find(includeKeyword) == String::npos) {
+				ss << line << "\n";
+			} else {
+				String includeFileName = StringFuncs::split(line, ' ')[1];
+				includeFileName =
+					includeFileName.substr(1,includeFileName.length() - 2);
+
+				String toAppend;
+				loadTextFileWithIncludes(toAppend, filePath + includeFileName,
+						includeKeyword);
+				ss << toAppend << "\n";
+			}
+		}
+	} else {
+		DEBUG_LOG(LOG_TYPE_IO, LOG_ERROR, "Unable to load shader: %s",
+				fileName.c_str());
+		return false;
+	}
+
+	output = ss.str();
+	return true;
+}
 
 unsigned int TextureFromFile(String path)
 {
@@ -55,8 +99,10 @@ const unsigned int SCR_HEIGHT = 600;
 
 #ifdef __APPLE__
 	String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/stmpnk2.png";
+    String SHADER_TEXT_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/shaders/basicShader.glsl";
 #else
    String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
+   String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
 #endif
 
 
@@ -82,7 +128,7 @@ const char *fragmentShaderSource = "#version 330 core\n"
 
 int main()
 {
-    PlatformWindow window(800, 600, "Test!");
+    Window window(800, 600, "Test!");
     // build and compile our shader program
     // ------------------------------------
     // vertex shader
@@ -167,7 +213,26 @@ int main()
 
 
     //Testing Texture
-    RenderDevice renderDevice;
+    RenderDevice renderDevice(window);
+    Sampler sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
+
+    String shaderText;
+    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+	//StringFuncs::loadTextFileWithIncludes(shaderText, "./res/shaders/basicShader.glsl", "#include");
+	Shader shader(renderDevice, shaderText);
+    mat4 projection = glm::perspective(glm::radians(45.0f), (float)window.GetWidth() / (float)window.GetHeight(), 0.1f, 100.0f);
+
+    DrawParams drawParams;
+	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	drawParams.faceCulling = FACE_CULL_BACK;
+	drawParams.shouldWriteDepth = true;
+	drawParams.depthFunc = DRAW_FUNC_LESS;
+//	drawParams.sourceBlend = RenderDevice::BLEND_FUNC_ONE;
+//	drawParams.destBlend = RenderDevice::BLEND_FUNC_ONE;
+
+    RenderTarget target(renderDevice);
+    EditorRenderContext (renderDevice, target, drawParams, shader, sampler, projection);
+
     ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
     Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
@@ -176,7 +241,7 @@ int main()
     std::cout << (uint32)-1;
 
     //Asset load test
-    //RenderDevice device(window);
+    //RenderDevice device()
 	//Sampler sampler(device, RenderDevice::FILTER_LINEAR_MIPMAP_LINEAR);
     
     while (!window.ShouldClose())

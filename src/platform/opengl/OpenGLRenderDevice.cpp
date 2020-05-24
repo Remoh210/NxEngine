@@ -45,27 +45,46 @@ bool OpenGLRenderDevice::GlobalInit()
 	return bIsInitialized;
 }
 
-OpenGLRenderDevice::OpenGLRenderDevice() :
+OpenGLRenderDevice::OpenGLRenderDevice(Window& window) :
 	shaderVersion(""), version(0),
-	boundFBO(0)
-	//viewportFBO(0),
-	//boundShader(0),
-	//currentFaceCulling(FACE_CULL_NONE),
-	//currentDepthFunc(DRAW_FUNC_ALWAYS),
-	//currentSourceBlend(BLEND_FUNC_NONE),
-	//currentDestBlend(BLEND_FUNC_NONE),
-	//currentStencilFunc(DRAW_FUNC_ALWAYS),
-	//currentStencilTestMask((uint32)0xFFFFFFFF),
-	//currentStencilWriteMask((uint32)0xFFFFFFFF),
-	//currentStencilComparisonVal(0),
-	//currentStencilFail(STENCIL_KEEP),
-	//currentStencilPassButDepthFail(STENCIL_KEEP),
-	//currentStencilPass(STENCIL_KEEP),
-	//blendingEnabled(false),
-	//shouldWriteDepth(false),
-	//stencilTestEnabled(false),
+	boundFBO(0),
+	viewportFBO(0),
+	boundVAO(0),
+	boundShader(0),
+	currentFaceCulling(FACE_CULL_NONE),
+	currentDepthFunc(DRAW_FUNC_ALWAYS),
+	currentSourceBlend(BLEND_FUNC_NONE),
+	currentDestBlend(BLEND_FUNC_NONE),
+	currentStencilFunc(DRAW_FUNC_ALWAYS),
+	currentStencilTestMask((uint32)0xFFFFFFFF),
+	currentStencilWriteMask((uint32)0xFFFFFFFF),
+	currentStencilComparisonVal(0),
+	currentStencilFail(STENCIL_KEEP),
+	currentStencilPassButDepthFail(STENCIL_KEEP),
+	currentStencilPass(STENCIL_KEEP),
+	bBlendingEnabled(false),
+	bShouldWriteDepth(false),
+	bStencilTestEnabled(false),
+	bScissorTestEnabled(false)
 {
-    
+	//context = SDL_GL_CreateContext(window.getWindowHandle());
+	//glewExperimental = GL_TRUE;
+	//GLenum res = glewInit();
+	//if(res != GLEW_OK) {
+	//	DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "%s", glewGetErrorString(res));
+	//	throw std::runtime_error("Render device could not be initialized");
+	//}
+
+	struct FBOData fboWindowData;
+	fboWindowData.width = window.GetWidth();
+	fboWindowData.height = window.GetHeight();
+	fboMap[0] = fboWindowData;
+
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(DRAW_FUNC_ALWAYS);
+	glDepthMask(GL_FALSE);
+//	glEnable(GL_FRAMEBUFFER_SRGB);
+	glFrontFace(GL_CW);
 }
 
 void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
@@ -97,6 +116,22 @@ void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
 		glDrawElementsInstanced(drawParams.primitiveType, (GLsizei)numElements, GL_UNSIGNED_INT, 0,
 				numInstances);
 	}
+}
+
+uint32 OpenGLRenderDevice::ReleaseRenderTarget(uint32 fbo)
+{
+	if(fbo == 0) {
+		return 0;
+	}
+
+	Map<uint32, FBOData>::iterator it = fboMap.find(fbo);
+	if(it == fboMap.end()) {
+		return 0;
+	}
+
+	glDeleteFramebuffers(1, &fbo);
+	fboMap.erase(it);
+	return 0;
 }
 
 void OpenGLRenderDevice::UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
@@ -502,6 +537,23 @@ uint32 OpenGLRenderDevice::CreateVertexArray(const float** vertexData,
 		}
 
 	}
+
+
+	uintptr indicesSize = numIndices * sizeof(uint32);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[numBuffers-1]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize,
+			indices, usage);
+	bufferSizes[numBuffers-1] = indicesSize;
+
+	struct VertexArray vaoData;
+	vaoData.buffers = buffers;
+	vaoData.bufferSizes = bufferSizes;
+	vaoData.numBuffers = numBuffers;
+	vaoData.numElements = numIndices;
+	vaoData.usage = usage;
+	vaoData.instanceComponentsStartIndex = numVertexComponents;
+	vaoMap[VAO] = vaoData;
+	return VAO;
 
 }
 

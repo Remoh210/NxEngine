@@ -1,6 +1,6 @@
 #pragma once
 
 
-#include "platform/platformWindow.hpp"
+#include "platform/PlatformWindow.h"
 typedef PlatformWindow Window;
 

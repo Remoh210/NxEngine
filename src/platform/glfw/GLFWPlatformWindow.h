@@ -18,6 +18,8 @@ public:
     void Present();
     inline bool ShouldClose() { return glfwWindowShouldClose(window); };
     inline WindowHandle GetWindowHandle() { return window; };
+    inline uint32 GetHeight() { return height; }
+    inline uint32 GetWidth() { return width; }
 
 private:
     WindowHandle window;

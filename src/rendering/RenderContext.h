@@ -36,7 +36,7 @@ public:
                 drawParams, numInstances, numIndices);
     }
 
-    ~RenderContext();
+    ~RenderContext(){};
 private:
     RenderDevice* mRenderDevice;
     RenderTarget* mRenderTarget;

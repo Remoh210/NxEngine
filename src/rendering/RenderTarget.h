@@ -1,3 +1,4 @@
+#pragma once
 #include "RenderDevice.h"
 #include "common/Common.h"
 #include "Texture.h"
