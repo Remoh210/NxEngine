@@ -12,6 +12,7 @@
 #include "rendering/Shader.h"
 #include "EditorRenderContext.h"
 #include "common/CommonTypes.h"
+#include "rendering/AssetLoader.h"
 #include <fstream>
 #include <sstream>
 
@@ -100,9 +101,11 @@ const unsigned int SCR_HEIGHT = 600;
 #ifdef __APPLE__
 	String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/stmpnk2.png";
     String SHADER_TEXT_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/shaders/basicShader.glsl";
+    String TEST_MODEL_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/models/nanosuit/nanosuit.obj";
 #else
    String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
    String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
+   String TEST_MODEL_FILE = "../res/models/nanosuit/nanosuit.obj";
 #endif
 
 
@@ -231,7 +234,13 @@ int main()
 //	drawParams.destBlend = RenderDevice::BLEND_FUNC_ONE;
 
     RenderTarget target(renderDevice);
-    EditorRenderContext (renderDevice, target, drawParams, shader, sampler, projection);
+    EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection);
+
+    Array<IndexedModel> models;
+	Array<uint32> modelMaterialIndices;
+	Array<Material> modelMaterials;
+    AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
+    VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 
     ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
@@ -267,7 +276,8 @@ int main()
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-
+        EditorContext.RenderMesh(vertexArray, testtex, mat4());
+        EditorContext.Flush();
         // render the triangle
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);

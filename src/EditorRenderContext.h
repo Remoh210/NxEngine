@@ -18,7 +18,11 @@ public:
             : RenderContext(deviceIn, targetIn),
 		    drawParams(drawParamsIn), shader(shaderIn), sampler(samplerIn), perspective(perspectiveIn) 
         {}
-		
+	inline void RenderMesh(VertexArray& vertexArray, Texture& texture, const mat4& transformIn)
+	{
+		meshRenderBuffer[std::make_pair(&vertexArray, &texture)].push_back(perspective * transformIn);
+	}
+	
     void Flush();
     //~EditorRenderContext();
 

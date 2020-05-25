@@ -1,6 +1,3 @@
-#include "common.glh"
-
-
 
 #if defined(VS_BUILD)
 
@@ -22,11 +19,10 @@ void main()
 uniform sampler2D diffuse;
 in vec2 texCoord0;
 
-layout(location = 0) vec4
-DeclareFragOutput(0, vec4);
+layout (location = 0) out vec4 FinalColor;
 void main()
 {
-    gl_FragData[0] = texture2D(diffuse, texCoord0);
+    FinalColor = texture(diffuse, texCoord0);
 
 }
 #endif
