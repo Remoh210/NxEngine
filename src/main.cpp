@@ -276,11 +276,12 @@ int main()
         // ------
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
-        EditorContext.RenderMesh(vertexArray, testtex, mat4());
+		mat4 iden = mat4();
+        EditorContext.RenderMesh(vertexArray, testtex, iden);
         EditorContext.Flush();
         // render the triangle
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        //glBindVertexArray(VAO);
+        //glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         //
