@@ -134,6 +134,26 @@ uint32 OpenGLRenderDevice::ReleaseRenderTarget(uint32 fbo)
 	return 0;
 }
 
+void OpenGLRenderDevice::Clear(uint32 fbo, bool bShouldClearColor, bool bShouldClearDepth,
+		bool bShouldClearStencil, const vec4& color, uint32 stencil)
+{
+	SetFBO(fbo);
+	uint32 flags = 0;
+	if(bShouldClearColor) {
+		flags |= GL_COLOR_BUFFER_BIT;
+		glClearColor(color.r, color.g, color.b, color.a);
+	}
+	if(bShouldClearDepth) {
+		flags |= GL_DEPTH_BUFFER_BIT;
+	}
+	if(bShouldClearStencil) {
+		flags |= GL_STENCIL_BUFFER_BIT;
+		SetStencilWriteMask(stencil);
+	}
+
+	glClear(flags);
+}
+
 void OpenGLRenderDevice::UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
 			const void* data, uintptr dataSize)
 {

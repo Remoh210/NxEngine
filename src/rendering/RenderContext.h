@@ -12,15 +12,16 @@ public:
             mRenderDevice(&deviceIn), mRenderTarget(&targetIn)
             {}
     
-    inline void Clear(bool shouldClearColor, bool shouldClearDepth,
-			bool shouldClearStencil, const vec3& color, uint32 stencil)
+    inline void Clear(bool bShouldClearColor, bool bShouldClearDepth,
+			bool bShouldClearStencil, const vec4& color, uint32 stencil)
             
     {
-        //device->clear
+        	mRenderDevice->Clear(mRenderTarget->GetId(), bShouldClearColor, bShouldClearDepth, bShouldClearStencil,
+			color, stencil);
     }
-	inline void Clear(const vec3& color, bool shouldClearDepth=false)
+	inline void Clear(const vec4& color, bool bShouldClearDepth=false)
     {
-        //device->clear()
+        mRenderDevice->Clear(mRenderTarget->GetId(), true, bShouldClearDepth, false, color, 0);
     }
 	inline void Draw(Shader& shader, VertexArray& vertexArray,
 			const DrawParams& drawParams, uint32 numInstances=1)

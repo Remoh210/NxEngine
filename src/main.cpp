@@ -274,8 +274,8 @@ int main()
         ImGui::End();
         // render
         // ------
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+       
+        EditorContext.Clear(glm::vec4(1.0f, 0.f, 0.f, 0.f), true);
 		mat4 iden = mat4();
         EditorContext.RenderMesh(vertexArray, testtex, iden);
         EditorContext.Flush();

@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "common/Common.h"
+#include "common/CommonTypes.h"
 #include "common/dataStructs/Map.h"
 #include "common/dataStructs/Array.h"
 #include "common/dataStructs/String.h"
@@ -151,6 +152,10 @@ public:
 			FramebufferAttachment attachment, uint32
 			attachmentNumber, uint32 mipLevel);
 	uint32 ReleaseRenderTarget(uint32 fbo);
+
+	void Clear(uint32 fbo,
+			bool bShouldClearColor, bool bShouldClearDepth, bool bShouldClearStencil,
+			const vec4& color, uint32 stencil);
 
     uint32 CreateTexture2D(uint32 width, uint32 height, PixelFormat dataFormat,
 			const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
