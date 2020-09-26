@@ -99,13 +99,14 @@ const unsigned int SCR_HEIGHT = 600;
 
 
 #ifdef __APPLE__
-	String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/stmpnk2.png";
+	String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/stmpnk.png";
     String SHADER_TEXT_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/shaders/basicShader.glsl";
-    String TEST_MODEL_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/models/nanosuit/nanosuit.obj";
+    String TEST_MODEL_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/models/monkey3.obj";
 #else
    String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
    String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
-   String TEST_MODEL_FILE = "../res/models/nanosuit/nanosuit.obj";
+   //String TEST_MODEL_FILE = "../res/models/tinycube.obj";
+   String TEST_MODEL_FILE = "../res/models/monkey3.obj";
 #endif
 
 
@@ -131,85 +132,10 @@ const char *fragmentShaderSource = "#version 330 core\n"
 
 int main()
 {
-    Window window(800, 600, "Test!");
-    // build and compile our shader program
-    // ------------------------------------
-    // vertex shader
-    int vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-    glCompileShader(vertexShader);
-    // check for shader compile errors
-    int success;
-    char infoLog[512];
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // fragment shader
-    int fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-    glCompileShader(fragmentShader);
-    // check for shader compile errors
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
-    if (!success)
-    {
-        glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    }
-    // link shaders
-    int shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-    // check for linking errors
-    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-    if (!success) {
-        glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << std::endl;
-    }
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
+    Window window(700, 600, "Test!");
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
-    float vertices[] = {
-        // positions         // colors
-         0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,  // bottom right
-        -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,  // bottom left
-         0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f   // top
 
-    };
-
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // position attribute
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // color attribute
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
-    // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-    // VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-    // glBindVertexArray(0);
-
-    // as we only have a single shader, we could also just activate our shader once beforehand if we want to
-    glUseProgram(shaderProgram);
-
-    // render loop
-    // -----------
     ImGui::CreateContext();
-    // draw in wireframe
-    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     ImGui_ImplGlfw_InitForOpenGL(window.GetWindowHandle(), true);
     ImGui_ImplOpenGL3_Init("#version 410");
     ImGui::StyleColorsDark();
@@ -223,10 +149,12 @@ int main()
     loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
 	//StringFuncs::loadTextFileWithIncludes(shaderText, "./res/shaders/basicShader.glsl", "#include");
 	Shader shader(renderDevice, shaderText);
+	int ha = window.GetHeight();
+	int wa= window.GetWidth();
     mat4 projection = glm::perspective(glm::radians(45.0f), (float)window.GetWidth() / (float)window.GetHeight(), 0.1f, 100.0f);
 
     DrawParams drawParams;
-	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	drawParams.primitiveType = PRIMITIVE_LINES;
 	drawParams.faceCulling = FACE_CULL_BACK;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
@@ -247,11 +175,6 @@ int main()
     Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
     
     uint32 dbgTex = TextureFromFile(TEST_TEXTURE_FILE);
-    std::cout << (uint32)-1;
-
-    //Asset load test
-    //RenderDevice device()
-	//Sampler sampler(device, RenderDevice::FILTER_LINEAR_MIPMAP_LINEAR);
     
     while (!window.ShouldClose())
     {
@@ -272,16 +195,20 @@ int main()
         ImGui::Begin("TestImageWindow");
         ImGui::Image((void*)testtex.GetId(), sizeP);
         ImGui::End();
+
         // render
         // ------
-       
-        EditorContext.Clear(glm::vec4(1.0f, 0.f, 0.f, 0.f), true);
-		mat4 iden = mat4();
-        EditorContext.RenderMesh(vertexArray, testtex, iden);
+		EditorContext.Clear(glm::vec4(0.576, 0.439, 0.859, 0), true);
+
+		glm::mat4 trans = glm::mat4(1.0f);
+		trans = glm::translate(trans, glm::vec3(5.9f, -0.15f, -50.0f));
+		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.01f, 0.0f));
+	    trans = glm::scale(trans, glm::vec3(8.1f, 8.1f, 8.1f));
+
+        EditorContext.RenderMesh(vertexArray, testtex, trans);
         EditorContext.Flush();
-        // render the triangle
-        //glBindVertexArray(VAO);
-        //glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         //
@@ -291,12 +218,6 @@ int main()
         window.Present();
         glfwPollEvents();
     }
-
-    // optional: de-allocate all resources once they've outlived their purpose:
-    // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteProgram(shaderProgram);
 
     // glfw: terminate, clearing all previously allocated GLFW resources.
     // ------------------------------------------------------------------

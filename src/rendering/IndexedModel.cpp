@@ -2,20 +2,17 @@
 
 void IndexedModel::AddElement1f(uint32 elementIndex, float e0)
 {
-	AssertCheck(elementIndex < elementSizes.size());
 	elements[elementIndex].push_back(e0);
 }
 
 void IndexedModel::AddElement2f(uint32 elementIndex, float e0, float e1)
 {
-	AssertCheck(elementIndex < elementSizes.size());
 	elements[elementIndex].push_back(e0);
 	elements[elementIndex].push_back(e1);
 }
 
 void IndexedModel::AddElement3f(uint32 elementIndex, float e0, float e1, float e2)
 {
-	AssertCheck(elementIndex < elementSizes.size());
 	elements[elementIndex].push_back(e0);
 	elements[elementIndex].push_back(e1);
 	elements[elementIndex].push_back(e2);
@@ -23,7 +20,6 @@ void IndexedModel::AddElement3f(uint32 elementIndex, float e0, float e1, float e
 
 void IndexedModel::AddElement4f(uint32 elementIndex, float e0, float e1, float e2, float e3)
 {
-	AssertCheck(elementIndex < elementSizes.size());
 	elements[elementIndex].push_back(e0);
 	elements[elementIndex].push_back(e1);
 	elements[elementIndex].push_back(e2);
@@ -81,7 +77,7 @@ void IndexedModel::SetInstancedElementStartIndex(uint32 elementIndex)
 //}
 
 uint32 IndexedModel::CreateVertexArray(RenderDevice& device,
-		BufferUsage usage) const
+	enum BufferUsage usage) const
 {
 	uint32 numVertexComponents = elementSizes.size();
 	uint32 numInstanceComponents = instancedElementsStartIndex == ((uint32)-1) ?
@@ -89,17 +85,18 @@ uint32 IndexedModel::CreateVertexArray(RenderDevice& device,
 	numVertexComponents -= numInstanceComponents;
 
 	Array<const float*> vertexDataArray;
-	for(uint32 i = 0; i < numVertexComponents; i++) {
+	for (uint32 i = 0; i < numVertexComponents; i++) {
 		vertexDataArray.push_back(&(elements[i][0]));
 	}
 
 	const float** vertexData = &vertexDataArray[0];
 	const uint32* vertexElementSizes = &elementSizes[0];
-	
-	uint32 numVertices = elements[0].size()/vertexElementSizes[0];
+
+	uint32 numVertices = elements[0].size() / vertexElementSizes[0];
 	uint32 numIndices = indices.size();
-	
+
 	return device.CreateVertexArray(vertexData, vertexElementSizes,
-			numVertexComponents, numInstanceComponents, numVertices, &indices[0],
-			numIndices, usage);
+		numVertexComponents, numInstanceComponents, numVertices, &indices[0],
+		numIndices, usage);
 }
+

@@ -4,10 +4,13 @@
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+
     glViewport(0, 0, width, height);
 }
 
 GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* title)
+	:mWidth(width),
+	mHeight(height)
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
