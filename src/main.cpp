@@ -94,14 +94,14 @@ unsigned int TextureFromFile(String path)
 
 // settings
 const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+const unsigned int SCR_HEIGHT = 700;
 
 
 
 #ifdef __APPLE__
-	String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/textures/stmpnk.png";
-    String SHADER_TEXT_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/shaders/basicShader.glsl";
-    String TEST_MODEL_FILE = "/Users/nyan/Desktop/Workspace/NxEngine/res/models/monkey3.obj";
+	String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/textures/stmpnk.jpg";
+    String SHADER_TEXT_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/shaders/basicShader.glsl";
+    String TEST_MODEL_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/models/monkey3.obj";
 #else
    String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
    String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
@@ -110,29 +110,9 @@ const unsigned int SCR_HEIGHT = 600;
 #endif
 
 
-
-
-const char *vertexShaderSource ="#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in vec3 aColor;\n"
-    "out vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos, 1.0);\n"
-    "   ourColor = aColor;\n"
-    "}\0";
-
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "in vec3 ourColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(ourColor, 1.0f);\n"
-    "}\n\0";
-
 int main()
 {
-    Window window(700, 600, "Test!");
+    Window window(SCR_WIDTH, SCR_HEIGHT, "Test!");
 
 
     ImGui::CreateContext();
