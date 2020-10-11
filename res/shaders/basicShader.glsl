@@ -11,7 +11,7 @@ layout (location = 4) in mat4 transformMat;
 
 void main()
 {
-    gl_Position = vec4(position, 1.0) * transformMat;
+    gl_Position = transformMat * vec4(position, 1.0) ;
     texCoord0 = texCoord;
 }
 

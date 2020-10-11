@@ -134,8 +134,8 @@ int main()
     mat4 projection = glm::perspective(glm::radians(45.0f), (float)window.GetWidth() / (float)window.GetHeight(), 0.1f, 100.0f);
 
     DrawParams drawParams;
-	drawParams.primitiveType = PRIMITIVE_LINES;
-	drawParams.faceCulling = FACE_CULL_BACK;
+	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	drawParams.faceCulling = FACE_CULL_FRONT;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
 //	drawParams.sourceBlend = RenderDevice::BLEND_FUNC_ONE;
