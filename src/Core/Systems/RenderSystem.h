@@ -16,7 +16,10 @@ struct RenderableMeshComponent : public Component<RenderableMeshComponent>
 class RenderableMeshSystem : public BaseSystem
 {
 public:
-	RenderableMeshSystem(EditorRenderContext& contextIn) :BaseSystem(), context(contextIn)
+	RenderableMeshSystem(EditorRenderContext& contextIn, ECS& ecsIn) 
+		:BaseSystem()
+		, context(contextIn)
+		, ecs(ecsIn)
 	{
 		addComponentType(TransformComponent::ID);
 		addComponentType(RenderableMeshComponent::ID);
@@ -25,14 +28,29 @@ public:
 	virtual void UpdateComponents(float delta, BaseComponent** components)
 	{
 		TransformComponent* transform = (TransformComponent*)components[0];
-		RenderableMeshComponent* mesh = (RenderableMeshComponent*)components[1];
+	
+		
+		RenderableMeshComponent* mesh = ecs.GetComponent<RenderableMeshComponent>(transform->entity);
 
 		transform->transform.rotation.y += 0.01f;
 
+
+
 		context.RenderMesh(*mesh->vertexArray, *mesh->texture, transform->transform.ToMatrix());
+
+		//Transform newTrasform;
+		//newTrasform = transform->transform;
+		//for (int i = 0; i < 1000; i++)
+		//{
+		//	
+		//	newTrasform.position.x += 1.1f;
+		//	context.RenderMesh(*mesh->vertexArray, *mesh->texture, newTrasform.ToMatrix());
+		//}
+		
 	}
 private:
 	EditorRenderContext& context;
+	ECS& ecs;
 };
 
 

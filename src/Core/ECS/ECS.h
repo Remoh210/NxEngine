@@ -63,6 +63,11 @@ public:
 	{
 		BaseComponent* components[] = { &c1, &c2 };
 		uint32 componentIDs[] = { A::ID, B::ID};
+
+		//for (auto comp : components)
+		//{
+		//	comp->
+		//}
 		return MakeEntity(components, componentIDs, 2);
 	}
 
