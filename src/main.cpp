@@ -3,14 +3,14 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <iostream>
-#include <stb_image.h>
 #include "rendering/Texture.h"
 #include "rendering/RenderDevice.h"
 #include "rendering/RenderTarget.h"
 #include "rendering/Sampler.h"
 #include "rendering/Window.h"
 #include "rendering/Shader.h"
-#include "EditorRenderContext.h"
+#include <Editor/EditorRenderContext.h>
+#include <Core/Systems/RenderSystem.h>
 #include "common/CommonTypes.h"
 #include "rendering/AssetLoader.h"
 #include <fstream>
@@ -53,43 +53,6 @@ bool loadTextFileWithIncludes(String& output, const String& fileName,
 
 	output = ss.str();
 	return true;
-}
-
-unsigned int TextureFromFile(String path)
-{
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height, nrComponents;
-    uint8 *data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
-    if (data)
-    {
-        GLenum format;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
-        stbi_image_free(data);
-    }
-
-    return textureID;
 }
 
 // settings
@@ -154,7 +117,28 @@ int main()
 	testBitmap.Load(TEST_TEXTURE_FILE);
     Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
     
-    uint32 dbgTex = TextureFromFile(TEST_TEXTURE_FILE);
+    uint32 dbgTex = AssetLoader::TextureFromFile(TEST_TEXTURE_FILE);
+
+
+	//ECS
+	ECS ecs;
+
+	//ECS
+
+	RenderableMeshComponent renderableMesh;
+	renderableMesh.vertexArray = &vertexArray;
+	renderableMesh.texture = &testtex;
+	TransformComponent transformComp;
+	transformComp.transform.position = vec3(5.9f, -0.15f, -50.0f);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp.transform.scale = vec3(8.0f);
+
+	ecs.MakeEntity(transformComp, renderableMesh);
+
+
+	RenderableMeshSystem renderSystem(EditorContext);
+	SystemList systemList;
+	systemList.AddSystem(renderSystem);
     
     while (!window.ShouldClose())
     {
@@ -180,12 +164,14 @@ int main()
         // ------
 		EditorContext.Clear(glm::vec4(0.576, 0.439, 0.859, 0), true);
 
-		glm::mat4 trans = glm::mat4(1.0f);
-		trans = glm::translate(trans, glm::vec3(5.9f, -0.15f, -50.0f));
-		trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.01f, 0.0f));
-	    trans = glm::scale(trans, glm::vec3(8.1f, 8.1f, 8.1f));
+		//glm::mat4 trans = glm::mat4(1.0f);
+		//trans = glm::translate(trans, glm::vec3(5.9f, -0.15f, -50.0f));
+		//trans = glm::rotate(trans, (float)glfwGetTime(), glm::vec3(0.0f, 0.01f, 0.0f));
+	 //   trans = glm::scale(trans, glm::vec3(8.1f, 8.1f, 8.1f));
 
-        EditorContext.RenderMesh(vertexArray, testtex, trans);
+        //EditorContext.RenderMesh(vertexArray, testtex, trans);
+		ecs.UpdateSystems(systemList, 0.0f);
+
         EditorContext.Flush();
 
 		

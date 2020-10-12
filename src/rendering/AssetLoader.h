@@ -11,4 +11,6 @@ public:
 			Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 			Array<Material>& materials);
 
+	static unsigned int TextureFromFile(String path);
+
 };

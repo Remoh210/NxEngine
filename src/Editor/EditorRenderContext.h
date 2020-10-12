@@ -1,3 +1,5 @@
+#pragma once
+
 #include "rendering/RenderDevice.h"
 #include "rendering/RenderContext.h"
 #include "rendering/Shader.h"
@@ -5,9 +7,6 @@
 #include "rendering/VertexArray.h"
 #include "common/CommonTypes.h"
 #include "common/dataStructs/Map.h"
-
-
-
 
 class EditorRenderContext : public RenderContext
 {

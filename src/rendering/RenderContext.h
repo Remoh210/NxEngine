@@ -1,3 +1,5 @@
+#pragma once
+
 #include "RenderDevice.h"
 #include "RenderTarget.h"
 #include "common/CommonTypes.h"
