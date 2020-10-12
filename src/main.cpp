@@ -88,10 +88,7 @@ int main()
     RenderDevice renderDevice(window);
     Sampler sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
 
-    String shaderText;
-    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-	//StringFuncs::loadTextFileWithIncludes(shaderText, "./res/shaders/basicShader.glsl", "#include");
-	Shader shader(renderDevice, shaderText);
+
 	int ha = window.GetHeight();
 	int wa= window.GetWidth();
     mat4 projection = glm::perspective(glm::radians(45.0f), (float)window.GetWidth() / (float)window.GetHeight(), 0.1f, 100.0f);
@@ -105,20 +102,26 @@ int main()
 //	drawParams.destBlend = RenderDevice::BLEND_FUNC_ONE;
 
     RenderTarget target(renderDevice);
-    EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection);
+    
+
 
     Array<IndexedModel> models;
 	Array<uint32> modelMaterialIndices;
 	Array<Material> modelMaterials;
     AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
     VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
-
+    
     ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
     Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
     
     uint32 dbgTex = AssetLoader::TextureFromFile(TEST_TEXTURE_FILE);
-
+    
+    String shaderText;
+    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+    //StringFuncs::loadTextFileWithIncludes(shaderText, "./res/shaders/basicShader.glsl", "#include");
+    Shader shader(renderDevice, shaderText);
+    EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection);
 
 	//ECS
 	ECS ecs;
@@ -129,9 +132,9 @@ int main()
 	renderableMesh.vertexArray = &vertexArray;
 	renderableMesh.texture = &testtex;
 	TransformComponent transformComp;
-	transformComp.transform.position = vec3(5.9f, -0.15f, -50.0f);
+	transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-	transformComp.transform.scale = vec3(8.0f);
+	transformComp.transform.scale = vec3(7.0f);
 
 	ecs.MakeEntity(transformComp, renderableMesh);
 

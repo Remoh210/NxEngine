@@ -108,7 +108,7 @@ public:
 		AddComponentInternal(entity, handleToEntity(entity), Component::ID, component);
 		for (uint32 i = 0; i < listeners.size(); i++) {
 			const Array<uint32>& componentIDs = listeners[i]->GetComponentIDs();
-			if (listeners[i]->shouldNotifyOnAllComponentOperations()) {
+			if (listeners[i]->ShouldNotifyOnAllComponentOperations()) {
 				listeners[i]->OnAddComponent(entity, Component::ID);
 			}
 			else {
@@ -128,7 +128,7 @@ public:
 		for (uint32 i = 0; i < listeners.size(); i++) {
 			const Array<uint32>& componentIDs = listeners[i]->GetComponentIDs();
 			for (uint32 j = 0; j < componentIDs.size(); j++) {
-				if (listeners[i]->shouldNotifyOnAllComponentOperations()) {
+				if (listeners[i]->ShouldNotifyOnAllComponentOperations()) {
 					listeners[i]->OnRemoveComponent(entity, Component::ID);
 				}
 				else {
