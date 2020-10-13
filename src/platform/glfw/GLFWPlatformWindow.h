@@ -7,7 +7,7 @@
 
 #include <functional>
 
-typedef void(*CursorCallbackFunc)(int xpos, int ypos);
+//typedef void(*CursorCallbackFunc)(int xpos, int ypos);
 
 typedef GLFWwindow* WindowHandle;
 
@@ -26,11 +26,13 @@ public:
     inline uint32 GetHeight() { return mHeight; }
     inline uint32 GetWidth() { return mWidth; }
 
-	inline void SetMouseCallback(CursorCallbackFunc callbackFunc) { MouseCallBackFunc  = callbackFunc; }
+	inline void SetMouseCallback(std::function<void (int, int)> callbackFunc) { MouseCallbackFunc  = callbackFunc; }
+    inline void SetFrameBufferResizeCallback(std::function<void (int, int)> callbackFunc) { FrameBufferResizeCallbackBackFunc  = callbackFunc; }
 
 	static Camera* mainCamera;
 
-	static CursorCallbackFunc MouseCallBackFunc;
+    static std::function<void (int, int)> MouseCallbackFunc;
+    static std::function<void (int, int)> FrameBufferResizeCallbackBackFunc;
 private:
     WindowHandle window;
     int mWidth;
@@ -38,4 +40,5 @@ private:
 
 	
 	static void GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos);
+    static void GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height);
 };

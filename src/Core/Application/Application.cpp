@@ -24,7 +24,7 @@ String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/textures/stmpnk
 String SHADER_TEXT_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/shaders/basicShader.glsl";
 String TEST_MODEL_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/models/monkey3.obj";
 String TEST_MODEL_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/rock.obj";
-String TEST_TEXTURE_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/rock/rock.png";
+String TEST_TEXTURE_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/rock.png";
 #else
 String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
 String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
@@ -75,7 +75,7 @@ int Application::Run()
 
 	window.SetMouseCallback
 	(
-		[] (int xpos, int ypos)
+		[this] (int xpos, int ypos)
 	{
 		if (firstMouse)
 		{
@@ -177,7 +177,7 @@ int Application::Run()
 	RenderableMeshComponent renderableMesh2;
 	renderableMesh2.vertexArray = &vertexArray2;
 	renderableMesh2.texture = &testtex2;
-	renderableMesh2.numInst = 50000;
+	renderableMesh2.numInst = 500;
 	TransformComponent transformComp2;
 	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);

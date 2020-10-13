@@ -3,7 +3,8 @@
 
 //Camera* GLFWPlatformWindow::MainCamera;
 
-CursorCallbackFunc GLFWPlatformWindow::MouseCallBackFunc = NULL;
+std::function<void (int, int)> GLFWPlatformWindow::MouseCallbackFunc = [](int, int){};
+std::function<void (int, int)> GLFWPlatformWindow::FrameBufferResizeCallbackBackFunc = [](int, int){};
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -12,7 +13,13 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void GLFWPlatformWindow::GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	GLFWPlatformWindow::MouseCallBackFunc(xpos, ypos);
+	GLFWPlatformWindow::MouseCallbackFunc(xpos, ypos);
+}
+
+void GLFWPlatformWindow::GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+    FrameBufferResizeCallbackBackFunc(width, height);
 }
 
 GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* title)
