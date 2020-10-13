@@ -37,5 +37,5 @@ private:
     int mHeight;
 
 	
-	static void GLFWPlatformWindow::GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos);
+	static void GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos);
 };
