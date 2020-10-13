@@ -23,17 +23,21 @@
 String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/textures/stmpnk.jpg";
 String SHADER_TEXT_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/shaders/basicShader.glsl";
 String TEST_MODEL_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/models/monkey3.obj";
+String TEST_MODEL_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/rock.obj";
+String TEST_TEXTURE_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/rock/rock.png";
 #else
 String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
 String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
 //String TEST_MODEL_FILE = "../res/models/tinycube.obj";
 String TEST_MODEL_FILE = "../res/models/monkey3.obj";
+String TEST_MODEL_FILE2 = "../res/models/rock/rock.obj";
+String TEST_TEXTURE_FILE2 = "../res/models/rock/rock.png";
 #endif
 
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 700;
+const unsigned int SCR_WIDTH = 1200;
+const unsigned int SCR_HEIGHT = 900;
 
 uint32 Application::numInstances = 0;
 
@@ -135,7 +139,10 @@ int Application::Run()
 	RenderTarget target(renderDevice);
 
 
+	//ECS
+	ECS ecs;
 
+	//model 1
 	Array<IndexedModel> models;
 	Array<uint32> modelMaterialIndices;
 	Array<Material> modelMaterials;
@@ -148,12 +155,6 @@ int Application::Run()
 
 	uint32 dbgTex = AssetLoader::TextureFromFile(TEST_TEXTURE_FILE);
 
-
-	//ECS
-	ECS ecs;
-
-	//ECS
-
 	RenderableMeshComponent renderableMesh;
 	renderableMesh.vertexArray = &vertexArray;
 	renderableMesh.texture = &testtex;
@@ -163,6 +164,32 @@ int Application::Run()
 	transformComp.transform.scale = vec3(7.0f);
 
 	ecs.MakeEntity(transformComp, renderableMesh);
+
+
+	//model2 
+	AssetLoader::LoadModels(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
+	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
+
+	ArrayBitmap testBitmap2;
+	testBitmap2.Load(TEST_TEXTURE_FILE2);
+	Texture testtex2(renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
+
+	RenderableMeshComponent renderableMesh2;
+	renderableMesh2.vertexArray = &vertexArray2;
+	renderableMesh2.texture = &testtex2;
+	renderableMesh2.numInst = 50000;
+	TransformComponent transformComp2;
+	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp2.transform.scale = vec3(7.0f);
+
+	ecs.MakeEntity(transformComp2, renderableMesh2);
+
+
+
+	//ECS
+
+;
 
 
 	String shaderText;
@@ -324,7 +351,7 @@ Application::Application(float Width, float Height)
 	windowHeight = Height;
 	if (!MainCamera)
 	{
-		MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+		MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 83.0f));
 		MainCamera->bControlled = false;
 		MainCamera->MovementSpeed = 100.0f;
 	}
