@@ -69,6 +69,27 @@ int Application::Run()
 {
 	Window window(SCR_WIDTH, SCR_HEIGHT, "Test!");
 
+	window.SetMouseCallback
+	(
+		[] (int xpos, int ypos)
+	{
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+		lastX = xpos;
+		lastY = ypos;
+
+		Application::GetMainCamera()->ProcessMouseMovement(xoffset, yoffset);
+	}
+	);
+
 
 	ImGui::CreateContext();
 	ImGui_ImplGlfw_InitForOpenGL(window.GetWindowHandle(), true);
@@ -101,7 +122,7 @@ int Application::Run()
 
 	int ha = window.GetHeight();
 	int wa = window.GetWidth();
-	mat4 projection = glm::perspective(glm::radians(45.0f), (float)window.GetWidth() / (float)window.GetHeight(), 0.1f, 100.0f);
+	mat4 projection = glm::perspective(glm::radians(45.0f), (float)window.GetWidth() / (float)window.GetHeight(), 0.1f, 10000.0f);
 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
@@ -147,7 +168,7 @@ int Application::Run()
 	String shaderText;
 	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
 	Shader shader(renderDevice, shaderText);
-	EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection);
+	EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection, MainCamera);
 
 	RenderableMeshSystem renderSystem(EditorContext, ecs);
 	SystemList systemList;
@@ -155,7 +176,6 @@ int Application::Run()
 
 	while (!window.ShouldClose())
 	{
-\
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
@@ -292,7 +312,7 @@ bool Application::IsRunning()
 	return isAppRunning;
 }
 
-Camera * Application::GetMainCamera()
+Camera* Application::GetMainCamera()
 {
 	return MainCamera;
 }
@@ -302,8 +322,16 @@ Application::Application(float Width, float Height)
 	numInstances++;
 	windowWidth = Width;
 	windowHeight = Height;
-	MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+	if (!MainCamera)
+	{
+		MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
+		MainCamera->bControlled = false;
+		MainCamera->MovementSpeed = 100.0f;
+	}
+	
+	
 	deltaTime = 0;
+
 }
 
 
@@ -329,6 +357,19 @@ void Application::processInput(GLFWwindow *window)
 
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GLFW_TRUE);
+
+
+	if (glfwGetKey(window, GLFW_KEY_BACKSPACE) == GLFW_PRESS)
+	{
+		Application::MainCamera->bControlled = false;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+
+	if (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS)
+	{
+		Application::MainCamera->bControlled = true;
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
 }
 
 void Application::ResizeWindow(uint32 width, uint32 height)

@@ -43,13 +43,15 @@ public:
     float MouseSensitivity;
     float Zoom;
 
+	bool bControlled;
+
     // Constructor with vectors
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH) : Front(glm::vec3(0.0f, 0.0f, -1.0f)), MovementSpeed(SPEED), MouseSensitivity(SENSITIVITY), Zoom(ZOOM)
     {
         Position = position;
         WorldUp = up;
 		Yaw = yaw;
-		bControlled = false;
+		bControlled = true;
         Pitch = pitch;
         updateCameraVectors();
     }
@@ -59,7 +61,7 @@ public:
         Position = glm::vec3(posX, posY, posZ);
         WorldUp = glm::vec3(upX, upY, upZ);
         Yaw = yaw;
-		bControlled = false;
+		bControlled = true;
         Pitch = pitch;
         updateCameraVectors();
     }
@@ -155,6 +157,6 @@ private:
         Right = glm::normalize(glm::cross(Front, WorldUp));  // Normalize the vectors, because their length gets closer to 0 the more you look up or down which results in slower movement.
         Up    = glm::normalize(glm::cross(Right, Front));
     }
-	bool bControlled;
+	
 };
 #endif

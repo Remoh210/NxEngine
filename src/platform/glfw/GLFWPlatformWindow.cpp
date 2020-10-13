@@ -1,11 +1,18 @@
 #include "GLFWPlatformWindow.h"
-
 #define LOG_TYPE_WINDOW "Window"
+
+//Camera* GLFWPlatformWindow::MainCamera;
+
+CursorCallbackFunc GLFWPlatformWindow::MouseCallBackFunc = NULL;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-
     glViewport(0, 0, width, height);
+}
+
+void GLFWPlatformWindow::GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos)
+{
+	GLFWPlatformWindow::MouseCallBackFunc(xpos, ypos);
 }
 
 GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* title)
@@ -33,6 +40,7 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+	glfwSetCursorPosCallback(window, GLFWPlatformWindow::GLFWMouseCallback);
     gladLoadGL(glfwGetProcAddress);
 }
 

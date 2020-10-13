@@ -38,14 +38,14 @@ public:
 
 		context.RenderMesh(*mesh->vertexArray, *mesh->texture, transform->transform.ToMatrix());
 
-		//Transform newTrasform;
-		//newTrasform = transform->transform;
-		//for (int i = 0; i < 1000; i++)
-		//{
-		//	
-		//	newTrasform.position.x += 1.1f;
-		//	context.RenderMesh(*mesh->vertexArray, *mesh->texture, newTrasform.ToMatrix());
-		//}
+		Transform newTrasform;
+		newTrasform = transform->transform;
+		for (int i = 0; i < 1000; i++)
+		{
+			
+			newTrasform.position.x += 1.1f;
+			context.RenderMesh(*mesh->vertexArray, *mesh->texture, newTrasform.ToMatrix());
+		}
 		
 	}
 private:
