@@ -15,7 +15,7 @@ public:
             id(deviceIn.CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
             texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress))
     {
-		//texData.Clean();
+		texData.Clean();
 	}
     inline uint32 GetId() { return id; };
     inline uint32 GetWidth() { return width; };

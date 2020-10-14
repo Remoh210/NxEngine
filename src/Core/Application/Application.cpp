@@ -167,11 +167,11 @@ int Application::Run()
 
 
 	//model2 
-	AssetLoader::LoadModels(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
+	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
 	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
 
 	ArrayBitmap testBitmap2;
-	testBitmap2.Load(TEST_TEXTURE_FILE2);
+	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
 	Texture testtex2(renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
 
 	RenderableMeshComponent renderableMesh2;

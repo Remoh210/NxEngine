@@ -31,21 +31,19 @@ bool ArrayBitmap::Load(const string& fileName)
 	else
 	{
 		DEBUG_LOG(LOG_TYPE_ArrayBitmap, LOG_ERROR, "Failed to load ArrayBitmap: %s", fileName.c_str());
+		stbi_image_free(data);
 	}
-	//::free(data);
-	
-	//stbi_image_free(imageData);
 
 	return bResult;
 }
 
 void ArrayBitmap::Clean()
 {
-	//stbi_image_free(data);
+	stbi_image_free(data);
 }
 
 ArrayBitmap::~ArrayBitmap() 
 {
-	DEBUG_LOG_TEMP("ArrayBitmap destructor has been called");
+	//DEBUG_LOG_TEMP("ArrayBitmap destructor has been called");
 	//Clean();
 }
