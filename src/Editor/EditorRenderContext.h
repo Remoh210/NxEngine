@@ -5,8 +5,8 @@
 #include "rendering/Shader.h"
 #include "rendering/Sampler.h"
 #include "rendering/VertexArray.h"
-#include "common/CommonTypes.h"
-#include "common/dataStructs/Map.h"
+#include "Common/CommonTypes.h"
+#include "Common/dataStructs/Map.h"
 #include <Core/Camera/Camera.h>
 #include <Core/Graphics/LineRenderer/LineRenderer.h>
 

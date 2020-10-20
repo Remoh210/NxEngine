@@ -1,7 +1,7 @@
 
 #include "Application.h"
 #include <Core/Camera/Camera.h>
-#include <common/CommonTypes.h>
+#include <Common/CommonTypes.h>
 
 #include <Core/Components/TransformComponent.h>
 #include <Core/Systems/RenderSystem.h>
@@ -18,7 +18,7 @@
 
 #include <fstream>
 #include <sstream>
-#include <filesystem>
+#include <experimental/filesystem>
 
 #ifdef __APPLE__
 String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/textures/stmpnk.jpg";

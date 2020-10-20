@@ -1,7 +1,7 @@
 #pragma once
 
-#include "common/dataStructs/Map.h"
-#include "common/CommonTypes.h"
+#include "Common/dataStructs/Map.h"
+#include "Common/CommonTypes.h"
 
 struct Material
 {

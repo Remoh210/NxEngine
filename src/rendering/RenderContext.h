@@ -2,7 +2,7 @@
 
 #include "RenderDevice.h"
 #include "RenderTarget.h"
-#include "common/CommonTypes.h"
+#include "Common/CommonTypes.h"
 #include "Shader.h"
 #include "VertexArray.h"
 

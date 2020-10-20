@@ -1,5 +1,6 @@
 #include "ECS.h"
-#include <algorithm> 
+#include <algorithm>
+#include <cstring>
 
 ECS::~ECS()
 {

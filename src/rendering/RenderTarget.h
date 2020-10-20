@@ -1,6 +1,6 @@
 #pragma once
 #include "RenderDevice.h"
-#include "common/Common.h"
+#include "Common/Common.h"
 #include "Texture.h"
 
 class RenderTarget

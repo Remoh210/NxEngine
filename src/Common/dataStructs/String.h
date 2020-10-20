@@ -2,8 +2,8 @@
 
 #include <string>
 #include <sstream>
-#include "common/Common.h"
-#include "common/dataStructs/Array.h"
+#include "Common/Common.h"
+#include "Common/dataStructs/Array.h"
 
 #define String std::string
 

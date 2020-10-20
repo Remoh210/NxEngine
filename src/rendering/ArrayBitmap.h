@@ -1,7 +1,7 @@
 #pragma once 
 
-#include "common/Common.h"
-#include "common/dataStructs/String.h"
+#include "Common/Common.h"
+#include "Common/dataStructs/String.h"
 #include "RenderDevice.h"
 
 class ArrayBitmap

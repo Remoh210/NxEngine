@@ -3,7 +3,7 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 #include <Core/Camera/Camera.h>
-#include "common/Common.h"
+#include "Common/Common.h"
 
 #include <functional>
 

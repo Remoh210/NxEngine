@@ -1,5 +1,5 @@
 #pragma once
-#include <common/CommonTypes.h>
+#include <Common/CommonTypes.h>
 
 struct Transform
 {

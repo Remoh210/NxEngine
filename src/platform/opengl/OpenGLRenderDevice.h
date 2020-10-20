@@ -2,11 +2,11 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
-#include "common/Common.h"
-#include "common/CommonTypes.h"
-#include "common/dataStructs/Map.h"
-#include "common/dataStructs/Array.h"
-#include "common/dataStructs/String.h"
+#include "Common/Common.h"
+#include "Common/CommonTypes.h"
+#include "Common/dataStructs/Map.h"
+#include "Common/dataStructs/Array.h"
+#include "Common/dataStructs/String.h"
 #include "rendering/Window.h"
 
 
