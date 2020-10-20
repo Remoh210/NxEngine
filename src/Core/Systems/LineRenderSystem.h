@@ -18,9 +18,8 @@ struct LineRenderComponent : public Component<LineRenderComponent>
 class LineRenderSystem : public BaseSystem
 {
 public:
-	LineRenderSystem(EditorRenderContext& contextIn, ECS& ecsIn)
+	LineRenderSystem(ECS& ecsIn)
 		:BaseSystem()
-		, context(contextIn)
 		, ecs(ecsIn)
 	{
 		addComponentType(TransformComponent::ID);
@@ -41,14 +40,14 @@ public:
 		//transforms.push_back(transform->transform.ToMatrix());
 
 		//mesh->vertexArray->UpdateBuffer(4, &transforms[0], sizeof(mat4));
-		context.RenderPrimitives(mesh->vertexArray, mesh->shader, mesh->texture, 3, transform->transform.ToMatrix());
+		//context.RenderPrimitives(mesh->vertexArray, mesh->shader, mesh->texture, 3, transform->transform.ToMatrix());
 		
 
 		
 	}
 private:
 	bool fist = 1;
-	EditorRenderContext& context;
+//	EditorRenderContext& context;
 	Array<Transform> transformArray;
 	ECS& ecs;
 };

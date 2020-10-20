@@ -17,19 +17,21 @@ void EditorRenderContext::Flush()
             continue;
         }
 
+        Shader& modelShader = *vertexArray->GetShader();
+
         if(texture != currentTexture)
         {
-            shader.SetSampler("diffuse", *texture, sampler, 0);
+            modelShader.SetSampler("diffuse", *texture, sampler, 0);
         }
         vertexArray->UpdateBuffer(4, transforms, numTransforms*sizeof(mat4));
 		if (vertexArray->GetNumIndices() == 0)
 		{
-			mRenderDevice->DrawArrays(mRenderTarget->GetId(), vertexArray->shader->GetId(), vertexArray->GetId(),
+			mRenderDevice->DrawArrays(mRenderTarget->GetId(), modelShader.GetId(), vertexArray->GetId(),
 				drawParams, 3);
 		}
 		else
 		{
-			this->Draw(*vertexArray->shader, *vertexArray, drawParams, numTransforms);
+			this->Draw(modelShader, *vertexArray, drawParams, numTransforms);
 		}
         
 

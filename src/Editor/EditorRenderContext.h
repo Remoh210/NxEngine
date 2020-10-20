@@ -15,10 +15,9 @@ class EditorRenderContext : public RenderContext
 
 public:
 	EditorRenderContext(RenderDevice& deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
-			Shader& shaderIn, Sampler& samplerIn, const mat4& perspectiveIn, Camera* CameraIn) 
+	        Sampler& samplerIn, const mat4& perspectiveIn, Camera* CameraIn)
             : RenderContext(deviceIn, targetIn),
-		    drawParams(drawParamsIn), 
-			shader(shaderIn), 
+		    drawParams(drawParamsIn),
 			sampler(samplerIn),
 			perspective(perspectiveIn),
 		mainCamera(CameraIn)
@@ -33,7 +32,7 @@ public:
 		Array<mat4> transforms;
 		transforms.push_back(transform);
 		vertexArray->UpdateBuffer(4, &transforms[0], transforms.size() * sizeof(mat4));
-		mRenderDevice->DrawArrays(mRenderTarget->GetId(), shader.GetId(), vertexArray->GetId(),
+		mRenderDevice->DrawArrays(mRenderTarget->GetId(), vertexArray->GetShader()->GetId(), vertexArray->GetId(),
 			drawParams, numVertecies);
 
 	}
@@ -44,7 +43,7 @@ public:
 	
 private:
 	DrawParams& drawParams;
-	Shader& shader;
+	//Shader& shader;
 	Sampler& sampler;
 	mat4 perspective;
 	Map<std::pair<VertexArray*, Texture*>, Array<mat4>> meshRenderBuffer;

@@ -26,6 +26,7 @@ String SHADER_TEXT_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/shaders/basicSha
 String TEST_MODEL_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/models/monkey3.obj";
 String TEST_MODEL_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/rock.obj";
 String TEST_TEXTURE_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/rock.png";
+String LINE_SHADER_TEXT_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/shaders/LineShader.glsl";
 #else
 String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
 String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
@@ -139,16 +140,7 @@ int Application::Run()
 	//	drawParams.destBlend = RenderDevice::BLEND_FUNC_ONE;
 
 	RenderTarget target(renderDevice);
-
-
-	String LineShaderText;
-	loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-	Shader Line_shader(renderDevice, LineShaderText);
-
-	String shaderText;
-	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-	Shader shader(renderDevice, shaderText);
-	EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection, MainCamera);
+    EditorRenderContext EditorContext(renderDevice, target, drawParams, sampler, projection, MainCamera);
 
 	//ECS
 	ECS ecs;
@@ -158,7 +150,7 @@ int Application::Run()
 	Array<uint32> modelMaterialIndices;
 	Array<Material> modelMaterials;
 	AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
-	VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW, &shader);
+	VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 
 	ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
@@ -182,7 +174,7 @@ int Application::Run()
 
 	//model2 
 	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
-	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW, &shader);
+	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
 
 	ArrayBitmap testBitmap2;
 	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
@@ -201,10 +193,6 @@ int Application::Run()
 
 
 
-
-
-
-
 	RenderableMeshSystem renderSystem(EditorContext, ecs);
 	SystemList systemList;
 	systemList.AddSystem(renderSystem);
@@ -215,10 +203,10 @@ int Application::Run()
 	points.push_back(vec3(0.5f, -0.5f, 0.0f));
 	points.push_back(vec3(0.0f, 0.5f, 0.0f));
 	LineRenderer GridLineRenderer;
-	VertexArray vertexArrayGRID(renderDevice, GridLineRenderer.CreateVertexArray(points), USAGE_STATIC_DRAW, &Line_shader);
+	VertexArray vertexArrayGRID(renderDevice, GridLineRenderer.CreateVertexArray(points), USAGE_STATIC_DRAW);
 
 
-	LineRenderSystem lineRenderSystem(EditorContext, ecs);
+	LineRenderSystem lineRenderSystem(ecs);
 	systemList.AddSystem(lineRenderSystem);
 
 	RenderableMeshComponent LineRenderComp;
@@ -229,6 +217,22 @@ int Application::Run()
 	transformComp3.transform.position = vec3(0.9f, -0.15f, -40.0f);
 	transformComp3.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp3.transform.scale = vec3(17.0f);
+
+
+
+    //Load and set shaders
+    String LineShaderText;
+    loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
+    Shader Line_shader(renderDevice, LineShaderText);
+
+    String shaderText;
+    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+    Shader shader(renderDevice, shaderText);
+
+
+    vertexArray.SetShader(&shader);
+    vertexArray2.SetShader(&shader);
+    vertexArrayGRID.SetShader(&Line_shader);
 
 	ecs.MakeEntity(transformComp3, LineRenderComp);
 
