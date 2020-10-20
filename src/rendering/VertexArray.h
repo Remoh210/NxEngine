@@ -2,16 +2,25 @@
 #include "common/Common.h"
 #include "RenderDevice.h"
 #include "IndexedModel.h"
+#include  "rendering/Shader.h"
 
 class VertexArray
 {
 public:
 	inline VertexArray(RenderDevice& deviceIn, const IndexedModel& model,
-			BufferUsage usage) :
+			BufferUsage usage, Shader* inShader) :
 		device(&deviceIn),
 		id(model.CreateVertexArray(deviceIn, usage)),
-		numIndices(model.GetNumIndices()) 
+		numIndices(model.GetNumIndices()),
+		shader(inShader)
 		{}
+
+	inline VertexArray(RenderDevice& deviceIn, uint32 idIn,
+		BufferUsage usage, uint32 numVertecies) :
+		device(&deviceIn),
+		id(idIn),
+		numIndices(numVertecies)
+	{}
 
 	inline ~VertexArray()
 	{
@@ -25,6 +34,7 @@ public:
 
 	inline uint32 GetId() { return id; };
 	inline uint32 GetNumIndices(){ return numIndices; };
+	Shader* shader;
 private:
 	RenderDevice* device;
 	uint32 id;

@@ -95,6 +95,13 @@ uint32 IndexedModel::CreateVertexArray(RenderDevice& device,
 	uint32 numVertices = elements[0].size() / vertexElementSizes[0];
 	uint32 numIndices = indices.size();
 
+	if (indices.size() == 0)
+	{
+		return device.CreateVertexArray(vertexData, vertexElementSizes,
+			numVertexComponents, numInstanceComponents, numVertices, nullptr,
+			numIndices, usage);
+	}
+
 	return device.CreateVertexArray(vertexData, vertexElementSizes,
 		numVertexComponents, numInstanceComponents, numVertices, &indices[0],
 		numIndices, usage);

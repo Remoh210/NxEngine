@@ -118,6 +118,25 @@ void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
 	}
 }
 
+void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
+	const DrawParams& drawParams,
+	uint32 numVertecies)
+{
+
+	SetFBO(fbo);
+	SetViewport(fbo);
+	SetBlending(drawParams.sourceBlend, drawParams.destBlend);
+	SetScissorTest(drawParams.useScissorTest,
+		drawParams.scissorStartX, drawParams.scissorStartY,
+		drawParams.scissorWidth, drawParams.scissorHeight);
+	SetFaceCulling(drawParams.faceCulling);
+	SetDepthTest(drawParams.shouldWriteDepth, drawParams.depthFunc);
+	SetShader(shader);
+	SetVAO(vao);
+
+	glDrawArrays(GL_LINE_LOOP, 0, numVertecies);
+}
+
 uint32 OpenGLRenderDevice::ReleaseRenderTarget(uint32 fbo)
 {
 	if(fbo == 0) {
@@ -558,12 +577,14 @@ uint32 OpenGLRenderDevice::CreateVertexArray(const float** vertexData,
 
 	}
 
-
-	uintptr indicesSize = numIndices * sizeof(uint32);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[numBuffers-1]);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize,
+	if (numIndices > 0)
+	{
+		uintptr indicesSize = numIndices * sizeof(uint32);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffers[numBuffers - 1]);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesSize,
 			indices, usage);
-	bufferSizes[numBuffers-1] = indicesSize;
+		bufferSizes[numBuffers - 1] = indicesSize;
+	}
 
 	struct VertexArray vaoData;
 	vaoData.buffers = buffers;

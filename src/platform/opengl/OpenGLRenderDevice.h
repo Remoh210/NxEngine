@@ -141,9 +141,15 @@ public:
 
     ~OpenGLRenderDevice(){};
 
+	//Draw Elements
 	void Draw(uint32 fbo, uint32 shader, uint32 vao,
 		const DrawParams& drawParams,
 		uint32 numInstances, uint32 numElements);
+
+	//Draw Arrays
+	void DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
+		const DrawParams& drawParams,
+		uint32 numVertecies);
 
 	void UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
 			const void* data, uintptr dataSize);

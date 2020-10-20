@@ -40,7 +40,7 @@ public:
     }
 
     ~RenderContext(){};
-private:
+protected:
     RenderDevice* mRenderDevice;
     RenderTarget* mRenderTarget;
 };

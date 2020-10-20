@@ -13,6 +13,7 @@ struct RenderableMeshComponent : public Component<RenderableMeshComponent>
 {
 	VertexArray* vertexArray = nullptr;
 	Texture* texture = nullptr;
+	Shader* shader = nullptr;
 	int numInst = 0;
 };
 
@@ -84,14 +85,6 @@ public:
 
 			context.RenderMesh(*mesh->vertexArray, *mesh->texture, transform->transform.ToMatrix());
 
-
-			//newTrasform = transform->transform;
-			//for (int i = 0; i < 1000; i++)
-			//{
-			//	
-			//	newTrasform.position.x += 1.1f;
-			//	context.RenderMesh(*mesh->vertexArray, *mesh->texture, newTrasform.ToMatrix());
-			//}
 		}
 
 		

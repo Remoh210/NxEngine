@@ -22,7 +22,17 @@ void EditorRenderContext::Flush()
             shader.SetSampler("diffuse", *texture, sampler, 0);
         }
         vertexArray->UpdateBuffer(4, transforms, numTransforms*sizeof(mat4));
-        this->Draw(shader, *vertexArray, drawParams, numTransforms);
+		if (vertexArray->GetNumIndices() == 0)
+		{
+			mRenderDevice->DrawArrays(mRenderTarget->GetId(), vertexArray->shader->GetId(), vertexArray->GetId(),
+				drawParams, 3);
+		}
+		else
+		{
+			this->Draw(*vertexArray->shader, *vertexArray, drawParams, numTransforms);
+		}
+        
+
         it->second.clear();
     }
 }

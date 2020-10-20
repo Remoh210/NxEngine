@@ -8,6 +8,7 @@
 #include "common/CommonTypes.h"
 #include "common/dataStructs/Map.h"
 #include <Core/Camera/Camera.h>
+#include <Core/Graphics/LineRenderer/LineRenderer.h>
 
 class EditorRenderContext : public RenderContext
 {
@@ -26,10 +27,21 @@ public:
 	{
 		meshRenderBuffer[std::make_pair(&vertexArray, &texture)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
 	}
+
+	inline void RenderPrimitives(VertexArray* vertexArray, Shader* InShader, Texture* texture, uint32 numVertecies, mat4 transform)
+	{
+		Array<mat4> transforms;
+		transforms.push_back(transform);
+		vertexArray->UpdateBuffer(4, &transforms[0], transforms.size() * sizeof(mat4));
+		mRenderDevice->DrawArrays(mRenderTarget->GetId(), shader.GetId(), vertexArray->GetId(),
+			drawParams, numVertecies);
+
+	}
 	
     void Flush();
     //~EditorRenderContext();
 
+	
 private:
 	DrawParams& drawParams;
 	Shader& shader;

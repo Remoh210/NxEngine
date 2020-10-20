@@ -5,6 +5,7 @@
 
 #include <Core/Components/TransformComponent.h>
 #include <Core/Systems/RenderSystem.h>
+#include <Core/Systems/LineRenderSystem.h>
 
 #include "SceneManager/cSceneManager.h"
 
@@ -28,6 +29,7 @@ String TEST_TEXTURE_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/ro
 #else
 String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
 String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
+String LINE_SHADER_TEXT_FILE = "../res/shaders/LineShader.glsl";
 //String TEST_MODEL_FILE = "../res/models/tinycube.obj";
 String TEST_MODEL_FILE = "../res/models/monkey3.obj";
 String TEST_MODEL_FILE2 = "../res/models/rock/rock.obj";
@@ -139,6 +141,15 @@ int Application::Run()
 	RenderTarget target(renderDevice);
 
 
+	String LineShaderText;
+	loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
+	Shader Line_shader(renderDevice, LineShaderText);
+
+	String shaderText;
+	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+	Shader shader(renderDevice, shaderText);
+	EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection, MainCamera);
+
 	//ECS
 	ECS ecs;
 
@@ -147,13 +158,16 @@ int Application::Run()
 	Array<uint32> modelMaterialIndices;
 	Array<Material> modelMaterials;
 	AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
-	VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
+	VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW, &shader);
 
 	ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
 	Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
 
 	uint32 dbgTex = AssetLoader::TextureFromFile(TEST_TEXTURE_FILE);
+
+
+
 
 	RenderableMeshComponent renderableMesh;
 	renderableMesh.vertexArray = &vertexArray;
@@ -168,7 +182,7 @@ int Application::Run()
 
 	//model2 
 	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
-	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
+	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW, &shader);
 
 	ArrayBitmap testBitmap2;
 	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
@@ -187,19 +201,36 @@ int Application::Run()
 
 
 
-	//ECS
-
-;
 
 
-	String shaderText;
-	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-	Shader shader(renderDevice, shaderText);
-	EditorRenderContext EditorContext(renderDevice, target, drawParams, shader, sampler, projection, MainCamera);
+
 
 	RenderableMeshSystem renderSystem(EditorContext, ecs);
 	SystemList systemList;
 	systemList.AddSystem(renderSystem);
+  
+	//Line Renderer
+    Array<vec3> points;
+	points.push_back(vec3(-0.5f, -0.5f, 0.0f));
+	points.push_back(vec3(0.5f, -0.5f, 0.0f));
+	points.push_back(vec3(0.0f, 0.5f, 0.0f));
+	LineRenderer GridLineRenderer;
+	VertexArray vertexArrayGRID(renderDevice, GridLineRenderer.CreateVertexArray(points), USAGE_STATIC_DRAW, &Line_shader);
+
+
+	LineRenderSystem lineRenderSystem(EditorContext, ecs);
+	systemList.AddSystem(lineRenderSystem);
+
+	RenderableMeshComponent LineRenderComp;
+	LineRenderComp.vertexArray = &vertexArrayGRID;
+	//LineRenderComp.numVertecies = points.size();
+	//LineRenderComp.shader = &Line_shader;
+	TransformComponent transformComp3;
+	transformComp3.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	transformComp3.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp3.transform.scale = vec3(17.0f);
+
+	ecs.MakeEntity(transformComp3, LineRenderComp);
 
 	while (!window.ShouldClose())
 	{
@@ -306,7 +337,6 @@ int Application::Run()
 		ImGui::Begin("TestImageWindow");
 		ImGui::Image((void*)testtex.GetId(), sizeP);
 		ImGui::End();
-
 		// render
 		// ------
 		EditorContext.Clear(glm::vec4(0.576, 0.439, 0.859, 0), true);
@@ -315,6 +345,8 @@ int Application::Run()
 		ecs.UpdateSystems(systemList, 0.0f);
 
 		EditorContext.Flush();
+
+		//
 
 
 
