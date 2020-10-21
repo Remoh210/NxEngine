@@ -7,6 +7,29 @@
 
 #define String std::string
 
+//class String : public std::string
+//{
+//public:
+//
+//	String() : std::string()
+//	{
+//	}
+//
+//	String(const std::string& str) : std::string(str)
+//	{
+//	}
+//
+//	String(const char* s): std::string(s)
+//	{
+//	}
+//
+//	const char* operator * () 
+//	{
+//		return this->c_str();
+//	}
+//
+//};
+
 struct StringFuncs
 {
 	template<typename T>
@@ -20,6 +43,6 @@ struct StringFuncs
 	static Array<String> split(const String& s, char delim);
 	static String getFilePath(const String& fileName);
 	static bool loadTextFileWithIncludes(String& output, const String& fileName,
-		const String& includeKeyword);
+	const String& includeKeyword);
 };
 

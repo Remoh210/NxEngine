@@ -74,7 +74,9 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      imgui
                      stb_image)
 
-
+# Path to code
+configure_file(Config/root_directory.h.in Config/root_directory.h)
+include_directories(${CMAKE_BINARY_DIR}/Config)
 
 # Macro to preserve source files hierarchy in the IDE
 macro(GroupSources curdir)
