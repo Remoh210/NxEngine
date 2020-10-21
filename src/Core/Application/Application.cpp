@@ -20,22 +20,13 @@
 #include <sstream>
 #include <experimental/filesystem>
 
-#ifdef __APPLE__
-String TEST_TEXTURE_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/textures/stmpnk.jpg";
-String SHADER_TEXT_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/shaders/basicShader.glsl";
-//String TEST_MODEL_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/models/monkey3.obj";
-String TEST_MODEL_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/rock.obj";
-String TEST_TEXTURE_FILE2 = "/Users/nyan/Desktop/NxEngine_OLD/res/models/rock/rock.png";
-String LINE_SHADER_TEXT_FILE = "/Users/nyan/Desktop/NxEngine_OLD/res/shaders/LineShader.glsl";
-#else
-String TEST_TEXTURE_FILE = "../res/textures/stmpnk.jpg";
-String SHADER_TEXT_FILE = "../res/shaders/basicShader.glsl";
-String LINE_SHADER_TEXT_FILE = "../res/shaders/LineShader.glsl";
-//String TEST_MODEL_FILE = "../res/models/tinycube.obj";
-//String TEST_MODEL_FILE = "../res/models/monkey3.obj";
-String TEST_MODEL_FILE2 = "../res/models/rock/rock.obj";
-String TEST_TEXTURE_FILE2 = "../res/models/rock/rock.png";
-#endif
+
+String TEST_TEXTURE_FILE     = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
+String SHADER_TEXT_FILE      = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
+String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
+String TEST_MODEL_FILE       = Nx::FileSystem::GetPath("res/models/monkey3.obj");
+String TEST_MODEL_FILE2      = Nx::FileSystem::GetPath("res/models/rock/rock.obj");
+String TEST_TEXTURE_FILE2    = Nx::FileSystem::GetPath("res/models/rock/rock.png");
 
 
 // settings
@@ -146,7 +137,6 @@ int Application::Run()
 	ECS ecs;
 
 	//model 1
-	String TEST_MODEL_FILE = Nx::FileSystem::GetPath("res/models/monkey3.obj");
 	Array<IndexedModel> models;
 	Array<uint32> modelMaterialIndices;
 	Array<Material> modelMaterials;
