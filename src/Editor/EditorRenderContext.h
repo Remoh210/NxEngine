@@ -22,13 +22,17 @@ public:
 		meshRenderBuffer[std::make_pair(&vertexArray, &texture)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
 	}
 
-	inline void RenderPrimitives(VertexArray* vertexArray, Shader* InShader, Texture* texture, uint32 numVertecies, mat4 transform)
+	inline void RenderMesh(VertexArray& vertexArray, const mat4& transformIn)
+	{
+		meshRenderBuffer[std::make_pair(&vertexArray, nullptr)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
+	}
+
+	inline void RenderPrimitives(VertexArray* vertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
 	{
 		Array<mat4> transforms;
 		transforms.push_back(transform);
 		vertexArray->UpdateBuffer(4, &transforms[0], transforms.size() * sizeof(mat4));
-		mRenderDevice->DrawArrays(mRenderTarget->GetId(), vertexArray->GetShader()->GetId(), vertexArray->GetId(),
-			drawParams, numVertecies);
+		Draw(*InShader, *vertexArray, drawParams, 1);
 
 	}
 

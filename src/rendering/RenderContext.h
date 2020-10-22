@@ -39,6 +39,11 @@ public:
                 drawParams, numInstances, numIndices);
     }
 
+    inline RenderDevice* GetRenderDevice()
+    {
+        return mRenderDevice;
+    }
+
     ~RenderContext(){};
 protected:
     RenderDevice* mRenderDevice;

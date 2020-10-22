@@ -5,6 +5,8 @@
 #include <rendering/RenderDevice.h>
 #include <iostream>
 
+#define PI 3.14
+
 class LineRenderer
 {
 public:
@@ -13,7 +15,7 @@ public:
 	~LineRenderer() {}
 
 
-	static IndexedModel CreateGridVA(uint32 slices, vec3 color = vec3(1.0f, 0.0f, 0.0f))
+	inline static IndexedModel CreateGridVA(uint32 slices, vec3 color = vec3(1.0f, 0.0f, 0.0f))
 	{
 //		Array<float> vertices;
 //		numVertices = inVertices.size();
@@ -75,7 +77,82 @@ public:
 
 		return newModel;
 	}
-    
+
+	inline static IndexedModel CreateSphere(float radius, uint32 sectorCount, uint32 stackCount)
+	{
+		IndexedModel newModel;
+		newModel.AllocateElement(3); // Positions
+		newModel.AllocateElement(2); // TexCoords
+		newModel.AllocateElement(3); // Normals
+		newModel.AllocateElement(3); // Tangents
+		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
+		newModel.AllocateElement(16); // Transform matrix
+
+		float x, y, z, xy;                              // vertex position
+		float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
+		float s, t;                                     // vertex texCoord
+
+		float sectorStep = 2 * PI / sectorCount;
+		float stackStep = PI / stackCount;
+		float sectorAngle, stackAngle;
+
+		for(int i = 0; i <= stackCount; ++i)
+		{
+		    stackAngle = PI / 2 - i * stackStep;        // starting from pi/2 to -pi/2
+		    xy = radius * cosf(stackAngle);             // r * cos(u)
+		    z = radius * sinf(stackAngle);              // r * sin(u)
+
+		    // add (sectorCount+1) vertices per stack
+		    // the first and last vertices have same position and normal, but different tex coords
+		    for(int j = 0; j <= sectorCount; ++j)
+		    {
+		        sectorAngle = j * sectorStep;           // starting from 0 to 2pi
+
+		        // vertex position (x, y, z)
+		        x = xy * cosf(sectorAngle);             // r * cos(u) * cos(v)
+		        y = xy * sinf(sectorAngle);             // r * cos(u) * sin(v)
+		        newModel.AddElement3f(0, x, y, z);
+
+				// vertex tex coord (s, t) range between [0, 1]
+		        s = (float)j / sectorCount;
+		        t = (float)i / stackCount;
+				newModel.AddElement2f(1, s, t);
+
+		        // normalized vertex normal (nx, ny, nz)
+		        nx = x * lengthInv;
+		        ny = y * lengthInv;
+		        nz = z * lengthInv;
+				newModel.AddElement3f(2, nx, ny, nz);
+		    }
+		}
+
+		// generate CCW index list of sphere triangles
+		int k1, k2;
+		for(int i = 0; i < stackCount; ++i)
+		{
+		    k1 = i * (sectorCount + 1);     // beginning of current stack
+		    k2 = k1 + sectorCount + 1;      // beginning of next stack
+
+		    for(int j = 0; j < sectorCount; ++j, ++k1, ++k2)
+		    {
+		        // 2 triangles per sector excluding first and last stacks
+		        // k1 => k2 => k1+1
+		        if(i != 0)
+		        {
+					newModel.AddIndices3i(k1, k2, k1 + 1);
+		        }
+
+		        // k1+1 => k2 => k2+1
+		        if(i != (stackCount-1))
+		        {
+					newModel.AddIndices3i(k1 + 1, k2, k2 + 1);
+		        }
+		    }
+		}
+        
+        return newModel;
+	}
+
 
 	inline uint32 GetId()
 	{

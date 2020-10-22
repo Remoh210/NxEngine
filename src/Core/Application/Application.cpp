@@ -7,6 +7,7 @@
 #include <Core/Systems/RenderSystem.h>
 #include <Core/Systems/LineRenderSystem.h>
 #include <Core/FileSystem/FileSystem.h>
+#include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 
 #include <rendering/Sampler.h>
 #include <rendering/RenderDevice.h>
@@ -14,6 +15,7 @@
 #include <rendering/AssetLoader.h>
 #include <rendering/Shader.h>
 #include <Editor/EditorRenderContext.h>
+
 
 //Standard includes
 #include <fstream>
@@ -45,6 +47,8 @@ double Application::gScrollOffset = 0;
 double Application::gXoffset = 0;
 double Application::gYoffset = 0;
 Camera* Application::MainCamera = nullptr;
+
+
 
 //void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void resize_callback(GLFWwindow * window, int width, int height);
@@ -220,6 +224,9 @@ int Application::Run()
 
     vertexArray.SetShader(&shader);
     vertexArray2.SetShader(&shader);
+
+	DebugRenderer debugRenderer(EditorContext);
+	debugRenderer.DrawDebugSphere(vec3(0.f), 5000, 50, vec3(1, 0, 0));
     //vertexArrayGRID.SetShader(&Line_shader);
 
 	//ecs.MakeEntity(transformComp3, LineRenderComp);
@@ -339,6 +346,8 @@ int Application::Run()
 		EditorContext.Clear(glm::vec4(0.576, 0.439, 0.859, 0), true);
 
 		//EditorContext.RenderMesh(vertexArray, testtex, trans);
+		debugRenderer.Update(deltaTime);
+
 		ecs.UpdateSystems(systemList, 0.0f);
 
 		EditorContext.Flush();
@@ -380,7 +389,7 @@ Application::Application(float Width, float Height)
 	windowHeight = Height;
 	if (!MainCamera)
 	{
-		MainCamera = new Camera(glm::vec3(0.0f, 0.0f, 83.0f));
+		MainCamera = new Camera(glm::vec3(0.0f, 10.0f, 80.0f));
 		MainCamera->bControlled = false;
 		MainCamera->MovementSpeed = 100.0f;
 	}
