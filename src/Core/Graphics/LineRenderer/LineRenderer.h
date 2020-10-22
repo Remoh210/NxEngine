@@ -13,21 +13,21 @@ public:
 	~LineRenderer() {}
 
 
-	IndexedModel CreateVertexArray(Array<vec3>& inVertices)
+	IndexedModel CreateGridVA(uint32 slices)
 	{
-		Array<float> vertices;
-		numVertices = inVertices.size();
-		for (size_t i = 0; i < numVertices; i++)
-		{
-			vertices.push_back(inVertices[i].x);
-			vertices.push_back(inVertices[i].y);
-			vertices.push_back(inVertices[i].z);
-		}
-
-		for (int i = 0; i < 9; i++)
-		{
-			std::cout << vertices[i] << "," << std::endl;
-		}
+//		Array<float> vertices;
+//		numVertices = inVertices.size();
+//		for (size_t i = 0; i < numVertices; i++)
+//		{
+//			vertices.push_back(inVertices[i].x);
+//			vertices.push_back(inVertices[i].y);
+//			vertices.push_back(inVertices[i].z);
+//		}
+//
+//		for (int i = 0; i < 9; i++)
+//		{
+//			std::cout << vertices[i] << "," << std::endl;
+//		}
 
 		IndexedModel newModel;
 		newModel.AllocateElement(3); // Positions
@@ -36,15 +36,46 @@ public:
 		newModel.AllocateElement(3); // Tangents
 		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 		newModel.AllocateElement(16); // Transform matrix
+        
+        //Array<vec3> vertices;
+        for(int j=0; j<=slices; ++j)
+        {
+          for(int i=0; i<=slices; ++i)
+          {
+            float x = (float)i/(float)slices;
+            float y = 0;
+            float z = (float)j/(float)slices;
+            newModel.AddElement3f(0, x, y, z);
+            newModel.AddElement2f(1, 0, 0);
+            newModel.AddElement3f(2, 1, 0, 0);
+            newModel.AddElement3f(3, 0, 0, 0);
+          }
+        }
 
-		for (uint32 i = 0; i < inVertices.size(); i++) {
-			vec3 pos = inVertices[i];
+//		for (uint32 i = 0; i < inVertices.size(); i++)
+//        {
+//			vec3 pos = inVertices[i];
+//
+//			newModel.AddElement3f(0, pos.x, pos.y, pos.z);
+//			newModel.AddElement2f(1, 0, 0);
+//			newModel.AddElement3f(2, 1, 0, 0);
+//			newModel.AddElement3f(3, 0, 0, 0);
+//		}
+        
+        for(int j=0; j<slices; ++j)
+        {
+          for(int i=0; i<slices; ++i)
+          {
 
-			newModel.AddElement3f(0, pos.x, pos.y, pos.z);
-			newModel.AddElement2f(1, 0, 0);
-			newModel.AddElement3f(2, 1, 0, 0);
-			newModel.AddElement3f(3, 0, 0, 0);
-		}
+            int row1 =  j    * (slices+1);
+            int row2 = (j+1) * (slices+1);
+              
+            newModel.AddIndices4i(row1+i, row1+i+1, row1+i+1,row2+i+1);
+            newModel.AddIndices4i(row2+i+1, row2+i, row2+i, row1+i);
+            
+
+          }
+        }
 
 		return newModel;
 	}
@@ -53,6 +84,22 @@ public:
 	//{
 	//	Points.push_back(pointIn);
 	//}
+    
+    IndexedModel inline CreateGrid(uint slices)
+    {
+//        Array<vec3> vertices;
+//        for(int j=0; j<=slices; ++j)
+//        {
+//          for(int i=0; i<=slices; ++i)
+//          {
+//            float x = (float)i/(float)slices;
+//            float y = 0;
+//            float z = (float)j/(float)slices;
+//            vertices.push_back(vec3(x, y, z));
+//          }
+//        }
+//        return CreateVertexArray(vertices);
+    }
 
 	inline uint32 GetId()
 	{

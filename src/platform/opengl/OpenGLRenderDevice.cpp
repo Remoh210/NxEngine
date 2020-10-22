@@ -134,7 +134,7 @@ void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 	SetShader(shader);
 	SetVAO(vao);
 
-	glDrawArrays(GL_LINE_LOOP, 0, numVertecies);
+	glDrawArrays(GL_LINES, 0, numVertecies);
 }
 
 uint32 OpenGLRenderDevice::ReleaseRenderTarget(uint32 fbo)

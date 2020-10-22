@@ -27,7 +27,7 @@ void EditorRenderContext::Flush()
 		if (vertexArray->GetNumIndices() == 0)
 		{
 			mRenderDevice->DrawArrays(mRenderTarget->GetId(), modelShader.GetId(), vertexArray->GetId(),
-				drawParams, 3);
+				drawParams, 300);
 		}
 		else
 		{

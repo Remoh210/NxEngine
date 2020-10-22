@@ -55,9 +55,6 @@ void key_callback(GLFWwindow* window,
 	int mods);
 
 
-
-
-
 Application* Application::Create(float Width, float Height)
 {
 	return new Application(Width, Height);
@@ -194,7 +191,7 @@ int Application::Run()
 	points.push_back(vec3(0.5f, -0.5f, 0.0f));
 	points.push_back(vec3(0.0f, 0.5f, 0.0f));
 	LineRenderer GridLineRenderer;
-	VertexArray vertexArrayGRID(renderDevice, GridLineRenderer.CreateVertexArray(points), USAGE_STATIC_DRAW);
+	VertexArray vertexArrayGRID(renderDevice, GridLineRenderer.CreateGridVA(20), USAGE_STATIC_DRAW);
 
 
 	LineRenderSystem lineRenderSystem(ecs);

@@ -44,6 +44,8 @@ public:
 	inline uint32 GetId() { return id; };
 	inline uint32 GetNumIndices(){ return numIndices; };
 
+    //Hack
+    uint32 NumVert;
 private:
     Shader* shader;
 	RenderDevice* device;
