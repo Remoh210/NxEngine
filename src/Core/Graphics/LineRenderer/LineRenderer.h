@@ -13,7 +13,7 @@ public:
 	~LineRenderer() {}
 
 
-	static IndexedModel CreateGridVA(uint32 slices)
+	static IndexedModel CreateGridVA(uint32 slices, vec3 color = vec3(1.0f, 0.0f, 0.0f))
 	{
 //		Array<float> vertices;
 //		numVertices = inVertices.size();
@@ -37,31 +37,27 @@ public:
 		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 		newModel.AllocateElement(16); // Transform matrix
         
+		glm::vec3 extents(0.0f);
+
         //Array<vec3> vertices;
         for(int j=0; j<=slices; ++j)
         {
           for(int i=0; i<=slices; ++i)
           {
             float x = (float)i/(float)slices;
+			if (x > extents.x) { extents.x = x; }
             float y = 0;
             float z = (float)j/(float)slices;
+			if (z > extents.z) { extents.z = z; }
             newModel.AddElement3f(0, x, y, z);
             newModel.AddElement2f(1, 0, 0);
-            newModel.AddElement3f(2, 1, 0, 0);
+            newModel.AddElement3f(2, color.x, color.y, color.z);
             newModel.AddElement3f(3, 0, 0, 0);
           }
         }
-
-//		for (uint32 i = 0; i < inVertices.size(); i++)
-//        {
-//			vec3 pos = inVertices[i];
-//
-//			newModel.AddElement3f(0, pos.x, pos.y, pos.z);
-//			newModel.AddElement2f(1, 0, 0);
-//			newModel.AddElement3f(2, 1, 0, 0);
-//			newModel.AddElement3f(3, 0, 0, 0);
-//		}
         
+		DEBUG_LOG_TEMP("Extents: x: %f, y: %f, z: %f", extents.x, extents.y, extents.z);
+
         for(int j=0; j<slices; ++j)
         {
           for(int i=0; i<slices; ++i)
@@ -79,27 +75,7 @@ public:
 
 		return newModel;
 	}
-
-	//inline void AddPoint(vec3& pointIn)
-	//{
-	//	Points.push_back(pointIn);
-	//}
     
-    IndexedModel inline CreateGrid(uint slices)
-    {
-//        Array<vec3> vertices;
-//        for(int j=0; j<=slices; ++j)
-//        {
-//          for(int i=0; i<=slices; ++i)
-//          {
-//            float x = (float)i/(float)slices;
-//            float y = 0;
-//            float z = (float)j/(float)slices;
-//            vertices.push_back(vec3(x, y, z));
-//          }
-//        }
-//        return CreateVertexArray(vertices);
-    }
 
 	inline uint32 GetId()
 	{

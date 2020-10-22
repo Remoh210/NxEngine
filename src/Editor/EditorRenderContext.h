@@ -6,6 +6,7 @@
 #include "rendering/Sampler.h"
 #include "rendering/VertexArray.h"
 #include "Common/CommonTypes.h"
+#include "Common/Transform/Transform.h"
 #include "Common/dataStructs/Map.h"
 #include "Core/Graphics/LineRenderer/LineRenderer.h"
 #include <Core/Camera/Camera.h>
@@ -47,7 +48,11 @@ private:
 	Camera* mainCamera;
 
 	//Grid VO
-	VertexArray* EditorGrid;
-	DrawParams GridDrawParams;
+	Transform editorGridTransform;
+	VertexArray* editorGridVA;
+	DrawParams editorGridDrawParams;
+	float editorGridSlices;
+	float editorGridScale;
+	
 };
 

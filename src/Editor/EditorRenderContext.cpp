@@ -1,6 +1,5 @@
 #include "EditorRenderContext.h"
 #include "rendering/VertexArray.h"
-#include "Common/Transform/Transform.h"
 #include "Core/Application/Application.h"
 #include "Core/FileSystem/FileSystem.h"
 
@@ -11,17 +10,25 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 		    drawParams(drawParamsIn),
 			sampler(samplerIn),
 			perspective(perspectiveIn),
-		mainCamera(CameraIn)
+			mainCamera(CameraIn)
 {
-	GridDrawParams.primitiveType = PRIMITIVE_LINES;
-	EditorGrid = new VertexArray(deviceIn,LineRenderer::CreateGridVA(40), BufferUsage::USAGE_DYNAMIC_DRAW);
+	editorGridSlices = 100;
+	editorGridScale = 2000;
+
+	editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
+	editorGridDrawParams.shouldWriteDepth = true;
+	editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
+	editorGridVA = new VertexArray(deviceIn,LineRenderer::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
                 //Load and set shaders
     String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
     String LineShaderText;
     Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
     Shader* grid_shader = new Shader(deviceIn, LineShaderText);
-    EditorGrid->SetShader(grid_shader);
-			//Create grid#inVertexA#include#includerrayclude#include
+	editorGridVA->SetShader(grid_shader);
+
+	editorGridTransform.scale = vec3(editorGridScale);
+	editorGridTransform.position.x = -0.5 * editorGridScale;
+	editorGridTransform.position.z = -0.5 * editorGridScale;
 }
 
 void EditorRenderContext::Flush()
@@ -30,11 +37,9 @@ void EditorRenderContext::Flush()
     for(Map<std::pair<VertexArray*, Texture*>, Array<mat4> >::iterator it
             = meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
     {
-        //Draw Editor stuff 0first
+        //Draw Editor stuff first
         DrawEditorHelpers();
         
-
-
         VertexArray* vertexArray = it->first.first;
         Texture* texture = it->first.second;
         mat4* transforms = &it->second[0];
@@ -62,17 +67,15 @@ void EditorRenderContext::Flush()
 			Draw(modelShader, *vertexArray, drawParams, numTransforms);
 		}
         
-
         it->second.clear();
     }
 }
 
 void EditorRenderContext::DrawEditorHelpers()
 {
-    Transform gridTransform;
-    gridTransform.scale = vec3(200);
     Array<mat4> transforms;
-    transforms.push_back(perspective * mainCamera->GetViewMatrix() * gridTransform.ToMatrix());
-    EditorGrid->UpdateBuffer(4, &transforms[0], sizeof(mat4));
-    Draw(*EditorGrid->GetShader(), *EditorGrid, GridDrawParams, 1);
+    transforms.push_back(perspective * mainCamera->GetViewMatrix() * editorGridTransform.ToMatrix());
+
+	editorGridVA->UpdateBuffer(4, &transforms[0], sizeof(mat4));
+    Draw(*editorGridVA->GetShader(), *editorGridVA, editorGridDrawParams, 1);
 }
