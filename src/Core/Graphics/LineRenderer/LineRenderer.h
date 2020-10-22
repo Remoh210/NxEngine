@@ -13,7 +13,7 @@ public:
 	~LineRenderer() {}
 
 
-	IndexedModel CreateGridVA(uint32 slices)
+	static IndexedModel CreateGridVA(uint32 slices)
 	{
 //		Array<float> vertices;
 //		numVertices = inVertices.size();

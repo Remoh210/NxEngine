@@ -29,6 +29,10 @@ public:
 	void ResizeWindow(uint32 width, uint32 height);
 	void processInput(GLFWwindow *window);
 
+
+	static bool loadTextFileWithIncludes(String& output, const String& fileName,
+		const String& includeKeyword);
+
 private:
 	Application(float Width, float Height);
 
@@ -56,9 +60,6 @@ private:
 
 	static void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 	static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
-	static bool loadTextFileWithIncludes(String& output, const String& fileName,
-		const String& includeKeyword);
 
 	static double gScrollOffset;
 	static double gXoffset;

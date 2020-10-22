@@ -23,7 +23,7 @@
 
 String TEST_TEXTURE_FILE     = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
 String SHADER_TEXT_FILE      = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
-String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
+//String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
 String TEST_MODEL_FILE       = Nx::FileSystem::GetPath("res/models/monkey3.obj");
 String TEST_MODEL_FILE2      = Nx::FileSystem::GetPath("res/models/rock/rock.obj");
 String TEST_TEXTURE_FILE2    = Nx::FileSystem::GetPath("res/models/rock/rock.png");
@@ -197,21 +197,21 @@ int Application::Run()
 	LineRenderSystem lineRenderSystem(ecs);
 	systemList.AddSystem(lineRenderSystem);
 
-	RenderableMeshComponent LineRenderComp;
-	LineRenderComp.vertexArray = &vertexArrayGRID;
-	//LineRenderComp.numVertecies = points.size();
-	//LineRenderComp.shader = &Line_shader;
-	TransformComponent transformComp3;
-	transformComp3.transform.position = vec3(0.9f, -0.15f, -40.0f);
-	transformComp3.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-	transformComp3.transform.scale = vec3(17.0f);
-
+	//RenderableMeshComponent LineRenderComp;
+	//LineRenderComp.vertexArray = &vertexArrayGRID;
+	////LineRenderComp.numVertecies = points.size();
+	////LineRenderComp.shader = &Line_shader;
+	//TransformComponent transformComp3;
+	//transformComp3.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	//transformComp3.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	//transformComp3.transform.scale = vec3(17.0f);
 
 
     //Load and set shaders
-    String LineShaderText;
-    loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-    Shader Line_shader(renderDevice, LineShaderText);
+    //String LineShaderText;
+    //loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
+    //Shader Line_shader(renderDevice, LineShaderText);
+
 
     String shaderText;
     loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
@@ -220,9 +220,9 @@ int Application::Run()
 
     vertexArray.SetShader(&shader);
     vertexArray2.SetShader(&shader);
-    vertexArrayGRID.SetShader(&Line_shader);
+    //vertexArrayGRID.SetShader(&Line_shader);
 
-	ecs.MakeEntity(transformComp3, LineRenderComp);
+	//ecs.MakeEntity(transformComp3, LineRenderComp);
 
 
 	String TestString = Nx::FileSystem::GetPath("res/models/rock/rock.obj");
