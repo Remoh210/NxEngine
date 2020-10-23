@@ -87,6 +87,7 @@ public:
 		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 		newModel.AllocateElement(16); // Transform matrix
 
+		//songho.ca/opengl/gl_sphere.html
 		float x, y, z, xy;                              // vertex position
 		float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
 		float s, t;                                     // vertex texCoord
@@ -99,7 +100,7 @@ public:
 		{
 		    stackAngle = PI / 2 - i * stackStep;        // starting from pi/2 to -pi/2
 		    xy = radius * cosf(stackAngle);             // r * cos(u)
-		    z = radius * sinf(stackAngle);              // r * sin(u)
+		    y = radius * sinf(stackAngle);              // r * sin(u)
 
 		    // add (sectorCount+1) vertices per stack
 		    // the first and last vertices have same position and normal, but different tex coords
@@ -109,7 +110,7 @@ public:
 
 		        // vertex position (x, y, z)
 		        x = xy * cosf(sectorAngle);             // r * cos(u) * cos(v)
-		        y = xy * sinf(sectorAngle);             // r * cos(u) * sin(v)
+		        z = xy * sinf(sectorAngle);             // r * cos(u) * sin(v)
 		        newModel.AddElement3f(0, x, y, z);
 
 				// vertex tex coord (s, t) range between [0, 1]
@@ -121,8 +122,8 @@ public:
 		        nx = x * lengthInv;
 		        ny = y * lengthInv;
 		        nz = z * lengthInv;
-				newModel.AddElement3f(2, nx, ny, nz);
 
+				newModel.AddElement3f(2, nx, ny, nz);
 				newModel.AddElement3f(3, color.x, color.y, color.z);
 		    }
 		}
