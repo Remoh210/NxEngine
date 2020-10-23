@@ -61,10 +61,10 @@ void DebugRenderer::Update(float dt)
     {
 		editorContext.RenderDebugShapes(shape, shape->transform.ToMatrix());
         shape->timeSinceCreated += dt;
-        if(shape->timeSinceCreated > shape->lifetime)
+        if(shape->lifetime != 0.0f && shape->timeSinceCreated > shape->lifetime)
         {
-            //hack
-            //ShapesToDraw.erase(std::remove(ShapesToDraw.begin(), ShapesToDraw.end(), shape), ShapesToDraw.end());
+            ShapesToDraw.Remove(shape);
+            shape->~DebugShape();
         }
     }
 }

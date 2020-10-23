@@ -17,20 +17,6 @@ public:
 
 	inline static IndexedModel CreateGridVA(uint32 slices, vec3 color = vec3(1.0f, 0.0f, 0.0f))
 	{
-//		Array<float> vertices;
-//		numVertices = inVertices.size();
-//		for (size_t i = 0; i < numVertices; i++)
-//		{
-//			vertices.push_back(inVertices[i].x);
-//			vertices.push_back(inVertices[i].y);
-//			vertices.push_back(inVertices[i].z);
-//		}
-//
-//		for (int i = 0; i < 9; i++)
-//		{
-//			std::cout << vertices[i] << "," << std::endl;
-//		}
-
 		IndexedModel newModel;
 		newModel.AllocateElement(3); // Positions
 		newModel.AllocateElement(2); // TexCoords
@@ -181,7 +167,6 @@ public:
 		return newModel;
 	}
 
-
 	inline uint32 GetId()
 	{
 		return id;
@@ -199,19 +184,4 @@ private:
 	uint32 numVertices;
 	uint32 VAO;
 	uint32 shaderProgram;
-
-
-	const char *vertexShaderSource = "#version 330 core\n"
-		"layout (location = 0) in vec3 aPos;\n"
-		"void main()\n"
-		"{\n"
-		"   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-		"}\0";
-	const char *fragmentShaderSource = "#version 330 core\n"
-		"out vec4 FragColor;\n"
-		"void main()\n"
-		"{\n"
-		"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-		"}\n\0";
-
 };
