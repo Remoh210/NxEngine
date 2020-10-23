@@ -1,5 +1,5 @@
 #include "DebugRenderer.h"
-#include "Core/Graphics/LineRenderer/LineRenderer.h"
+#include "Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h"
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/Application/Application.h"
 
@@ -24,7 +24,7 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time = 0, float radius 
 {
     DebugShape* SphereShape = new DebugShape();
 
-	IndexedModel model = LineRenderer::CreateSphere(1, 36, 18, color);
+	IndexedModel model = PrimitiveGenerator::CreateSphere(1, 36, 18, color);
 
 	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
@@ -42,7 +42,7 @@ void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 col
 {
     DebugShape* lineShape = new DebugShape();
 
-	IndexedModel model = LineRenderer::CreateLine(color);
+	IndexedModel model = PrimitiveGenerator::CreateLine(color);
 
 	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);

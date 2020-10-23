@@ -194,8 +194,8 @@ int Application::Run()
 	points.push_back(vec3(-0.5f, -0.5f, 0.0f));
 	points.push_back(vec3(0.5f, -0.5f, 0.0f));
 	points.push_back(vec3(0.0f, 0.5f, 0.0f));
-	LineRenderer GridLineRenderer;
-	VertexArray vertexArrayGRID(renderDevice, GridLineRenderer.CreateGridVA(20), USAGE_STATIC_DRAW);
+	PrimitiveGenerator GridPrimitiveGenerator;
+	VertexArray vertexArrayGRID(renderDevice, GridPrimitiveGenerator.CreateGridVA(20), USAGE_STATIC_DRAW);
 
 
 	LineRenderSystem lineRenderSystem(ecs);

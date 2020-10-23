@@ -8,9 +8,9 @@
 #include "Common/CommonTypes.h"
 #include "Common/Transform/Transform.h"
 #include "Common/dataStructs/Map.h"
-#include "Core/Graphics/LineRenderer/LineRenderer.h"
+#include "Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h"
 #include <Core/Camera/Camera.h>
-#include <Core/Graphics/LineRenderer/LineRenderer.h>
+#include <Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h>
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
 
 class EditorRenderContext : public RenderContext

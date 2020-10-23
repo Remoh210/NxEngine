@@ -18,7 +18,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 	editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
 	editorGridDrawParams.shouldWriteDepth = true;
 	editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
-	editorGridVA = new VertexArray(deviceIn,LineRenderer::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
                 //Load and set shaders
     String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
     String LineShaderText;
