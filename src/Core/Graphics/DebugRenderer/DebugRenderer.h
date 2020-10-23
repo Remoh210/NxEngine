@@ -14,6 +14,8 @@ public:
     
     void DrawDebugSphere(vec3 position, float time, float radius, vec3 color);
 
+    void DrawDebugLine(vec3 start, vec3 end, float time, vec3 color);
+
     void Update(float dt);
 
 

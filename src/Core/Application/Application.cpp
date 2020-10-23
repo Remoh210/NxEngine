@@ -227,6 +227,7 @@ int Application::Run()
 
 	DebugRenderer debugRenderer(EditorContext);
 	debugRenderer.DrawDebugSphere(vec3(0.f), 5000, 50, vec3(1, 0, 0));
+	debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 100, vec3(0, 1, 0));
     //vertexArrayGRID.SetShader(&Line_shader);
 
 	//ecs.MakeEntity(transformComp3, LineRenderComp);

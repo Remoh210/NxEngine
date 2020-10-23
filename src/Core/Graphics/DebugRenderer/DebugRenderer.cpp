@@ -38,6 +38,23 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time = 0, float radius 
 
 }
 
+void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 color = vec3(1.f, 0.f, 0.f))
+{
+    DebugShape* lineShape = new DebugShape();
+
+	IndexedModel model = LineRenderer::CreateLine(color);
+
+	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VA->SetShader(shader);
+
+	lineShape->vertexArray = VA;
+	lineShape->drawParams = debugDrawParams;
+    lineShape->lifetime = time;
+    lineShape->transform.position = start;
+    lineShape->transform.scale = end;
+    ShapesToDraw.push_back(lineShape);
+}
+
 void DebugRenderer::Update(float dt)
 {
     for(DebugShape* shape : ShapesToDraw)
