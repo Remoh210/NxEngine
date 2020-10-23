@@ -11,6 +11,7 @@
 #include "Core/Graphics/LineRenderer/LineRenderer.h"
 #include <Core/Camera/Camera.h>
 #include <Core/Graphics/LineRenderer/LineRenderer.h>
+#include "Core/Graphics/DebugRenderer/DebugShape.h"
 
 class EditorRenderContext : public RenderContext
 {
@@ -32,11 +33,17 @@ public:
 		Array<mat4> transforms;
 		transforms.push_back(transform);
 		vertexArray->UpdateBuffer(4, &transforms[0], transforms.size() * sizeof(mat4));
-		Draw(*InShader, *vertexArray, drawParams, 1);
+		Draw(*InShader, *vertexArray, drawParamsIn, 1);
 
 	}
 
+	inline void RenderDebugShapes(DebugShape* shapeIn, const mat4& transformIn)
+	{
+		debugShapeBuffer[shapeIn].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
+	}
+
 	void DrawEditorHelpers();
+	void DrawDebugShapes();
 	
     void Flush();
     //~EditorRenderContext();
@@ -48,6 +55,7 @@ private:
 	Sampler& sampler;
 	mat4 perspective;
 	Map<std::pair<VertexArray*, Texture*>, Array<mat4>> meshRenderBuffer;
+	Map<DebugShape*, Array<mat4>> debugShapeBuffer;
 
 	Camera* mainCamera;
 
@@ -57,6 +65,5 @@ private:
 	DrawParams editorGridDrawParams;
 	float editorGridSlices;
 	float editorGridScale;
-	
 };
 

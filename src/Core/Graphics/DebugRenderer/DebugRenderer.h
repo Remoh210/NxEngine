@@ -4,25 +4,11 @@
 #include "rendering/RenderDevice.h"
 #include "Common/dataStructs/Array.h"
 #include "Common/Transform/Transform.h"
-#include "rendering/VertexArray.h"
-
-struct DebugShape
-{
-   float lifetime = 0;
-   float timeSinceCreated = 0.0f;
-   VertexArray* vertexArray;
-   Transform transform;
-   ~DebugShape()
-   {
-       delete vertexArray;
-       DEBUG_LOG_TEMP("Debug Shape Destructor Was Called");
-   } 
-};
+#include "DebugShape.h"
 
 class DebugRenderer
 {
 public:
-
 
     DebugRenderer(EditorRenderContext& contextIn);
     
@@ -33,7 +19,7 @@ public:
 
 private:
     EditorRenderContext& editorContext;
-    Array<DebugShape> ShapesToDraw;
+    Array<DebugShape*> ShapesToDraw;
     Shader* shader;
     DrawParams debugDrawParams;
 };

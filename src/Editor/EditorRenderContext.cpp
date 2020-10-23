@@ -33,12 +33,15 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 
 void EditorRenderContext::Flush()
 {
+	//Draw Editor stuff first
+	DrawEditorHelpers();
+
+	DrawDebugShapes();
+
     Texture* currentTexture = nullptr;
     for(Map<std::pair<VertexArray*, Texture*>, Array<mat4> >::iterator it
             = meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
     {
-        //Draw Editor stuff first
-        DrawEditorHelpers();
         
         VertexArray* vertexArray = it->first.first;
         Texture* texture = it->first.second;
@@ -78,4 +81,41 @@ void EditorRenderContext::DrawEditorHelpers()
 
 	editorGridVA->UpdateBuffer(4, &transforms[0], sizeof(mat4));
     Draw(*editorGridVA->GetShader(), *editorGridVA, editorGridDrawParams, 1);
+}
+
+void EditorRenderContext::DrawDebugShapes()
+{
+	Texture* currentTexture = nullptr;
+	for (Map<DebugShape*, Array<mat4>>::iterator it
+		= debugShapeBuffer.begin(); it != debugShapeBuffer.end(); ++it)
+	{
+		//Draw Editor stuff first
+		DrawEditorHelpers();
+
+		DebugShape* shapeToDraw = it->first;
+
+		VertexArray* vertexArray = shapeToDraw->vertexArray;
+		Texture* texture = shapeToDraw->texture;
+		DrawParams shapeDrawParams = shapeToDraw->drawParams;
+		mat4* transforms = &it->second[0];
+		size_t numTransforms = it->second.size();
+
+		if (numTransforms == 0)
+		{
+			continue;
+		}
+
+		Shader& modelShader = *vertexArray->GetShader();
+
+		if (texture != currentTexture)
+		{
+			modelShader.SetSampler("diffuse", *texture, sampler, 0);
+		}
+		vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
+
+		Draw(modelShader, *vertexArray, shapeDrawParams, numTransforms);
+		
+
+		it->second.clear();
+	}
 }

@@ -9,51 +9,45 @@
 DebugRenderer::DebugRenderer(EditorRenderContext& contextIn)
     :editorContext(contextIn)
 {
-    //Create shader
-        //Load and set shaders
-    String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
-    String LineShaderText;
-    Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-    shader = new Shader(*editorContext.GetRenderDevice(), LineShaderText);
+    //Load and set shaders
+	String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/DebugShapeShader.glsl");
+	String LineShaderText;
+	Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
+	shader = new Shader(*editorContext.GetRenderDevice(), LineShaderText);
 
-    debugDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
+    debugDrawParams.primitiveType = PRIMITIVE_LINES;
 	debugDrawParams.shouldWriteDepth = true;
 	debugDrawParams.depthFunc = DRAW_FUNC_LESS;
 }
 
 void DebugRenderer::DrawDebugSphere(vec3 position, float time = 0, float radius = 1, vec3 color = vec3(1.f, 0.f, 0.f))
 {
-    DebugShape SphereShape;
-    SphereShape.vertexArray = new VertexArray(*editorContext.GetRenderDevice(), LineRenderer::CreateSphere(1, 36, 18), BufferUsage::USAGE_DYNAMIC_DRAW);
-    //SphereShape.vertexArray->SetShader(shader)
-    SphereShape.lifetime = time;
-    SphereShape.transform.position = position;
-    SphereShape.transform.scale = vec3(radius);
+    DebugShape* SphereShape = new DebugShape();
+
+	IndexedModel model = LineRenderer::CreateSphere(1, 36, 18, color);
+
+	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VA->SetShader(shader);
+
+	SphereShape->vertexArray = VA;
+	SphereShape->drawParams = debugDrawParams;
+    SphereShape->lifetime = time;
+    SphereShape->transform.position = position;
+    SphereShape->transform.scale = vec3(radius);
     ShapesToDraw.push_back(SphereShape);
-
-
-    //if(!ShapeToRender.Find(SphereShape))
-
-
 
 }
 
 void DebugRenderer::Update(float dt)
 {
-    for(DebugShape& shape : ShapesToDraw)
+    for(DebugShape* shape : ShapesToDraw)
     {
-        
-        //editorContext.RenderMesh(*shape.vertexArray, shape.transform.ToMatrix());
-
-        editorContext.RenderPrimitives(shape.vertexArray, shader, shape.transform.ToMatrix(), debugDrawParams);
-        
-        shape.timeSinceCreated += dt;
-        if(shape.timeSinceCreated > shape.lifetime)
+		editorContext.RenderDebugShapes(shape, shape->transform.ToMatrix());
+        shape->timeSinceCreated += dt;
+        if(shape->timeSinceCreated > shape->lifetime)
         {
             //hack
             //ShapesToDraw.erase(std::remove(ShapesToDraw.begin(), ShapesToDraw.end(), shape), ShapesToDraw.end());
         }
     }
-    //for(VAToRender)
-    //Context->RenderMesh(DebugShape.VertexArray, ...)
 }

@@ -108,7 +108,7 @@ int Application::Run()
 
 
 
-	bool show_demo_window = true;
+	bool show_demo_window = false;
 	bool show_another_window = false;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	bool p_open = true;
@@ -282,7 +282,7 @@ int Application::Run()
 			fpsTimeCounter = 0;
 			fps = 0;
 		}
-
+		ImGui::End();
 
 		//// Scene Tree
 		//{
@@ -304,23 +304,6 @@ int Application::Run()
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
-		// 2. Show a simple window that we create ourselves. We use a Begin/End pair to created a named window.
-		{
-			static float f = 0.0f;
-			static int counter = 0;
-			ImGui::Begin("Settings");                          // Create a window called "Hello, world!" and append into it.
-
-			ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-			ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-			ImGui::SameLine();
-			ImGui::Text("counter = %d", counter);
-
-			ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::End();
-		}
-
-		ImGui::End();
 
 
 
@@ -335,12 +318,12 @@ int Application::Run()
 
 		//ImGui::ShowDemoWindow();
 
-		ImVec2 sizeP(250, 350);
-		ImVec2 sizeW(400, 400);
-		ImGui::SetNextWindowSize(sizeW);
-		ImGui::Begin("TestImageWindow");
-		ImGui::Image((void*)testtex.GetId(), sizeP);
-		ImGui::End();
+		//ImVec2 sizeP(250, 350);
+		//ImVec2 sizeW(400, 400);
+		//ImGui::SetNextWindowSize(sizeW);
+		//ImGui::Begin("TestImageWindow");
+		//ImGui::Image((void*)testtex.GetId(), sizeP);
+		//ImGui::End();
 		// render
 		// ------
 		EditorContext.Clear(glm::vec4(0.576, 0.439, 0.859, 0), true);

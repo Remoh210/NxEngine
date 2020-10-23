@@ -42,9 +42,9 @@ public:
 		glm::vec3 extents(0.0f);
 
         //Array<vec3> vertices;
-        for(int j=0; j<=slices; ++j)
+        for(uint32 j=0; j<=slices; ++j)
         {
-          for(int i=0; i<=slices; ++i)
+          for(uint32 i=0; i<=slices; ++i)
           {
             float x = (float)i/(float)slices;
 			if (x > extents.x) { extents.x = x; }
@@ -60,31 +60,30 @@ public:
         
 		DEBUG_LOG_TEMP("Extents: x: %f, y: %f, z: %f", extents.x, extents.y, extents.z);
 
-        for(int j=0; j<slices; ++j)
+        for(uint32 j=0; j<slices; ++j)
         {
-          for(int i=0; i<slices; ++i)
+          for(uint32 i=0; i<slices; ++i)
           {
 
-            int row1 =  j    * (slices+1);
-            int row2 = (j+1) * (slices+1);
+            uint32 row1 =  j    * (slices+1);
+			uint32 row2 = (j+1) * (slices+1);
               
             newModel.AddIndices4i(row1+i, row1+i+1, row1+i+1,row2+i+1);
             newModel.AddIndices4i(row2+i+1, row2+i, row2+i, row1+i);
             
-
           }
         }
 
 		return newModel;
 	}
 
-	inline static IndexedModel CreateSphere(float radius, uint32 sectorCount, uint32 stackCount)
+	inline static IndexedModel CreateSphere(float radius, uint32 sectorCount, uint32 stackCount, vec3& color)
 	{
 		IndexedModel newModel;
 		newModel.AllocateElement(3); // Positions
 		newModel.AllocateElement(2); // TexCoords
 		newModel.AllocateElement(3); // Normals
-		newModel.AllocateElement(3); // Tangents
+		newModel.AllocateElement(3); // Color
 		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 		newModel.AllocateElement(16); // Transform matrix
 
@@ -96,7 +95,7 @@ public:
 		float stackStep = PI / stackCount;
 		float sectorAngle, stackAngle;
 
-		for(int i = 0; i <= stackCount; ++i)
+		for(uint32 i = 0; i <= stackCount; ++i)
 		{
 		    stackAngle = PI / 2 - i * stackStep;        // starting from pi/2 to -pi/2
 		    xy = radius * cosf(stackAngle);             // r * cos(u)
@@ -104,7 +103,7 @@ public:
 
 		    // add (sectorCount+1) vertices per stack
 		    // the first and last vertices have same position and normal, but different tex coords
-		    for(int j = 0; j <= sectorCount; ++j)
+		    for(uint32 j = 0; j <= sectorCount; ++j)
 		    {
 		        sectorAngle = j * sectorStep;           // starting from 0 to 2pi
 
@@ -123,17 +122,19 @@ public:
 		        ny = y * lengthInv;
 		        nz = z * lengthInv;
 				newModel.AddElement3f(2, nx, ny, nz);
+
+				newModel.AddElement3f(3, color.x, color.y, color.z);
 		    }
 		}
 
 		// generate CCW index list of sphere triangles
-		int k1, k2;
-		for(int i = 0; i < stackCount; ++i)
+		uint32 k1, k2;
+		for(uint32 i = 0; i < stackCount; ++i)
 		{
 		    k1 = i * (sectorCount + 1);     // beginning of current stack
 		    k2 = k1 + sectorCount + 1;      // beginning of next stack
 
-		    for(int j = 0; j < sectorCount; ++j, ++k1, ++k2)
+		    for(uint32 j = 0; j < sectorCount; ++j, ++k1, ++k2)
 		    {
 		        // 2 triangles per sector excluding first and last stacks
 		        // k1 => k2 => k1+1
