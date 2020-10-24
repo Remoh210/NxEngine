@@ -6,6 +6,11 @@
 #include <stb_image.h>
 
 
+void AssetLoader::SetShouldFlipVTexture(bool bValue)
+{
+	stbi_set_flip_vertically_on_load(bValue);
+}
+
 //stbi_set_flip_vertically_on_load(true);
 
 String AssetLoader::mModelDirectory = "NULL_DIR";
@@ -89,7 +94,6 @@ unsigned int AssetLoader::TextureFromFile(String path)
     glGenTextures(1, &textureID);
 
     int width, height, nrComponents;
-	stbi_set_flip_vertically_on_load(true);
     uint8 *data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
     if (data)
     {

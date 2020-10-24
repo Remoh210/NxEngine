@@ -16,7 +16,6 @@
 #include <rendering/Shader.h>
 #include <Editor/EditorRenderContext.h>
 
-
 //Standard includes
 #include <fstream>
 #include <sstream>
@@ -113,6 +112,8 @@ int Application::Run()
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	bool p_open = true;
 
+	//Initialize
+	AssetLoader::SetShouldFlipVTexture(true);
 
 	//Testing Texture
 	RenderDevice renderDevice(window);
