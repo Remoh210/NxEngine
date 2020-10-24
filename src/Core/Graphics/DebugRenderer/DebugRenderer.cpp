@@ -25,7 +25,7 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec
 {
     DebugShape* SphereShape = new DebugShape();
 
-	IndexedModel& model = PrimitiveGenerator::CreateSphere(1, sectorCount, stackCount, color);
+	IndexedModel model = PrimitiveGenerator::CreateSphere(1, sectorCount, stackCount, color);
 
 	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);

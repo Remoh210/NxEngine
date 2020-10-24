@@ -226,9 +226,9 @@ int Application::Run()
     vertexArray2.SetShader(&shader);
 
 	DebugRenderer debugRenderer(EditorContext);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
-		debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0), 10, 6);
+		debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0));
 	}
 	
 	debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
