@@ -125,7 +125,7 @@ int Application::Run()
 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	drawParams.faceCulling = FACE_CULL_FRONT;
+	drawParams.faceCulling = FACE_CULL_NONE;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
 	//	drawParams.sourceBlend = RenderDevice::BLEND_FUNC_ONE;
@@ -183,6 +183,22 @@ int Application::Run()
 
 	ecs.MakeEntity(transformComp2, renderableMesh2);
 
+	String shaderText;
+    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+    Shader shader(renderDevice, shaderText);
+
+	RenderableMeshComponent renderableMesh3;
+	renderableMesh3.vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
+	renderableMesh3.vertexArray->SetShader(&shader);
+	renderableMesh3.texture = &testtex;
+	renderableMesh3.numInst = 1;
+	TransformComponent transformComp3;
+	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp3.transform.scale = vec3(10.0f);
+
+	ecs.MakeEntity(transformComp3, renderableMesh3);
+
 
 
 	RenderableMeshSystem renderSystem(EditorContext, ecs);
@@ -217,9 +233,7 @@ int Application::Run()
     //Shader Line_shader(renderDevice, LineShaderText);
 
 
-    String shaderText;
-    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-    Shader shader(renderDevice, shaderText);
+
 
 
     vertexArray.SetShader(&shader);
@@ -235,7 +249,7 @@ int Application::Run()
     //vertexArrayGRID.SetShader(&Line_shader);
 
 	//ecs.MakeEntity(transformComp3, LineRenderComp);
-
+	//debugRenderer.DrawDrawPlane();
 	vec3 debugSpherePos(0.0f);
 
 	while (!window.ShouldClose())

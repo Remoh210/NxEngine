@@ -17,6 +17,8 @@ public:
 
     void DrawDebugLine(vec3 start, vec3 end, float time, vec3 color);
 
+    void DrawQuad();
+
     void Update(float dt);
 
 
