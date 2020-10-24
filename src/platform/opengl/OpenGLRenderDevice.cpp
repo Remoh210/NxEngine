@@ -598,6 +598,26 @@ uint32 OpenGLRenderDevice::CreateVertexArray(const float** vertexData,
 
 }
 
+uint32 OpenGLRenderDevice::ReleaseVertexArray(uint32 vao)
+{
+	if (vao == 0) {
+		return 0;
+	}
+	Map<uint32, VertexArray>::iterator it = vaoMap.find(vao);
+	if (it == vaoMap.end()) {
+		return 0;
+	}
+	const struct VertexArray* vaoData = &it->second;
+
+	glDeleteVertexArrays(1, &vao);
+	glDeleteBuffers(vaoData->numBuffers, vaoData->buffers);
+	delete[] vaoData->buffers;
+	delete[] vaoData->bufferSizes;
+	vaoMap.erase(it);
+	return 0;
+
+}
+
 
 void OpenGLRenderDevice::SetVAO(uint32 vao)
 {
@@ -847,5 +867,6 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
     glBindSampler(unit, sampler);
     glUniform1i(shaderProgramMap[shader].samplerMap[samplerName], unit);
 }
+
 
 

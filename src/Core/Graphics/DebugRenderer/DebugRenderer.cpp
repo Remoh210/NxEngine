@@ -20,11 +20,12 @@ DebugRenderer::DebugRenderer(EditorRenderContext& contextIn)
 	debugDrawParams.depthFunc = DRAW_FUNC_LESS;
 }
 
-void DebugRenderer::DrawDebugSphere(vec3 position, float time = 0, float radius = 1, vec3 color = vec3(1.f, 0.f, 0.f))
+void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec3 color,
+		uint32 sectorCount, uint32 stackCount)
 {
     DebugShape* SphereShape = new DebugShape();
 
-	IndexedModel model = PrimitiveGenerator::CreateSphere(1, 36, 18, color);
+	IndexedModel& model = PrimitiveGenerator::CreateSphere(1, sectorCount, stackCount, color);
 
 	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
@@ -57,14 +58,26 @@ void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 col
 
 void DebugRenderer::Update(float dt)
 {
-    for(DebugShape* shape : ShapesToDraw)
+	Array<DebugShape*> DrawArray = ShapesToDraw;
+
+
+    for(DebugShape* shape : DrawArray)
     {
-		editorContext.RenderDebugShapes(shape, shape->transform.ToMatrix());
         shape->timeSinceCreated += dt;
-        if(shape->lifetime != 0.0f && shape->timeSinceCreated > shape->lifetime)
+        if((shape->lifetime != 0.0f && shape->timeSinceCreated > shape->lifetime) || shape->bShouldDelete)
         {
-            ShapesToDraw.Remove(shape);
+			ShapesToDraw.Remove(shape);
             shape->~DebugShape();
         }
+		else
+		{
+			editorContext.RenderDebugShapes(shape, shape->transform.ToMatrix());
+
+			if (shape->lifetime == 0.0f)
+			{
+				shape->bShouldDelete = true;
+			}
+		}
     }
+	
 }

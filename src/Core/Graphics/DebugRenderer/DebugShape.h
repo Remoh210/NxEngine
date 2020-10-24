@@ -14,6 +14,7 @@ struct DebugShape
 	Texture* texture;
 	Transform transform;
 	DrawParams drawParams;
+	bool bShouldDelete = false;
 
 	DebugShape()
 	{
@@ -26,6 +27,6 @@ struct DebugShape
 	{
 		delete vertexArray;
 		delete texture;
-		DEBUG_LOG_TEMP("Debug Shape Destructor Was Called");
+		//DEBUG_LOG_TEMP("Debug Shape Destructor Was Called");
 	}
 };

@@ -175,7 +175,7 @@ int Application::Run()
 	RenderableMeshComponent renderableMesh2;
 	renderableMesh2.vertexArray = &vertexArray2;
 	renderableMesh2.texture = &testtex2;
-	renderableMesh2.numInst = 500;
+	renderableMesh2.numInst = 100;
 	TransformComponent transformComp2;
 	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
@@ -226,16 +226,17 @@ int Application::Run()
     vertexArray2.SetShader(&shader);
 
 	DebugRenderer debugRenderer(EditorContext);
-	debugRenderer.DrawDebugSphere(vec3(0.f), 5000, 50, vec3(1, 0, 0));
+	for (int i = 0; i < 10; i++)
+	{
+		debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0), 10, 6);
+	}
+	
 	debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
     //vertexArrayGRID.SetShader(&Line_shader);
 
 	//ecs.MakeEntity(transformComp3, LineRenderComp);
 
-
-	String TestString = Nx::FileSystem::GetPath("res/models/rock/rock.obj");
-
-	DEBUG_LOG("TEST", "TEST", "MeshPath: %s", TestString.c_str());
+	vec3 debugSpherePos(0.0f);
 
 	while (!window.ShouldClose())
 	{
@@ -305,6 +306,11 @@ int Application::Run()
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
+		for (int i = 0; i < 20; i++)
+		{
+			debugSpherePos.x += 0.1f * deltaTime;
+			debugRenderer.DrawDebugSphere(debugSpherePos, 0, 10, vec3(0, 1, 0));
+		}
 
 
 

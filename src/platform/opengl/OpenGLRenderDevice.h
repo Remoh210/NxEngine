@@ -157,6 +157,7 @@ public:
 	uint32 CreateRenderTarget(uint32 texture, uint32 width, uint32 height,
 			FramebufferAttachment attachment, uint32
 			attachmentNumber, uint32 mipLevel);
+
 	uint32 ReleaseRenderTarget(uint32 fbo);
 
 	void Clear(uint32 fbo,
@@ -181,6 +182,9 @@ public:
 		const uint32* vertexElementSizes, uint32 numVertexComponents,
 		uint32 numInstanceComponents, uint32 numVertices, const uint32* indices,
 		uint32 numIndices, BufferUsage usage);
+
+
+	uint32 OpenGLRenderDevice::ReleaseVertexArray(uint32 vao);
 
 	void SetVAO(uint32 vao);
 

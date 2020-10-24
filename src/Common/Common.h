@@ -45,3 +45,20 @@ inline int GetPercentOf(int percent, int number)
 {
 	return (int)((number * percent) / 100);
 }
+
+static inline float Randf(float minimum_number, float maximum_number)
+{
+	return minimum_number + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (maximum_number - minimum_number)));
+}
+
+//Returns random float from 0.0 to 1.0
+static inline float Randf()
+{
+	return static_cast <float> (rand()) / static_cast <float> (RAND_MAX);
+}
+
+static inline int Randi(int minimum_number, int maximum_number)
+{
+	return (rand() % (maximum_number + 1 - minimum_number)) + minimum_number;
+}
+

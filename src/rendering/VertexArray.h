@@ -23,7 +23,7 @@ public:
 
 	inline ~VertexArray()
 	{
-		//id = device->ReleaseVertexArray(id);
+		device->ReleaseVertexArray(id);
 	}
 
 	inline void UpdateBuffer(uint32 bufferIndex, const void* data, uintptr dataSize)

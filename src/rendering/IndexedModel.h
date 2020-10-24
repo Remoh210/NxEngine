@@ -24,7 +24,6 @@ public:
 	void AddIndices3i(uint32 i0, uint32 i1, uint32 i2);
 	void AddIndices4i(uint32 i0, uint32 i1, uint32 i2, uint32 i3);
 
-
 	uint32 GetNumIndices() const;
 private:
 	Array<uint32> indices;

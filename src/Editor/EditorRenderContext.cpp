@@ -89,8 +89,6 @@ void EditorRenderContext::DrawDebugShapes()
 	for (Map<DebugShape*, Array<mat4>>::iterator it
 		= debugShapeBuffer.begin(); it != debugShapeBuffer.end(); ++it)
 	{
-		//Draw Editor stuff first
-		DrawEditorHelpers();
 
 		DebugShape* shapeToDraw = it->first;
 
@@ -115,7 +113,8 @@ void EditorRenderContext::DrawDebugShapes()
 
 		Draw(modelShader, *vertexArray, shapeDrawParams, numTransforms);
 		
-
-		it->second.clear();
 	}
+	debugShapeBuffer.clear();
+
+	int i = 0;
 }

@@ -16,14 +16,12 @@ public:
 		this->pop_back();
 	}
 
-	template <class P>
-	bool Find(P value)
+	bool Find(T value)
 	{
 		return std::find(this->begin(), this->end(), value) != this->end();
 	}
 
-	template <class P>
-	void Remove(P value)
+	void Remove(T value)
 	{
 		if(this->end() != this->erase(std::remove(this->begin(), this->end(), value), this->end()));
 	}
