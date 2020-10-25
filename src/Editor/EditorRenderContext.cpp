@@ -33,7 +33,9 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 	//Infinite grid
 	editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	editorGridDrawParams.shouldWriteDepth = true;
-	editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
+	//editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
+	editorGridDrawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
+	editorGridDrawParams.destBlend = BLEND_FUNC_ONE_MINUS_SRC_ALPHA;
 	String GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
     String GrigShaderText;
     Application::loadTextFileWithIncludes(GrigShaderText, GrigShaderPath, "#include");
@@ -59,7 +61,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 
 void EditorRenderContext::Flush()
 {
-	//Draw Editor stuff first
+
+			//Draw Editor stuff first
 	DrawEditorHelpers();
 
 	DrawDebugShapes();
@@ -98,6 +101,8 @@ void EditorRenderContext::Flush()
         
         it->second.clear();
     }
+
+
 }
 
 void EditorRenderContext::DrawEditorHelpers()

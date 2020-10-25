@@ -126,11 +126,11 @@ int Application::Run()
 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	drawParams.faceCulling = FACE_CULL_NONE;
+	drawParams.faceCulling = FACE_CULL_FRONT;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
-	//	drawParams.sourceBlend = RenderDevice::BLEND_FUNC_ONE;
-	//	drawParams.destBlend = RenderDevice::BLEND_FUNC_ONE;
+	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
+	//drawParams.destBlend = BLEND_FUNC_ONE;
 
 	RenderTarget target(renderDevice);
     EditorRenderContext EditorContext(renderDevice, target, drawParams, sampler, projection, MainCamera);
@@ -321,7 +321,7 @@ int Application::Run()
 		//ImGui::End();
 		// render
 		// ------
-		EditorContext.Clear(glm::vec4(0.576, 0.439, 0.859, 0), true);
+		EditorContext.Clear(glm::vec4(0.0, 0.0, 0.0, 0), true);
 
 		//EditorContext.RenderMesh(vertexArray, testtex, trans);
 		debugRenderer.Update(deltaTime);
