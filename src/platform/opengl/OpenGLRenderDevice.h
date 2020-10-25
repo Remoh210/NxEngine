@@ -189,7 +189,7 @@ public:
 		uint32 numIndices, BufferUsage usage);
 
 
-	uint32 OpenGLRenderDevice::ReleaseVertexArray(uint32 vao);
+	uint32 ReleaseVertexArray(uint32 vao);
 
 	void SetVAO(uint32 vao);
 

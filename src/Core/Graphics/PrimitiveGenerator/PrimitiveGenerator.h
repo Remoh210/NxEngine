@@ -167,6 +167,59 @@ public:
 		return newModel;
 	}
 
+	inline static IndexedModel CreateQuad()
+	{
+		IndexedModel newModel;
+		newModel.AllocateElement(3); // Positions
+		newModel.AllocateElement(2); // TexCoords
+		newModel.AllocateElement(3); // Normals
+		newModel.AllocateElement(3); // Color
+		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
+		newModel.AllocateElement(16); // Transform matrix
+
+		vec3 color(1.0f, 0.0, 0.0);
+
+		newModel.AddElement3f(0, 1, 1, 0);
+        newModel.AddElement2f(1, 1, 1);
+        newModel.AddElement3f(2, 0, 0, 0);
+		newModel.AddElement3f(3, color.x, color.y, color.z);
+
+		newModel.AddElement3f(0, -1, -1, 0);
+        newModel.AddElement2f(1, 0, 0);
+        newModel.AddElement3f(2, 0, 0, 0);
+		newModel.AddElement3f(3, color.x, color.y, color.z);
+
+		newModel.AddElement3f(0, -1, 1, 0);
+        newModel.AddElement2f(1, 0, 1);
+        newModel.AddElement3f(2, 0, 0, 0);
+		newModel.AddElement3f(3, color.x, color.y, color.z);
+
+		newModel.AddElement3f(0, -1, -1, 0);
+        newModel.AddElement2f(1, 0, 0);
+        newModel.AddElement3f(2, 0, 0, 0);
+		newModel.AddElement3f(3, color.x, color.y, color.z);
+
+		newModel.AddElement3f(0, 1, 1, 0);
+        newModel.AddElement2f(1, 1, 1);
+        newModel.AddElement3f(2, 0, 0, 0);
+		newModel.AddElement3f(3, color.x, color.y, color.z);
+
+		newModel.AddElement3f(0, 1, -1, 0);
+        newModel.AddElement2f(1, 1, 0);
+        newModel.AddElement3f(2, 0, 0, 0);
+		newModel.AddElement3f(3, color.x, color.y, color.z);
+
+
+		newModel.AddIndices3i(0, 1, 2);
+
+		newModel.AddIndices3i(1, 0, 5);
+
+
+		return newModel;
+	}
+
+	
+
 	inline uint32 GetId()
 	{
 		return id;

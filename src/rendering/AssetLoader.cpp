@@ -5,6 +5,14 @@
 #include <iostream>
 #include <stb_image.h>
 
+
+void AssetLoader::SetShouldFlipVTexture(bool bValue)
+{
+	stbi_set_flip_vertically_on_load(bValue);
+}
+
+//stbi_set_flip_vertically_on_load(true);
+
 String AssetLoader::mModelDirectory = "NULL_DIR";
 Array<String*> AssetLoader::mLoadedTextures;
 

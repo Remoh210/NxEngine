@@ -16,7 +16,6 @@
 #include <rendering/Shader.h>
 #include <Editor/EditorRenderContext.h>
 
-
 //Standard includes
 #include <fstream>
 #include <sstream>
@@ -113,6 +112,8 @@ int Application::Run()
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	bool p_open = true;
 
+	//Initialize
+	AssetLoader::SetShouldFlipVTexture(true);
 
 	//Testing Texture
 	RenderDevice renderDevice(window);
@@ -125,7 +126,7 @@ int Application::Run()
 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	drawParams.faceCulling = FACE_CULL_FRONT;
+	drawParams.faceCulling = FACE_CULL_NONE;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
 	//	drawParams.sourceBlend = RenderDevice::BLEND_FUNC_ONE;
@@ -183,6 +184,22 @@ int Application::Run()
 
 	ecs.MakeEntity(transformComp2, renderableMesh2);
 
+	String shaderText;
+    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+    Shader shader(renderDevice, shaderText);
+
+	RenderableMeshComponent renderableMesh3;
+	renderableMesh3.vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
+	renderableMesh3.vertexArray->SetShader(&shader);
+	renderableMesh3.texture = &testtex;
+	renderableMesh3.numInst = 1;
+	TransformComponent transformComp3;
+	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp3.transform.scale = vec3(10.0f);
+
+	ecs.MakeEntity(transformComp3, renderableMesh3);
+
 
 
 	RenderableMeshSystem renderSystem(EditorContext, ecs);
@@ -217,25 +234,23 @@ int Application::Run()
     //Shader Line_shader(renderDevice, LineShaderText);
 
 
-    String shaderText;
-    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-    Shader shader(renderDevice, shaderText);
+
 
 
     vertexArray.SetShader(&shader);
     vertexArray2.SetShader(&shader);
 
 	DebugRenderer debugRenderer(EditorContext);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 1; i++)
 	{
-		debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0), 10, 6);
+		debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0));
 	}
 	
 	debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
     //vertexArrayGRID.SetShader(&Line_shader);
 
 	//ecs.MakeEntity(transformComp3, LineRenderComp);
-
+	//debugRenderer.DrawDrawPlane();
 	vec3 debugSpherePos(0.0f);
 
 	while (!window.ShouldClose())

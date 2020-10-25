@@ -25,7 +25,7 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec
 {
     DebugShape* SphereShape = new DebugShape();
 
-	IndexedModel& model = PrimitiveGenerator::CreateSphere(1, sectorCount, stackCount, color);
+	IndexedModel model = PrimitiveGenerator::CreateSphere(1, sectorCount, stackCount, color);
 
 	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
@@ -54,6 +54,25 @@ void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 col
     lineShape->transform.position = start;
     lineShape->transform.scale = end;
     ShapesToDraw.push_back(lineShape);
+}
+
+void DebugRenderer::DrawQuad()
+{
+    DebugShape* PlaneShape = new DebugShape();
+
+	IndexedModel model = PrimitiveGenerator::CreateQuad();
+
+	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VA->SetShader(shader);
+
+	PlaneShape->vertexArray = VA;
+	PlaneShape->drawParams = debugDrawParams;
+	PlaneShape->drawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	PlaneShape->drawParams.faceCulling = FACE_CULL_FRONT_AND_BACK;
+    PlaneShape->lifetime = 1000;
+    //laneShape->transform.position = start;
+    PlaneShape->transform.scale = vec3(10.0f);
+    ShapesToDraw.push_back(PlaneShape);
 }
 
 void DebugRenderer::Update(float dt)
