@@ -502,11 +502,11 @@ uint32 OpenGLRenderDevice::CreateShaderProgram(const String& shaderText)
 		return (uint32)-1;
 	}
 
-    glValidateProgram(shaderProgram);
-	if(CheckShaderError(shaderProgram, GL_VALIDATE_STATUS,
-				true, "Invalid shader program")) {
-		return (uint32)-1;
-	}
+    // glValidateProgram(shaderProgram);
+	// if(CheckShaderError(shaderProgram, GL_VALIDATE_STATUS,
+	// 			true, "Invalid shader program")) {
+	// 	return (uint32)-1;
+	// }
 
 	AddAllAttributes(shaderProgram, vertexShaderText, GetVersion());
 	AddShaderUniforms(shaderProgram, shaderText, programData.uniformMap,

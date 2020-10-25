@@ -12,23 +12,37 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 			perspective(perspectiveIn),
 			mainCamera(CameraIn)
 {
-	editorGridSlices = 100;
-	editorGridScale = 2000;
+	// editorGridSlices = 100;
+	// editorGridScale = 2000;
 
-	editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
+	// editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
+	// editorGridDrawParams.shouldWriteDepth = true;
+	// editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
+	// editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+    //             //Load and set shaders
+    // String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
+    // String LineShaderText;
+    // Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
+    // Shader* grid_shader = new Shader(deviceIn, LineShaderText);
+	// editorGridVA->SetShader(grid_shader);
+
+	// editorGridTransform.scale = vec3(editorGridScale);
+	// editorGridTransform.position.x = -0.5 * editorGridScale;
+	// editorGridTransform.position.z = -0.5 * editorGridScale;
+
+	//Infinite grid
+	editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	editorGridDrawParams.shouldWriteDepth = true;
 	editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
-	editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
-                //Load and set shaders
-    String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
-    String LineShaderText;
-    Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-    Shader* grid_shader = new Shader(deviceIn, LineShaderText);
-	editorGridVA->SetShader(grid_shader);
+	String GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
+    String GrigShaderText;
+    Application::loadTextFileWithIncludes(GrigShaderText, GrigShaderPath, "#include");
+	Shader* GRIDshader = new Shader(deviceIn, GrigShaderText);
+    editorGridVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateQuad(vec3(1.0f, 0.0f, 0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	editorGridVA->SetShader(GRIDshader);
 
-	editorGridTransform.scale = vec3(editorGridScale);
-	editorGridTransform.position.x = -0.5 * editorGridScale;
-	editorGridTransform.position.z = -0.5 * editorGridScale;
+	editorGridTransform.scale = vec3(10.0f);
+	
 }
 
 void EditorRenderContext::Flush()

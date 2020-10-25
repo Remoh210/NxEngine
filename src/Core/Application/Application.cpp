@@ -151,9 +151,6 @@ int Application::Run()
 
 	uint32 dbgTex = AssetLoader::TextureFromFile(TEST_TEXTURE_FILE);
 
-
-
-
 	RenderableMeshComponent renderableMesh;
 	renderableMesh.vertexArray = &vertexArray;
 	renderableMesh.texture = &testtex;
@@ -215,28 +212,6 @@ int Application::Run()
 	VertexArray vertexArrayGRID(renderDevice, GridPrimitiveGenerator.CreateGridVA(20), USAGE_STATIC_DRAW);
 
 
-	LineRenderSystem lineRenderSystem(ecs);
-	systemList.AddSystem(lineRenderSystem);
-
-	//RenderableMeshComponent LineRenderComp;
-	//LineRenderComp.vertexArray = &vertexArrayGRID;
-	////LineRenderComp.numVertecies = points.size();
-	////LineRenderComp.shader = &Line_shader;
-	//TransformComponent transformComp3;
-	//transformComp3.transform.position = vec3(0.9f, -0.15f, -40.0f);
-	//transformComp3.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-	//transformComp3.transform.scale = vec3(17.0f);
-
-
-    //Load and set shaders
-    //String LineShaderText;
-    //loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-    //Shader Line_shader(renderDevice, LineShaderText);
-
-
-
-
-
     vertexArray.SetShader(&shader);
     vertexArray2.SetShader(&shader);
 
@@ -247,10 +222,8 @@ int Application::Run()
 	}
 	
 	debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
-    //vertexArrayGRID.SetShader(&Line_shader);
 
-	//ecs.MakeEntity(transformComp3, LineRenderComp);
-	//debugRenderer.DrawDrawPlane();
+
 	vec3 debugSpherePos(0.0f);
 
 	while (!window.ShouldClose())
@@ -321,7 +294,7 @@ int Application::Run()
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
 
-		for (int i = 0; i < 20; i++)
+		for (int i = 0; i < 1; i++)
 		{
 			debugSpherePos.x += 0.1f * deltaTime;
 			debugRenderer.DrawDebugSphere(debugSpherePos, 0, 10, vec3(0, 1, 0));

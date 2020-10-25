@@ -167,7 +167,7 @@ public:
 		return newModel;
 	}
 
-	inline static IndexedModel CreateQuad()
+	inline static IndexedModel CreateQuad(vec3 color = vec3(0.0f))
 	{
 		IndexedModel newModel;
 		newModel.AllocateElement(3); // Positions
@@ -176,8 +176,6 @@ public:
 		newModel.AllocateElement(3); // Color
 		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 		newModel.AllocateElement(16); // Transform matrix
-
-		vec3 color(1.0f, 0.0, 0.0);
 
 		newModel.AddElement3f(0, 1, 1, 0);
         newModel.AddElement2f(1, 1, 1);

@@ -11,8 +11,6 @@ void AssetLoader::SetShouldFlipVTexture(bool bValue)
 	stbi_set_flip_vertically_on_load(bValue);
 }
 
-//stbi_set_flip_vertically_on_load(true);
-
 String AssetLoader::mModelDirectory = "NULL_DIR";
 Array<String*> AssetLoader::mLoadedTextures;
 
@@ -126,12 +124,6 @@ unsigned int AssetLoader::TextureFromFile(String path)
 }
 
 
-
-
-
-
-
-
 void AssetLoader::LoadModel(const String& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<Material>& materials)
@@ -151,11 +143,6 @@ void AssetLoader::LoadModel(const String& fileName,
 
 	//process ASSIMP's root node recursively
 	ProcessNode(scene->mRootNode, scene, fileName, models, modelMaterialIndices, materials);
-
-	//cStaticMesh* staticMesh = new cStaticMesh(vec_mesh_temp);
-	//vec_mesh_temp.clear();
-
-	//vec_static_mesh.push_back(staticMesh);
 }
 
 
