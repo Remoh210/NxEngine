@@ -188,7 +188,7 @@ public:
 
 	void UpdateUniformBuffer(uint32 buffer, const void* data, uintptr dataSize, uintptr PrevDataSize = 0);
 
-	uint32 OpenGLRenderDevice::ReleaseUniformBuffer(uint32 buffer);
+	uint32 ReleaseUniformBuffer(uint32 buffer);
 
 	uint32 CreateVertexArray(const float** vertexData,
 		const uint32* vertexElementSizes, uint32 numVertexComponents,

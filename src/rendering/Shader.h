@@ -17,7 +17,7 @@ public:
 		//mRenderDevice->ReleaseShaderProgram(deviceId);
 	}
 
-	inline void Shader::SetUniformBuffer(const String& name, UniformBuffer& buffer)
+	inline void SetUniformBuffer(const String& name, UniformBuffer& buffer)
 	{
 		mRenderDevice->SetShaderUniformBuffer(mProgramId, name, buffer.GetId());
 	}

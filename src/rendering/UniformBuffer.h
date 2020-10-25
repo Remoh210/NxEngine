@@ -5,13 +5,14 @@
 class UniformBuffer
 {
 public:
-	inline UniformBuffer(RenderDevice& deviceIn, uintptr dataSize,
+	inline UniformBuffer(RenderDevice& deviceIn, uint32 numder, uintptr dataSize,
 		enum BufferUsage usage, const void* data = nullptr) :
 		device(&deviceIn),
-		UniformId(device->CreateUniformBuffer(data, dataSize, usage)),
+		UniformId(device->CreateUniformBuffer(data, numder * dataSize, usage)),
 		size(dataSize) 
 	{
-		Offset = 0;
+		padding = dataSize;
+		//Offset = 0;
 	}
 
 	inline ~UniformBuffer()
@@ -19,14 +20,14 @@ public:
 		UniformId = device->ReleaseUniformBuffer(UniformId);
 	}
 
-	inline void Update(const void* data, uintptr dataSize)
+	inline void Update(const void* data, uintptr dataSize, uint32 offset)
 	{
-		device->UpdateUniformBuffer(UniformId, data, dataSize, Offset);
-		Offset += dataSize;
+		device->UpdateUniformBuffer(UniformId, data, dataSize, offset * dataSize);
+		//Offset += dataSize;
 	}
 	inline void Update(const void* data) 
 	{
-		Update(data, size);
+		//Update(data, size);
 	}
 
 	inline void ResetOffset()
@@ -39,5 +40,7 @@ private:
 	RenderDevice* device;
 	uint32 UniformId;
 	uintptr Offset;
+
+	uintptr padding;
 	uintptr size;
 };
