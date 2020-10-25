@@ -176,6 +176,11 @@ public:
     void SetShaderSampler(uint32 shader, const String& samplerName,
             uint32 texture, uint32 sampler, uint32 unit);
 
+	void SetShaderUniformBuffer(uint32 shader, const String& uniformBufferName,
+		uint32 buffer);
+
+	uint32 ReleaseShaderProgram(uint32 shader);
+
 	uint32 CreateShaderProgram(const String& shaderText);
 
 	uint32 CreateVertexArray(const float** vertexData,

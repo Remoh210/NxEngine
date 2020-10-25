@@ -868,5 +868,37 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
     glUniform1i(shaderProgramMap[shader].samplerMap[samplerName], unit);
 }
 
+void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const String& uniformBufferName,
+	uint32 buffer)
+{
+	SetShader(shader);
+	glBindBufferBase(GL_UNIFORM_BUFFER,
+		shaderProgramMap[shader].uniformMap[uniformBufferName],
+		buffer);
+}
+
+uint32 OpenGLRenderDevice::ReleaseShaderProgram(uint32 shader)
+{
+	if (shader == 0) {
+		return 0;
+	}
+	Map<uint32, ShaderProgram>::iterator programIt = shaderProgramMap.find(shader);
+	if (programIt == shaderProgramMap.end()) {
+		return 0;
+	}
+	const struct ShaderProgram* shaderProgram = &programIt->second;
+
+	for (Array<uint32>::const_iterator it = shaderProgram->shaders.begin();
+		it != shaderProgram->shaders.end(); ++it)
+	{
+		glDetachShader(shader, *it);
+		glDeleteShader(*it);
+	}
+	glDeleteProgram(shader);
+	shaderProgramMap.erase(programIt);
+	return 0;
+}
+
+
 
 
