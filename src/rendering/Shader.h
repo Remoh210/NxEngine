@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderDevice.h"
 #include "Texture.h"
+#include "UniformBuffer.h"
 #include "Sampler.h"
 
 class Shader
@@ -16,10 +17,11 @@ public:
 		//mRenderDevice->ReleaseShaderProgram(deviceId);
 	}
 
-	//inline void setUniformBuffer(const String& name, UniformBuffer& buffer)
-    //{
-    //    
-    //}
+	inline void Shader::SetUniformBuffer(const String& name, UniformBuffer& buffer)
+	{
+		mRenderDevice->SetShaderUniformBuffer(mProgramId, name, buffer.GetId());
+	}
+
     inline void SetSampler(const String& name, Texture& texture, Sampler& sampler,
             uint32 unit)
     {

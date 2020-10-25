@@ -517,6 +517,37 @@ uint32 OpenGLRenderDevice::CreateShaderProgram(const String& shaderText)
 
 }
 
+uint32 OpenGLRenderDevice::CreateUniformBuffer(const void* data, uintptr dataSize,
+	enum BufferUsage usage)
+{
+	uint32 ubo;
+	glGenBuffers(1, &ubo);
+	glBindBuffer(GL_UNIFORM_BUFFER, ubo);
+	glBufferData(GL_UNIFORM_BUFFER, dataSize, data, usage);
+	return ubo;
+}
+
+void OpenGLRenderDevice::UpdateUniformBuffer(uint32 buffer, const void* data, uintptr dataSize, uintptr PrevDataSize)
+{
+	//glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+	//void* dest = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+	//memcpy(dest, data, dataSize);
+	//glUnmapBuffer(GL_UNIFORM_BUFFER);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, buffer);
+	glBufferSubData(GL_UNIFORM_BUFFER, PrevDataSize, dataSize, data);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+uint32 OpenGLRenderDevice::ReleaseUniformBuffer(uint32 buffer)
+{
+	if (buffer == 0) {
+		return 0;
+	}
+	glDeleteBuffers(1, &buffer);
+	return 0;
+}
+
 uint32 OpenGLRenderDevice::CreateVertexArray(const float** vertexData,
 	const uint32* vertexElementSizes, uint32 numVertexComponents,
 	uint32 numInstanceComponents, uint32 numVertices, const uint32* indices,
@@ -872,6 +903,7 @@ void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const String& uni
 	uint32 buffer)
 {
 	SetShader(shader);
+	//glUniformBlockBinding(shader, shaderProgramMap[shader].uniformMap[uniformBufferName], 0);
 	glBindBufferBase(GL_UNIFORM_BUFFER,
 		shaderProgramMap[shader].uniformMap[uniformBufferName],
 		buffer);

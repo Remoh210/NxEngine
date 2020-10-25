@@ -12,8 +12,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 			perspective(perspectiveIn),
 			mainCamera(CameraIn)
 {
-	// editorGridSlices = 100;
-	// editorGridScale = 2000;
+	 editorGridSlices = 10;
+	 editorGridScale = 2000;
 
 	// editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
 	// editorGridDrawParams.shouldWriteDepth = true;
@@ -31,17 +31,27 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 	// editorGridTransform.position.z = -0.5 * editorGridScale;
 
 	//Infinite grid
-	editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
 	editorGridDrawParams.shouldWriteDepth = true;
 	editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
 	String GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
     String GrigShaderText;
     Application::loadTextFileWithIncludes(GrigShaderText, GrigShaderPath, "#include");
 	Shader* GRIDshader = new Shader(deviceIn, GrigShaderText);
-    editorGridVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateQuad(vec3(1.0f, 0.0f, 0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	MatrixUniformBuffer = new UniformBuffer(deviceIn, 2 * sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
+	
+	
+	//MatrixUniformBuffer->Update(&perspectiveIn[0], sizeof(glm::mat4));
+
+	//MatrixUniformBuffer
+
+
+    editorGridVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_STATIC_DRAW);
 	editorGridVA->SetShader(GRIDshader);
 
-	editorGridTransform.scale = vec3(10.0f);
+	editorGridTransform.position.x = -0.5 * editorGridScale;
+    editorGridTransform.position.z = -0.5 * editorGridScale;
+	editorGridTransform.scale = vec3(editorGridScale);
 	
 }
 
@@ -91,10 +101,21 @@ void EditorRenderContext::Flush()
 void EditorRenderContext::DrawEditorHelpers()
 {
     Array<mat4> transforms;
-    transforms.push_back(perspective * mainCamera->GetViewMatrix() * editorGridTransform.ToMatrix());
+
+	mat4 viewMatrix = mainCamera->GetViewMatrix();
+
+	editorGridVA->GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+	
+	MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4));
+	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4));
+
+    transforms.push_back(editorGridTransform.ToMatrix());
 
 	editorGridVA->UpdateBuffer(4, &transforms[0], sizeof(mat4));
+
     Draw(*editorGridVA->GetShader(), *editorGridVA, editorGridDrawParams, 1);
+
+	
 }
 
 void EditorRenderContext::DrawDebugShapes()
@@ -129,6 +150,9 @@ void EditorRenderContext::DrawDebugShapes()
 		
 	}
 	debugShapeBuffer.clear();
+
+    //HACK...
+	MatrixUniformBuffer->ResetOffset();
 
 	int i = 0;
 }

@@ -167,7 +167,7 @@ public:
 		return newModel;
 	}
 
-	inline static IndexedModel CreateQuad(vec3 color = vec3(0.0f))
+	inline static IndexedModel CreateQuad(vec3 color = vec3(1, 0, 0))
 	{
 		IndexedModel newModel;
 		newModel.AllocateElement(3); // Positions

@@ -12,6 +12,7 @@
 #include <Core/Camera/Camera.h>
 #include <Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h>
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
+#include "rendering/UniformBuffer.h"
 
 class EditorRenderContext : public RenderContext
 {
@@ -25,7 +26,7 @@ public:
 
 	inline void RenderMesh(VertexArray& vertexArray, const mat4& transformIn)
 	{
-		meshRenderBuffer[std::make_pair(&vertexArray, nullptr)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
+		meshRenderBuffer[std::make_pair(&vertexArray, nullptr)].push_back(perspective * transformIn);
 	}
 
 	inline void RenderPrimitives(VertexArray* vertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
@@ -53,6 +54,7 @@ private:
 	DrawParams& drawParams;
 	//Shader& shader;
 	Sampler& sampler;
+	UniformBuffer* MatrixUniformBuffer;
 	mat4 perspective;
 	Map<std::pair<VertexArray*, Texture*>, Array<mat4>> meshRenderBuffer;
 	Map<DebugShape*, Array<mat4>> debugShapeBuffer;

@@ -4,6 +4,7 @@
 #include <glm.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
 #include <gtx/quaternion.hpp>
+#include <gtc/type_ptr.hpp>
 
 typedef glm::vec2 vec2;
 typedef glm::vec3 vec3;

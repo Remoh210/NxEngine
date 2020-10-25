@@ -183,6 +183,13 @@ public:
 
 	uint32 CreateShaderProgram(const String& shaderText);
 
+	uint32 CreateUniformBuffer(const void* data, uintptr dataSize,
+		enum BufferUsage usage);
+
+	void UpdateUniformBuffer(uint32 buffer, const void* data, uintptr dataSize, uintptr PrevDataSize = 0);
+
+	uint32 OpenGLRenderDevice::ReleaseUniformBuffer(uint32 buffer);
+
 	uint32 CreateVertexArray(const float** vertexData,
 		const uint32* vertexElementSizes, uint32 numVertexComponents,
 		uint32 numInstanceComponents, uint32 numVertices, const uint32* indices,

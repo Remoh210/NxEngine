@@ -9,11 +9,17 @@ layout (location = 2) in vec3 normal;
 layout (location = 3) in vec3 color;
 layout (location = 4) in mat4 transformMat;
 
+layout (std140) uniform Matrices
+{
+    mat4 projection;
+    mat4 view;
+};
+
 
 
 void main()
 {
-    gl_Position = transformMat * vec4(position, 1.0) ;
+    gl_Position = projection * view * transformMat * vec4(position, 1.0);
     texCoord0 = texCoord;
 	VertColor = color;
 }

@@ -1,38 +1,43 @@
 #pragma once
 
-#include "renderDevice.hpp"
+#include "RenderDevice.h"
 
 class UniformBuffer
 {
 public:
 	inline UniformBuffer(RenderDevice& deviceIn, uintptr dataSize,
-		enum RenderDevice::BufferUsage usage, const void* data = nullptr) :
+		enum BufferUsage usage, const void* data = nullptr) :
 		device(&deviceIn),
-		deviceId(device->CreateUniformBuffer(data, dataSize, usage)),
-		size(dataSize) {}
-	inline ~UniformBuffer()
+		UniformId(device->CreateUniformBuffer(data, dataSize, usage)),
+		size(dataSize) 
 	{
-		deviceId = device->ReleaseUniformBuffer(deviceId);
+		Offset = 0;
 	}
 
-	inline void update(const void* data, uintptr dataSize);
-	inline void update(const void* data) { update(data, size); }
+	inline ~UniformBuffer()
+	{
+		UniformId = device->ReleaseUniformBuffer(UniformId);
+	}
 
-	inline uint32 getId();
+	inline void Update(const void* data, uintptr dataSize)
+	{
+		device->UpdateUniformBuffer(UniformId, data, dataSize, Offset);
+		Offset += dataSize;
+	}
+	inline void Update(const void* data) 
+	{
+		Update(data, size);
+	}
+
+	inline void ResetOffset()
+	{
+		Offset = 0;
+	}
+
+	inline uint32 GetId() { return UniformId; }
 private:
 	RenderDevice* device;
-	uint32 deviceId;
+	uint32 UniformId;
+	uintptr Offset;
 	uintptr size;
-
-	NULL_COPY_AND_ASSIGN(UniformBuffer);
 };
-
-inline uint32 UniformBuffer::GetId()
-{
-	return deviceId;
-}
-
-inline void UniformBuffer::Update(const void* data, uintptr dataSize)
-{
-	device->updateUniformBuffer(deviceId, data, dataSize);
-}
