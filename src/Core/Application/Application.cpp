@@ -108,8 +108,8 @@ int Application::Run()
 
 
 
-	bool show_demo_window = false;
-	bool show_another_window = false;
+	bool show_demo_window = true;
+	bool show_another_window = true;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	bool p_open = true;
 
@@ -138,6 +138,8 @@ int Application::Run()
 
 	//ECS
 	ECS ecs;
+
+	SceneManager::SetECS(ecs);
 
 	//model 1
 	Array<IndexedModel> models;
@@ -341,10 +343,12 @@ int Application::Run()
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		//
+		
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+		
 		window.Present();
+
 		glfwPollEvents();
 	}
 
@@ -470,12 +474,12 @@ void Application::GUI_ShowMenuBar(ECS& ecs)
 		if (ImGui::MenuItem("Open", "Ctrl+O")) {}
 		if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
 		{  
-			SceneManager::SaveScene("TestScene", ecs, *GetMainCamera());
+			SceneManager::SaveScene("TestScene", *GetMainCamera());
 		}
 		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 		{
 
-			//cSceneManager::LoadScene("test", ecs, *GetMainCamera());
+			SceneManager::LoadScene("test", *GetMainCamera());
 	
 		}
 

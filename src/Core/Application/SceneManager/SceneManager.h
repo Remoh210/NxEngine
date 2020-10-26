@@ -15,13 +15,16 @@ public:
 
 	//SceneManager();
 	static Scene currentScene;
-	static bool SaveScene(NString filename, ECS& ecs, class Camera& camera);
-	//static bool LoadScene(std::string filename, ECS& ecs, class Camera& camera);
+	static bool SaveScene(NString filename, class Camera& camera);
+	static bool LoadScene(NString filename, class Camera& camera);
 	//inline static sScene GetCurrentScene() { return currentScene; };
-	//static void RemoveObjectFromScene(EntityHandle entity, ECS& ecs);;
-	//void setBasePath(std::string basepath);
+	static void RemoveObjectFromScene(EntityHandle entity);
 
+	static void SetECS(ECS& ecsIn)
+	{
+		ecs = &ecsIn;
+	}
 
 private:
-	//static Scene ClearCurrentScene();
+	static ECS* ecs;
 };
