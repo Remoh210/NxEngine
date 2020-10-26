@@ -16,6 +16,11 @@ public:
 		this->pop_back();
 	}
 
+	void Add(T value)
+	{
+		this->push_back(value);
+	}
+
 	bool Find(T value)
 	{
 		return std::find(this->begin(), this->end(), value) != this->end();

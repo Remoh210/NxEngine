@@ -8,6 +8,7 @@
 #include <Core/Systems/LineRenderSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
+#include <Core/Application/SceneManager/SceneManager.h>
 
 #include <rendering/Sampler.h>
 #include <rendering/RenderDevice.h>
@@ -159,7 +160,6 @@ int Application::Run()
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp.transform.scale = vec3(7.0f);
 
-	ecs.MakeEntity(transformComp, renderableMesh);
 
 
 	//model2 
@@ -179,7 +179,7 @@ int Application::Run()
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp2.transform.scale = vec3(7.0f);
 
-	ecs.MakeEntity(transformComp2, renderableMesh2);
+	
 
 	NString shaderText;
     loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
@@ -195,8 +195,13 @@ int Application::Run()
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp3.transform.scale = vec3(10.0f);
 
-	ecs.MakeEntity(transformComp3, renderableMesh3);
 
+	
+	
+	
+	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp, renderableMesh));
+	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp3, renderableMesh3));
+	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp2, renderableMesh2));
 
 
 	RenderableMeshSystem renderSystem(EditorContext, ecs);
@@ -456,11 +461,16 @@ void Application::GUI_ShowMenuBar(ECS& ecs)
 	ImGui::BeginMenuBar();
 	if (ImGui::BeginMenu("Menu"))
 	{
-		if (ImGui::MenuItem("New")) {}
+		
+		if (ImGui::MenuItem("New")) 
+		{
+			//Create and load new scene
+		}
+		// Buttons return true when clicked (most widgets return true when edited/activated)
 		if (ImGui::MenuItem("Open", "Ctrl+O")) {}
 		if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
-		{                          // Buttons return true when clicked (most widgets return true when edited/activated)
-			//cSceneManager::SaveScene("test", ecs, *GetMainCamera());
+		{  
+			SceneManager::SaveScene("TestScene", ecs, *GetMainCamera());
 		}
 		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 		{

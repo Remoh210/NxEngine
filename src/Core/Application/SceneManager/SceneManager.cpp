@@ -3,13 +3,11 @@
 //#include <fstream>
 //#include <iostream>
 //
-
-//#include "Common/Transform/Transform.h"
+#include "Common/Transform/Transform.h"
 //
-//#include "Core/Systems/RenderSystem.h"
-//#include "Core/Camera/Camera.h"
-
-//#include "Core/FileSystem/FileSystem.h"
+#include "Core/Systems/RenderSystem.h"
+#include "Core/Camera/Camera.h"
+#include "Core/FileSystem/FileSystem.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
@@ -36,106 +34,107 @@ Scene SceneManager::currentScene;
 //}
 
 
-bool SceneManager::SaveScene(std::string filename, ECS& ecs, Camera& camera) {
+bool SceneManager::SaveScene(NString filename, ECS& ecs, Camera& camera) {
 
-//	rapidjson::Document doc;
-//	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
-//	doc.SetObject();
-//	rapidjson::Value MeshArray(rapidjson::kArrayType);
+	rapidjson::Document doc;
+	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+	doc.SetObject();
+	rapidjson::Value MeshArray(rapidjson::kArrayType);
 	
-	// //Camera Output
-	// rapidjson::Value CameraObj(rapidjson::kObjectType);
-	// rapidjson::Value CameraSpeed(camera.MovementSpeed);
-	// rapidjson::Value CameraPosArray(rapidjson::kArrayType);
+	 //Camera Output
+	 rapidjson::Value CameraObj(rapidjson::kObjectType);
+	 rapidjson::Value CameraSpeed(camera.MovementSpeed);
+	 rapidjson::Value CameraPosArray(rapidjson::kArrayType);
 
-	// for (int i = 0; i < 3; i++)
-	// {
-	// 	rapidjson::Value temp(camera.Position[i]);
-	// 	CameraPosArray.PushBack(temp, allocator);
-	// }
-	// CameraObj.AddMember("Speed", CameraSpeed, allocator);
-	// CameraObj.AddMember("Position", CameraPosArray, allocator);
+	 for (int i = 0; i < 3; i++)
+	 {
+	 	rapidjson::Value temp(camera.Position[i]);
+	 	CameraPosArray.PushBack(temp, allocator);
+	 }
+	 CameraObj.AddMember("Speed", CameraSpeed, allocator);
+	 CameraObj.AddMember("Position", CameraPosArray, allocator);
 
 
-	// //GameObjects
-	// /*or rapidjson::Value myArray; ;
-	//      myArray.SetArray() */
-	// for (const auto& entity : currentScene.sceneObjects)
-	// {
-	// 	//if (/*!Entity->bIsDebug*/) {continue;}
-	// 	rapidjson::Value ObjValue(rapidjson::kObjectType);
+	 //GameObjects
+	 /*or rapidjson::Value myArray; ;
+	      myArray.SetArray() */
+	 for (const auto& entity : currentScene.sceneObjects)
+	 {
+	 	//if (/*!Entity->bIsDebug*/) {continue;}
+	 	rapidjson::Value ObjValue(rapidjson::kObjectType);
 
-	// 	RenderComponent* RendComp = ecs.GetComponent<RenderComponent>(entity);
-	// 	if (!RendComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
+		RenderableMeshComponent* RendComp = ecs.GetComponent<RenderableMeshComponent>(entity);
+	 	if (!RendComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
 		
-	// 	rapidjson::Value FriendlyName(RendComp->mesh.c_str(), allocator);
-	// 	rapidjson::Value MeshName(RendComp->meshPath.c_str(), allocator);
-	// 	rapidjson::Value Visible(RendComp->bIsVisible);
-	// 	rapidjson::Value Shader(RendComp->shader.c_str(), allocator);
-	// 	rapidjson::Value WireFrame(RendComp->bIsWireFrame);
-	// 	rapidjson::Value DiffuseRGBArray(rapidjson::kArrayType);
+	 	//rapidjson::Value FriendlyName(RendComp->.c_str(), allocator);
+	 	//rapidjson::Value MeshName(RendComp->meshPath.c_str(), allocator);
+	 	//rapidjson::Value Visible(RendComp->bIsVisible);
+	 	//rapidjson::Value Shader(RendComp->shader.c_str(), allocator);
+	 	//rapidjson::Value WireFrame(RendComp->bIsWireFrame);
+	 	//rapidjson::Value DiffuseRGBArray(rapidjson::kArrayType);
 
-	// 	for (int i = 0; i < 4; i++) {
-	// 		rapidjson::Value temp(RendComp->diffuse[i]);
-	// 		DiffuseRGBArray.PushBack(temp, allocator);
-	// 	}
+	 	//for (int i = 0; i < 4; i++) {
+	 	//	rapidjson::Value temp(RendComp->diffuse[i]);
+	 	//	DiffuseRGBArray.PushBack(temp, allocator);
+	 	//}
 
 
-	// 	TransformComponent* TransComp = ecs.GetComponent<TransformComponent>(entity);
-	// 	if (!TransComp) { DEBUG_LOG("ENGINE", "ERROR", "No TransformComponent"); return false; }
+	 	TransformComponent* TransComp = ecs.GetComponent<TransformComponent>(entity);
+	 	if (!TransComp) { DEBUG_LOG("ENGINE", "ERROR", "No TransformComponent"); return false; }
 		
-	// 	rapidjson::Value PositionArray(rapidjson::kArrayType);
-	// 	rapidjson::Value Rotation(rapidjson::kArrayType);
-	// 	rapidjson::Value Scale(rapidjson::kArrayType);
+	 	rapidjson::Value PositionArray(rapidjson::kArrayType);
+	 	rapidjson::Value Rotation(rapidjson::kArrayType);
+	 	rapidjson::Value Scale(rapidjson::kArrayType);
 		
-	// 	for (int i = 0; i < 3; i++) {
-	// 		rapidjson::Value temp(TransComp->transform.position[i]);
-	// 		PositionArray.PushBack(temp, allocator);
-	// 	}
+	 	for (int i = 0; i < 3; i++) {
+	 		rapidjson::Value temp(TransComp->transform.position[i]);
+	 		PositionArray.PushBack(temp, allocator);
+	 	}
 
-	// 	for (int i = 0; i < 4; i++) {
-	// 		quat rot = TransComp->transform.rotation;
-	// 		rapidjson::Value temp(rot[i]);
-	// 		Rotation.PushBack(temp, allocator);
-	// 	}
+	 	for (int i = 0; i < 4; i++) {
+	 		quat rot = TransComp->transform.rotation;
+	 		rapidjson::Value temp(rot[i]);
+	 		Rotation.PushBack(temp, allocator);
+	 	}
 
-	// 	for (int i = 0; i < 3; i++) {
-	// 		rapidjson::Value temp(TransComp->transform.scale[i]);
-	// 		Scale.PushBack(temp, allocator);
-	// 	}
-
-
-	// 	ObjValue.AddMember("Name", FriendlyName, allocator);
-	// 	ObjValue.AddMember("Mesh", MeshName, allocator);
-	// 	ObjValue.AddMember("Visible", Visible, allocator);
-	// 	ObjValue.AddMember("Shader", Shader, allocator);
-	// 	ObjValue.AddMember("Wireframe", WireFrame, allocator);
-	// 	ObjValue.AddMember("Position", PositionArray, allocator);
-	// 	ObjValue.AddMember("DiffuseRGB_Alpha", DiffuseRGBArray, allocator);
-	// 	ObjValue.AddMember("Rotation", Rotation, allocator);
-	// 	ObjValue.AddMember("Scale", Scale, allocator);
-
-	// 	MeshArray.PushBack(ObjValue, allocator);
-
-	// }
+	 	for (int i = 0; i < 3; i++) {
+	 		rapidjson::Value temp(TransComp->transform.scale[i]);
+	 		Scale.PushBack(temp, allocator);
+	 	}
 
 
+	 	//ObjValue.AddMember("Name", FriendlyName, allocator);
+	 	//ObjValue.AddMember("Mesh", MeshName, allocator);
+	 	//ObjValue.AddMember("Visible", Visible, allocator);
+	 	//ObjValue.AddMember("Shader", Shader, allocator);
+	 	//ObjValue.AddMember("Wireframe", WireFrame, allocator);
+	 	ObjValue.AddMember("Position", PositionArray, allocator);
+	 	//ObjValue.AddMember("DiffuseRGB_Alpha", DiffuseRGBArray, allocator);
+	 	ObjValue.AddMember("Rotation", Rotation, allocator);
+	 	ObjValue.AddMember("Scale", Scale, allocator);
 
-	// doc.AddMember("Camera", CameraObj, allocator);
-	// doc.AddMember("GameObjects", MeshArray, allocator);
+	 	MeshArray.PushBack(ObjValue, allocator);
+
+	 }
+
+
+
+	 doc.AddMember("Camera", CameraObj, allocator);
+	 doc.AddMember("GameObjects", MeshArray, allocator);
 
 	
 	
-	// std::string fileToLoadFullPath = "../assets/scenes/" + filename + ".scene";
+	 std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
+	 DEBUG_LOG_TEMP("SCENE: %s", fileToLoadFullPath.c_str());
 
-	// FILE* fp = fopen(fileToLoadFullPath.c_str(), "wb"); // non-Windows use "w"
-	// char writeBuffer[65536];
-	// rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
-	// rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(os);
-	// doc.Accept(writer);
-	// fclose(fp);
+	 FILE* fp = fopen(fileToLoadFullPath.c_str(), "wb"); // non-Windows use "w"
+	 char writeBuffer[65536];
+	 rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+	 rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(os);
+	 doc.Accept(writer);
+	 fclose(fp);
 
-	// return true;
+	return true;
 }
 //
 //

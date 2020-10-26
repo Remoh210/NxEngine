@@ -13,9 +13,9 @@ namespace Nx
 
 		static std::string GetPath(const std::string& path);
 
-	private:
 		static std::string const& GetRoot();
 
+	private:
 		static Builder GetPathBuilder();
 
 		static std::string GetPathRelativeRoot(const std::string& path);

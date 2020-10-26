@@ -1,10 +1,11 @@
 #pragma once
 #include <string>
 #include "Core/ECS/ECS.h"
+#include "Common/dataStructs/String.h"
 
 struct Scene
 {
-	std::string sceneName;
+	NString sceneName;
 	Array<EntityHandle> sceneObjects;
 };
 
@@ -14,7 +15,7 @@ public:
 
 	//SceneManager();
 	static Scene currentScene;
-	static bool SaveScene(std::string filename, ECS& ecs, class Camera& camera);
+	static bool SaveScene(NString filename, ECS& ecs, class Camera& camera);
 	//static bool LoadScene(std::string filename, ECS& ecs, class Camera& camera);
 	//inline static sScene GetCurrentScene() { return currentScene; };
 	//static void RemoveObjectFromScene(EntityHandle entity, ECS& ecs);;
