@@ -30,35 +30,20 @@ vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
     return unprojectedPoint.xyz / unprojectedPoint.w;
 }
 
-
-void main()
-{
-    nearPoint = UnprojectPoint(position.x, position.y, 0.0, view, projection).xyz; // unprojecting on the near plane
-    farPoint = UnprojectPoint(position.x, position.y, 1.0, view, projection).xyz; // unprojecting on the far plane
-    gl_Position = vec4(position, 1.0); // using directly the clipped coordinates
-
-    //gl_Position = projection * view * transformMat * vec4(position, 1.0);
-    texCoord0 = texCoord;
-	VertColor = color;
-
-    fragView = view;
-    fragProj = projection;
+void main() {
+    vec3 p = position.xyz;
+    nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
+    farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
+    gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
 }
 
 #elif defined(FS_BUILD)
-uniform sampler2D diffuse;
-in vec2 texCoord0;
-in vec3 VertColor;
 
 in vec3 nearPoint;
 in vec3 farPoint;
-
 in mat4 fragView;
 in mat4 fragProj;
-
-float near = 0.01;
-float far = 100;
-
+layout(location = 0) out vec4 outColor;
 
 vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
     vec2 coord = fragPos3D.xz * scale;
@@ -76,34 +61,14 @@ vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
         color.x = 1.0;
     return color;
 }
-
 float computeDepth(vec3 pos) {
     vec4 clip_space_pos = fragProj * fragView * vec4(pos.xyz, 1.0);
     return (clip_space_pos.z / clip_space_pos.w);
 }
-float computeLinearDepth(vec3 pos) {
-    vec4 clip_space_pos = fragProj * fragView * vec4(pos.xyz, 1.0);
-    float clip_space_depth = (clip_space_pos.z / clip_space_pos.w) * 2.0 - 1.0; // put back between -1 and 1
-    float linearDepth = (2.0 * near * far) / (far + near - clip_space_depth * (far - near)); // get linear value between 0.01 and 100
-    return linearDepth / far; // normalize
-}
-
-
-
-layout (location = 0) out vec4 FinalColor;
-void main()
-{
+void main() {
     float t = -nearPoint.y / (farPoint.y - nearPoint.y);
-
     vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
-
     gl_FragDepth = computeDepth(fragPos3D);
-
-    float linearDepth = computeLinearDepth(fragPos3D);
-    float fading = max(0, (0.5 - linearDepth));
-
-    FinalColor = (grid(fragPos3D, 10, true) + grid(fragPos3D, 1, true))* float(t > 0); // adding multiple resolution for the grid
-    FinalColor.a *= fading;
-
+    outColor = grid(fragPos3D, 10, true) * float(t > 0);
 }
 #endif

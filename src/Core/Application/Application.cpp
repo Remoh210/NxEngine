@@ -321,7 +321,7 @@ int Application::Run()
 		//ImGui::End();
 		// render
 		// ------
-		EditorContext.Clear(glm::vec4(0.0, 0.0, 0.0, 0), true);
+		EditorContext.Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
 
 		//EditorContext.RenderMesh(vertexArray, testtex, trans);
 		debugRenderer.Update(deltaTime);

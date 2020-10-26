@@ -12,58 +12,54 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 			perspective(perspectiveIn),
 			mainCamera(CameraIn)
 {
-	 editorGridSlices = 10;
-	 editorGridScale = 20;
+	 editorGridSlices = 200;
+	 editorGridScale = 1000;
 
-	// editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
-	// editorGridDrawParams.shouldWriteDepth = true;
-	// editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
-	// editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
-    //             //Load and set shaders
-    // String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
-    // String LineShaderText;
-    // Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-    // Shader* grid_shader = new Shader(deviceIn, LineShaderText);
-	// editorGridVA->SetShader(grid_shader);
+	 editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
+	 editorGridDrawParams.shouldWriteDepth = true;
+	 editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
+	 editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+                 //Load and set shaders
+     String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/EditorGridSimpleShader.glsl");
+     String LineShaderText;
+     Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
+     Shader* grid_shader = new Shader(deviceIn, LineShaderText);
+	 MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
+	 editorGridVA->SetShader(grid_shader);
+	 editorGridVA->GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
-	// editorGridTransform.scale = vec3(editorGridScale);
-	// editorGridTransform.position.x = -0.5 * editorGridScale;
-	// editorGridTransform.position.z = -0.5 * editorGridScale;
+	 editorGridTransform.scale = vec3(editorGridScale);
+	 editorGridTransform.position.x = -0.5 * editorGridScale;
+	 editorGridTransform.position.z = -0.5 * editorGridScale;
+
+	 MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 
 	//Infinite grid
-	editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	editorGridDrawParams.shouldWriteDepth = true;
+	//editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	//editorGridDrawParams.shouldWriteDepth = true;
 	//editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
-	editorGridDrawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
-	editorGridDrawParams.destBlend = BLEND_FUNC_ONE_MINUS_SRC_ALPHA;
-	String GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
-    String GrigShaderText;
-    Application::loadTextFileWithIncludes(GrigShaderText, GrigShaderPath, "#include");
-	Shader* GRIDshader = new Shader(deviceIn, GrigShaderText);
-	MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
-	
-	
-	//MatrixUniformBuffer->Update(&perspectiveIn[0], sizeof(glm::mat4));
+	//editorGridDrawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
+	//editorGridDrawParams.destBlend = BLEND_FUNC_ONE_MINUS_SRC_ALPHA;
+	//String GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
+	// String GrigShaderText;
+	//Application::loadTextFileWithIncludes(GrigShaderText, GrigShaderPath, "#include");
+	//Shader* GRIDshader = new Shader(deviceIn, GrigShaderText);
+	//MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
+	//GRIDshader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
-	//MatrixUniformBuffer
+	//editorGridVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
+	//editorGridVA->SetShader(GRIDshader);
 
+	//editorGridTransform.scale = vec3(editorGridScale);
 
-    editorGridVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
-	editorGridVA->SetShader(GRIDshader);
-
-	//editorGridTransform.position.x = -0.5 * editorGridScale;
-    //editorGridTransform.position.z = -0.5 * editorGridScale;
-	editorGridTransform.scale = vec3(editorGridScale);
-
-	MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
+	//MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 	
 }
 
 void EditorRenderContext::Flush()
 {
 
-			//Draw Editor stuff first
-	DrawEditorHelpers();
+
 
 	DrawDebugShapes();
 
@@ -101,7 +97,8 @@ void EditorRenderContext::Flush()
         
         it->second.clear();
     }
-
+	//Draw Editor stuff first
+	DrawEditorHelpers();
 
 }
 
@@ -110,8 +107,6 @@ void EditorRenderContext::DrawEditorHelpers()
     Array<mat4> transforms;
 
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
-
-	editorGridVA->GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 	
 	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
 
