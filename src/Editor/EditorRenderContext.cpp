@@ -20,8 +20,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 	 editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
 	 editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
                  //Load and set shaders
-     String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/EditorGridSimpleShader.glsl");
-     String LineShaderText;
+     NString LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/EditorGridSimpleShader.glsl");
+     NString LineShaderText;
      Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
      Shader* grid_shader = new Shader(deviceIn, LineShaderText);
 	 MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
@@ -40,8 +40,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 	//editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
 	//editorGridDrawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
 	//editorGridDrawParams.destBlend = BLEND_FUNC_ONE_MINUS_SRC_ALPHA;
-	//String GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
-	// String GrigShaderText;
+	//NString GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
+	// NString GrigShaderText;
 	//Application::loadTextFileWithIncludes(GrigShaderText, GrigShaderPath, "#include");
 	//Shader* GRIDshader = new Shader(deviceIn, GrigShaderText);
 	//MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);

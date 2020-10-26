@@ -1,9 +1,9 @@
 #include "String.h"
 #include <fstream>
 
-Array<String> StringFuncs::split(const String& s, char delim)
+Array<NString> StringFuncs::split(const NString& s, char delim)
 {
-	Array<String> elems;
+	Array<NString> elems;
         
     const char* cstr = s.c_str();
     unsigned int strLength = (unsigned int)s.length();
@@ -26,7 +26,7 @@ Array<String> StringFuncs::split(const String& s, char delim)
     return elems;
 }
 
-String StringFuncs::getFilePath(const String& fileName)
+NString StringFuncs::getFilePath(const NString& fileName)
 {
 	const char* cstr = fileName.c_str();
 	unsigned int strLength = (unsigned int)fileName.length();
@@ -48,28 +48,28 @@ String StringFuncs::getFilePath(const String& fileName)
 	}
 }
 
-bool StringFuncs::loadTextFileWithIncludes(String& output, const String& fileName,
-		const String& includeKeyword)
+bool StringFuncs::loadTextFileWithIncludes(NString& output, const NString& fileName,
+		const NString& includeKeyword)
 {
 	std::ifstream file;
 	file.open(fileName.c_str());
 
-	String filePath = getFilePath(fileName);
+	NString filePath = getFilePath(fileName);
 	std::stringstream ss;
-	String line;
+	NString line;
 
 	if(file.is_open()) {
 		while(file.good()) {
 			getline(file, line);
 			
-			if(line.find(includeKeyword) == String::npos) {
+			if(line.find(includeKeyword) == NString::npos) {
 				ss << line << "\n";
 			} else {
-				String includeFileName = StringFuncs::split(line, ' ')[1];
+				NString includeFileName = StringFuncs::split(line, ' ')[1];
 				includeFileName =
 					includeFileName.substr(1,includeFileName.length() - 2);
 
-				String toAppend;
+				NString toAppend;
 				loadTextFileWithIncludes(toAppend, filePath + includeFileName,
 						includeKeyword);
 				ss << toAppend << "\n";

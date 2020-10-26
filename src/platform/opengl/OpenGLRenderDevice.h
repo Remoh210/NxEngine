@@ -173,15 +173,15 @@ public:
 	
 	uint32 ReleaseSampler(uint32 sampler);
     
-    void SetShaderSampler(uint32 shader, const String& samplerName,
+    void SetShaderSampler(uint32 shader, const NString& samplerName,
             uint32 texture, uint32 sampler, uint32 unit);
 
-	void SetShaderUniformBuffer(uint32 shader, const String& uniformBufferName,
+	void SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
 		uint32 buffer);
 
 	uint32 ReleaseShaderProgram(uint32 shader);
 
-	uint32 CreateShaderProgram(const String& shaderText);
+	uint32 CreateShaderProgram(const NString& shaderText);
 
 	uint32 CreateUniformBuffer(const void* data, uintptr dataSize,
 		enum BufferUsage usage);
@@ -201,7 +201,7 @@ public:
 	void SetVAO(uint32 vao);
 
 	uint32 GetVersion();
-	String GetShaderVersion();
+	NString GetShaderVersion();
 
 	static GLint GetOpenGLFormat(PixelFormat format);
 	static GLint GetOpenGLInternalFormat(PixelFormat format, bool bCompress);
@@ -222,8 +222,8 @@ private:
 	struct ShaderProgram
 	{
 		Array<uint32> shaders;
-		Map<String, int32> uniformMap;
-		Map<String, int32> samplerMap;
+		Map<NString, int32> uniformMap;
+		Map<NString, int32> samplerMap;
 	};
 
 	struct FBOData
@@ -250,7 +250,7 @@ private:
 
 	static bool bIsInitialized;
 	//DeviceContext context;
-	String shaderVersion;
+	NString shaderVersion;
 	uint32 version;
 	Map<uint32, VertexArray> vaoMap;
 	Map<uint32, FBOData> fboMap;

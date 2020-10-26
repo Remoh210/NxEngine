@@ -30,8 +30,8 @@ public:
 	void processInput(GLFWwindow *window);
 
 
-	static bool loadTextFileWithIncludes(String& output, const String& fileName,
-		const String& includeKeyword);
+	static bool loadTextFileWithIncludes(NString& output, const NString& fileName,
+		const NString& includeKeyword);
 
 private:
 	Application(float Width, float Height);

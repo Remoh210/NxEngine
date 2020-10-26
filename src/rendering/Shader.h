@@ -7,7 +7,7 @@
 class Shader
 {
 public:
-    Shader(RenderDevice& deviceIn, const String& shaderText):
+    Shader(RenderDevice& deviceIn, const NString& shaderText):
             mRenderDevice(&deviceIn),
             mProgramId(deviceIn.CreateShaderProgram(shaderText))
             {}
@@ -17,12 +17,12 @@ public:
 		//mRenderDevice->ReleaseShaderProgram(deviceId);
 	}
 
-	inline void SetUniformBuffer(const String& name, UniformBuffer& buffer)
+	inline void SetUniformBuffer(const NString& name, UniformBuffer& buffer)
 	{
 		mRenderDevice->SetShaderUniformBuffer(mProgramId, name, buffer.GetId());
 	}
 
-    inline void SetSampler(const String& name, Texture& texture, Sampler& sampler,
+    inline void SetSampler(const NString& name, Texture& texture, Sampler& sampler,
             uint32 unit)
     {
         mRenderDevice->SetShaderSampler(mProgramId, name, texture.GetId(), sampler.GetId(), unit);

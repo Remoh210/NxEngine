@@ -59,6 +59,8 @@ target_link_libraries(imgui PRIVATE glad)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/imgui)
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/Include)
+
 #Stb_image
 add_library(stb_image STATIC ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.h ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.c)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/stb_image)

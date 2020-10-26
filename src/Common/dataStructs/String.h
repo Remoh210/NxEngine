@@ -5,7 +5,7 @@
 #include "Common/Common.h"
 #include "Common/dataStructs/Array.h"
 
-#define String std::string
+#define NString std::string
 
 //class String : public std::string
 //{
@@ -33,16 +33,16 @@
 struct StringFuncs
 {
 	template<typename T>
-	static inline String toString(T val)
+	static inline NString toString(T val)
 	{
 		std::ostringstream convert;
 		convert << val;
 		return convert.str();
 	}
 
-	static Array<String> split(const String& s, char delim);
-	static String getFilePath(const String& fileName);
-	static bool loadTextFileWithIncludes(String& output, const String& fileName,
-	const String& includeKeyword);
+	static Array<NString> split(const NString& s, char delim);
+	static NString getFilePath(const NString& fileName);
+	static bool loadTextFileWithIncludes(NString& output, const NString& fileName,
+	const NString& includeKeyword);
 };
 

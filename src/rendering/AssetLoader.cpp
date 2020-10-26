@@ -11,10 +11,10 @@ void AssetLoader::SetShouldFlipVTexture(bool bValue)
 	stbi_set_flip_vertically_on_load(bValue);
 }
 
-String AssetLoader::mModelDirectory = "NULL_DIR";
-Array<String*> AssetLoader::mLoadedTextures;
+NString AssetLoader::mModelDirectory = "NULL_DIR";
+Array<NString*> AssetLoader::mLoadedTextures;
 
-bool AssetLoader::LoadModels(const String& fileName,
+bool AssetLoader::LoadModels(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<Material>& materials)
 {
@@ -76,7 +76,7 @@ bool AssetLoader::LoadModels(const String& fileName,
 		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0 &&
 			material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath)
 			!= AI_SUCCESS) {
-			String str(texturePath.data);
+			NString str(texturePath.data);
 			spec.textureNames["diffuse"] = str;
 		}
 		//materials.push_back(spec);
@@ -86,7 +86,7 @@ bool AssetLoader::LoadModels(const String& fileName,
 }
 
 
-unsigned int AssetLoader::TextureFromFile(String path)
+unsigned int AssetLoader::TextureFromFile(NString path)
 {
     unsigned int textureID;
     glGenTextures(1, &textureID);
@@ -124,7 +124,7 @@ unsigned int AssetLoader::TextureFromFile(String path)
 }
 
 
-void AssetLoader::LoadModel(const String& fileName,
+void AssetLoader::LoadModel(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<Material>& materials)
 {
@@ -146,7 +146,7 @@ void AssetLoader::LoadModel(const String& fileName,
 }
 
 
-void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const String& fileName,
+void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<Material>& materials)
 {
@@ -165,7 +165,7 @@ void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const String& 
 	}
 }
 
-void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const String& fileName,
+void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<Material>& materials)
 {
@@ -218,20 +218,20 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const String& 
 }
 
 
-void AssetLoader::LoadMaterialTextures(const String& filePath, aiMaterial *mat, aiTextureType type, Material& material, std::string typeName)
+void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat, aiTextureType type, Material& material, NString typeName)
 {
 
 	// retrieve the directory path of the filepath
-	String myDirectory = filePath.substr(0, filePath.find_last_of('/'));
+	NString myDirectory = filePath.substr(0, filePath.find_last_of('/'));
 
-	String TexturePath;
+	NString TexturePath;
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 	{
 		aiString str;
 		mat->GetTexture(type, i, &str);
-		std::string mystr(str.C_Str());
+		NString mystr(str.C_Str());
 		DEBUG_LOG_TEMP("Texture Name: %s", str.C_Str());
-		String TexturePath = myDirectory + "/" + str.C_Str();
+		NString TexturePath = myDirectory + "/" + str.C_Str();
 		material.textureNames[typeName] = TexturePath;
 	}
 }

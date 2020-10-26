@@ -22,12 +22,12 @@
 #include <experimental/filesystem>
 
 
-String TEST_TEXTURE_FILE     = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
-String SHADER_TEXT_FILE      = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
-//String LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
-String TEST_MODEL_FILE       = Nx::FileSystem::GetPath("res/models/monkey3.obj");
-String TEST_MODEL_FILE2      = Nx::FileSystem::GetPath("res/models/rock/rock.obj");
-String TEST_TEXTURE_FILE2    = Nx::FileSystem::GetPath("res/models/rock/rock.png");
+NString TEST_TEXTURE_FILE     = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
+NString SHADER_TEXT_FILE      = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
+//NString LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
+NString TEST_MODEL_FILE       = Nx::FileSystem::GetPath("res/models/monkey3.obj");
+NString TEST_MODEL_FILE2      = Nx::FileSystem::GetPath("res/models/rock/rock.obj");
+NString TEST_TEXTURE_FILE2    = Nx::FileSystem::GetPath("res/models/rock/rock.png");
 
 
 // settings
@@ -181,7 +181,7 @@ int Application::Run()
 
 	ecs.MakeEntity(transformComp2, renderableMesh2);
 
-	String shaderText;
+	NString shaderText;
     loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
     Shader shader(renderDevice, shaderText);
 
@@ -433,7 +433,7 @@ void Application::DisplayEntyties(ECS& ecs)
 
 }
 
-void Application::loadEntityToScene(ECS& ecs, string name)
+void Application::loadEntityToScene(ECS& ecs, NString name)
 {
 	//TransformComponent transformComponent;
 	//transformComponent.transform.position = vec3f(0.f, 0.f, 0.f);
@@ -734,28 +734,28 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 }
 
 
-bool Application::loadTextFileWithIncludes(String& output, const String& fileName,
-		const String& includeKeyword)
+bool Application::loadTextFileWithIncludes(NString& output, const NString& fileName,
+		const NString& includeKeyword)
 {
 	std::ifstream file;
 	file.open(fileName.c_str());
 
-	String filePath = StringFuncs::getFilePath(fileName);
+	NString filePath = StringFuncs::getFilePath(fileName);
 	std::stringstream ss;
-	String line;
+	NString line;
 
 	if(file.is_open()) {
 		while(file.good()) {
 			getline(file, line);
 			
-			if(line.find(includeKeyword) == String::npos) {
+			if(line.find(includeKeyword) == NString::npos) {
 				ss << line << "\n";
 			} else {
-				String includeFileName = StringFuncs::split(line, ' ')[1];
+				NString includeFileName = StringFuncs::split(line, ' ')[1];
 				includeFileName =
 					includeFileName.substr(1,includeFileName.length() - 2);
 
-				String toAppend;
+				NString toAppend;
 				loadTextFileWithIncludes(toAppend, filePath + includeFileName,
 						includeKeyword);
 				ss << toAppend << "\n";

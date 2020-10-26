@@ -5,8 +5,8 @@
 
 struct Material
 {
-	Map<String, String> textureNames;
-	Map<String, float> floats;
-	Map<String, vec3> vectors;
+	Map<NString, NString> textureNames;
+	Map<NString, float> floats;
+	Map<NString, vec3> vectors;
 	//Map<String, mat4> matrices;
 };

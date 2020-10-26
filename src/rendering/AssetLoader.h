@@ -11,28 +11,28 @@ public:
 	static void SetShouldFlipVTexture(bool bValue);
 
 
-	static bool LoadModels(const String& fileName,
+	static bool LoadModels(const NString& fileName,
 			Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 			Array<Material>& materials);
 
-	static unsigned int TextureFromFile(String path);
+	static unsigned int TextureFromFile(NString path);
 
-	static void LoadModel(const String& fileName,
+	static void LoadModel(const NString& fileName,
 		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 		Array<Material>& materials);
 
 private:
 
-	static void ProcessNode(aiNode *node, const aiScene *scene, const String& fileName,
+	static void ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
 		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 		Array<Material>& materials);
 
-	static void ProcessMesh(aiMesh* mesh, const aiScene* scene, const String& fileName,
+	static void ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString& fileName,
 		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 		Array<Material>& materials);
 
-	static void LoadMaterialTextures(const String& filePath, aiMaterial *mat, aiTextureType type, Material& material, std::string typeName);
+	static void LoadMaterialTextures(const NString& filePath, aiMaterial *mat, aiTextureType type, Material& material, NString typeName);
 
-	static String mModelDirectory;
-	static Array<String*> mLoadedTextures;
+	static NString mModelDirectory;
+	static Array<NString*> mLoadedTextures;
 };

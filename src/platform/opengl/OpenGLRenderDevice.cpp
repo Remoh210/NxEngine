@@ -5,13 +5,13 @@
 
 bool OpenGLRenderDevice::bIsInitialized = false;
 
-static bool AddShader(GLuint shaderProgram, const String& text, GLenum type,
+static bool AddShader(GLuint shaderProgram, const NString& text, GLenum type,
 		Array<GLuint>* shaders);
-static void AddAllAttributes(GLuint program, const String& vertexShaderText, uint32 version);
+static void AddAllAttributes(GLuint program, const NString& vertexShaderText, uint32 version);
 static bool CheckShaderError(GLuint shader, int flag,
-		bool isProgram, const String& errorMessage);
-static void AddShaderUniforms(GLuint shaderProgram, const String& shaderText,
-		Map<String, GLint>& uniformMap, Map<String, GLint>& samplerMap);
+		bool isProgram, const NString& errorMessage);
+static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
+		Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap);
 
 bool OpenGLRenderDevice::GlobalInit() 
 {
@@ -470,7 +470,7 @@ GLint OpenGLRenderDevice::GetOpenGLFormat(PixelFormat format)
 	};
 }
 
-uint32 OpenGLRenderDevice::CreateShaderProgram(const String& shaderText)
+uint32 OpenGLRenderDevice::CreateShaderProgram(const NString& shaderText)
 {
 	GLuint shaderProgram = glCreateProgram();
 
@@ -480,10 +480,10 @@ uint32 OpenGLRenderDevice::CreateShaderProgram(const String& shaderText)
         return (uint32)-1;
     }
 
-	String version = GetShaderVersion();
-	String vertexShaderText = "#version " + version +
+	NString version = GetShaderVersion();
+	NString vertexShaderText = "#version " + version +
 		"\n#define VS_BUILD\n#define GLSL_VERSION " + version + "\n" + shaderText;
-	String fragmentShaderText = "#version " + version +
+	NString fragmentShaderText = "#version " + version +
 		"\n#define FS_BUILD\n#define GLSL_VERSION " + version + "\n" + shaderText;
 
 	ShaderProgram programData;
@@ -659,7 +659,7 @@ void OpenGLRenderDevice::SetVAO(uint32 vao)
 	boundVAO = vao;
 }
 
-static bool AddShader(GLuint shaderProgram, const String& text, GLenum type,
+static bool AddShader(GLuint shaderProgram, const NString& text, GLenum type,
 		Array<GLuint>* shaders)
 {
 	GLuint shader = glCreateShader(type);
@@ -695,8 +695,8 @@ static bool AddShader(GLuint shaderProgram, const String& text, GLenum type,
 	return true;
 }
 
-static void AddShaderUniforms(GLuint shaderProgram, const String& shaderText,
-		Map<String, GLint>& uniformMap, Map<String, GLint>& samplerMap)
+static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
+		Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap)
 {
 	GLint numBlocks;
 	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORM_BLOCKS, &numBlocks);
@@ -707,7 +707,7 @@ static void AddShaderUniforms(GLuint shaderProgram, const String& shaderText,
 
 		Array<GLchar> name(nameLen);
 		glGetActiveUniformBlockName(shaderProgram, block, nameLen, NULL, &name[0]);
-		String uniformBlockName((char*)&name[0], nameLen-1);
+		NString uniformBlockName((char*)&name[0], nameLen-1);
 		uniformMap[uniformBlockName] = glGetUniformBlockIndex(shaderProgram, &name[0]);
 	}
 
@@ -727,12 +727,12 @@ static void AddShaderUniforms(GLuint shaderProgram, const String& shaderText,
 					"Non-sampler2d uniforms currently unsupported!");
 			continue;
 		}
-		String name((char*)&uniformName[0], actualLength - 1);
+		NString name((char*)&uniformName[0], actualLength - 1);
 		samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
 	}
 }
 
-static void AddAllAttributes(GLuint program, const String& vertexShaderText, uint32 version)
+static void AddAllAttributes(GLuint program, const NString& vertexShaderText, uint32 version)
 {
 	if(version >= 320) {
 		// Layout is enabled. Return.
@@ -781,7 +781,7 @@ uint32 OpenGLRenderDevice::GetVersion()
 }
 
 static bool CheckShaderError(GLuint shader, int flag,
-		bool isProgram, const String& errorMessage)
+		bool isProgram, const NString& errorMessage)
 {
 	GLint success = 0;
     GLchar error[1024] = { 0 };
@@ -806,7 +806,7 @@ static bool CheckShaderError(GLuint shader, int flag,
 }
 
 
-String OpenGLRenderDevice::GetShaderVersion()
+NString OpenGLRenderDevice::GetShaderVersion()
 {
     if(!shaderVersion.empty()) {
 		return shaderVersion;
@@ -899,7 +899,7 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
     glUniform1i(shaderProgramMap[shader].samplerMap[samplerName], unit);
 }
 
-void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const String& uniformBufferName,
+void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
 	uint32 buffer)
 {
 	SetShader(shader);
