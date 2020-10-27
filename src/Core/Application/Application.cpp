@@ -71,33 +71,38 @@ int Application::Run()
 	window.SetMouseCallback
 	(
 		[this] (int xpos, int ypos)
-	{
-		if (firstMouse)
 		{
+			if (firstMouse)
+			{
+				lastX = xpos;
+				lastY = ypos;
+				firstMouse = false;
+			}
+
+			float xoffset = xpos - lastX;
+			float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
 			lastX = xpos;
 			lastY = ypos;
-			firstMouse = false;
+
+			Application::GetMainCamera()->ProcessMouseMovement(xoffset, yoffset);
 		}
-
-		float xoffset = xpos - lastX;
-		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-		lastX = xpos;
-		lastY = ypos;
-
-		Application::GetMainCamera()->ProcessMouseMovement(xoffset, yoffset);
-	}
 	);
 
 
 	ImGui::CreateContext();
+
+
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
 	ImGui_ImplGlfw_InitForOpenGL(window.GetWindowHandle(), true);
 	ImGui_ImplOpenGL3_Init("#version 410");
 	ImGui::StyleColorsDark();
 
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	//cSceneManager::LoadScene("test", ecs, *GetMainCamera());
+
+	//cSceneManager::LoadScene("TestScene.json", ecs, *GetMainCamera());
 
 
 	uint32 fps = 0;
@@ -129,7 +134,7 @@ int Application::Run()
 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	drawParams.faceCulling = FACE_CULL_FRONT;
+	drawParams.faceCulling = FACE_CULL_NONE;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
 	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
@@ -164,8 +169,6 @@ int Application::Run()
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp.transform.scale = vec3(7.0f);
 
-
-
 	//model2 
 	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
 	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
@@ -199,9 +202,6 @@ int Application::Run()
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp3.transform.scale = vec3(10.0f);
 
-
-	
-	
 	
 	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp, renderableMesh));
 	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp3, renderableMesh3));
@@ -240,21 +240,18 @@ int Application::Run()
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
-
-
-
 		ImGui::NewFrame();
 
 		ImVec2 VecScreen(windowWidth/5, windowHeight/5);
-		ImVec2 VecPos(0, 0);
+		ImVec2 VecPosRel = ImGui::GetMainViewport()->Pos;
+		ImVec2 VecPos(150, 150);
 		ImGui::SetNextWindowSize(VecScreen);
-		ImGui::SetNextWindowPos(VecPos);
-
-
+		ImGui::SetNextWindowPos(VecPosRel);
 		ImGuiWindowFlags window_flags = 0;
 		//window_flags |= ImGuiWindowFlags_NoTitleBar;
 		//if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
 		window_flags |= ImGuiWindowFlags_MenuBar;
+		window_flags |= ImGuiWindowFlags_NoDocking;
 		//window_flags |= ImGuiWindowFlags_NoMove;
 		//window_flags |= ImGuiWindowFlags_NoResize;
 		//window_flags |= ImGuiWindowFlags_NoCollapse;
@@ -308,12 +305,9 @@ int Application::Run()
 			debugRenderer.DrawDebugSphere(debugSpherePos, 0, 10, vec3(0, 1, 0));
 		}
 
-
-
 		// input
 		// -----
-		processInput(window.GetWindowHandle());
-
+		
 		//// Start the Dear ImGui frame
 		//ImGui_ImplOpenGL3_NewFrame();
 		//ImGui_ImplGlfw_NewFrame();
@@ -327,31 +321,35 @@ int Application::Run()
 		//ImGui::Begin("TestImageWindow");
 		//ImGui::Image((void*)testtex.GetId(), sizeP);
 		//ImGui::End();
+
 		// render
 		// ------
 		EditorContext.Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
-
-		//EditorContext.RenderMesh(vertexArray, testtex, trans);
 		debugRenderer.Update(deltaTime);
-
 		ecs.UpdateSystems(systemList, 0.0f);
-
 		EditorContext.Flush();
-
-		//
-
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		//
-		
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		
+		processInput(window.GetWindowHandle());
+		glfwPollEvents();
 		window.Present();
 
-		glfwPollEvents();
+		GLFWwindow* backup_current_context = glfwGetCurrentContext();
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(backup_current_context);
 	}
+
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	//glfwDestroyWindow(window);
+	glfwTerminate();
 
 	return 0;
 }
@@ -387,6 +385,11 @@ Application::Application(float Width, float Height)
 
 }
 
+
+void Application::Initialize()
+{
+
+}
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------

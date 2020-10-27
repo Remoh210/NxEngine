@@ -46,6 +46,7 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
         glfwTerminate();
     }
     glfwMakeContextCurrent(window);
+	glfwSwapInterval(1); // Enable vsync
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, GLFWPlatformWindow::GLFWMouseCallback);
     gladLoadGL(glfwGetProcAddress);

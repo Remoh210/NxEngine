@@ -36,6 +36,8 @@ public:
 private:
 	Application(float Width, float Height);
 
+	void Initialize();
+
 	void DisplayEntyties(ECS& ecs);
 
 	void ShowContentWindow(ECS& ecs);
