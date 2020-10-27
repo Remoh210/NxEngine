@@ -183,7 +183,7 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 	FILE* fp = fopen(fileToLoadFullPath.c_str(), "rb"); // non-Windows use "r"
 	if (!fp)
 	{
-		DEBUG_LOG("SceneMager", "ERROR", "No such scene: %s", fileToLoadFullPath);
+        DEBUG_LOG("SceneMager", "ERROR", "No such scene: %s", fileToLoadFullPath.c_str());
 		return false;
 	}
 	char readBuffer[65536];
