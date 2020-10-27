@@ -95,6 +95,8 @@ int Application::Run()
 	ImGui_ImplOpenGL3_Init("#version 410");
 	ImGui::StyleColorsDark();
 
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	//cSceneManager::LoadScene("test", ecs, *GetMainCamera());
 
 
@@ -247,7 +249,6 @@ int Application::Run()
 		ImVec2 VecPos(0, 0);
 		ImGui::SetNextWindowSize(VecScreen);
 		ImGui::SetNextWindowPos(VecPos);
-
 
 
 		ImGuiWindowFlags window_flags = 0;
@@ -479,7 +480,7 @@ void Application::GUI_ShowMenuBar(ECS& ecs)
 		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 		{
 
-			SceneManager::LoadScene("test", *GetMainCamera());
+			SceneManager::LoadScene("TestScene.json", *GetMainCamera());
 	
 		}
 

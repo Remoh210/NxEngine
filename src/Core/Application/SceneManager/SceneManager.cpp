@@ -62,8 +62,16 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	rapidjson::Value temp(camera.Position[i]);
 	 	CameraPosArray.PushBack(temp, allocator);
 	 }
+
+	 rapidjson::Value CamYaw(camera.Yaw);
+
+	 rapidjson::Value CamPitch(camera.Pitch);
+	
 	 CameraObj.AddMember("Speed", CameraSpeed, allocator);
 	 CameraObj.AddMember("Position", CameraPosArray, allocator);
+	 CameraObj.AddMember("Yaw", CamYaw, allocator);
+	 CameraObj.AddMember("Pitch", CamPitch, allocator);
+
 
 
 	 //GameObjects
@@ -158,96 +166,104 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 		//TODO: Log
 		return false;
 	}
-	//HACK HACK HACK CLEAR ALL ENTITIES BEFORE LOADING THE SCENE
-	for (const auto entity : ecs->GetEntities())
+
+	int count = currentScene.sceneObjects.size();
+	for (int i = 0; i < count; i++)
 	{
-		int count = currentScene.sceneObjects.size();
-		for (int i = 0; i < count; i++)
-		{
-			RemoveObjectFromScene(currentScene.sceneObjects[i]);
-		}
-
-		currentScene.sceneObjects.clear();
-
-		std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename;
-
-
-		rapidjson::Document doc;
-		FILE* fp = fopen(fileToLoadFullPath.c_str(), "rb"); // non-Windows use "r"
-		if (!fp)
-		{
-			DEBUG_LOG("SceneMager", "ERROR", "No such scene: %s", fileToLoadFullPath);
-			return false;
-		}
-		char readBuffer[65536];
-		rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-		doc.ParseStream(is);
-		fclose(fp);
-
-
-		//Camera
-		float Speed;
-		glm::vec3 CameraPos;
-		rapidjson::Value& CameraPosArray = doc["Camera"]["Position"];
-
-		camera.MovementSpeed = doc["Camera"]["Speed"].GetFloat();
-		for (rapidjson::SizeType i = 0; i < CameraPosArray.Size(); i++)
-		{
-			CameraPos[i] = CameraPosArray[i].GetFloat();
-			std::cout << "CameraPos: [ " << CameraPos[i] << " ]" << std::endl;
-		}
-		camera.Position = CameraPos;
-
-
-
-		//Game Objects
-		const rapidjson::Value& GameObjects = doc["GameObjects"];
-
-
-		for (rapidjson::SizeType i = 0; i < GameObjects.Size(); i++)
-		{
-
-			//RenderComponent renderComponent;
-			//renderComponent.diffuse = vec4f(0.2f, 0.4f, 0.5f, 1.f);
-
-			//renderComponent.mesh = GameObjects[i]["Name"].GetString();
-			//renderComponent.bIsVisible = GameObjects[i]["Visible"].GetBool();
-			//renderComponent.bIsWireFrame = GameObjects[i]["Wireframe"].GetBool();
-			//renderComponent.meshPath = GameObjects[i]["Mesh"].GetString();
-			//renderComponent.shader = GameObjects[i]["Shader"].GetString();
-
-			//const rapidjson::Value& DiffuseArray = GameObjects[i]["DiffuseRGB_Alpha"];
-			//for (rapidjson::SizeType i = 0; i < DiffuseArray.Size(); i++) {
-
-			//	renderComponent.diffuse[i] = DiffuseArray[i].GetFloat();
-
-			//}
-
-			TransformComponent transformComponent;
-
-			const rapidjson::Value& PositionArray = GameObjects[i]["Position"];
-			for (rapidjson::SizeType i = 0; i < PositionArray.Size(); i++) {
-				transformComponent.transform.position[i] = PositionArray[i].GetFloat();
-			}
-
-
-			const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
-			for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++) {
-				transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
-			}
-
-
-			const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
-			for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) {
-
-				transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
-
-			}
-
-			//EntityHandle entity = ecs->MakeEntity(renderComponent, transformComponent);
-
-			currentScene.sceneObjects.Add(entity);
-		}
+		//RemoveObjectFromScene(currentScene.sceneObjects[i]);
 	}
+
+
+    //currentScene.sceneObjects.clear();
+
+	std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename;
+
+
+	rapidjson::Document doc;
+	FILE* fp = fopen(fileToLoadFullPath.c_str(), "rb"); // non-Windows use "r"
+	if (!fp)
+	{
+		DEBUG_LOG("SceneMager", "ERROR", "No such scene: %s", fileToLoadFullPath);
+		return false;
+	}
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	doc.ParseStream(is);
+	fclose(fp);
+
+	//Camera
+	float Speed;
+	glm::vec3 CameraPos;
+	rapidjson::Value& CameraPosArray = doc["Camera"]["Position"];
+
+	camera.MovementSpeed = doc["Camera"]["Speed"].GetFloat();
+	for (rapidjson::SizeType i = 0; i < CameraPosArray.Size(); i++)
+	{
+		CameraPos[i] = CameraPosArray[i].GetFloat();
+		std::cout << "CameraPos: [ " << CameraPos[i] << " ]" << std::endl;
+	}
+	camera.Position = CameraPos;
+
+	camera.Yaw = doc["Camera"]["Yaw"].GetFloat();
+	camera.Pitch = doc["Camera"]["Pitch"].GetFloat();
+
+	camera.updateCameraVectors();
+
+	////HACK HACK HACK CLEAR ALL ENTITIES BEFORE LOADING THE SCENE
+	//for (const auto entity : ecs->GetEntities())
+	//{
+
+
+
+
+	//	//Game Objects
+	//	const rapidjson::Value& GameObjects = doc["GameObjects"];
+
+
+	//	for (rapidjson::SizeType i = 0; i < GameObjects.Size(); i++)
+	//	{
+
+	//		//RenderComponent renderComponent;
+	//		//renderComponent.diffuse = vec4f(0.2f, 0.4f, 0.5f, 1.f);
+
+	//		//renderComponent.mesh = GameObjects[i]["Name"].GetString();
+	//		//renderComponent.bIsVisible = GameObjects[i]["Visible"].GetBool();
+	//		//renderComponent.bIsWireFrame = GameObjects[i]["Wireframe"].GetBool();
+	//		//renderComponent.meshPath = GameObjects[i]["Mesh"].GetString();
+	//		//renderComponent.shader = GameObjects[i]["Shader"].GetString();
+
+	//		//const rapidjson::Value& DiffuseArray = GameObjects[i]["DiffuseRGB_Alpha"];
+	//		//for (rapidjson::SizeType i = 0; i < DiffuseArray.Size(); i++) {
+
+	//		//	renderComponent.diffuse[i] = DiffuseArray[i].GetFloat();
+
+	//		//}
+
+	//		TransformComponent transformComponent;
+
+	//		const rapidjson::Value& PositionArray = GameObjects[i]["Position"];
+	//		for (rapidjson::SizeType i = 0; i < PositionArray.Size(); i++) {
+	//			transformComponent.transform.position[i] = PositionArray[i].GetFloat();
+	//		}
+
+
+	//		const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
+	//		for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++) {
+	//			transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
+	//		}
+
+
+	//		const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
+	//		for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) {
+
+	//			transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
+
+	//		}
+
+	//		//EntityHandle entity = ecs->MakeEntity(renderComponent, transformComponent);
+
+	//		currentScene.sceneObjects.Add(entity);
+	//	}
+	//}
 	return true;
 }
