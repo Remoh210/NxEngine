@@ -3,15 +3,16 @@
 #include "Core/ECS/ECS.h"
 #include "Core/ECS/Component.h"
 //#include "utilComponents.hpp"
-#include <Editor/EditorRenderContext.h>
-#include <Core/Components/RenderComponent.h>
-#include <Core/Components/TransformComponent.h>
+#include "Editor/EditorRenderContext.h"
+#include "Core/Components/TransformComponent.h"
+#include "Core/Graphics/Material/Material.h"
 
 
 
 struct RenderableMeshComponent : public Component<RenderableMeshComponent>
 {
 	VertexArray* vertexArray = nullptr;
+	ModelMaterial* material = nullptr;
 	Texture* texture = nullptr;
 	Shader* shader = nullptr;
 	int numInst = 0;

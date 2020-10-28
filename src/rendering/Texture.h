@@ -3,6 +3,13 @@
 #include "ArrayBitmap.h"
 #include "RenderDevice.h"
 
+enum TextureType
+{
+    Diffuse,
+    Normal,
+    Alpha
+};
+
 class Texture
 {
 

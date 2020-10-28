@@ -2,7 +2,6 @@
 #include "Core/ECS/Component.h"
 //#include "utilComponents.hpp"
 #include <Editor/EditorRenderContext.h>
-#include <Core/Components/RenderComponent.h>
 #include <Core/Components/TransformComponent.h>
 
 

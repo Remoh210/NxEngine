@@ -164,6 +164,8 @@ int Application::Run()
 	RenderableMeshComponent renderableMesh;
 	renderableMesh.vertexArray = &vertexArray;
 	renderableMesh.texture = &testtex;
+	//renderableMesh.material->diffuseTextures.Add(&testtex);
+	//renderableMesh.material->shader = &shader;
 	TransformComponent transformComp;
 	transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
@@ -441,7 +443,6 @@ void Application::DisplayEntyties(ECS& ecs)
 	entities = ecs.GetEntities();
 	for (int i = 0; i < entities.size(); i++)
 	{
-		DEBUG_LOG_TEMP(ecs.GetComponent<RenderComponent>(entities[i])->mesh.c_str());
 	}
 
 }
