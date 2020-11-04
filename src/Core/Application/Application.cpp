@@ -5,7 +5,6 @@
 
 #include <Core/Components/TransformComponent.h>
 #include <Core/Systems/RenderSystem.h>
-#include <Core/Systems/LineRenderSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 #include <Core/Application/SceneManager/SceneManager.h>
@@ -151,7 +150,7 @@ int Application::Run()
 	//model 1
 	Array<IndexedModel> models;
 	Array<uint32> modelMaterialIndices;
-	Array<Material> modelMaterials;
+	Array<MaterialSpec> modelMaterials;
 	AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
 	VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 
@@ -161,9 +160,19 @@ int Application::Run()
 
 	uint32 dbgTex = AssetLoader::TextureFromFile(TEST_TEXTURE_FILE);
 
-	RenderableMeshComponent renderableMesh;
-	renderableMesh.vertexArray = &vertexArray;
-	renderableMesh.texture = &testtex;
+
+	NString shaderText;
+	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+	Shader shader(renderDevice, shaderText);
+
+	MeshInfo meshInfo1;
+	meshInfo1.vertexArray = &vertexArray;
+	Material material1;
+	material1.shader = &shader;
+	material1.diffuseTextures.Add(&testtex);
+	meshInfo1.material = &material1;
+	StaticMeshComponent renderableMesh;
+	renderableMesh.meshes.Add(&meshInfo1);
 	//renderableMesh.material->diffuseTextures.Add(&testtex);
 	//renderableMesh.material->shader = &shader;
 	TransformComponent transformComp;
@@ -179,26 +188,29 @@ int Application::Run()
 	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
 	Texture testtex2(renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
 
-	RenderableMeshComponent renderableMesh2;
-	renderableMesh2.vertexArray = &vertexArray2;
-	renderableMesh2.texture = &testtex2;
+	MeshInfo meshInfo2;
+	meshInfo2.vertexArray = &vertexArray2;
+	Material material2;
+	material2.shader = &shader;
+	material2.diffuseTextures.Add(&testtex2);
+	meshInfo2.material = &material2;
+	StaticMeshComponent renderableMesh2;
+	renderableMesh2.meshes.Add(&meshInfo2);
 	renderableMesh2.numInst = 100;
 	TransformComponent transformComp2;
 	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp2.transform.scale = vec3(7.0f);
 
-	
 
-	NString shaderText;
-    loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-    Shader shader(renderDevice, shaderText);
-
-	RenderableMeshComponent renderableMesh3;
-	renderableMesh3.vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
-	renderableMesh3.vertexArray->SetShader(&shader);
-	renderableMesh3.texture = &testtex;
-	renderableMesh3.numInst = 1;
+	MeshInfo* meshInfo3 = new MeshInfo();
+	meshInfo3->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
+	Material material3;
+	material3.shader = &shader;
+	material3.diffuseTextures.Add(&testtex);
+	meshInfo3->material = &material3;
+	StaticMeshComponent renderableMesh3;
+	renderableMesh3.meshes.Add(meshInfo3);
 	TransformComponent transformComp3;
 	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
@@ -222,9 +234,9 @@ int Application::Run()
 	PrimitiveGenerator GridPrimitiveGenerator;
 	VertexArray vertexArrayGRID(renderDevice, GridPrimitiveGenerator.CreateGridVA(20), USAGE_STATIC_DRAW);
 
-
-    vertexArray.SetShader(&shader);
-    vertexArray2.SetShader(&shader);
+	renderableMesh.shader = &shader;
+	renderableMesh2.shader = &shader;
+	renderableMesh3.shader = &shader;
 
 	DebugRenderer debugRenderer(EditorContext);
 	for (int i = 0; i < 1; i++)

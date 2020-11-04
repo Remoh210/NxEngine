@@ -58,48 +58,48 @@ EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& t
 
 void EditorRenderContext::Flush()
 {
-
-
-
-	DrawDebugShapes();
-
-    Texture* currentTexture = nullptr;
-    for(Map<std::pair<VertexArray*, Texture*>, Array<mat4> >::iterator it
-            = meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
-    {
-        
-        VertexArray* vertexArray = it->first.first;
-        Texture* texture = it->first.second;
-        mat4* transforms = &it->second[0];
-        size_t numTransforms = it->second.size();
-
-        if(numTransforms == 0)
-        {
-            continue;
-        }
-
-        Shader& modelShader = *vertexArray->GetShader();
-
-        if(texture != currentTexture)
-        {
-            modelShader.SetSampler("diffuse", *texture, sampler, 0);
-        }
-        vertexArray->UpdateBuffer(4, transforms, numTransforms*sizeof(mat4));
-		if (vertexArray->GetNumIndices() == 0)
-		{
-			mRenderDevice->DrawArrays(mRenderTarget->GetId(), modelShader.GetId(), vertexArray->GetId(),
-				drawParams, 300);
-		}
-		else
-		{
-			Draw(modelShader, *vertexArray, drawParams, numTransforms);
-		}
-        
-        it->second.clear();
-    }
 	//Draw Editor stuff first
 	DrawEditorHelpers();
+	DrawDebugShapes();
 
+    for(Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
+            = meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
+    {
+		//if (numTransforms == 0)
+		//{
+		//	continue;
+		//}
+
+		mat4* transforms = &it->second[0];
+		size_t numTransforms = it->second.size();
+		//Shader* modelShader = it->first.second;
+
+		for (MeshInfo* mesh : it->first.first)
+		{
+
+			VertexArray* vertexArray = mesh->vertexArray;
+			Texture* texture = mesh->material->diffuseTextures[0];
+			Shader * modelShader = mesh->material->shader;
+
+			if (texture != nullptr)
+			{
+				modelShader->SetSampler("diffuse", *texture, sampler, 0);
+			}
+			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
+			if (vertexArray->GetNumIndices() == 0)
+			{
+				mRenderDevice->DrawArrays(mRenderTarget->GetId(), modelShader->GetId(), vertexArray->GetId(),
+					drawParams, 300);
+			}
+			else
+			{
+				Draw(*modelShader, *vertexArray, drawParams, numTransforms);
+			}
+
+			it->second.clear();
+
+		}
+    }
 }
 
 void EditorRenderContext::DrawEditorHelpers()

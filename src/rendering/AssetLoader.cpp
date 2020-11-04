@@ -16,7 +16,7 @@ Array<NString*> AssetLoader::mLoadedTextures;
 
 bool AssetLoader::LoadModels(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<Material>& materials)
+	Array<MaterialSpec>& materials)
 {
 	Assimp::Importer importer;
 	const aiScene* scene = importer.ReadFile(fileName.c_str(),
@@ -69,7 +69,7 @@ bool AssetLoader::LoadModels(const NString& fileName,
 
 	for (uint32 i = 0; i < scene->mNumMaterials; i++) {
 		const aiMaterial* material = scene->mMaterials[i];
-		Material spec;
+		MaterialSpec spec;
 
 		// Currently only handles diffuse textures.
 		aiString texturePath;
@@ -126,7 +126,7 @@ unsigned int AssetLoader::TextureFromFile(NString path)
 
 void AssetLoader::LoadModel(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<Material>& materials)
+	Array<MaterialSpec>& materials)
 {
 	//Create static mesh 
 
@@ -148,7 +148,7 @@ void AssetLoader::LoadModel(const NString& fileName,
 
 void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<Material>& materials)
+	Array<MaterialSpec>& materials)
 {
 	// process each mesh located at the current node
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -167,7 +167,7 @@ void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const NString&
 
 void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<Material>& materials)
+	Array<MaterialSpec>& materials)
 {
 	modelMaterialIndices.push_back(mesh->mMaterialIndex);
 
@@ -205,7 +205,7 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
-	Material spec;
+	MaterialSpec spec;
 
 	LoadMaterialTextures(fileName, material, aiTextureType_DIFFUSE, spec, "texture_diffuse");
 	LoadMaterialTextures(fileName, material, aiTextureType_SPECULAR, spec, "texture_specular");
@@ -218,7 +218,7 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 }
 
 
-void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat, aiTextureType type, Material& material, NString typeName)
+void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat, aiTextureType type, MaterialSpec& material, NString typeName)
 {
 
 	// retrieve the directory path of the filepath

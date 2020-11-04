@@ -82,7 +82,7 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	//if (/*!Entity->bIsDebug*/) {continue;}
 	 	rapidjson::Value ObjValue(rapidjson::kObjectType);
 
-		RenderableMeshComponent* RendComp = ecs->GetComponent<RenderableMeshComponent>(entity);
+		StaticMeshComponent* RendComp = ecs->GetComponent<StaticMeshComponent>(entity);
 	 	if (!RendComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
 		
 	 	//rapidjson::Value FriendlyName(RendComp->.c_str(), allocator);

@@ -12,6 +12,7 @@
 #include <Core/Camera/Camera.h>
 #include <Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h>
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
+#include  "Core/Components/StaticMeshComponent.h"
 #include "rendering/UniformBuffer.h"
 
 class EditorRenderContext : public RenderContext
@@ -19,15 +20,15 @@ class EditorRenderContext : public RenderContext
 public:
 	EditorRenderContext(RenderDevice& deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
 	        Sampler& samplerIn, const mat4& perspectiveIn, Camera* CameraIn);
-	inline void RenderMesh(VertexArray& vertexArray, Texture& texture, const mat4& transformIn)
+	inline void RenderMesh(Array<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
 	{
-		meshRenderBuffer[std::make_pair(&vertexArray, &texture)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
+		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
 	}
 
-	inline void RenderMesh(VertexArray& vertexArray, const mat4& transformIn)
-	{
-		meshRenderBuffer[std::make_pair(&vertexArray, nullptr)].push_back(perspective * transformIn);
-	}
+	//inline void RenderMesh(Array<MeshInfo*> meshes, const mat4& transformIn)
+	//{
+	//	meshRenderBuffer[meshes].push_back(perspective * transformIn);
+	//}
 
 	inline void RenderPrimitives(VertexArray* vertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
 	{
@@ -56,7 +57,7 @@ private:
 	Sampler& sampler;
 	UniformBuffer* MatrixUniformBuffer;
 	mat4 perspective;
-	Map<std::pair<VertexArray*, Texture*>, Array<mat4>> meshRenderBuffer;
+	Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4>> meshRenderBuffer;
 	Map<DebugShape*, Array<mat4>> debugShapeBuffer;
 
 	Camera* mainCamera;
