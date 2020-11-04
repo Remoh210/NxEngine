@@ -3,7 +3,7 @@
 #include "Common/dataStructs/Map.h"
 #include "Common/CommonTypes.h"
 
-struct Material
+struct MaterialSpec
 {
 	Map<NString, NString> textureNames;
 	Map<NString, float> floats;

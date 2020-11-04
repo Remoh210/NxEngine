@@ -6,17 +6,7 @@
 #include "Editor/EditorRenderContext.h"
 #include "Core/Components/TransformComponent.h"
 #include "Core/Graphics/Material/Material.h"
-
-
-
-struct RenderableMeshComponent : public Component<RenderableMeshComponent>
-{
-	VertexArray* vertexArray = nullptr;
-	ModelMaterial* material = nullptr;
-	Texture* texture = nullptr;
-	Shader* shader = nullptr;
-	int numInst = 0;
-};
+#include "Core/Components/StaticMeshComponent.h"
 
 class RenderableMeshSystem : public BaseSystem
 {
@@ -27,7 +17,7 @@ public:
 		, ecs(ecsIn)
 	{
 		addComponentType(TransformComponent::ID);
-		addComponentType(RenderableMeshComponent::ID);
+		addComponentType(StaticMeshComponent::ID);
 	}
 
 	virtual void UpdateComponents(float delta, BaseComponent** components)
@@ -35,7 +25,7 @@ public:
 		TransformComponent* transform = (TransformComponent*)components[0];
 	
 		
-		RenderableMeshComponent* mesh = ecs.GetComponent<RenderableMeshComponent>(transform->entity);
+		StaticMeshComponent* mesh = ecs.GetComponent<StaticMeshComponent>(transform->entity);
 
 		Transform newTrasform;
 
@@ -75,7 +65,9 @@ public:
 		{
 			for (auto item : transformArray)
 			{
-				context.RenderMesh(*mesh->vertexArray, *mesh->texture, item.ToMatrix());
+				
+				context.RenderMesh(mesh->meshes, mesh->shader, item.ToMatrix());
+				std::make_pair<int, float>(10, 10.0f);
 			}
 		}
 		else
@@ -84,7 +76,7 @@ public:
 			transform->transform.position = vec3(0.0f);
 
 
-			context.RenderMesh(*mesh->vertexArray, *mesh->texture, transform->transform.ToMatrix());
+			context.RenderMesh(mesh->meshes, mesh->meshes[0]->material->shader, transform->transform.ToMatrix());
 
 		}
 

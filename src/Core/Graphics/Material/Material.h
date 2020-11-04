@@ -1,10 +1,12 @@
+#pragma once
+
 #include "Common/dataStructs/Map.h"
 #include "Common/dataStructs/String.h"
 
 #include "rendering/Texture.h"
 #include "rendering/Shader.h"
 
-struct ModelMaterial
+struct Material
 {
     NString Name = "NULL_MATERIAL";
     Array<Texture*> diffuseTextures;
