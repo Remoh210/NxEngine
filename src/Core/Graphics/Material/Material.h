@@ -8,7 +8,6 @@
 
 struct Material
 {
-    NString Name = "NULL_MATERIAL";
     Array<Texture*> diffuseTextures;
     Array<Texture*> normalTextures;
     Shader* shader;

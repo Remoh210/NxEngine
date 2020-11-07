@@ -50,12 +50,11 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	rapidjson::Document doc;
 	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
 	doc.SetObject();
-	rapidjson::Value MeshArray(rapidjson::kArrayType);
-	
-	 //Camera Output
-	 rapidjson::Value CameraObj(rapidjson::kObjectType);
-	 rapidjson::Value CameraSpeed(camera.MovementSpeed);
-	 rapidjson::Value CameraPosArray(rapidjson::kArrayType);
+
+#pragma region camera
+	rapidjson::Value CameraObj(rapidjson::kObjectType);
+	rapidjson::Value CameraSpeed(camera.MovementSpeed);
+	rapidjson::Value CameraPosArray(rapidjson::kArrayType);
 
 	 for (int i = 0; i < 3; i++)
 	 {
@@ -71,12 +70,13 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 CameraObj.AddMember("Position", CameraPosArray, allocator);
 	 CameraObj.AddMember("Yaw", CamYaw, allocator);
 	 CameraObj.AddMember("Pitch", CamPitch, allocator);
+#pragma endregion camera
 
-
-
+	
 	 //GameObjects
 	 /*or rapidjson::Value myArray; ;
 	      myArray.SetArray() */
+	 rapidjson::Value MeshArray(rapidjson::kArrayType);
 	 for (const auto& entity : currentScene.sceneObjects)
 	 {
 	 	//if (/*!Entity->bIsDebug*/) {continue;}
@@ -85,10 +85,9 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 		StaticMeshComponent* RendComp = ecs->GetComponent<StaticMeshComponent>(entity);
 	 	if (!RendComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
 		
-	 	//rapidjson::Value FriendlyName(RendComp->.c_str(), allocator);
-	 	//rapidjson::Value MeshName(RendComp->meshPath.c_str(), allocator);
+	 	rapidjson::Value meshFileName(RendComp->meshAssetFile.c_str(), allocator);
 	 	//rapidjson::Value Visible(RendComp->bIsVisible);
-	 	//rapidjson::Value Shader(RendComp->shader.c_str(), allocator);
+	 	//rapidjson::Value Shader(RendComp->shader., allocator);
 	 	//rapidjson::Value WireFrame(RendComp->bIsWireFrame);
 	 	//rapidjson::Value DiffuseRGBArray(rapidjson::kArrayType);
 
@@ -122,10 +121,10 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	}
 
 
-	 	//ObjValue.AddMember("Name", FriendlyName, allocator);
-	 	//ObjValue.AddMember("Mesh", MeshName, allocator);
+	 	ObjValue.AddMember("MeshFileName", meshFileName, allocator);
+		 //ObjValue.AddMember("ShaderFileName", Shader, allocator);
 	 	//ObjValue.AddMember("Visible", Visible, allocator);
-	 	//ObjValue.AddMember("Shader", Shader, allocator);
+	 	
 	 	//ObjValue.AddMember("Wireframe", WireFrame, allocator);
 	 	ObjValue.AddMember("Position", PositionArray, allocator);
 	 	//ObjValue.AddMember("DiffuseRGB_Alpha", DiffuseRGBArray, allocator);
