@@ -124,7 +124,7 @@ unsigned int AssetLoader::TextureFromFile(NString path)
 }
 
 
-void AssetLoader::LoadModel(const NString& fileName,
+bool AssetLoader::LoadModel(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<MaterialSpec>& materials)
 {
@@ -137,12 +137,14 @@ void AssetLoader::LoadModel(const NString& fileName,
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
 		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-		return;
+		return false;
 	}
 ;
 
 	//process ASSIMP's root node recursively
 	ProcessNode(scene->mRootNode, scene, fileName, models, modelMaterialIndices, materials);
+
+	return true;
 }
 
 

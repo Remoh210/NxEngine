@@ -172,6 +172,7 @@ int Application::Run()
 	material1.diffuseTextures.Add(&testtex);
 	meshInfo1.material = &material1;
 	StaticMeshComponent renderableMesh;
+	renderableMesh.meshAssetFile = TEST_MODEL_FILE;
 	renderableMesh.meshes.Add(&meshInfo1);
 	//renderableMesh.material->diffuseTextures.Add(&testtex);
 	//renderableMesh.material->shader = &shader;
@@ -195,6 +196,8 @@ int Application::Run()
 	material2.diffuseTextures.Add(&testtex2);
 	meshInfo2.material = &material2;
 	StaticMeshComponent renderableMesh2;
+	renderableMesh2.meshAssetFile = TEST_MODEL_FILE2;
+
 	renderableMesh2.meshes.Add(&meshInfo2);
 	renderableMesh2.numInst = 100;
 	TransformComponent transformComp2;

@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include "Core/ECS/ECS.h"
+#include "rendering/RenderDevice.h"
 #include "Common/dataStructs/String.h"
 
 struct Scene
@@ -24,7 +25,17 @@ public:
 	{
 		ecs = &ecsIn;
 	}
+	inline static void SetRenderDevice(ECS& ecsIn)
+	{
+		ecs = &ecsIn;
+	}
+
+	inline static void SetRenderDevice(RenderDevice& renderDeviceIn)
+	{
+		renderDevice = &renderDeviceIn;
+	}
 
 private:
 	static ECS* ecs;
+	static RenderDevice* renderDevice;
 };

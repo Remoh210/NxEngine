@@ -17,7 +17,7 @@ public:
 
 	static unsigned int TextureFromFile(NString path);
 
-	static void LoadModel(const NString& fileName,
+	static bool LoadModel(const NString& fileName,
 		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 		Array<MaterialSpec>& materials);
 
