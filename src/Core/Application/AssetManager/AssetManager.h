@@ -1,7 +1,7 @@
 #include "Common/CommonTypes.h"
-#include "Common/DataStructs/Array.h"
-#include "Common/DataStructs/Map.h"
-#include "Common/DataStructs/String.h"
+#include "Common/dataStructs/Array.h"
+#include "Common/dataStructs/Map.h"
+#include "Common/dataStructs/String.h"
 #include "Core/Graphics/Mesh/MeshInfo.h"
 
 //Material specs
