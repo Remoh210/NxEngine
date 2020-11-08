@@ -22,11 +22,14 @@
 #include <experimental/filesystem>
 
 
+NString monkeyMesh = "res/models/monkey3.obj";
+NString rockMesh = "res/models/rock/rock.obj";
+
 NString TEST_TEXTURE_FILE     = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
 NString SHADER_TEXT_FILE      = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
 //NString LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
-NString TEST_MODEL_FILE       = Nx::FileSystem::GetPath("res/models/monkey3.obj");
-NString TEST_MODEL_FILE2      = Nx::FileSystem::GetPath("res/models/rock/rock.obj");
+NString TEST_MODEL_FILE       = Nx::FileSystem::GetPath(monkeyMesh);
+NString TEST_MODEL_FILE2      = Nx::FileSystem::GetPath(rockMesh);
 NString TEST_TEXTURE_FILE2    = Nx::FileSystem::GetPath("res/models/rock/rock.png");
 
 
@@ -146,6 +149,7 @@ int Application::Run()
 	ECS ecs;
 
 	SceneManager::SetECS(ecs);
+	SceneManager::SetRenderDevice(renderDevice);
 
 	//model 1
 	Array<IndexedModel> models;
@@ -172,7 +176,7 @@ int Application::Run()
 	material1.diffuseTextures.Add(&testtex);
 	meshInfo1.material = &material1;
 	StaticMeshComponent renderableMesh;
-	renderableMesh.meshAssetFile = TEST_MODEL_FILE;
+	renderableMesh.meshAssetFile = monkeyMesh;
 	renderableMesh.meshes.Add(&meshInfo1);
 	//renderableMesh.material->diffuseTextures.Add(&testtex);
 	//renderableMesh.material->shader = &shader;
@@ -196,7 +200,7 @@ int Application::Run()
 	material2.diffuseTextures.Add(&testtex2);
 	meshInfo2.material = &material2;
 	StaticMeshComponent renderableMesh2;
-	renderableMesh2.meshAssetFile = TEST_MODEL_FILE2;
+	renderableMesh2.meshAssetFile = rockMesh;
 
 	renderableMesh2.meshes.Add(&meshInfo2);
 	renderableMesh2.numInst = 100;

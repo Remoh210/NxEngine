@@ -1,8 +1,12 @@
 #pragma once
-#include <string>
+
+#include "Common/dataStructs/String.h"
 #include "Core/ECS/ECS.h"
 #include "rendering/RenderDevice.h"
-#include "Common/dataStructs/String.h"
+#include "rendering/Shader.h"
+
+
+
 
 struct Scene
 {
@@ -21,11 +25,7 @@ public:
 	//inline static sScene GetCurrentScene() { return currentScene; };
 	static void RemoveObjectFromScene(EntityHandle entity);
 
-	static void SetECS(ECS& ecsIn)
-	{
-		ecs = &ecsIn;
-	}
-	inline static void SetRenderDevice(ECS& ecsIn)
+	inline static void SetECS(ECS& ecsIn)
 	{
 		ecs = &ecsIn;
 	}
@@ -38,4 +38,6 @@ public:
 private:
 	static ECS* ecs;
 	static RenderDevice* renderDevice;
+
+	static Map<NString, Shader*> shaders;
 };

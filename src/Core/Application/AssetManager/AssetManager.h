@@ -10,9 +10,10 @@
 
 class AssetManager 
 {
-    AssetManager();
+public:
+    AssetManager() {};
 
-	Array<MeshInfo*> ImportModel(RenderDevice* renderDevice, NString file);
+	static Array<MeshInfo*> ImportModel(RenderDevice* renderDevice, NString file);
 
     static Map<NString, Array<MeshInfo*>> importedModels;
     static Map<NString, Texture*> importedTextures;

@@ -2,7 +2,7 @@
 #include "Common/Common.h"
 #include "RenderDevice.h"
 #include "IndexedModel.h"
-#include  "rendering/Shader.h"
+#include "rendering/Shader.h"
 
 class VertexArray
 {

@@ -2,16 +2,16 @@
     "Camera": {
         "Speed": 100.0,
         "Position": [
-            0.0,
-            10.0,
-            80.0
+            26.29203987121582,
+            31.71183204650879,
+            67.00871276855469
         ],
-        "Yaw": -90.0,
-        "Pitch": 0.0
+        "Yaw": -103.699951171875,
+        "Pitch": -23.300006866455079
     },
     "GameObjects": [
         {
-            "MeshFileName": "res/models/monkey3.obj",
+            "MeshFileName": "/Users/nyan/Desktop/Workspace/NxEngine/res/models/monkey3.obj",
             "Position": [
                 0.0,
                 0.0,
@@ -19,9 +19,9 @@
             ],
             "Rotation": [
                 -0.0,
-                0.9830827116966248,
+                0.8770248889923096,
                 -0.0,
-                -0.18316233158111573
+                -0.48044487833976748
             ],
             "Scale": [
                 7.0,
@@ -38,9 +38,9 @@
             ],
             "Rotation": [
                 -0.0,
-                0.9830827116966248,
+                0.8770248889923096,
                 -0.0,
-                -0.18316233158111573
+                -0.48044487833976748
             ],
             "Scale": [
                 10.0,
@@ -49,7 +49,7 @@
             ]
         },
         {
-            "MeshFileName": "res/models/rock/rock.obj",
+            "MeshFileName": "/Users/nyan/Desktop/Workspace/NxEngine/res/models/rock/rock.obj",
             "Position": [
                 0.0,
                 0.0,

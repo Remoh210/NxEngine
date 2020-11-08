@@ -8,6 +8,7 @@
 #include "Core/Systems/RenderSystem.h"
 #include "Core/Camera/Camera.h"
 #include "Core/FileSystem/FileSystem.h"
+#include "Core/Application/AssetManager/AssetManager.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
@@ -16,13 +17,11 @@
 #include <rapidjson/stringbuffer.h>
 #include <rapidjson/prettywriter.h>
 
-//#include <cstdio>
-//
-
-Scene SceneManager::currentScene;
-ECS* SceneManager::ecs = nullptr;
-//
-//
+Scene 		          SceneManager::currentScene;
+RenderDevice*         SceneManager::renderDevice = nullptr;
+ECS*          		  SceneManager::ecs = nullptr;
+Map<NString, Shader*> SceneManager::shaders;
+ 
 void SceneManager::RemoveObjectFromScene(EntityHandle entity)
 {
 	if (!ecs)
@@ -72,20 +71,21 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 CameraObj.AddMember("Pitch", CamPitch, allocator);
 #pragma endregion camera
 
-	
-	 //GameObjects
-	 /*or rapidjson::Value myArray; ;
-	      myArray.SetArray() */
+#pragma components
+
 	 rapidjson::Value MeshArray(rapidjson::kArrayType);
 	 for (const auto& entity : currentScene.sceneObjects)
 	 {
 	 	//if (/*!Entity->bIsDebug*/) {continue;}
 	 	rapidjson::Value ObjValue(rapidjson::kObjectType);
 
-		StaticMeshComponent* RendComp = ecs->GetComponent<StaticMeshComponent>(entity);
-	 	if (!RendComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
+		StaticMeshComponent* staticMeshComp = ecs->GetComponent<StaticMeshComponent>(entity);
+	 	if (!staticMeshComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
 		
-	 	rapidjson::Value meshFileName(RendComp->meshAssetFile.c_str(), allocator);
+
+		
+	 	rapidjson::Value meshFileName(staticMeshComp->meshAssetFile.c_str(), allocator);
+
 	 	//rapidjson::Value Visible(RendComp->bIsVisible);
 	 	//rapidjson::Value Shader(RendComp->shader., allocator);
 	 	//rapidjson::Value WireFrame(RendComp->bIsWireFrame);
@@ -135,7 +135,7 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 
 	 }
 
-
+#pragma endregion components
 
 	 doc.AddMember("Camera", CameraObj, allocator);
 	 doc.AddMember("GameObjects", MeshArray, allocator);
@@ -154,10 +154,7 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 
 	return true;
 }
-//
-//
-//
-//
+
 bool SceneManager::LoadScene(NString filename, class Camera& camera) 
 {
 	if (!ecs)
@@ -208,8 +205,50 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 
 	camera.updateCameraVectors();
 
+	for(EntityHandle entity : currentScene.sceneObjects)
+	{
+		ecs->RemoveEntity(entity);
+	}
+
+	const rapidjson::Value& GameObjects = doc["GameObjects"];
+	for (int i = 0; i < GameObjects.Size(); i++)
+	{
+		const rapidjson::Value& staticMeshValue = GameObjects[i]["StaticMesh"];
+
+		StaticMeshComponent staticMeshComp;
+		NString meshFile = staticMeshValue["MeshFile"].GetString(); 
+		staticMeshComp.meshAssetFile = meshFile;
+		staticMeshComp.meshes = AssetManager::ImportModel(renderDevice, meshFile);
+
+		TransformComponent transformComponent;
+
+		const rapidjson::Value& PositionArray = GameObjects[i]["Position"];
+		for (rapidjson::SizeType i = 0; i < PositionArray.Size(); i++) 
+		{
+			transformComponent.transform.position[i] = PositionArray[i].GetFloat();
+		}
+
+					const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
+			for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++) {
+				transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
+			}
+
+
+			const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
+			for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) {
+
+				transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
+
+			}
+			
+		EntityHandle entity = ecs->MakeEntity(staticMeshComp, transformComponent);
+
+		currentScene.sceneObjects.Add(entity);
+	}
+
+
 	////HACK HACK HACK CLEAR ALL ENTITIES BEFORE LOADING THE SCENE
-	//for (const auto entity : ecs->GetEntities())
+	//for (const auto entity : ecs->GetEntities())MakeEntity
 	//{
 
 
@@ -237,27 +276,6 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 	//		//	renderComponent.diffuse[i] = DiffuseArray[i].GetFloat();
 
 	//		//}
-
-	//		TransformComponent transformComponent;
-
-	//		const rapidjson::Value& PositionArray = GameObjects[i]["Position"];
-	//		for (rapidjson::SizeType i = 0; i < PositionArray.Size(); i++) {
-	//			transformComponent.transform.position[i] = PositionArray[i].GetFloat();
-	//		}
-
-
-	//		const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
-	//		for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++) {
-	//			transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
-	//		}
-
-
-	//		const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
-	//		for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) {
-
-	//			transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
-
-	//		}
 
 	//		//EntityHandle entity = ecs->MakeEntity(renderComponent, transformComponent);
 
