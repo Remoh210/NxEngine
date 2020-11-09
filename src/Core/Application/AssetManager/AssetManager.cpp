@@ -20,32 +20,56 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 	AssetLoader::LoadModel(Nx::FileSystem::GetPath(file), models, materialIndices, materials);
 
 	Array<MeshInfo*> loadedMeshes;
-	for (int i; i < loadedMeshes.size(); i++)
+	for (int i = 0; i < models.size(); i++)
 	{
 		IndexedModel& model = models[i];
 		MeshInfo* newMesh = new MeshInfo();
-		MaterialSpec& materialSpec = materials[materialIndices[i]];
-		newMesh->material = new Material();
 
 		newMesh->vertexArray = new VertexArray(*renderDevice, model, BufferUsage::USAGE_DYNAMIC_DRAW);
 
+		//HACK!
+		if (materials.size() == 0)
+		{
+			//Use default material
+			newMesh->material = new Material();
+			continue;
+		}
+		
+		MaterialSpec& materialSpec = materials[materialIndices[i] - 1];
+		newMesh->material = new Material();
 		//Textures
 		for (auto texture_it : materialSpec.textureNames)
 		{
-			if (texture_it.first == "Diffuse")
+			NString textureType = texture_it.first;
+			if (textureType == "texture_diffuse")
 			{
-				auto imported_texture_it = importedTextures.find(texture_it.second);
-				if (imported_texture_it != importedTextures.end())
+				if (Texture* cachedTex = FindTexture(texture_it.first))
 				{
-					newMesh->material->diffuseTextures.push_back(imported_texture_it->second);
+					newMesh->material->diffuseTextures.push_back(cachedTex);
 				}
 				else
 				{
 					NString textureFile = texture_it.second;
 					ArrayBitmap bitmap;
-					bitmap.Load(imported_texture_it->first);
+					bitmap.Load(textureFile);
 					Texture* texture = new Texture(*renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
 					newMesh->material->diffuseTextures.push_back(texture);
+					importedTextures[textureFile] = texture;
+				}
+			}
+			else if(textureType == "texture_normal")
+			{
+				if (Texture* cachedTex = FindTexture(texture_it.first))
+				{
+					newMesh->material->diffuseTextures.push_back(cachedTex);
+				}
+				else
+				{
+					NString textureFile = texture_it.second;
+					ArrayBitmap bitmap;
+					bitmap.Load(textureFile);
+					Texture* texture = new Texture(*renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
+					newMesh->material->normalMaps.push_back(texture);
 					importedTextures[textureFile] = texture;
 				}
 			}
@@ -56,4 +80,6 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 	}
 
 	importedModels[file] = loadedMeshes;
+
+	return loadedMeshes;
 }

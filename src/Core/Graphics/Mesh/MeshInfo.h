@@ -8,4 +8,9 @@ struct MeshInfo
 {
 	VertexArray* vertexArray;
 	Material* material;
+
+	~MeshInfo()
+	{
+		vertexArray->~VertexArray();
+	}
 };

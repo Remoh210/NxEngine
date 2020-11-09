@@ -9,6 +9,7 @@
 #include "Core/Camera/Camera.h"
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/Application/AssetManager/AssetManager.h"
+#include "Core/Graphics/ShaderManager/ShaderManager.h"
 
 #include <rapidjson/document.h>
 #include <rapidjson/filereadstream.h>
@@ -80,11 +81,11 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	rapidjson::Value ObjValue(rapidjson::kObjectType);
 
 		StaticMeshComponent* staticMeshComp = ecs->GetComponent<StaticMeshComponent>(entity);
-	 	if (!staticMeshComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
-		
 
-		
+	 	if (!staticMeshComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
+
 	 	rapidjson::Value meshFileName(staticMeshComp->meshAssetFile.c_str(), allocator);
+
 
 	 	//rapidjson::Value Visible(RendComp->bIsVisible);
 	 	//rapidjson::Value Shader(RendComp->shader., allocator);
@@ -109,8 +110,8 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 		PositionArray.PushBack(temp, allocator);
 	 	}
 
-	 	for (int i = 0; i < 4; i++) {
-	 		quat rot = TransComp->transform.rotation;
+	 	for (int i = 0; i < 3; i++) {
+	 		vec3 rot = TransComp->transform.rotation;
 	 		rapidjson::Value temp(rot[i]);
 	 		Rotation.PushBack(temp, allocator);
 	 	}
@@ -121,7 +122,7 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	}
 
 
-	 	ObjValue.AddMember("MeshFileName", meshFileName, allocator);
+	 	ObjValue.AddMember("MeshFile", meshFileName, allocator);
 		 //ObjValue.AddMember("ShaderFileName", Shader, allocator);
 	 	//ObjValue.AddMember("Visible", Visible, allocator);
 	 	
@@ -134,7 +135,6 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	MeshArray.PushBack(ObjValue, allocator);
 
 	 }
-
 #pragma endregion components
 
 	 doc.AddMember("Camera", CameraObj, allocator);
@@ -163,11 +163,11 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 		return false;
 	}
 
-	int count = currentScene.sceneObjects.size();
-	for (int i = 0; i < count; i++)
-	{
-		//RemoveObjectFromScene(currentScene.sceneObjects[i]);
-	}
+	//int count = currentScene.sceneObjects.size();
+	//for (int i = 0; i < count; i++)
+	//{
+	//	//RemoveObjectFromScene(currentScene.sceneObjects[i]);
+	//}
 
 
     //currentScene.sceneObjects.clear();
@@ -213,12 +213,18 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 	const rapidjson::Value& GameObjects = doc["GameObjects"];
 	for (int i = 0; i < GameObjects.Size(); i++)
 	{
-		const rapidjson::Value& staticMeshValue = GameObjects[i]["StaticMesh"];
+		//const rapidjson::Value& staticMeshValue = GameObjects[i]["StaticMesh"];
 
 		StaticMeshComponent staticMeshComp;
-		NString meshFile = staticMeshValue["MeshFile"].GetString(); 
+		NString meshFile = GameObjects[i]["MeshFile"].GetString();
+		if(meshFile == "") 
+		{
+			DEBUG_LOG(LOG_ERROR, "Error", "No mesh file specified");
+			continue;
+		}
 		staticMeshComp.meshAssetFile = meshFile;
 		staticMeshComp.meshes = AssetManager::ImportModel(renderDevice, meshFile);
+		staticMeshComp.shader = ShaderManager::GetMainShader();
 
 		TransformComponent transformComponent;
 
@@ -228,7 +234,7 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 			transformComponent.transform.position[i] = PositionArray[i].GetFloat();
 		}
 
-					const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
+			const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
 			for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++) {
 				transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
 			}

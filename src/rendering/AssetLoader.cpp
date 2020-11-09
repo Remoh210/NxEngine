@@ -184,10 +184,12 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (uint32 i = 0; i < mesh->mNumVertices; i++) {
 		const aiVector3D pos = mesh->mVertices[i];
-		const aiVector3D normal = mesh->mNormals[i];
+		const aiVector3D normal = mesh->HasNormals()
+			? mesh->mNormals[i] : aiZeroVector;
 		const aiVector3D texCoord = mesh->HasTextureCoords(0)
 			? mesh->mTextureCoords[0][i] : aiZeroVector;
-		const aiVector3D tangent = mesh->mTangents[i];
+		const aiVector3D tangent = mesh->HasTangentsAndBitangents()
+			? mesh->mTangents[i] : aiZeroVector;
 
 		newModel.AddElement3f(0, pos.x, pos.y, pos.z);
 		newModel.AddElement2f(1, texCoord.x, texCoord.y);

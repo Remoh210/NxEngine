@@ -15,6 +15,22 @@ public:
 
 	static Array<MeshInfo*> ImportModel(RenderDevice* renderDevice, NString file);
 
-    static Map<NString, Array<MeshInfo*>> importedModels;
-    static Map<NString, Texture*> importedTextures;
+
+
+private:
+	static Map<NString, Array<MeshInfo*>> importedModels;
+	static Map<NString, Texture*> importedTextures;
+
+	inline static Texture* FindTexture(NString textureFile)
+	{
+		auto imported_texture_it = importedTextures.find(textureFile);
+		if (imported_texture_it != importedTextures.end())
+		{
+			return imported_texture_it->second;
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
 };

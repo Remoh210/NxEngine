@@ -8,6 +8,7 @@
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 #include <Core/Application/SceneManager/SceneManager.h>
+#include <Core/Graphics/ShaderManager/ShaderManager.h>
 
 #include <rendering/Sampler.h>
 #include <rendering/RenderDevice.h>
@@ -15,6 +16,7 @@
 #include <rendering/AssetLoader.h>
 #include <rendering/Shader.h>
 #include <Editor/EditorRenderContext.h>
+
 
 //Standard includes
 #include <fstream>
@@ -146,10 +148,7 @@ int Application::Run()
     EditorRenderContext EditorContext(renderDevice, target, drawParams, sampler, projection, MainCamera);
 
 	//ECS
-	ECS ecs;
-
-	SceneManager::SetECS(ecs);
-	SceneManager::SetRenderDevice(renderDevice);
+	ECS ecs;;
 
 	//model 1
 	Array<IndexedModel> models;
@@ -169,14 +168,20 @@ int Application::Run()
 	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
 	Shader shader(renderDevice, shaderText);
 
+
+	SceneManager::SetECS(ecs);
+	SceneManager::SetRenderDevice(renderDevice);
+	ShaderManager::SetRenderDevice(renderDevice);
+	ShaderManager::SetMainShader(shader);
+
 	MeshInfo meshInfo1;
 	meshInfo1.vertexArray = &vertexArray;
 	Material material1;
-	material1.shader = &shader;
 	material1.diffuseTextures.Add(&testtex);
 	meshInfo1.material = &material1;
 	StaticMeshComponent renderableMesh;
 	renderableMesh.meshAssetFile = monkeyMesh;
+	renderableMesh.shader = &shader;
 	renderableMesh.meshes.Add(&meshInfo1);
 	//renderableMesh.material->diffuseTextures.Add(&testtex);
 	//renderableMesh.material->shader = &shader;
@@ -196,12 +201,11 @@ int Application::Run()
 	MeshInfo meshInfo2;
 	meshInfo2.vertexArray = &vertexArray2;
 	Material material2;
-	material2.shader = &shader;
 	material2.diffuseTextures.Add(&testtex2);
 	meshInfo2.material = &material2;
 	StaticMeshComponent renderableMesh2;
 	renderableMesh2.meshAssetFile = rockMesh;
-
+	renderableMesh2.shader = &shader;
 	renderableMesh2.meshes.Add(&meshInfo2);
 	renderableMesh2.numInst = 100;
 	TransformComponent transformComp2;
@@ -213,10 +217,11 @@ int Application::Run()
 	MeshInfo* meshInfo3 = new MeshInfo();
 	meshInfo3->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material material3;
-	material3.shader = &shader;
+	
 	material3.diffuseTextures.Add(&testtex);
 	meshInfo3->material = &material3;
 	StaticMeshComponent renderableMesh3;
+	renderableMesh3.shader = &shader;
 	renderableMesh3.meshes.Add(meshInfo3);
 	TransformComponent transformComp3;
 	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);

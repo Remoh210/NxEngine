@@ -76,7 +76,7 @@ public:
 			transform->transform.position = vec3(0.0f);
 
 
-			context.RenderMesh(mesh->meshes, mesh->meshes[0]->material->shader, transform->transform.ToMatrix());
+			context.RenderMesh(mesh->meshes, mesh->shader, transform->transform.ToMatrix());
 
 		}
 

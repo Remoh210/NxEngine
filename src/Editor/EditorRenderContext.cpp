@@ -78,12 +78,17 @@ void EditorRenderContext::Flush()
 		{
 
 			VertexArray* vertexArray = mesh->vertexArray;
-			Texture* texture = mesh->material->diffuseTextures[0];
-			Shader * modelShader = mesh->material->shader;
 
-			if (texture != nullptr)
+			Shader * modelShader = it->first.second;
+
+			if (mesh->material->diffuseTextures.size() > 0)
 			{
+				Texture* texture = mesh->material->diffuseTextures[0];
 				modelShader->SetSampler("diffuse", *texture, sampler, 0);
+			}
+			else
+			{
+				//TODO: use default texture or material
 			}
 			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 			if (vertexArray->GetNumIndices() == 0)
@@ -98,8 +103,12 @@ void EditorRenderContext::Flush()
 
 			it->second.clear();
 
+			
+
 		}
     }
+
+	meshRenderBuffer.clear();
 }
 
 void EditorRenderContext::DrawEditorHelpers()
