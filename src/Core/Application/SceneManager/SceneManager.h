@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common/dataStructs/String.h"
+#include "Common/CommonTypes.h"
 #include "Core/ECS/ECS.h"
 #include "rendering/RenderDevice.h"
 #include "rendering/Shader.h"
@@ -12,6 +13,8 @@ struct Scene
 {
 	NString sceneName;
 	Array<EntityHandle> sceneObjects;
+	inline uint32 GetNumObjects() { return sceneObjects.size(); }
+	void Clear();
 };
 
 class SceneManager
@@ -23,7 +26,7 @@ public:
 	static bool SaveScene(NString filename, class Camera& camera);
 	static bool LoadScene(NString filename, class Camera& camera);
 	//inline static sScene GetCurrentScene() { return currentScene; };
-	static void RemoveObjectFromScene(EntityHandle entity);
+	static void ClearScene();
 
 	inline static void SetECS(ECS& ecsIn)
 	{

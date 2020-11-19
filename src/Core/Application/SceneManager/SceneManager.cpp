@@ -22,19 +22,26 @@ Scene 		          SceneManager::currentScene;
 RenderDevice*         SceneManager::renderDevice = nullptr;
 ECS*          		  SceneManager::ecs = nullptr;
 Map<NString, Shader*> SceneManager::shaders;
- 
-void SceneManager::RemoveObjectFromScene(EntityHandle entity)
+
+void Scene::Clear()
 {
+	sceneObjects.clear();
+}
+ 
+void SceneManager::ClearScene()
+{
+	//Remove entitties from ECS
 	if (!ecs)
 	{
-		//TODO: Log
 		return;
 	}
-	if (currentScene.sceneObjects.Find(entity))
+
+	for (int i = 0; i < currentScene.GetNumObjects(); i++)
 	{
-		currentScene.sceneObjects.Remove(entity);
-		ecs->RemoveEntity(entity);
+		ecs->RemoveEntity(currentScene.sceneObjects[i]);
 	}
+
+	currentScene.Clear();
 
 }
 
@@ -162,15 +169,8 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 		//TODO: Log
 		return false;
 	}
-
-	//int count = currentScene.sceneObjects.size();
-	//for (int i = 0; i < count; i++)
-	//{
-	//	//RemoveObjectFromScene(currentScene.sceneObjects[i]);
-	//}
-
-
-    //currentScene.sceneObjects.clear();
+	
+	//ClearScene();
 
 	std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename;
 
@@ -204,11 +204,6 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 	camera.Pitch = doc["Camera"]["Pitch"].GetFloat();
 
 	camera.updateCameraVectors();
-
-	for(EntityHandle entity : currentScene.sceneObjects)
-	{
-		ecs->RemoveEntity(entity);
-	}
 
 	const rapidjson::Value& GameObjects = doc["GameObjects"];
 	for (int i = 0; i < GameObjects.Size(); i++)
