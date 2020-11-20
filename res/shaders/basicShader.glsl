@@ -28,7 +28,6 @@ void main()
 	if(bTexUse)
 	{
 		FinalColor = texture(diffuse, texCoord0);
-		//FinalColor = vec4(1.0, 0.0, 0.0, 1.0);
 	}
 	else
 	{

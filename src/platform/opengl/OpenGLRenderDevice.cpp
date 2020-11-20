@@ -904,26 +904,26 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, texture);
     glBindSampler(unit, sampler);
-    glUniform1i(shaderProgramMap[shader].samplerMap[samplerName], unit);
+    glUniform1i(shaderProgramMap.at(shader).samplerMap.at(samplerName), unit);
 }
 
 void OpenGLRenderDevice::SetShaderUniform1i(uint32 shader, const NString& uniformName, int value)
 {
 	SetShader(shader);
-	glUniform1i(shaderProgramMap[shader].uniformMap[uniformName], 1);
+    glUniform1i(shaderProgramMap.at(shader).uniformMap.at(uniformName), value);
 }
 
 void OpenGLRenderDevice::SetShaderUniform1f(uint32 shader, const NString& uniformName, float value)
 {
 	SetShader(shader);
-	glUniform1f(shaderProgramMap[shader].uniformMap[uniformName], value);
+	glUniform1f(shaderProgramMap.at(shader).uniformMap.at(uniformName), value);
 }
 
 void OpenGLRenderDevice::SetShaderUniform4f(uint32 shader, const NString& uniformName, float* value)
 {
 	SetShader(shader);
 
-	glUniform4f(shaderProgramMap[shader].uniformMap[uniformName], value[0], value[1], value[2], value[3]);
+	glUniform4f(shaderProgramMap.at(shader).uniformMap.at(uniformName), value[0], value[1], value[2], value[3]);
 }
 
 void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
