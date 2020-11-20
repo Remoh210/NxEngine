@@ -27,6 +27,11 @@ public:
 		mRenderDevice->SetShaderUniform1i(mProgramId, name, value);
 	}
 
+	inline void SetUniform1f(const NString& name, float value)
+	{
+		mRenderDevice->SetShaderUniform1f(mProgramId, name, value);
+	}
+
 	inline void SetUniform4f(const NString& name, vec4 value)
 	{
 		mRenderDevice->SetShaderUniform4f(mProgramId, name, glm::value_ptr(value));

@@ -179,6 +179,9 @@ public:
 	void SetShaderUniform1i(uint32 shader, const NString& uniformName,
 		int value);
 
+	void SetShaderUniform1f(uint32 shader, const NString& uniformName,
+		float value);
+
 	void SetShaderUniform4f(uint32 shader, const NString& uniformName,
 		float* value);
 

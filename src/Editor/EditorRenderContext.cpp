@@ -75,26 +75,26 @@ void EditorRenderContext::Flush()
 		//Shader* modelShader = it->first.second;
 		Shader * modelShader = it->first.second;
 
+
+
+
 		for (MeshInfo* mesh : it->first.first)
 		{
 
 			VertexArray* vertexArray = mesh->vertexArray;
 
-			
-			modelShader->SetUniform1i("bUseTexture", 0);
-			modelShader->SetUniform4f("colorAlpha", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
 			if (mesh->material->diffuseTextures.size() > 0)
 			{
 				Texture* texture = mesh->material->diffuseTextures[0];
 				modelShader->SetSampler("diffuse", *texture, sampler, 0);
-				//modelShader->SetUniform1i("bUseTexture", false);
+				modelShader->SetUniform1f("bTexUse", 1.0f);
 			}
-			//else
-			//{
-			//	
-			//	modelShader->SetUniform1i("bUseTexture", false);
-			//	//TODO: use default texture or material
-			//}
+			else
+			{
+				modelShader->SetUniform1f("bTexUse", 0.0f);
+				modelShader->SetUniform4f("colorAlpha", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+			}
+
 			
 			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 			if (vertexArray->GetNumIndices() == 0)

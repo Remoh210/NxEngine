@@ -20,7 +20,7 @@ bool OpenGLRenderDevice::GlobalInit()
 		return true;
 	}
 	int32 major = 3;
-	int32 minor = 2;
+	int32 minor = 1;
 	
 	bIsInitialized = true;
 	//if(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
@@ -723,7 +723,7 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 		GLsizei actualLength = 0;
 		glGetActiveUniform(shaderProgram, uniform, uniformName.size(),
 				&actualLength, &arraySize, &type, &uniformName[0]);
-		NString name((char*)&uniformName[0], actualLength - 1);
+		NString name((char*)&uniformName[0]);
 		if(type == GL_SAMPLER_2D) 
 		{
 			DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
@@ -910,12 +910,19 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
 void OpenGLRenderDevice::SetShaderUniform1i(uint32 shader, const NString& uniformName, int value)
 {
 	SetShader(shader);
-	glUniform1i(shaderProgramMap[shader].uniformMap[uniformName], value);
+	glUniform1i(shaderProgramMap[shader].uniformMap[uniformName], 1);
+}
+
+void OpenGLRenderDevice::SetShaderUniform1f(uint32 shader, const NString& uniformName, float value)
+{
+	SetShader(shader);
+	glUniform1f(shaderProgramMap[shader].uniformMap[uniformName], value);
 }
 
 void OpenGLRenderDevice::SetShaderUniform4f(uint32 shader, const NString& uniformName, float* value)
 {
 	SetShader(shader);
+
 	glUniform4f(shaderProgramMap[shader].uniformMap[uniformName], value[0], value[1], value[2], value[3]);
 }
 

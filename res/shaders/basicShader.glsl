@@ -18,22 +18,21 @@ void main()
 
 #elif defined(FS_BUILD)
 uniform sampler2D diffuse;
-uniform bool bUseTexture;
 uniform vec4 colorAlpha;
+uniform bool bTexUse;
 in vec2 texCoord0;
 
 layout (location = 0) out vec4 FinalColor;
 void main()
-{
-
-	if(bUseTexture)
+{	
+	if(bTexUse)
 	{
 		FinalColor = texture(diffuse, texCoord0);
+		//FinalColor = vec4(1.0, 0.0, 0.0, 1.0);
 	}
 	else
 	{
 		FinalColor = colorAlpha;
-	}    
-
+	}
 }
 #endif
