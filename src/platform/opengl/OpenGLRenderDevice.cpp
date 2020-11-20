@@ -11,7 +11,7 @@ static void AddAllAttributes(GLuint program, const NString& vertexShaderText, ui
 static bool CheckShaderError(GLuint shader, int flag,
 		bool isProgram, const NString& errorMessage);
 static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
-		Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap);
+		Map<NString, GLint>& UBOMap, Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap);
 
 bool OpenGLRenderDevice::GlobalInit() 
 {
@@ -22,7 +22,7 @@ bool OpenGLRenderDevice::GlobalInit()
 	int32 major = 3;
 	int32 minor = 2;
 	
-	//bIsInitialized = true;
+	bIsInitialized = true;
 	//if(SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
 	//			SDL_GL_CONTEXT_PROFILE_CORE) != 0) {
 	//	DEBUG_LOG(LOG_TYPE_RENDERER, LOG_WARNING,
@@ -502,14 +502,14 @@ uint32 OpenGLRenderDevice::CreateShaderProgram(const NString& shaderText)
 		return (uint32)-1;
 	}
 
-  //   glValidateProgram(shaderProgram);
+	 //glValidateProgram(shaderProgram);
 	 //if(CheckShaderError(shaderProgram, GL_VALIDATE_STATUS,
 	 //			true, "Invalid shader program")) {
 	 //	return (uint32)-1;
 	 //}
 
 	AddAllAttributes(shaderProgram, vertexShaderText, GetVersion());
-	AddShaderUniforms(shaderProgram, shaderText, programData.uniformMap,
+	AddShaderUniforms(shaderProgram, shaderText, programData.UBOMap, programData.uniformMap,
 			programData.samplerMap);
 
 	shaderProgramMap[shaderProgram] = programData;
@@ -534,6 +534,7 @@ void OpenGLRenderDevice::UpdateUniformBuffer(uint32 buffer, const void* data, ui
 	//memcpy(dest, data, dataSize);
 	//glUnmapBuffer(GL_UNIFORM_BUFFER);
 
+	//PrevDataSize = offset
 	glBindBuffer(GL_UNIFORM_BUFFER, buffer);
 	glBufferSubData(GL_UNIFORM_BUFFER, PrevDataSize, dataSize, data);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -696,7 +697,7 @@ static bool AddShader(GLuint shaderProgram, const NString& text, GLenum type,
 }
 
 static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
-		Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap)
+		Map<NString, GLint>& UBOMap, Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap)
 {
 	GLint numBlocks;
 	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORM_BLOCKS, &numBlocks);
@@ -708,11 +709,11 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 		Array<GLchar> name(nameLen);
 		glGetActiveUniformBlockName(shaderProgram, block, nameLen, NULL, &name[0]);
 		NString uniformBlockName((char*)&name[0], nameLen-1);
-		uniformMap[uniformBlockName] = glGetUniformBlockIndex(shaderProgram, &name[0]);
+		UBOMap[uniformBlockName] = glGetUniformBlockIndex(shaderProgram, &name[0]);
 	}
 
 	GLint numUniforms = 0;
-	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &numBlocks);
+	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &numUniforms);
 	
 	// Would get GL_ACTIVE_UNIFORM_MAX_LENGTH, but buggy on some drivers
 	Array<GLchar> uniformName(256); 
@@ -722,14 +723,21 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 		GLsizei actualLength = 0;
 		glGetActiveUniform(shaderProgram, uniform, uniformName.size(),
 				&actualLength, &arraySize, &type, &uniformName[0]);
-		if(type != GL_SAMPLER_2D) {
-			DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR,
-					"Non-sampler2d uniforms currently unsupported!");
-			continue;
-		}
 		NString name((char*)&uniformName[0], actualLength - 1);
-		samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
+		if(type == GL_SAMPLER_2D) 
+		{
+			DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
+			samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
+		}
+		else
+		{
+			DEBUG_LOG_TEMP("Uniform: %s", (char*)&uniformName[0]);
+			uniformMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
+		}
+
 	}
+
+	DEBUG_LOG_TEMP("UniformSize: %d", uniformMap.size());
 }
 
 static void AddAllAttributes(GLuint program, const NString& vertexShaderText, uint32 version)
@@ -899,13 +907,25 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
     glUniform1i(shaderProgramMap[shader].samplerMap[samplerName], unit);
 }
 
+void OpenGLRenderDevice::SetShaderUniform1i(uint32 shader, const NString& uniformName, int value)
+{
+	SetShader(shader);
+	glUniform1i(shaderProgramMap[shader].uniformMap[uniformName], value);
+}
+
+void OpenGLRenderDevice::SetShaderUniform4f(uint32 shader, const NString& uniformName, float* value)
+{
+	SetShader(shader);
+	glUniform4f(shaderProgramMap[shader].uniformMap[uniformName], value[0], value[1], value[2], value[3]);
+}
+
 void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
 	uint32 buffer)
 {
 	SetShader(shader);
-	//glUniformBlockBinding(shader, shaderProgramMap[shader].uniformMap[uniformBufferName], 0);
+	//glUniformBlockBinding(shader, shaderProgramMap[shader].UBOMap[uniformBufferName], 0);
 	glBindBufferBase(GL_UNIFORM_BUFFER,
-		shaderProgramMap[shader].uniformMap[uniformBufferName],
+		shaderProgramMap[shader].UBOMap[uniformBufferName],
 		buffer);
 }
 

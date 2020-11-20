@@ -170,10 +170,9 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 		return false;
 	}
 	
-	//ClearScene();
+	ClearScene();
 
 	std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename;
-
 
 	rapidjson::Document doc;
 	FILE* fp = fopen(fileToLoadFullPath.c_str(), "rb"); // non-Windows use "r"
@@ -251,10 +250,6 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 	////HACK HACK HACK CLEAR ALL ENTITIES BEFORE LOADING THE SCENE
 	//for (const auto entity : ecs->GetEntities())MakeEntity
 	//{
-
-
-
-
 	//	//Game Objects
 	//	const rapidjson::Value& GameObjects = doc["GameObjects"];
 

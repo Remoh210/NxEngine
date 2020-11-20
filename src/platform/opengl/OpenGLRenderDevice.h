@@ -176,6 +176,12 @@ public:
     void SetShaderSampler(uint32 shader, const NString& samplerName,
             uint32 texture, uint32 sampler, uint32 unit);
 
+	void SetShaderUniform1i(uint32 shader, const NString& uniformName,
+		int value);
+
+	void SetShaderUniform4f(uint32 shader, const NString& uniformName,
+		float* value);
+
 	void SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
 		uint32 buffer);
 
@@ -222,6 +228,7 @@ private:
 	struct ShaderProgram
 	{
 		Array<uint32> shaders;
+		Map<NString, int32> UBOMap;
 		Map<NString, int32> uniformMap;
 		Map<NString, int32> samplerMap;
 	};

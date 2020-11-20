@@ -22,6 +22,16 @@ public:
 		mRenderDevice->SetShaderUniformBuffer(mProgramId, name, buffer.GetId());
 	}
 
+	inline void SetUniform1i(const NString& name, int value)
+	{
+		mRenderDevice->SetShaderUniform1i(mProgramId, name, value);
+	}
+
+	inline void SetUniform4f(const NString& name, vec4 value)
+	{
+		mRenderDevice->SetShaderUniform4f(mProgramId, name, glm::value_ptr(value));
+	}
+
     inline void SetSampler(const NString& name, Texture& texture, Sampler& sampler,
             uint32 unit)
     {

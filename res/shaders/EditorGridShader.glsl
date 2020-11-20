@@ -20,8 +20,8 @@ layout (std140) uniform Matrices
 {
     mat4 projection;
     mat4 view;
+	vec2 vec2UniTest;
 };
-
 
 vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
     mat4 viewInv = inverse(view);
