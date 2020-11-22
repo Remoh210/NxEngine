@@ -1,6 +1,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "ArrayBitmap.h"
 #include "stb_image.h"
+#include "Core/FileSystem/FileSystem.h"
 
 #define LOG_TYPE_ArrayBitmap "ArrayBitmap"
 
@@ -12,9 +13,11 @@ ArrayBitmap::ArrayBitmap(/*const string& fileName*/)
 
 bool ArrayBitmap::Load(const string& fileName) 
 {
+	texturefile = fileName;
 	bool bResult = false;
 	int nrComponents;
-	data = stbi_load(fileName.c_str(), &width, &height, &nrComponents, 0);
+	NString textureFullPath = Nx::FileSystem::GetPath(fileName);
+	data = stbi_load(textureFullPath.c_str(), &width, &height, &nrComponents, 0);
 	
 	if (data)
 	{

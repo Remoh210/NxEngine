@@ -2,6 +2,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include "Core/FileSystem/FileSystem.h"
 #include <iostream>
 #include <stb_image.h>
 
@@ -18,8 +19,9 @@ bool AssetLoader::LoadModels(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<MaterialSpec>& materials)
 {
+	NString absoluteFilePath = Nx::FileSystem::GetPath(fileName);
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(fileName.c_str(),
+	const aiScene* scene = importer.ReadFile(absoluteFilePath.c_str(),
 		aiProcess_Triangulate |
 		aiProcess_GenSmoothNormals |
 		aiProcess_FlipUVs |
@@ -27,7 +29,7 @@ bool AssetLoader::LoadModels(const NString& fileName,
 
 	if (!scene) {
 		DEBUG_LOG(LOG_TYPE_IO, LOG_ERROR, "Mesh load failed!: %s",
-			fileName.c_str());
+			absoluteFilePath.c_str());
 		return false;
 	}
 
@@ -128,11 +130,12 @@ bool AssetLoader::LoadModel(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 	Array<MaterialSpec>& materials)
 {
+	NString absoluteFilePath = Nx::FileSystem::GetPath(fileName);
 	//Create static mesh 
 
 	// read file via ASSIMP
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(fileName, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(absoluteFilePath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 	// check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
@@ -223,8 +226,7 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 
 
 void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat, aiTextureType type, MaterialSpec& material, NString typeName)
-{
-
+{	
 	// retrieve the directory path of the filepath
 	NString myDirectory = filePath.substr(0, filePath.find_last_of('/'));
 

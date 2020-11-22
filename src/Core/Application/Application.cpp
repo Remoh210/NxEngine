@@ -329,11 +329,11 @@ void Application::LoadDefaultScene()
 	NString monkeyMesh = "res/models/monkey3.obj";
 	NString rockMesh = "res/models/rock/rock.obj";
 
-	NString TEST_TEXTURE_FILE = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
+	NString TEST_TEXTURE_FILE = "res/textures/stmpnk.jpg";
 	NString SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
-	NString TEST_MODEL_FILE = Nx::FileSystem::GetPath(monkeyMesh);
-	NString TEST_MODEL_FILE2 = Nx::FileSystem::GetPath(rockMesh);
-	NString TEST_TEXTURE_FILE2 = Nx::FileSystem::GetPath("res/models/rock/rock.png");
+	NString TEST_MODEL_FILE = monkeyMesh;
+	NString TEST_MODEL_FILE2 = rockMesh;
+	NString TEST_TEXTURE_FILE2 = "res/models/rock/rock.png";
 
 	//model 1
 	Array<IndexedModel> models;

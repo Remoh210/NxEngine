@@ -90,6 +90,7 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 for (const auto& entity : currentScene.sceneObjects)
 	 {
 	 	//if (/*!Entity->bIsDebug*/) {continue;}
+
 	 	rapidjson::Value ObjValue(rapidjson::kObjectType);
 
 		ECS::ComponentHandle<StaticMeshComponent> staticMeshComp = entity->get<StaticMeshComponent>();
@@ -97,6 +98,42 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	if (!staticMeshComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
 
 	 	rapidjson::Value meshFileName(staticMeshComp->meshAssetFile.c_str(), allocator);
+
+		rapidjson::Value subMeshArray(rapidjson::kArrayType);
+		for(MeshInfo* meshInfo : staticMeshComp->meshes)
+		{
+			rapidjson::Value meshInfoObjectValue(rapidjson::kObjectType);
+			rapidjson::Value materialValue(rapidjson::kObjectType);
+
+			if(meshInfo->material->diffuseTextures.size() > 0)
+			{
+				rapidjson::Value textureArray(rapidjson::kArrayType);
+				for(Texture* texture : meshInfo->material->diffuseTextures)
+				{
+					rapidjson::Value textureObjectValue(rapidjson::kObjectType);
+					rapidjson::Value textureNameValue(texture->GetFileName().c_str(), allocator);
+					textureObjectValue.AddMember("TextureFile", textureNameValue, allocator);
+					rapidjson::Value isCompressedValue(texture->IsCompressed());
+					textureObjectValue.AddMember("IsCompressed", isCompressedValue, allocator);
+					rapidjson::Value hasMipMapsValue(texture->HasMipmaps());
+					textureObjectValue.AddMember("HasMipmaps", hasMipMapsValue, allocator);
+					textureArray.PushBack(textureObjectValue, allocator);
+				}
+				materialValue.AddMember("DiffuseTexures", textureArray, allocator);
+			}
+			else
+			{
+				rapidjson::Value colorValue(rapidjson::kArrayType);
+	 			for (int i = 0; i < 3; i++) {
+	 				rapidjson::Value temp(meshInfo->material->color[i]);
+	 				colorValue.PushBack(temp, allocator);
+	 			}
+				materialValue.AddMember("DiffuseColor", colorValue, allocator);
+			}
+			meshInfoObjectValue.AddMember("Material", materialValue, allocator);
+			subMeshArray.PushBack(meshInfoObjectValue, allocator);
+
+		}
 
 
 	 	//rapidjson::Value Visible(RendComp->bIsVisible);
@@ -111,25 +148,19 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 
 		
 	 	ECS::ComponentHandle<TransformComponent> TransComp = entity->get<TransformComponent>();
-
-
 	 	if (!TransComp) { DEBUG_LOG("ENGINE", "ERROR", "No TransformComponent"); return false; }
-		
 	 	rapidjson::Value PositionArray(rapidjson::kArrayType);
 	 	rapidjson::Value Rotation(rapidjson::kArrayType);
 	 	rapidjson::Value Scale(rapidjson::kArrayType);
-		
 	 	for (int i = 0; i < 3; i++) {
 	 		rapidjson::Value temp(TransComp->transform.position[i]);
 	 		PositionArray.PushBack(temp, allocator);
 	 	}
-
 	 	for (int i = 0; i < 3; i++) {
 	 		vec3 rot = TransComp->transform.rotation;
 	 		rapidjson::Value temp(rot[i]);
 	 		Rotation.PushBack(temp, allocator);
 	 	}
-
 	 	for (int i = 0; i < 3; i++) {
 	 		rapidjson::Value temp(TransComp->transform.scale[i]);
 	 		Scale.PushBack(temp, allocator);
@@ -137,7 +168,8 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 
 
 	 	ObjValue.AddMember("MeshFile", meshFileName, allocator);
-		 //ObjValue.AddMember("ShaderFileName", Shader, allocator);
+		ObjValue.AddMember("SubMeshArray", subMeshArray, allocator);
+		//ObjValue.AddMember("ShaderFileName", Shader, allocator);
 	 	//ObjValue.AddMember("Visible", Visible, allocator);
 	 	
 	 	//ObjValue.AddMember("Wireframe", WireFrame, allocator);
@@ -215,8 +247,6 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 	const rapidjson::Value& GameObjects = doc["GameObjects"];
 	for (int i = 0; i < GameObjects.Size(); i++)
 	{
-		//const rapidjson::Value& staticMeshValue = GameObjects[i]["StaticMesh"];
-
 		StaticMeshComponent staticMeshComp;
 		NString meshFile = GameObjects[i]["MeshFile"].GetString();
 		if(meshFile == "") 
@@ -229,25 +259,21 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 		staticMeshComp.shader = ShaderManager::GetMainShader();
 
 		TransformComponent transformComponent;
-
 		const rapidjson::Value& PositionArray = GameObjects[i]["Position"];
 		for (rapidjson::SizeType i = 0; i < PositionArray.Size(); i++) 
 		{
 			transformComponent.transform.position[i] = PositionArray[i].GetFloat();
 		}
-
-			const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
-			for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++) {
-				transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
-			}
-
-
-			const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
-			for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) {
-
-				transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
-
-			}
+		const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
+		for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++)
+		{
+			transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
+		}
+		const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
+		for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) 
+		{
+			transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
+		}
 		
 		ECS::Entity* ent = world->create();
 		ent->assign<TransformComponent>(transformComponent);
@@ -256,36 +282,5 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 		currentScene.sceneObjects.Add(ent);
 	}
 
-	////HACK HACK HACK CLEAR ALL ENTITIES BEFORE LOADING THE SCENE
-	//for (const auto entity : ecs->GetEntities())MakeEntity
-	//{
-	//	//Game Objects
-	//	const rapidjson::Value& GameObjects = doc["GameObjects"];
-
-
-	//	for (rapidjson::SizeType i = 0; i < GameObjects.Size(); i++)
-	//	{
-
-	//		//RenderComponent renderComponent;
-	//		//renderComponent.diffuse = vec4f(0.2f, 0.4f, 0.5f, 1.f);
-
-	//		//renderComponent.mesh = GameObjects[i]["Name"].GetString();
-	//		//renderComponent.bIsVisible = GameObjects[i]["Visible"].GetBool();
-	//		//renderComponent.bIsWireFrame = GameObjects[i]["Wireframe"].GetBool();
-	//		//renderComponent.meshPath = GameObjects[i]["Mesh"].GetString();
-	//		//renderComponent.shader = GameObjects[i]["Shader"].GetString();
-
-	//		//const rapidjson::Value& DiffuseArray = GameObjects[i]["DiffuseRGB_Alpha"];
-	//		//for (rapidjson::SizeType i = 0; i < DiffuseArray.Size(); i++) {
-
-	//		//	renderComponent.diffuse[i] = DiffuseArray[i].GetFloat();
-
-	//		//}
-
-	//		//EntityHandle entity = ecs->MakeEntity(renderComponent, transformComponent);
-
-	//		currentScene.sceneObjects.Add(entity);
-	//	}
-	//}
 	return true;
 }
