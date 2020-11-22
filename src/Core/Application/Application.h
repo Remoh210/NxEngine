@@ -1,4 +1,5 @@
 #pragma once
+#include <Common/dataStructs/Map.h>
 #include <rendering/Window.h>
 #include <Common/dataStructs/String.h>
 #include <imgui.h>
@@ -38,16 +39,14 @@ private:
 
 	void Initialize();
 
-	void DisplayEntyties(ECS& ecs);
+	void DisplayEntyties();
 
-	void ShowContentWindow(ECS& ecs);
-	void ShowSceneObjectList(ECS& ecs);
-	void ShowInspector(ECS & ecs);
-	void ShowEditor(GLint EditorTex);
+	void ShowContentWindow();
+	void ShowSceneObjectList();
+	void ShowInspector();
+	void ShowEditor();
 
-	void loadEntityToScene(ECS& ecs, string name);
-
-	void GUI_ShowMenuBar(ECS& ecs);
+	void GUI_ShowMenuBar();
 
 	Map<string, string> MapModelPaths;
 
@@ -69,4 +68,6 @@ private:
 
 	double deltaTime;
 
+private:
+	ECS::World* world;
 };

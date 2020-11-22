@@ -148,14 +148,15 @@ int Application::Run()
     EditorRenderContext EditorContext(renderDevice, target, drawParams, sampler, projection, MainCamera);
 
 	//ECS
-	ECS ecs;;
+	world = ECS::World::createWorld();
 
 	//model 1
 	Array<IndexedModel> models;
 	Array<uint32> modelMaterialIndices;
 	Array<MaterialSpec> modelMaterials;
 	AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
-	VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
+	//VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
+	VertexArray* vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 
 	ArrayBitmap testBitmap;
 	testBitmap.Load(TEST_TEXTURE_FILE);
@@ -169,13 +170,13 @@ int Application::Run()
 	Shader shader(renderDevice, shaderText);
 
 
-	SceneManager::SetECS(ecs);
+	SceneManager::SetECS(world);
 	SceneManager::SetRenderDevice(renderDevice);
 	ShaderManager::SetRenderDevice(renderDevice);
 	ShaderManager::SetMainShader(shader);
 
 	MeshInfo meshInfo1;
-	meshInfo1.vertexArray = &vertexArray;
+	meshInfo1.vertexArray = vertexArray;
 	Material material1;
 	material1.diffuseTextures.Add(&testtex);
 	meshInfo1.material = &material1;
@@ -192,14 +193,15 @@ int Application::Run()
 
 	//model2 
 	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
-	VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
+	VertexArray* vertexArray2 = new VertexArray(renderDevice, models[1], USAGE_STATIC_DRAW);
+	//VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
 
 	ArrayBitmap testBitmap2;
 	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
 	Texture testtex2(renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
 
 	MeshInfo meshInfo2;
-	meshInfo2.vertexArray = &vertexArray2;
+	meshInfo2.vertexArray = vertexArray2;
 	Material material2;
 	material2.diffuseTextures.Add(&testtex2);
 	meshInfo2.material = &material2;
@@ -218,7 +220,7 @@ int Application::Run()
 	meshInfo3->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material material3;
 	
-	material3.diffuseTextures.Add(&testtex);
+	//material3.diffuseTextures.Add(&testtex);
 	meshInfo3->material = &material3;
 	StaticMeshComponent renderableMesh3;
 	renderableMesh3.shader = &shader;
@@ -229,22 +231,26 @@ int Application::Run()
 	transformComp3.transform.scale = vec3(10.0f);
 
 	
-	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp, renderableMesh));
-	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp3, renderableMesh3));
-	SceneManager::currentScene.sceneObjects.Add(ecs.MakeEntity(transformComp2, renderableMesh2));
+
+	
+	ECS::Entity* ent = world->create();
+	auto pos = ent->assign<TransformComponent>(transformComp);
+	auto rot = ent->assign<StaticMeshComponent>(renderableMesh);
+
+	ECS::Entity* ent2 = world->create();
+	auto pos2 = ent2->assign<TransformComponent>(transformComp2);
+	auto rot2 = ent2->assign<StaticMeshComponent>(renderableMesh2);
+
+	ECS::Entity* ent3 = world->create();
+	auto pos3 = ent3->assign<TransformComponent>(transformComp3);
+	auto rot3 = ent3->assign<StaticMeshComponent>(renderableMesh3);
+
+	SceneManager::currentScene.sceneObjects.Add(ent);
+	SceneManager::currentScene.sceneObjects.Add(ent2);
+	SceneManager::currentScene.sceneObjects.Add(ent3);
 
 
-	RenderableMeshSystem renderSystem(EditorContext, ecs);
-	SystemList systemList;
-	systemList.AddSystem(renderSystem);
-  
-	//Line Renderer
-    Array<vec3> points;
-	points.push_back(vec3(-0.5f, -0.5f, 0.0f));
-	points.push_back(vec3(0.5f, -0.5f, 0.0f));
-	points.push_back(vec3(0.0f, 0.5f, 0.0f));
-	PrimitiveGenerator GridPrimitiveGenerator;
-	VertexArray vertexArrayGRID(renderDevice, GridPrimitiveGenerator.CreateGridVA(20), USAGE_STATIC_DRAW);
+	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(EditorContext));
 
 	renderableMesh.shader = &shader;
 	renderableMesh2.shader = &shader;
@@ -288,7 +294,7 @@ int Application::Run()
 
 
 		ImGui::Begin("Main Window", &p_open, window_flags);                          // Create a window called "Hello, world!" and append into it.
-		GUI_ShowMenuBar(ecs);
+		GUI_ShowMenuBar();
 
 		currentFrame = glfwGetTime();
 		deltaTime = currentFrame - lastFrame;
@@ -312,7 +318,7 @@ int Application::Run()
 		//ImGui::SameLine();
 		//Inspector
 		{
-			ShowInspector(ecs);
+			ShowInspector();
 		}
 		//ImGui::NewLine();
 		////Content Window
@@ -328,7 +334,7 @@ int Application::Run()
 		for (int i = 0; i < 1; i++)
 		{
 			debugSpherePos.x += 0.1f * deltaTime;
-			debugRenderer.DrawDebugSphere(debugSpherePos, 0, 10, vec3(0, 1, 0));
+			//debugRenderer.DrawDebugSphere(debugSpherePos, 0, 10, vec3(0, 1, 0));
 		}
 
 		// input
@@ -352,7 +358,7 @@ int Application::Run()
 		// ------
 		EditorContext.Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
 		debugRenderer.Update(deltaTime);
-		ecs.UpdateSystems(systemList, 0.0f);
+		world->tick(deltaTime);
 		EditorContext.Flush();
 
 
@@ -456,39 +462,12 @@ void Application::processInput(GLFWwindow *window)
 
 void Application::ResizeWindow(uint32 width, uint32 height)
 {
+		GUI_ShowMenuBar();
 	windowHeight = height;
 	windowWidth = width;
 }
 
-void Application::DisplayEntyties(ECS& ecs)
-{
-	//HACK HACK HACK
-	Array<EntityHandle> entities;
-	entities = ecs.GetEntities();
-	for (int i = 0; i < entities.size(); i++)
-	{
-	}
-
-}
-
-void Application::loadEntityToScene(ECS& ecs, NString name)
-{
-	//TransformComponent transformComponent;
-	//transformComponent.transform.position = vec3f(0.f, 0.f, 0.f);
-	//transformComponent.transform.scale = vec3f(1.f, 1.f, 1.f);
-	//RenderComponent renderComponent;
-	//renderComponent.diffuse = vec4f(0.2f, 0.4f, 0.5f, 1.f);
-	//renderComponent.bIsVisible = true;
-	//renderComponent.bIsWireFrame = true;
-	//renderComponent.shader = "basic";
-	//renderComponent.mesh = name;
-	//renderComponent.meshPath = MapModelPaths.find(name)->second;
-
-	//EntityHandle entity = ecs.MakeEntity(renderComponent, transformComponent);
-	//cSceneManager::currentScene.sceneObjects.push_back(entity);
-}
-
-void Application::GUI_ShowMenuBar(ECS& ecs)
+void Application::GUI_ShowMenuBar()
 {
 	// Menu Bar
 	ImGui::BeginMenuBar();
@@ -555,51 +534,51 @@ void Application::GUI_ShowMenuBar(ECS& ecs)
 
 
 
-void Application::ShowContentWindow(ECS& ecs)
+void Application::ShowContentWindow()
 {
-	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
-	ImGui::BeginChild("Content Window", ImVec2(0, GetPercentOf(30, windowHeight)), true/*, window_flags*/);
+	// ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
+	// ImGui::BeginChild("Content Window", ImVec2(0, GetPercentOf(30, windowHeight)), true/*, window_flags*/);
 
-	ImGui::SetNextWindowContentSize(ImVec2(100 * MapModelPaths.size(), 0.0f));
-	ImGui::BeginChild("##ScrollingRegion", ImVec2(0, ImGui::GetFontSize() * 20), false, ImGuiWindowFlags_HorizontalScrollbar);
-	ImGui::Columns(MapModelPaths.size());
-	int ITEMS_COUNT = 1;
-	ImGuiListClipper clipper(ITEMS_COUNT);  // Also demonstrate using the clipper for large list
-	while (clipper.Step())
-	{
-		for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
-		{
-			int j = 0;
-			for (const auto& x : MapModelPaths)
-			{
+	// ImGui::SetNextWindowContentSize(ImVec2(100 * MapModelPaths.size(), 0.0f));
+	// ImGui::BeginChild("##ScrollingRegion", ImVec2(0, ImGui::GetFontSize() * 20), false, ImGuiWindowFlags_HorizontalScrollbar);
+	// ImGui::Columns(MapModelPaths.size());
+	// int ITEMS_COUNT = 1;
+	// ImGuiListClipper clipper(ITEMS_COUNT);  // Also demonstrate using the clipper for large list
+	// while (clipper.Step())
+	// {
+	// 	for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; i++)
+	// 	{
+	// 		int j = 0;
+	// 		for (const auto& x : MapModelPaths)
+	// 		{
 
-				ImGui::PushID(j);
-				int frame_padding = -1 + i;     // -1 = uses default padding
-				//ImGui::Image((void*)(intptr_t)TestTexId, ImVec2(400/5, 400/5));
-				if (ImGui::ImageButton((void*)(intptr_t)TestTexId, ImVec2(400 / 5, 400 / 5)))
-				{
-					loadEntityToScene(ecs, x.first);
-				}
-				ImGui::PopID();
-				ImGui::TextWrapped(x.first.c_str());
-				ImGui::NextColumn();
+	// 			ImGui::PushID(j);
+	// 			int frame_padding = -1 + i;     // -1 = uses default padding
+	// 			//ImGui::Image((void*)(intptr_t)TestTexId, ImVec2(400/5, 400/5));
+	// 			if (ImGui::ImageButton((void*)(intptr_t)TestTexId, ImVec2(400 / 5, 400 / 5)))
+	// 			{
+	// 				loadEntityToScene(ecs, x.first);
+	// 			}
+	// 			ImGui::PopID();
+	// 			ImGui::TextWrapped(x.first.c_str());
+	// 			ImGui::NextColumn();
 
-				j++;
-			}
-		}
-	}
-	ImGui::Columns(1);
-	ImGui::EndChild();
+	// 			j++;
+	// 		}
+	// 	}
+	// }
+	// ImGui::Columns(1);
+	// ImGui::EndChild();
 
-	ImGui::EndChild();
-	ImGui::PopStyleVar();
+	// ImGui::EndChild();
+	// ImGui::PopStyleVar();
 }
 
 
-bool showInspector = false;
-EntityHandle selectedEntity;
+//bool showInspector = false;
+//EntityHandle selectedEntity;
 
-void Application::ShowSceneObjectList(ECS& ecs)
+void Application::ShowSceneObjectList()
 {
 	//ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
 	//ImGui::BeginChild("Scene Tree", ImVec2(GetPercentOf(20, windowWidth), GetPercentOf(70, windowHeight)), true/*, window_flags*/);
@@ -655,64 +634,64 @@ void Application::ShowSceneObjectList(ECS& ecs)
 
 }
 
-void Application::ShowInspector(ECS& ecs)
+void Application::ShowInspector()
 {
-	//Inspector
-	if (showInspector)
-	{
-		TransformComponent* TC = ecs.GetComponent<TransformComponent>(selectedEntity);
-		if (TC)
-		{
-			//position
-			float PosVec[3];
-			for (int i = 0; i < 3; i++)
-			{
-				PosVec[i] = TC->transform.position[i];
-			}
-			//Scale
-			float scale = TC->transform.scale.x;
+	// //Inspector
+	// if (showInspector)
+	// {
+	// 	TransformComponent* TC = ecs.GetComponent<TransformComponent>(selectedEntity);
+	// 	if (TC)
+	// 	{
+	// 		//position
+	// 		float PosVec[3];
+	// 		for (int i = 0; i < 3; i++)
+	// 		{
+	// 			PosVec[i] = TC->transform.position[i];
+	// 		}
+	// 		//Scale
+	// 		float scale = TC->transform.scale.x;
 
 
 
-			ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 1.0f);
-			ImGui::BeginChild("Inspector", ImVec2(GetPercentOf(20, windowWidth) - 45, GetPercentOf(70, windowHeight)), true/*, window_flags*/);
+	// 		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 1.0f);
+	// 		ImGui::BeginChild("Inspector", ImVec2(GetPercentOf(20, windowWidth) - 45, GetPercentOf(70, windowHeight)), true/*, window_flags*/);
 
-			ImGui::DragFloat3("Position", PosVec, 0.01f);
-			ImGui::DragFloat("Scale", &scale, 0.01f, 0.001f, 1000.0f);
+	// 		ImGui::DragFloat3("Position", PosVec, 0.01f);
+	// 		ImGui::DragFloat("Scale", &scale, 0.01f, 0.001f, 1000.0f);
 
-			//position
-			for (int i = 0; i < 3; i++)
-				TC->transform.position[i] = PosVec[i];
-			//scale
-			for (int i = 0; i < 3; i++)
-				TC->transform.scale[i] = scale;
-
-
-			if (ImGui::Button("Remove Object"))
-			{
-				//cSceneManager::RemoveObjectFromScene(selectedEntity, ecs);
-				showInspector = false;
-			}
-			if (ImGui::Button("Close"))
-			{
-				showInspector = false;
-			}
-			ImGui::EndChild();
-			ImGui::PopStyleVar();
-		}
+	// 		//position
+	// 		for (int i = 0; i < 3; i++)
+	// 			TC->transform.position[i] = PosVec[i];
+	// 		//scale
+	// 		for (int i = 0; i < 3; i++)
+	// 			TC->transform.scale[i] = scale;
 
 
-	}
+	// 		if (ImGui::Button("Remove Object"))
+	// 		{
+	// 			//cSceneManager::RemoveObjectFromScene(selectedEntity, ecs);
+	// 			showInspector = false;
+	// 		}
+	// 		if (ImGui::Button("Close"))
+	// 		{
+	// 			showInspector = false;
+	// 		}
+	// 		ImGui::EndChild();
+	// 		ImGui::PopStyleVar();
+	// 	}
+
+
+	// }
 }
 
-void Application::ShowEditor(GLint EditorTex)
+void Application::ShowEditor()
 {
-	ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 1.0f);
-	ImGui::BeginChild("ViewPort", ImVec2(GetPercentOf(60, windowWidth), GetPercentOf(70, windowHeight)), true/*, window_flags*/);
+	// ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 1.0f);
+	// ImGui::BeginChild("ViewPort", ImVec2(GetPercentOf(60, windowWidth), GetPercentOf(70, windowHeight)), true/*, window_flags*/);
 
-	ImGui::Image((void *)EditorTex, ImVec2(GetPercentOf(60, windowWidth), GetPercentOf(70, windowHeight)), ImVec2(0, 1), ImVec2(1, 0));
-	ImGui::EndChild();
-	ImGui::PopStyleVar();
+	// ImGui::Image((void *)EditorTex, ImVec2(GetPercentOf(60, windowWidth), GetPercentOf(70, windowHeight)), ImVec2(0, 1), ImVec2(1, 0));
+	// ImGui::EndChild();
+	// ImGui::PopStyleVar();
 }
 
 

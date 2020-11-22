@@ -6,6 +6,7 @@
 #include "Common/Transform/Transform.h"
 //
 #include "Core/Systems/RenderSystem.h"
+#include "Core/Components/StaticMeshComponent.h"
 #include "Core/Camera/Camera.h"
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/Application/AssetManager/AssetManager.h"
@@ -20,8 +21,8 @@
 
 Scene 		          SceneManager::currentScene;
 RenderDevice*         SceneManager::renderDevice = nullptr;
-ECS*          		  SceneManager::ecs = nullptr;
 Map<NString, Shader*> SceneManager::shaders;
+ECS::World*           SceneManager::world = nullptr;
 
 void Scene::Clear()
 {
@@ -31,14 +32,18 @@ void Scene::Clear()
 void SceneManager::ClearScene()
 {
 	//Remove entitties from ECS
-	if (!ecs)
+	if (!world)
 	{
 		return;
 	}
 
+	DEBUG_LOG_TEMP("Num SceneObj: %d", currentScene.sceneObjects.size());
+
 	for (int i = 0; i < currentScene.GetNumObjects(); i++)
 	{
-		ecs->RemoveEntity(currentScene.sceneObjects[i]);
+		ECS::ComponentHandle<StaticMeshComponent> staticMeshComp = currentScene.sceneObjects[i]->get<StaticMeshComponent>();
+		DEBUG_LOG_TEMP("About to delete: %s", staticMeshComp->meshAssetFile.c_str());
+		world->destroy(currentScene.sceneObjects[i]);
 	}
 
 	currentScene.Clear();
@@ -48,7 +53,7 @@ void SceneManager::ClearScene()
 
 bool SceneManager::SaveScene(NString filename, Camera& camera) 
 {
-	if(!ecs)
+	if(!world)
 	{
 		//TODO: Log
 		return false;
@@ -87,7 +92,7 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	//if (/*!Entity->bIsDebug*/) {continue;}
 	 	rapidjson::Value ObjValue(rapidjson::kObjectType);
 
-		StaticMeshComponent* staticMeshComp = ecs->GetComponent<StaticMeshComponent>(entity);
+		ECS::ComponentHandle<StaticMeshComponent> staticMeshComp = entity->get<StaticMeshComponent>();
 
 	 	if (!staticMeshComp) { DEBUG_LOG("ENGINE", "ERROR", "No RenderComponent"); return false; }
 
@@ -104,8 +109,10 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	 	//	DiffuseRGBArray.PushBack(temp, allocator);
 	 	//}
 
+		
+	 	ECS::ComponentHandle<TransformComponent> TransComp = entity->get<TransformComponent>();
 
-	 	TransformComponent* TransComp = ecs->GetComponent<TransformComponent>(entity);
+
 	 	if (!TransComp) { DEBUG_LOG("ENGINE", "ERROR", "No TransformComponent"); return false; }
 		
 	 	rapidjson::Value PositionArray(rapidjson::kArrayType);
@@ -164,13 +171,14 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 
 bool SceneManager::LoadScene(NString filename, class Camera& camera) 
 {
-	if (!ecs)
+	if (!world)
 	{
 		//TODO: Log
 		return false;
 	}
-	
+
 	ClearScene();
+	//return false;
 
 	std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename;
 
@@ -240,12 +248,13 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 				transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
 
 			}
-			
-		EntityHandle entity = ecs->MakeEntity(staticMeshComp, transformComponent);
+		
+		ECS::Entity* ent = world->create();
+		ent->assign<TransformComponent>(transformComponent);
+		ent->assign<StaticMeshComponent>(staticMeshComp);
 
-		currentScene.sceneObjects.Add(entity);
+		currentScene.sceneObjects.Add(ent);
 	}
-
 
 	////HACK HACK HACK CLEAR ALL ENTITIES BEFORE LOADING THE SCENE
 	//for (const auto entity : ecs->GetEntities())MakeEntity

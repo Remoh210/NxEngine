@@ -8,11 +8,10 @@
 
 
 
-
 struct Scene
 {
 	NString sceneName;
-	Array<EntityHandle> sceneObjects;
+	Array<ECS::Entity*> sceneObjects;
 	inline uint32 GetNumObjects() { return sceneObjects.size(); }
 	void Clear();
 };
@@ -28,9 +27,9 @@ public:
 	//inline static sScene GetCurrentScene() { return currentScene; };
 	static void ClearScene();
 
-	inline static void SetECS(ECS& ecsIn)
+	inline static void SetECS(ECS::World* worldIn)
 	{
-		ecs = &ecsIn;
+		world = worldIn;
 	}
 
 	inline static void SetRenderDevice(RenderDevice& renderDeviceIn)
@@ -39,7 +38,7 @@ public:
 	}
 
 private:
-	static ECS* ecs;
+	static ECS::World* world;
 	static RenderDevice* renderDevice;
 
 	static Map<NString, Shader*> shaders;
