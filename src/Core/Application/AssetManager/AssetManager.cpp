@@ -17,7 +17,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 	Array<MaterialSpec> materials;
 	Array<uint32> materialIndices;
 
-	AssetLoader::LoadModel(Nx::FileSystem::GetPath(file), models, materialIndices, materials);
+	AssetLoader::LoadModel(file, models, materialIndices, materials);
 
 	Array<MeshInfo*> loadedMeshes;
 	for (int i = 0; i < models.size(); i++)

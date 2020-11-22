@@ -7,6 +7,10 @@
 #include <imgui_impl_opengl3.h>
 #include <Core/Camera/Camera.h>
 #include "rendering/RenderDevice.h"
+#include "rendering/RenderTarget.h"
+#include "rendering/Window.h"
+#include "Editor/EditorRenderContext.h"
+#include "rendering/Sampler.h"
 #include <Core/ECS/ECS.h>
 
 
@@ -21,7 +25,7 @@ public:
 	~Application();
 
 	bool IsRunning();
-	inline GLFWwindow* GetWindow()
+	inline Window* GetWindow()
 	{
 		return window;
 	}
@@ -58,7 +62,7 @@ private:
 	bool isAppRunning;
 	static uint32 numInstances;
 	static Camera* MainCamera;
-	GLFWwindow* window;
+	Window* window;
 
 
 	uint32 windowWidth;
@@ -75,6 +79,8 @@ private:
 
 private:
 	ECS::World* world;
-
+	Sampler* editorSampler;
+	RenderTarget* editorRenderTarget;
+	EditorRenderContext* editorRenderContext;
 	RenderDevice* renderDevice;
 };

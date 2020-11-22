@@ -45,7 +45,7 @@ bool OpenGLRenderDevice::GlobalInit()
 	return bIsInitialized;
 }
 
-OpenGLRenderDevice::OpenGLRenderDevice(Window& window) :
+OpenGLRenderDevice::OpenGLRenderDevice(Window* window) :
 	shaderVersion(""), version(0),
 	boundFBO(0),
 	viewportFBO(0),
@@ -76,8 +76,8 @@ OpenGLRenderDevice::OpenGLRenderDevice(Window& window) :
 	//}
 
 	struct FBOData fboWindowData;
-	fboWindowData.width = window.GetWidth();
-	fboWindowData.height = window.GetHeight();
+	fboWindowData.width = window->GetWidth();
+	fboWindowData.height = window->GetHeight();
 	fboMap[0] = fboWindowData;
 
 	glEnable(GL_DEPTH_TEST);

@@ -14,7 +14,7 @@ namespace ECS
 	{
 	public:
 
-		RenderableMeshSystem(EditorRenderContext& contextIn) 
+		RenderableMeshSystem(EditorRenderContext* contextIn) 
 			: EntitySystem(),
 			context(contextIn)
 
@@ -63,7 +63,7 @@ namespace ECS
 					for (auto item : transformArray)
 					{
 
-						context.RenderMesh(mesh->meshes, mesh->shader, item.ToMatrix());
+						context->RenderMesh(mesh->meshes, mesh->shader, item.ToMatrix());
 						std::make_pair<int, float>(10, 10.0f);
 					}
 				}
@@ -72,7 +72,7 @@ namespace ECS
 					transform->transform.rotation.y += 0.01f;
 					transform->transform.position = vec3(0.0f);
 
-					context.RenderMesh(mesh->meshes, mesh->shader, transform->transform.ToMatrix());
+					context->RenderMesh(mesh->meshes, mesh->shader, transform->transform.ToMatrix());
 				}
 			});
 		}
@@ -82,6 +82,6 @@ namespace ECS
 	private:
 		bool first = true;
 		Array<Transform> transformArray;
-		EditorRenderContext& context;
+		EditorRenderContext* context;
 	};
 } // namespace ECS

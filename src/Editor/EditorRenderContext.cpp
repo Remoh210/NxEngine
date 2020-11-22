@@ -4,8 +4,8 @@
 #include "Core/FileSystem/FileSystem.h"
 
 
-EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
-	        Sampler& samplerIn, const mat4& perspectiveIn, Camera* CameraIn)
+EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
+	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn)
             : RenderContext(deviceIn, targetIn),
 		    drawParams(drawParamsIn),
 			sampler(samplerIn),
@@ -83,7 +83,7 @@ void EditorRenderContext::Flush()
 			if (mesh->material->diffuseTextures.size() > 0)
 			{
 				Texture* texture = mesh->material->diffuseTextures[0];
-				modelShader->SetSampler("diffuse", *texture, sampler, 0);
+				modelShader->SetSampler("diffuse", *texture, *sampler, 0);
 				modelShader->SetUniform1f("bTexUse", true);
 			}
 			else
@@ -105,9 +105,6 @@ void EditorRenderContext::Flush()
 			}
 
 			it->second.clear();
-
-			
-
 		}
     }
 
@@ -155,7 +152,7 @@ void EditorRenderContext::DrawDebugShapes()
 
 		if (texture != currentTexture)
 		{
-			modelShader.SetSampler("diffuse", *texture, sampler, 0);
+			modelShader.SetSampler("diffuse", *texture, *sampler, 0);
 		}
 		vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 

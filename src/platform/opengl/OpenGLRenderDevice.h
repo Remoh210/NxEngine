@@ -136,7 +136,7 @@ class OpenGLRenderDevice
 {
 public:
     
-    OpenGLRenderDevice(Window& window);
+    OpenGLRenderDevice(Window* window);
 	static bool GlobalInit();
 
     ~OpenGLRenderDevice(){};

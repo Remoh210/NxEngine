@@ -59,30 +59,7 @@ Application* Application::Create(float Width, float Height)
 
 int Application::Run()
 {
-	Window window(SCR_WIDTH, SCR_HEIGHT, "Test!");
-
-	// Put to init UI
-	window.SetMouseCallback
-	(
-		[this] (int xpos, int ypos)
-		{
-			if (firstMouse)
-			{
-				lastX = xpos;
-				lastY = ypos;
-				firstMouse = false;
-			}
-
-			float xoffset = xpos - lastX;
-			float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-			lastX = xpos;
-			lastY = ypos;
-
-			Application::GetMainCamera()->ProcessMouseMovement(xoffset, yoffset);
-		}
-	);
-
+	Initialize();
 
 	ImGui::CreateContext();
 
@@ -90,7 +67,7 @@ int Application::Run()
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-	ImGui_ImplGlfw_InitForOpenGL(window.GetWindowHandle(), true);
+	ImGui_ImplGlfw_InitForOpenGL(window->GetWindowHandle(), true);
 	ImGui_ImplOpenGL3_Init("#version 410");
 	ImGui::StyleColorsDark();
 
@@ -111,56 +88,27 @@ int Application::Run()
 	uint32 fpsToShow = 0;
 
 
-
-	//Initialize
     //TODO: Fix this
 	AssetLoader::SetShouldFlipVTexture(true);
 
-	//Testing Texture
-	renderDevice = new RenderDevice(window);
-
-	Sampler sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
-
-
-	int ha = window.GetHeight();
-	int wa = window.GetWidth();
-	mat4 projection = glm::perspective(glm::radians(45.0f), (float)window.GetWidth() / (float)window.GetHeight(), 0.1f, 10000.0f);
-
-	DrawParams drawParams;
-	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	drawParams.faceCulling = FACE_CULL_NONE;
-	drawParams.shouldWriteDepth = true;
-	drawParams.depthFunc = DRAW_FUNC_LESS;
-	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
-	//drawParams.destBlend = BLEND_FUNC_ONE;
-
-	RenderTarget target(renderDevice);
-    EditorRenderContext EditorContext(renderDevice, target, drawParams, sampler, projection, MainCamera);
-
 	//ECS
 	world = ECS::World::createWorld();
+	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 
 
-
-	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(EditorContext));
-
-
-
-	DebugRenderer debugRenderer(EditorContext);
+	DebugRenderer debugRenderer(*editorRenderContext);
 	for (int i = 0; i < 1; i++)
 	{
 		debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0));
 	}
 	
 	debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
-
-
 	vec3 debugSpherePos(0.0f);
 
 
 	LoadDefaultScene();
 
-	while (!window.ShouldClose())
+	while (!window->ShouldClose())
 	{
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -249,18 +197,18 @@ int Application::Run()
 
 		// render
 		// ------
-		EditorContext.Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
+		editorRenderContext->Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
 		debugRenderer.Update(deltaTime);
 		world->tick(deltaTime);
-		EditorContext.Flush();
+		editorRenderContext->Flush();
 
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		processInput(window.GetWindowHandle());
+		processInput(window->GetWindowHandle());
 		glfwPollEvents();
-		window.Present();
+		window->Present();
 
 		GLFWwindow* backup_current_context = glfwGetCurrentContext();
 		ImGui::UpdatePlatformWindows();
@@ -316,12 +264,58 @@ Application::Application(float Width, float Height)
 
 void Application::Initialize()
 {
+	window = new Window(SCR_WIDTH, SCR_HEIGHT, "Test!");
+
+	// Put to init UI
+	window->SetMouseCallback
+	(
+		[this](int xpos, int ypos)
+	{
+		if (firstMouse)
+		{
+			lastX = xpos;
+			lastY = ypos;
+			firstMouse = false;
+		}
+
+		float xoffset = xpos - lastX;
+		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+		lastX = xpos;
+		lastY = ypos;
+
+		Application::GetMainCamera()->ProcessMouseMovement(xoffset, yoffset);
+	}
+	);
+
+
+	renderDevice = new RenderDevice(window);
+	editorSampler = new Sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
+
+
+	DrawParams drawParams;
+	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	drawParams.faceCulling = FACE_CULL_NONE;
+	drawParams.shouldWriteDepth = true;
+	drawParams.depthFunc = DRAW_FUNC_LESS;
+	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
+	//drawParams.destBlend = BLEND_FUNC_ONE;
+
+	int ha = window->GetHeight();
+	int wa = window->GetWidth();
+	mat4 projection = glm::perspective(glm::radians(45.0f), (float)window->GetWidth() / (float)window->GetHeight(), 0.1f, 10000.0f);
+
+	editorRenderTarget = new RenderTarget(renderDevice);
+	editorRenderContext = new EditorRenderContext(renderDevice, editorRenderTarget, drawParams, editorSampler, projection, MainCamera);
 }
 
 void Application::ShutDown()
 {
 	world->destroyWorld();
 	delete renderDevice;
+	delete editorSampler;
+	delete editorRenderTarget;
+	delete editorRenderContext;
 }
 
 void Application::LoadDefaultScene()

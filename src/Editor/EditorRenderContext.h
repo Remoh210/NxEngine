@@ -18,8 +18,8 @@
 class EditorRenderContext : public RenderContext
 {
 public:
-	EditorRenderContext(RenderDevice* deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
-	        Sampler& samplerIn, const mat4& perspectiveIn, Camera* CameraIn);
+	EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
+	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn);
 	inline void RenderMesh(Array<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
 	{
 		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
@@ -52,9 +52,9 @@ public:
 
 	
 private:
-	DrawParams& drawParams;
+	DrawParams drawParams;
 	//Shader& shader;
-	Sampler& sampler;
+	Sampler* sampler;
 	UniformBuffer* MatrixUniformBuffer;
 	mat4 perspective;
 	Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4>> meshRenderBuffer;
