@@ -6,6 +6,7 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <Core/Camera/Camera.h>
+#include "rendering/RenderDevice.h"
 #include <Core/ECS/ECS.h>
 
 
@@ -39,6 +40,10 @@ private:
 
 	void Initialize();
 
+	void ShutDown();
+
+	void LoadDefaultScene();
+
 	void DisplayEntyties();
 
 	void ShowContentWindow();
@@ -70,4 +75,6 @@ private:
 
 private:
 	ECS::World* world;
+
+	RenderDevice* renderDevice;
 };

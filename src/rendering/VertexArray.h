@@ -7,9 +7,9 @@
 class VertexArray
 {
 public:
-	inline VertexArray(RenderDevice& deviceIn, const IndexedModel& model,
+	inline VertexArray(RenderDevice* deviceIn, const IndexedModel& model,
 			BufferUsage usage) :
-		device(&deviceIn),
+		device(deviceIn),
 		id(model.CreateVertexArray(deviceIn, usage)),
 		numIndices(model.GetNumIndices())
 		{}

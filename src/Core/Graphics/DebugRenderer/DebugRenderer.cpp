@@ -13,7 +13,7 @@ DebugRenderer::DebugRenderer(EditorRenderContext& contextIn)
 	NString LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/DebugShapeShader.glsl");
 	NString LineShaderText;
 	Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-	shader = new Shader(*editorContext.GetRenderDevice(), LineShaderText);
+	shader = new Shader(editorContext.GetRenderDevice(), LineShaderText);
 
     debugDrawParams.primitiveType = PRIMITIVE_LINES;
 	debugDrawParams.shouldWriteDepth = true;
@@ -27,7 +27,7 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec
 
 	IndexedModel model = PrimitiveGenerator::CreateSphere(1, sectorCount, stackCount, color);
 
-	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VertexArray* VA = new VertexArray(editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
 
 	SphereShape->vertexArray = VA;
@@ -45,7 +45,7 @@ void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 col
 
 	IndexedModel model = PrimitiveGenerator::CreateLine(color);
 
-	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VertexArray* VA = new VertexArray(editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
 
 	lineShape->vertexArray = VA;
@@ -62,7 +62,7 @@ void DebugRenderer::DrawQuad()
 
 	IndexedModel model = PrimitiveGenerator::CreateQuad();
 
-	VertexArray* VA = new VertexArray(*editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VertexArray* VA = new VertexArray(editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
 
 	PlaneShape->vertexArray = VA;

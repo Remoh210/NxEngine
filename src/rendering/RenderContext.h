@@ -10,8 +10,8 @@ class RenderContext
 {
 
 public:
-    RenderContext(RenderDevice& deviceIn, RenderTarget& targetIn):
-            mRenderDevice(&deviceIn), mRenderTarget(&targetIn)
+    RenderContext(RenderDevice* deviceIn, RenderTarget& targetIn):
+            mRenderDevice(deviceIn), mRenderTarget(&targetIn)
             {}
     
     inline void Clear(bool bShouldClearColor, bool bShouldClearDepth,

@@ -76,7 +76,7 @@ void IndexedModel::SetInstancedElementStartIndex(uint32 elementIndex)
 //	elements.clear();
 //}
 
-uint32 IndexedModel::CreateVertexArray(RenderDevice& device,
+uint32 IndexedModel::CreateVertexArray(RenderDevice* device,
 	enum BufferUsage usage) const
 {
 	uint32 numVertexComponents = elementSizes.size();
@@ -97,12 +97,12 @@ uint32 IndexedModel::CreateVertexArray(RenderDevice& device,
 
 	if (indices.size() == 0)
 	{
-		return device.CreateVertexArray(vertexData, vertexElementSizes,
+		return device->CreateVertexArray(vertexData, vertexElementSizes,
 			numVertexComponents, numInstanceComponents, numVertices, nullptr,
 			numIndices, usage);
 	}
 
-	return device.CreateVertexArray(vertexData, vertexElementSizes,
+	return device->CreateVertexArray(vertexData, vertexElementSizes,
 		numVertexComponents, numInstanceComponents, numVertices, &indices[0],
 		numIndices, usage);
 }

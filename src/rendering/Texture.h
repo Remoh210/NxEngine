@@ -14,12 +14,12 @@ class Texture
 {
 
 public:
-    inline Texture(RenderDevice& deviceIn, ArrayBitmap& texData, PixelFormat interalPixelFormat,
+    inline Texture(RenderDevice* deviceIn, ArrayBitmap& texData, PixelFormat interalPixelFormat,
             bool bGenerateMipMaps = true, bool bCompress = true)
-            :device(&deviceIn),
+            :device(deviceIn),
             width(texData.GetWidth()), height(texData.GetHeight()),
             bIsCompressed(bCompress), bHasMipmaps(bGenerateMipMaps), 
-            id(deviceIn.CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
+            id(deviceIn->CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
             texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress))
     {
 		texData.Clean();

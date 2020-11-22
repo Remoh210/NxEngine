@@ -4,7 +4,7 @@
 #include "Core/FileSystem/FileSystem.h"
 
 
-EditorRenderContext::EditorRenderContext(RenderDevice& deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
+EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
 	        Sampler& samplerIn, const mat4& perspectiveIn, Camera* CameraIn)
             : RenderContext(deviceIn, targetIn),
 		    drawParams(drawParamsIn),

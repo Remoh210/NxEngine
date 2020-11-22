@@ -7,14 +7,14 @@ class ShaderManager
 {
 public:
 
-	inline static void SetRenderDevice(RenderDevice& renderDeviceIn)
+	inline static void SetRenderDevice(RenderDevice* renderDeviceIn)
 	{
-		renderDevice = &renderDeviceIn;
+		renderDevice = renderDeviceIn;
 	}
 
-	inline static void SetMainShader(Shader& shaderIn)
+	inline static void SetMainShader(Shader* shaderIn)
 	{
-		mainPipelineShader = &shaderIn;
+		mainPipelineShader = shaderIn;
 	}
 
 	inline static Shader* GetMainShader()

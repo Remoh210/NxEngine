@@ -7,9 +7,9 @@
 class Shader
 {
 public:
-    Shader(RenderDevice& deviceIn, const NString& shaderText):
-            mRenderDevice(&deviceIn),
-            mProgramId(deviceIn.CreateShaderProgram(shaderText))
+    Shader(RenderDevice* deviceIn, const NString& shaderText):
+            mRenderDevice(deviceIn),
+            mProgramId(deviceIn->CreateShaderProgram(shaderText))
             {}
     inline uint32 GetId() { return mProgramId; };
     inline ~Shader()

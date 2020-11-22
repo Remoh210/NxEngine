@@ -8,7 +8,7 @@ class IndexedModel
 public:
 	IndexedModel() :
 		instancedElementsStartIndex((uint32)-1) {}
-	uint32 CreateVertexArray(RenderDevice& device,
+	uint32 CreateVertexArray(RenderDevice* device,
 			BufferUsage usage) const;
 
 	void AllocateElement(uint32 elementSize);

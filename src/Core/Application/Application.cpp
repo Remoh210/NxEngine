@@ -24,17 +24,6 @@
 #include <experimental/filesystem>
 
 
-NString monkeyMesh = "res/models/monkey3.obj";
-NString rockMesh = "res/models/rock/rock.obj";
-
-NString TEST_TEXTURE_FILE     = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
-NString SHADER_TEXT_FILE      = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
-//NString LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/LineShader.glsl");
-NString TEST_MODEL_FILE       = Nx::FileSystem::GetPath(monkeyMesh);
-NString TEST_MODEL_FILE2      = Nx::FileSystem::GetPath(rockMesh);
-NString TEST_TEXTURE_FILE2    = Nx::FileSystem::GetPath("res/models/rock/rock.png");
-
-
 // settings
 const unsigned int SCR_WIDTH = 1200;
 const unsigned int SCR_HEIGHT = 900;
@@ -72,6 +61,7 @@ int Application::Run()
 {
 	Window window(SCR_WIDTH, SCR_HEIGHT, "Test!");
 
+	// Put to init UI
 	window.SetMouseCallback
 	(
 		[this] (int xpos, int ypos)
@@ -96,7 +86,6 @@ int Application::Run()
 
 	ImGui::CreateContext();
 
-
 	ImGuiIO& io = ImGui::GetIO();
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
@@ -106,8 +95,12 @@ int Application::Run()
 	ImGui::StyleColorsDark();
 
 
-	//cSceneManager::LoadScene("TestScene.json", ecs, *GetMainCamera());
+	bool show_demo_window = true;
+	bool show_another_window = true;
+	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+	bool p_open = true;
 
+	//UI
 
 	uint32 fps = 0;
 	double currentFrame = glfwGetTime();
@@ -119,16 +112,13 @@ int Application::Run()
 
 
 
-	bool show_demo_window = true;
-	bool show_another_window = true;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	bool p_open = true;
-
 	//Initialize
+    //TODO: Fix this
 	AssetLoader::SetShouldFlipVTexture(true);
 
 	//Testing Texture
-	RenderDevice renderDevice(window);
+	renderDevice = new RenderDevice(window);
+
 	Sampler sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
 
 
@@ -150,111 +140,11 @@ int Application::Run()
 	//ECS
 	world = ECS::World::createWorld();
 
-	//model 1
-	Array<IndexedModel> models;
-	Array<uint32> modelMaterialIndices;
-	Array<MaterialSpec> modelMaterials;
-	AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
-	//VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
-	VertexArray* vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
-
-	ArrayBitmap testBitmap;
-	testBitmap.Load(TEST_TEXTURE_FILE);
-	Texture testtex(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
-
-	uint32 dbgTex = AssetLoader::TextureFromFile(TEST_TEXTURE_FILE);
-
-
-	NString shaderText;
-	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-	Shader shader(renderDevice, shaderText);
-
-
-	SceneManager::SetECS(world);
-	SceneManager::SetRenderDevice(renderDevice);
-	ShaderManager::SetRenderDevice(renderDevice);
-	ShaderManager::SetMainShader(shader);
-
-	MeshInfo meshInfo1;
-	meshInfo1.vertexArray = vertexArray;
-	Material material1;
-	material1.diffuseTextures.Add(&testtex);
-	meshInfo1.material = &material1;
-	StaticMeshComponent renderableMesh;
-	renderableMesh.meshAssetFile = monkeyMesh;
-	renderableMesh.shader = &shader;
-	renderableMesh.meshes.Add(&meshInfo1);
-	//renderableMesh.material->diffuseTextures.Add(&testtex);
-	//renderableMesh.material->shader = &shader;
-	TransformComponent transformComp;
-	transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
-	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-	transformComp.transform.scale = vec3(7.0f);
-
-	//model2 
-	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
-	VertexArray* vertexArray2 = new VertexArray(renderDevice, models[1], USAGE_STATIC_DRAW);
-	//VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
-
-	ArrayBitmap testBitmap2;
-	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
-	Texture testtex2(renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
-
-	MeshInfo meshInfo2;
-	meshInfo2.vertexArray = vertexArray2;
-	Material material2;
-	material2.diffuseTextures.Add(&testtex2);
-	meshInfo2.material = &material2;
-	StaticMeshComponent renderableMesh2;
-	renderableMesh2.meshAssetFile = rockMesh;
-	renderableMesh2.shader = &shader;
-	renderableMesh2.meshes.Add(&meshInfo2);
-	renderableMesh2.numInst = 100;
-	TransformComponent transformComp2;
-	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
-	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-	transformComp2.transform.scale = vec3(7.0f);
-
-
-	MeshInfo* meshInfo3 = new MeshInfo();
-	meshInfo3->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
-	Material material3;
-	
-	//material3.diffuseTextures.Add(&testtex);
-	meshInfo3->material = &material3;
-	StaticMeshComponent renderableMesh3;
-	renderableMesh3.shader = &shader;
-	renderableMesh3.meshes.Add(meshInfo3);
-	TransformComponent transformComp3;
-	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
-	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-	transformComp3.transform.scale = vec3(10.0f);
-
-	
-
-	
-	ECS::Entity* ent = world->create();
-	auto pos = ent->assign<TransformComponent>(transformComp);
-	auto rot = ent->assign<StaticMeshComponent>(renderableMesh);
-
-	ECS::Entity* ent2 = world->create();
-	auto pos2 = ent2->assign<TransformComponent>(transformComp2);
-	auto rot2 = ent2->assign<StaticMeshComponent>(renderableMesh2);
-
-	ECS::Entity* ent3 = world->create();
-	auto pos3 = ent3->assign<TransformComponent>(transformComp3);
-	auto rot3 = ent3->assign<StaticMeshComponent>(renderableMesh3);
-
-	SceneManager::currentScene.sceneObjects.Add(ent);
-	SceneManager::currentScene.sceneObjects.Add(ent2);
-	SceneManager::currentScene.sceneObjects.Add(ent3);
 
 
 	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(EditorContext));
 
-	renderableMesh.shader = &shader;
-	renderableMesh2.shader = &shader;
-	renderableMesh3.shader = &shader;
+
 
 	DebugRenderer debugRenderer(EditorContext);
 	for (int i = 0; i < 1; i++)
@@ -266,6 +156,9 @@ int Application::Run()
 
 
 	vec3 debugSpherePos(0.0f);
+
+
+	LoadDefaultScene();
 
 	while (!window.ShouldClose())
 	{
@@ -293,7 +186,7 @@ int Application::Run()
 		//if (no_close)           p_open = NULL; // Don't pass our bool* to Begin
 
 
-		ImGui::Begin("Main Window", &p_open, window_flags);                          // Create a window called "Hello, world!" and append into it.
+		ImGui::Begin("Main Window", &p_open, window_flags);
 		GUI_ShowMenuBar();
 
 		currentFrame = glfwGetTime();
@@ -375,13 +268,18 @@ int Application::Run()
 		glfwMakeContextCurrent(backup_current_context);
 	}
 
-	// Cleanup
+	//Delete
+	ShutDown();
+
+	// UI Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
 	//glfwDestroyWindow(window);
 	glfwTerminate();
+
+	
 
 	return 0;
 }
@@ -411,16 +309,130 @@ Application::Application(float Width, float Height)
 		MainCamera->bControlled = false;
 		MainCamera->MovementSpeed = 100.0f;
 	}
-	
-	
+		
 	deltaTime = 0;
-
 }
 
 
 void Application::Initialize()
 {
+}
 
+void Application::ShutDown()
+{
+	world->destroyWorld();
+	delete renderDevice;
+}
+
+void Application::LoadDefaultScene()
+{
+	NString monkeyMesh = "res/models/monkey3.obj";
+	NString rockMesh = "res/models/rock/rock.obj";
+
+	NString TEST_TEXTURE_FILE = Nx::FileSystem::GetPath("res/textures/stmpnk.jpg");
+	NString SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
+	NString TEST_MODEL_FILE = Nx::FileSystem::GetPath(monkeyMesh);
+	NString TEST_MODEL_FILE2 = Nx::FileSystem::GetPath(rockMesh);
+	NString TEST_TEXTURE_FILE2 = Nx::FileSystem::GetPath("res/models/rock/rock.png");
+
+	//model 1
+	Array<IndexedModel> models;
+	Array<uint32> modelMaterialIndices;
+	Array<MaterialSpec> modelMaterials;
+	AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
+	//VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
+	VertexArray* vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
+
+	ArrayBitmap testBitmap;
+	testBitmap.Load(TEST_TEXTURE_FILE);
+	Texture* testtex = new Texture(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
+
+
+	NString shaderText;
+	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+	Shader* shader = new Shader(renderDevice, shaderText);
+
+
+	SceneManager::SetECS(world);
+	SceneManager::SetRenderDevice(renderDevice);
+	ShaderManager::SetRenderDevice(renderDevice);
+	ShaderManager::SetMainShader(shader);
+
+	MeshInfo* meshInfo1 = new MeshInfo();
+	meshInfo1->vertexArray = vertexArray;
+	Material* material1 = new Material();
+	material1->diffuseTextures.Add(testtex);
+	meshInfo1->material = material1;
+	StaticMeshComponent renderableMesh;
+	renderableMesh.meshAssetFile = monkeyMesh;
+	renderableMesh.shader = shader;
+	renderableMesh.meshes.Add(meshInfo1);
+	//renderableMesh.material->diffuseTextures.Add(testtex);
+	//renderableMesh.material->shader = &shader;
+	TransformComponent transformComp;
+	transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp.transform.scale = vec3(7.0f);
+
+	//model2 
+	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
+	VertexArray* vertexArray2 = new VertexArray(renderDevice, models[1], USAGE_STATIC_DRAW);
+	//VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
+
+	ArrayBitmap testBitmap2;
+	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
+	Texture* testtex2 = new Texture (renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
+
+	MeshInfo* meshInfo2 = new MeshInfo;
+	meshInfo2->vertexArray = vertexArray2;
+	Material* material2 = new Material();
+	material2->diffuseTextures.Add(testtex2);
+	meshInfo2->material = material2;
+	StaticMeshComponent renderableMesh2;
+	renderableMesh2.meshAssetFile = rockMesh;
+	renderableMesh2.shader = shader;
+	renderableMesh2.meshes.Add(meshInfo2);
+	renderableMesh2.numInst = 100;
+	TransformComponent transformComp2;
+	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp2.transform.scale = vec3(7.0f);
+
+
+	MeshInfo* meshInfo3 = new MeshInfo();
+	meshInfo3->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
+	Material* material3 = new Material();
+
+	//material3.diffuseTextures.Add(&testtex);
+	meshInfo3->material = material3;
+	StaticMeshComponent renderableMesh3;
+	renderableMesh3.shader = shader;
+	renderableMesh3.meshes.Add(meshInfo3);
+	TransformComponent transformComp3;
+	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp3.transform.scale = vec3(10.0f);
+
+
+	ECS::Entity* ent = world->create();
+	auto pos = ent->assign<TransformComponent>(transformComp);
+	auto rot = ent->assign<StaticMeshComponent>(renderableMesh);
+
+	ECS::Entity* ent2 = world->create();
+	auto pos2 = ent2->assign<TransformComponent>(transformComp2);
+	auto rot2 = ent2->assign<StaticMeshComponent>(renderableMesh2);
+
+	ECS::Entity* ent3 = world->create();
+	auto pos3 = ent3->assign<TransformComponent>(transformComp3);
+	auto rot3 = ent3->assign<StaticMeshComponent>(renderableMesh3);
+
+	SceneManager::currentScene.sceneObjects.Add(ent);
+	SceneManager::currentScene.sceneObjects.Add(ent2);
+	SceneManager::currentScene.sceneObjects.Add(ent3);
+
+	renderableMesh.shader = shader;
+	renderableMesh2.shader = shader;
+	renderableMesh3.shader = shader;
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

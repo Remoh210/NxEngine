@@ -18,7 +18,7 @@
 class EditorRenderContext : public RenderContext
 {
 public:
-	EditorRenderContext(RenderDevice& deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
+	EditorRenderContext(RenderDevice* deviceIn, RenderTarget& targetIn, DrawParams& drawParamsIn,
 	        Sampler& samplerIn, const mat4& perspectiveIn, Camera* CameraIn);
 	inline void RenderMesh(Array<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
 	{

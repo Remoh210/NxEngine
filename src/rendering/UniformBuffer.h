@@ -5,9 +5,9 @@
 class UniformBuffer
 {
 public:
-	inline UniformBuffer(RenderDevice& deviceIn, uint32 number, uintptr dataSize,
+	inline UniformBuffer(RenderDevice* deviceIn, uint32 number, uintptr dataSize,
 		enum BufferUsage usage, const void* data = nullptr) :
-		device(&deviceIn),
+		device(deviceIn),
 		UniformId(device->CreateUniformBuffer(data, number * dataSize, usage)),
 		size(dataSize) 
 	{

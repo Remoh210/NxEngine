@@ -32,9 +32,9 @@ public:
 		world = worldIn;
 	}
 
-	inline static void SetRenderDevice(RenderDevice& renderDeviceIn)
+	inline static void SetRenderDevice(RenderDevice* renderDeviceIn)
 	{
-		renderDevice = &renderDeviceIn;
+		renderDevice = renderDeviceIn;
 	}
 
 private:

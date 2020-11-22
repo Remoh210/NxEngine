@@ -25,7 +25,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 		IndexedModel& model = models[i];
 		MeshInfo* newMesh = new MeshInfo();
 
-		newMesh->vertexArray = new VertexArray(*renderDevice, model, BufferUsage::USAGE_DYNAMIC_DRAW);
+		newMesh->vertexArray = new VertexArray(renderDevice, model, BufferUsage::USAGE_DYNAMIC_DRAW);
 
 		//HACK!
 		if (materials.size() == 0)
@@ -52,7 +52,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 					NString textureFile = texture_it.second;
 					ArrayBitmap bitmap;
 					bitmap.Load(textureFile);
-					Texture* texture = new Texture(*renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
+					Texture* texture = new Texture(renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
 					newMesh->material->diffuseTextures.push_back(texture);
 					importedTextures[textureFile] = texture;
 				}
@@ -68,7 +68,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 					NString textureFile = texture_it.second;
 					ArrayBitmap bitmap;
 					bitmap.Load(textureFile);
-					Texture* texture = new Texture(*renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
+					Texture* texture = new Texture(renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
 					newMesh->material->normalMaps.push_back(texture);
 					importedTextures[textureFile] = texture;
 				}

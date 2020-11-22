@@ -7,8 +7,8 @@ class RenderTarget
 {
 
 public:
-    RenderTarget(RenderDevice& deviceIn) 
-            : mRenderDevice(&deviceIn),
+    RenderTarget(RenderDevice* deviceIn) 
+            : mRenderDevice(deviceIn),
               id(0)
             {}
 
