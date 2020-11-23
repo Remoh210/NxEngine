@@ -2,6 +2,7 @@
 
 #include "Core/ECS/ECS.h"
 //#include "utilComponents.hpp"
+#include "Core/Components/LightComponent.h"
 #include "Editor/EditorRenderContext.h"
 #include "Core/Components/TransformComponent.h"
 #include "Core/Graphics/Material/Material.h"
@@ -23,6 +24,10 @@ namespace ECS
 		
 		virtual void tick(class World *world, float deltaTime)
 		{
+			world->each<TransformComponent, LightComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<LightComponent> lightComp) -> void 
+			{
+				context->RenderLight(transform->transform.position + lightComp->relativePosition, lightComp.color * lightComp.intensity);
+			});
 
 			world->each<TransformComponent, StaticMeshComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<StaticMeshComponent> mesh) -> void {
 

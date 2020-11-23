@@ -5,5 +5,10 @@
 
 struct TransformComponent
 {
+	TransformComponent(Transform TransformormIn)
+		:transform(TransformormIn) {}
+
+	TransformComponent() {}
+
 	Transform transform;
 };

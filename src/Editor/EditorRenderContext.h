@@ -12,7 +12,8 @@
 #include <Core/Camera/Camera.h>
 #include <Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h>
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
-#include  "Core/Components/StaticMeshComponent.h"
+#include "Core/Components/StaticMeshComponent.h"
+#include "Core/Components/LightComponent.h"
 #include "rendering/UniformBuffer.h"
 
 class EditorRenderContext : public RenderContext
@@ -39,6 +40,13 @@ public:
 
 	}
 
+
+	inline void RenderLight(vec3 position, vec3 color)
+	{
+		lightPosBuffer.push_back(position);
+		lightColorBuffer.push_back(color);
+	}
+
 	inline void RenderDebugShapes(DebugShape* shapeIn, const mat4& transformIn)
 	{
 		debugShapeBuffer[shapeIn].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
@@ -59,6 +67,8 @@ private:
 	mat4 perspective;
 	Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4>> meshRenderBuffer;
 	Map<DebugShape*, Array<mat4>> debugShapeBuffer;
+	Array<vec3> lightPosBuffer; // pos color
+	Array<vec3> lightColorBuffer;
 
 	Camera* mainCamera;
 

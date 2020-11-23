@@ -46,38 +46,10 @@ void EditorRenderContext::Flush()
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
 	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
 
-	// lights
-	// ------
-	Array<glm::vec3> lightPositions;
-	lightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
-
-	
-	Array<glm::vec3> lightColors;
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
 
 
-
-	// render light source (simply re-render sphere at light positions)
-	// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
-	// keeps the codeprint small.
-
-	//glm::vec3 newPos = lightPositions[1] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-	//newPos = lightPositions[1];
-	//ShaderManager::GetMainShader()->SetUniform3f("lightPositions[0]", newPos);
-	//ShaderManager::GetMainShader()->SetUniform3f("lightColors[0]", lightColors[1]);
-
-
-	//glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-	//newPos = lightPositions[i];
-	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPositions);
-	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColors);
-
+	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPosBuffer);
+	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColorBuffer);
 
 	//for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
 	//{

@@ -4,6 +4,7 @@
 #include <Common/CommonTypes.h>
 
 #include <Core/Components/TransformComponent.h>
+#include <Core/Components/LightComponent.h>
 #include <Core/Systems/RenderSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
@@ -459,6 +460,55 @@ void Application::LoadDefaultScene()
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();
 	renderableMesh3.shader = ShaderManager::GetMainShader();
+
+
+	vec3 color(1.0f, 1.0f, 1.0f);
+	float inten = 3000;
+
+	ECS::Entity* light1 = world->create();
+	Transform transform1;
+	transform1.position = vec3(-10.0f, 10.0f, 10.0f);
+	light1->assign<TransformComponent>(transform1);
+	light1->assign<LightComponent>(color, inten, vec3(0));
+
+	ECS::Entity* light2 = world->create();
+	Transform transform2;
+	transform2.position = vec3(10.0f, 10.0f, 10.0f);
+	light2->assign<TransformComponent>(transform2);
+	light2->assign<LightComponent>(color, inten, vec3(0));
+
+
+	ECS::Entity* light3 = world->create();
+	Transform transform3;
+	transform3.position = vec3(-10.0f, -10.0f, 10.0f);
+	light3->assign<TransformComponent>(transform3);
+	light3->assign<LightComponent>(color, inten, vec3(0));
+
+	ECS::Entity* light4 = world->create();
+	Transform transform4;
+	transform4.position = vec3(10.0f, -10.0f, 10.0f);
+	light4->assign<TransformComponent>(transform4);
+	light4->assign<LightComponent>(color, inten, vec3(0));
+
+
+	//lights
+
+	// lights
+	// ------
+	Array<glm::vec3> lightPositions;
+	lightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
+
+	
+	Array<glm::vec3> lightColors;
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+
+
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
