@@ -2,6 +2,7 @@
 #include "rendering/VertexArray.h"
 #include "Core/Application/Application.h"
 #include "Core/FileSystem/FileSystem.h"
+#include "Core/Graphics/ShaderManager/ShaderManager.h"
 
 
 EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
@@ -20,7 +21,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
 	 editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
                  //Load and set shaders
-     NString LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/EditorGridSimpleShader.glsl");
+     NString LINE_SHADER_TEXT_FILE = "res/shaders/EditorGridSimpleShader.glsl";
      NString LineShaderText;
      Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
      Shader* grid_shader = new Shader(deviceIn, LineShaderText);
@@ -34,30 +35,64 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 
 	 MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 
-	//Infinite grid
-	//editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	//editorGridDrawParams.shouldWriteDepth = true;
-	//editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
-	//editorGridDrawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
-	//editorGridDrawParams.destBlend = BLEND_FUNC_ONE_MINUS_SRC_ALPHA;
-	//NString GrigShaderPath = Nx::FileSystem::GetPath("res/shaders/EditorGridShader.glsl");
-	// NString GrigShaderText;
-	//Application::loadTextFileWithIncludes(GrigShaderText, GrigShaderPath, "#include");
-	//Shader* GRIDshader = new Shader(deviceIn, GrigShaderText);
-	//MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
-	//GRIDshader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
-	//editorGridVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
-	//editorGridVA->SetShader(GRIDshader);
-
-	//editorGridTransform.scale = vec3(editorGridScale);
-
-	//MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
+	 Shader* mainShader = ShaderManager::GetMainShader();
+	 //mainShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 	
 }
 
 void EditorRenderContext::Flush()
 {
+	mat4 viewMatrix = mainCamera->GetViewMatrix();
+	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
+
+	// lights
+	// ------
+	Array<glm::vec3> lightPositions;
+	lightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
+
+	
+	Array<glm::vec3> lightColors;
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
+
+
+
+	// render light source (simply re-render sphere at light positions)
+	// this looks a bit off as we use the same shader, but it'll make their positions obvious and 
+	// keeps the codeprint small.
+
+	//glm::vec3 newPos = lightPositions[1] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+	//newPos = lightPositions[1];
+	//ShaderManager::GetMainShader()->SetUniform3f("lightPositions[0]", newPos);
+	//ShaderManager::GetMainShader()->SetUniform3f("lightColors[0]", lightColors[1]);
+
+
+	//glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+	//newPos = lightPositions[i];
+	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPositions);
+	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColors);
+
+
+	//for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
+	//{
+	//	glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
+	//	newPos = lightPositions[i];
+	//	ShaderManager::GetMainShader()->SetUniform3f("lightPositions[" + std::to_string(i) + "]", newPos);
+	//	ShaderManager::GetMainShader()->SetUniform3f("lightColors[" + std::to_string(i) + "]", lightColors[i]);
+
+	//	//model = glm::mat4(1.0f);
+	//	//model = glm::translate(model, newPos);
+	//	//model = glm::scale(model, glm::vec3(0.5f));
+	//	//shader.setMat4("model", model);
+	//	//renderSphere();
+	//}
+
 	//Draw Editor stuff first
 	DrawEditorHelpers();
 	DrawDebugShapes();
@@ -74,6 +109,7 @@ void EditorRenderContext::Flush()
 		size_t numTransforms = it->second.size();
 		//Shader* modelShader = it->first.second;
 		Shader * modelShader = it->first.second;
+		modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
 		for (MeshInfo* mesh : it->first.first)
 		{
@@ -83,15 +119,23 @@ void EditorRenderContext::Flush()
 			if (mesh->material->diffuseTextures.size() > 0)
 			{
 				Texture* texture = mesh->material->diffuseTextures[0];
-				modelShader->SetSampler("diffuse", *texture, *sampler, 0);
-				modelShader->SetUniform1f("bTexUse", true);
+				//modelShader->SetSampler("diffuse", *texture, *sampler, 0);
+				//modelShader->SetUniform1f("bTexUse", true);
 			}
 			else
 			{
-				modelShader->SetUniform1i("bTexUse", false);
-				modelShader->SetUniform4f("colorAlpha", glm::vec4(1.0f, 1.0f, 0.0f, 1.0f));
+				//modelShader->SetUniform1i("bTexUse", false);
+				modelShader->SetUniform4f("colorAlpha", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
 			}
 
+			//PBR Stuff
+			//modelShader->SetUniform1f("metallic", mesh->material->metallic);
+			//modelShader->SetUniform1f("roughness", mesh->material->roughness);
+			//modelShader->SetUniform1f("ao", mesh->material->ambientOcclusion);
+
+			modelShader->SetUniform1f("metallic", 0.7f);
+			modelShader->SetUniform1f("roughness", 0.3f);
+			modelShader->SetUniform1f("ao", 0.2f);
 			
 			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 			if (vertexArray->GetNumIndices() == 0)
@@ -114,10 +158,6 @@ void EditorRenderContext::Flush()
 void EditorRenderContext::DrawEditorHelpers()
 {
     Array<mat4> transforms;
-
-	mat4 viewMatrix = mainCamera->GetViewMatrix();
-	
-	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
 
     transforms.push_back(editorGridTransform.ToMatrix());
 

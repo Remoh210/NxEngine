@@ -182,6 +182,11 @@ public:
 	void SetShaderUniform1f(uint32 shader, const NString& uniformName,
 		float value);
 
+	void SetShaderUniform3f(uint32 shader, const NString& uniformName,
+		float* value);
+
+	void SetArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value);
+
 	void SetShaderUniform4f(uint32 shader, const NString& uniformName,
 		float* value);
 

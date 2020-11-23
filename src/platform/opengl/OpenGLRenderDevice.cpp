@@ -919,10 +919,23 @@ void OpenGLRenderDevice::SetShaderUniform1f(uint32 shader, const NString& unifor
 	glUniform1f(shaderProgramMap.at(shader).uniformMap.at(uniformName), value);
 }
 
+void OpenGLRenderDevice::SetShaderUniform3f(uint32 shader, const NString& uniformName, float* value)
+{
+	SetShader(shader);
+	glUniform4f(shaderProgramMap.at(shader).uniformMap.at(uniformName), value[0], value[1], value[2], value[3]);
+}
+
+void OpenGLRenderDevice::SetArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value)
+{
+
+	glUniform3fv(shaderProgramMap.at(shader).uniformMap.at(uniformName), size, value);
+
+	
+}
+
 void OpenGLRenderDevice::SetShaderUniform4f(uint32 shader, const NString& uniformName, float* value)
 {
 	SetShader(shader);
-
 	glUniform4f(shaderProgramMap.at(shader).uniformMap.at(uniformName), value[0], value[1], value[2], value[3]);
 }
 

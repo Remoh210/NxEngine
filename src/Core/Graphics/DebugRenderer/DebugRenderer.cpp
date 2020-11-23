@@ -10,7 +10,7 @@ DebugRenderer::DebugRenderer(EditorRenderContext& contextIn)
     :editorContext(contextIn)
 {
     //Load and set shaders
-	NString LINE_SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/DebugShapeShader.glsl");
+	NString LINE_SHADER_TEXT_FILE ="res/shaders/DebugShapeShader.glsl";
 	NString LineShaderText;
 	Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
 	shader = new Shader(editorContext.GetRenderDevice(), LineShaderText);

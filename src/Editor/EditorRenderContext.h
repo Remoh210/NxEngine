@@ -22,7 +22,7 @@ public:
 	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn);
 	inline void RenderMesh(Array<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
 	{
-		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
+		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(transformIn);
 	}
 
 	//inline void RenderMesh(Array<MeshInfo*> meshes, const mat4& transformIn)

@@ -12,6 +12,9 @@ struct Material
 	Material()
 	{
 		color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		ambientOcclusion = 0.0f;
+		metallic = 0.0f;
+		roughness = 0.0f;
 	}
 
     Array<Texture*> diffuseTextures;
@@ -19,4 +22,9 @@ struct Material
 
 	// color and alpha transparency
 	vec4 color;
+
+	//PBR properties
+	float ambientOcclusion;
+	float metallic;
+	float roughness;
 };

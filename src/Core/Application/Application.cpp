@@ -91,10 +91,8 @@ int Application::Run()
     //TODO: Fix this
 	AssetLoader::SetShouldFlipVTexture(true);
 
-	//ECS
-	world = ECS::World::createWorld();
-	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 
+	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 
 	DebugRenderer debugRenderer(*editorRenderContext);
 	for (int i = 0; i < 1; i++)
@@ -107,6 +105,12 @@ int Application::Run()
 
 
 	LoadDefaultScene();
+
+	Array<glm::vec3> lightPositions;
+	lightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
+	lightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
 
 	while (!window->ShouldClose())
 	{
@@ -194,6 +198,12 @@ int Application::Run()
 		//ImGui::Begin("TestImageWindow");
 		//ImGui::Image((void*)testtex.GetId(), sizeP);
 		//ImGui::End();
+
+
+		for (glm::vec3 pos : lightPositions)
+		{
+			debugRenderer.DrawDebugSphere(pos, 0.0f, 1.f);
+		}
 
 		// render
 		// ------
@@ -288,8 +298,29 @@ void Application::Initialize()
 	}
 	);
 
-
 	renderDevice = new RenderDevice(window);
+
+
+
+
+	NString SHADER_TEXT_FILE = "res/shaders/basicShader.glsl";
+	NString PBR_SHADER_TEXT_FILE = "res/shaders/PBR/pbr.glsl";
+	NString shaderText;
+	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+	Shader* shader = new Shader(renderDevice, shaderText);
+
+	NString PBRshaderText;
+	loadTextFileWithIncludes(PBRshaderText, PBR_SHADER_TEXT_FILE, "#include");
+	Shader* PBRshader = new Shader(renderDevice, PBRshaderText);
+
+	//NString shaderText;
+	//loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
+	//Shader* shader = new Shader(renderDevice, shaderText);
+	ShaderManager::SetMainShader(PBRshader);
+
+
+
+
 	editorSampler = new Sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
 
 
@@ -307,6 +338,15 @@ void Application::Initialize()
 
 	editorRenderTarget = new RenderTarget(renderDevice);
 	editorRenderContext = new EditorRenderContext(renderDevice, editorRenderTarget, drawParams, editorSampler, projection, MainCamera);
+
+
+	SceneManager::SetECS(world);
+	SceneManager::SetRenderDevice(renderDevice);
+	ShaderManager::SetRenderDevice(renderDevice);
+
+
+	//ECS
+	world = ECS::World::createWorld();
 }
 
 void Application::ShutDown()
@@ -324,10 +364,12 @@ void Application::LoadDefaultScene()
 	NString rockMesh = "res/models/rock/rock.obj";
 
 	NString TEST_TEXTURE_FILE = "res/textures/stmpnk.jpg";
-	NString SHADER_TEXT_FILE = Nx::FileSystem::GetPath("res/shaders/basicShader.glsl");
+
 	NString TEST_MODEL_FILE = monkeyMesh;
 	NString TEST_MODEL_FILE2 = rockMesh;
 	NString TEST_TEXTURE_FILE2 = "res/models/rock/rock.png";
+
+
 
 	//model 1
 	Array<IndexedModel> models;
@@ -342,16 +384,6 @@ void Application::LoadDefaultScene()
 	Texture* testtex = new Texture(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
 
 
-	NString shaderText;
-	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-	Shader* shader = new Shader(renderDevice, shaderText);
-
-
-	SceneManager::SetECS(world);
-	SceneManager::SetRenderDevice(renderDevice);
-	ShaderManager::SetRenderDevice(renderDevice);
-	ShaderManager::SetMainShader(shader);
-
 	MeshInfo* meshInfo1 = new MeshInfo();
 	meshInfo1->vertexArray = vertexArray;
 	Material* material1 = new Material();
@@ -359,7 +391,7 @@ void Application::LoadDefaultScene()
 	meshInfo1->material = material1;
 	StaticMeshComponent renderableMesh;
 	renderableMesh.meshAssetFile = monkeyMesh;
-	renderableMesh.shader = shader;
+	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh.meshes.Add(meshInfo1);
 	//renderableMesh.material->diffuseTextures.Add(testtex);
 	//renderableMesh.material->shader = &shader;
@@ -384,7 +416,7 @@ void Application::LoadDefaultScene()
 	meshInfo2->material = material2;
 	StaticMeshComponent renderableMesh2;
 	renderableMesh2.meshAssetFile = rockMesh;
-	renderableMesh2.shader = shader;
+	renderableMesh2.shader = ShaderManager::GetMainShader();
 	renderableMesh2.meshes.Add(meshInfo2);
 	renderableMesh2.numInst = 100;
 	TransformComponent transformComp2;
@@ -400,7 +432,7 @@ void Application::LoadDefaultScene()
 	//material3.diffuseTextures.Add(&testtex);
 	meshInfo3->material = material3;
 	StaticMeshComponent renderableMesh3;
-	renderableMesh3.shader = shader;
+	renderableMesh3.shader = ShaderManager::GetMainShader();
 	renderableMesh3.meshes.Add(meshInfo3);
 	TransformComponent transformComp3;
 	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
@@ -424,9 +456,9 @@ void Application::LoadDefaultScene()
 	SceneManager::currentScene.sceneObjects.Add(ent2);
 	SceneManager::currentScene.sceneObjects.Add(ent3);
 
-	renderableMesh.shader = shader;
-	renderableMesh2.shader = shader;
-	renderableMesh3.shader = shader;
+	renderableMesh.shader = ShaderManager::GetMainShader();
+	renderableMesh2.shader = ShaderManager::GetMainShader();
+	renderableMesh3.shader = ShaderManager::GetMainShader();
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
@@ -765,8 +797,9 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 bool Application::loadTextFileWithIncludes(NString& output, const NString& fileName,
 		const NString& includeKeyword)
 {
+	NString absolutePath = Nx::FileSystem::GetPath(fileName);
 	std::ifstream file;
-	file.open(fileName.c_str());
+	file.open(absolutePath.c_str());
 
 	NString filePath = StringFuncs::getFilePath(fileName);
 	std::stringstream ss;
