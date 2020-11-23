@@ -46,37 +46,18 @@ void EditorRenderContext::Flush()
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
 	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
 
-
-
-	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPosBuffer);
-	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColorBuffer);
-
-	//for (unsigned int i = 0; i < sizeof(lightPositions) / sizeof(lightPositions[0]); ++i)
-	//{
-	//	glm::vec3 newPos = lightPositions[i] + glm::vec3(sin(glfwGetTime() * 5.0) * 5.0, 0.0, 0.0);
-	//	newPos = lightPositions[i];
-	//	ShaderManager::GetMainShader()->SetUniform3f("lightPositions[" + std::to_string(i) + "]", newPos);
-	//	ShaderManager::GetMainShader()->SetUniform3f("lightColors[" + std::to_string(i) + "]", lightColors[i]);
-
-	//	//model = glm::mat4(1.0f);
-	//	//model = glm::translate(model, newPos);
-	//	//model = glm::scale(model, glm::vec3(0.5f));
-	//	//shader.setMat4("model", model);
-	//	//renderSphere();
-	//}
-
 	//Draw Editor stuff first
 	DrawEditorHelpers();
 	DrawDebugShapes();
 
+	//Set lights 
+	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPosBuffer);
+	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColorBuffer);
+
+	//Draw meshes
     for(Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
             = meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
     {
-		//if (numTransforms == 0)
-		//{
-		//	continue;
-		//}
-
 		mat4* transforms = &it->second[0];
 		size_t numTransforms = it->second.size();
 		//Shader* modelShader = it->first.second;
@@ -88,26 +69,72 @@ void EditorRenderContext::Flush()
             
 			VertexArray* vertexArray = mesh->vertexArray;
 
-			if (mesh->material->diffuseTextures.size() > 0)
+			uint32 samplerUnit = 0;
+			//Diffuse
+			Texture* DiffuseTexture = mesh->material->diffuseTexture;
+			if (DiffuseTexture != nullptr)
 			{
-				Texture* texture = mesh->material->diffuseTextures[0];
-				//modelShader->SetSampler("diffuse", *texture, *sampler, 0);
-				//modelShader->SetUniform1f("bTexUse", true);
+				modelShader->SetSampler("albedoMap", *DiffuseTexture, *sampler, samplerUnit);
+				modelShader->SetUniform1f("bUseAlbedoMap", true);
 			}
 			else
 			{
-				//modelShader->SetUniform1i("bTexUse", false);
-				modelShader->SetUniform4f("colorAlpha", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+				//TODO: Change That
+				modelShader->SetUniform4f("uColorAlpha", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+				modelShader->SetUniform1f("bUseAlbedoMap", false);
 			}
-
-			//PBR Stuff
-			//modelShader->SetUniform1f("metallic", mesh->material->metallic);
-			//modelShader->SetUniform1f("roughness", mesh->material->roughness);
-			//modelShader->SetUniform1f("ao", mesh->material->ambientOcclusion);
-
-			modelShader->SetUniform1f("metallic", 0.7f);
-			modelShader->SetUniform1f("roughness", 0.3f);
-			modelShader->SetUniform1f("ao", 0.2f);
+			//Normal
+			Texture* normalTexture = mesh->material->normalMap;
+			if (normalTexture != nullptr)
+			{
+				samplerUnit++;
+				modelShader->SetSampler("normalMap", *normalTexture, *sampler, samplerUnit);
+				modelShader->SetUniform1f("bUseNormalMap", true);
+			}
+			else
+			{
+				modelShader->SetUniform1f("bUseNormalMap", false);
+			}
+			Texture* metallicTexture = mesh->material->metallicMap;
+			if (metallicTexture != nullptr)
+			{
+				samplerUnit++;
+				modelShader->SetSampler("metallicMap", *metallicTexture, *sampler, samplerUnit);
+				modelShader->SetUniform1f("bUseMetallicMap", true);
+			}
+			else
+			{
+				modelShader->SetUniform1f("uMetallic", 0.9f);
+				modelShader->SetUniform1f("bUseMetallicMap", false);
+			}
+			//Roughness
+			Texture* roughnessTexture = mesh->material->roughnessMap;
+			if (roughnessTexture != nullptr)
+			{
+				samplerUnit++;
+				modelShader->SetSampler("roughnessMap", *roughnessTexture, *sampler, samplerUnit);
+				modelShader->SetUniform1f("bUseMetallicMap", true);
+			}
+			else
+			{
+				modelShader->SetUniform1f("bUseRoughnessMap", false);
+				modelShader->SetUniform1f("uRoughness", 0.3f);
+			}
+			//Ao
+			Texture* AoTexture = mesh->material->aoMap;
+			if (AoTexture)
+			{
+				samplerUnit++;
+				modelShader->SetSampler("aoMap", *AoTexture, *sampler, samplerUnit);
+				modelShader->SetUniform1f("bUseAoMap", true);
+			}
+			else
+			{
+				modelShader->SetUniform1f("bUseAoMap", false);
+				modelShader->SetUniform1f("uAo", 0.2f);
+			}
+			
+			
 			
 			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 			if (vertexArray->GetNumIndices() == 0)
@@ -175,6 +202,4 @@ void EditorRenderContext::DrawDebugShapes()
 
     //HACK...
 	MatrixUniformBuffer->ResetOffset();
-
-	int i = 0;
 }

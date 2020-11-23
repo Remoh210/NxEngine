@@ -26,8 +26,8 @@
 
 
 // settings
-const unsigned int SCR_WIDTH = 1200;
-const unsigned int SCR_HEIGHT = 900;
+const unsigned int SCR_WIDTH = 1600;
+const unsigned int SCR_HEIGHT = 1000;
 
 uint32 Application::numInstances = 0;
 
@@ -266,7 +266,7 @@ Application::Application(float Width, float Height)
 	{
 		MainCamera = new Camera(glm::vec3(0.0f, 10.0f, 80.0f));
 		MainCamera->bControlled = false;
-		MainCamera->MovementSpeed = 100.0f;
+		MainCamera->MovementSpeed = 50.0f;
 	}
 		
 	deltaTime = 0;
@@ -370,6 +370,43 @@ void Application::LoadDefaultScene()
 	NString TEST_MODEL_FILE2 = rockMesh;
 	NString TEST_TEXTURE_FILE2 = "res/models/rock/rock.png";
 
+   //PBR Texture Test
+	
+	NString TexureType = "rusted_iron";
+	//NString TexureType = "wall";
+	//NString TexureType = "plastic";
+	//NString TexureType = "grass";
+	//NString TexureType = "gold";
+	NString TexurePathBase = "res/textures/pbr";
+
+	NString file_albedoTex = TexurePathBase + "/" + TexureType + "/" + "albedo.png";
+	NString file_normalTex = TexurePathBase + "/" + TexureType + "/" + "normal.png";
+	NString file_metallicTex = TexurePathBase + "/" + TexureType + "/" + "metallic.png";
+	NString file_roughnessTex = TexurePathBase + "/" + TexureType + "/" + "roughness.png";
+	NString file_aoTex = TexurePathBase + "/" + TexureType + "/" + "ao.png";
+
+	ArrayBitmap albedoBitMap;
+	albedoBitMap.Load(file_albedoTex);
+	Texture* albedo = new Texture(renderDevice, albedoBitMap, PixelFormat::FORMAT_RGBA, false, false);
+
+	ArrayBitmap normalBitMap;
+	normalBitMap.Load(file_normalTex);
+	Texture* normal = new Texture(renderDevice, normalBitMap, PixelFormat::FORMAT_RGBA, false, false);
+
+	ArrayBitmap metallicBitMap;
+	metallicBitMap.Load(file_metallicTex);
+	Texture* metallic = new Texture(renderDevice, metallicBitMap, PixelFormat::FORMAT_RGBA, false, false);
+
+	ArrayBitmap roughnessBitMap;
+	roughnessBitMap.Load(file_roughnessTex);
+	Texture* roughness = new Texture(renderDevice, roughnessBitMap, PixelFormat::FORMAT_RGBA, false, false);
+
+	ArrayBitmap aoBitMap;
+	aoBitMap.Load(file_aoTex);
+	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, false, false);
+
+
+
 
 
 	//model 1
@@ -388,7 +425,7 @@ void Application::LoadDefaultScene()
 	MeshInfo* meshInfo1 = new MeshInfo();
 	meshInfo1->vertexArray = vertexArray;
 	Material* material1 = new Material();
-	material1->diffuseTextures.Add(testtex);
+	material1->diffuseTexture = testtex;
 	meshInfo1->material = material1;
 	StaticMeshComponent renderableMesh;
 	renderableMesh.meshAssetFile = monkeyMesh;
@@ -397,7 +434,7 @@ void Application::LoadDefaultScene()
 	//renderableMesh.material->diffuseTextures.Add(testtex);
 	//renderableMesh.material->shader = &shader;
 	TransformComponent transformComp;
-	transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
+	transformComp.transform.position = vec3(0.9f, 222.15f, -40.0f);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp.transform.scale = vec3(7.0f);
 
@@ -413,7 +450,7 @@ void Application::LoadDefaultScene()
 	MeshInfo* meshInfo2 = new MeshInfo;
 	meshInfo2->vertexArray = vertexArray2;
 	Material* material2 = new Material();
-	material2->diffuseTextures.Add(testtex2);
+	material2->diffuseTexture = testtex2;
 	meshInfo2->material = material2;
 	StaticMeshComponent renderableMesh2;
 	renderableMesh2.meshAssetFile = rockMesh;
@@ -440,22 +477,46 @@ void Application::LoadDefaultScene()
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp3.transform.scale = vec3(10.0f);
 
+	MeshInfo* pbrTestMesh = new MeshInfo();
+	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	Material* material4 = new Material();
+	material4->diffuseTexture = albedo;
+	material4->normalMap = normal;
+	material4->metallicMap = metallic;
+	material4->roughnessMap = roughness;
+	material4->aoMap = ao;
 
-	ECS::Entity* ent = world->create();
-	auto pos = ent->assign<TransformComponent>(transformComp);
-	auto rot = ent->assign<StaticMeshComponent>(renderableMesh);
+	//material3.diffuseTextures.Add(&testtex);
+	pbrTestMesh->material = material4;
+	StaticMeshComponent renderableMesh4;
+	renderableMesh4.shader = ShaderManager::GetMainShader();
+	renderableMesh4.meshes.Add(pbrTestMesh);
+	TransformComponent transformComp4;
+	transformComp4.transform.position = vec3(0, 0, -40);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp4.transform.scale = vec3(5);
+
+
+	//ECS::Entity* ent = world->create();
+	//ent->assign<TransformComponent>(transformComp);
+	//ent->assign<StaticMeshComponent>(renderableMesh);
 
 	ECS::Entity* ent2 = world->create();
-	auto pos2 = ent2->assign<TransformComponent>(transformComp2);
-	auto rot2 = ent2->assign<StaticMeshComponent>(renderableMesh2);
+	ent2->assign<TransformComponent>(transformComp2);
+	ent2->assign<StaticMeshComponent>(renderableMesh2);
 
-	ECS::Entity* ent3 = world->create();
-	auto pos3 = ent3->assign<TransformComponent>(transformComp3);
-	auto rot3 = ent3->assign<StaticMeshComponent>(renderableMesh3);
+	//ECS::Entity* ent3 = world->create();
+	//ent3->assign<TransformComponent>(transformComp3);
+	//ent3->assign<StaticMeshComponent>(renderableMesh3);
 
-	SceneManager::currentScene.sceneObjects.Add(ent);
+	ECS::Entity* ent4 = world->create();
+	ent4->assign<TransformComponent>(transformComp4);
+	ent4->assign<StaticMeshComponent>(renderableMesh4);
+
+	//SceneManager::currentScene.sceneObjects.Add(ent);
 	SceneManager::currentScene.sceneObjects.Add(ent2);
-	SceneManager::currentScene.sceneObjects.Add(ent3);
+	//SceneManager::currentScene.sceneObjects.Add(ent3);
+	SceneManager::currentScene.sceneObjects.Add(ent4);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();
@@ -463,7 +524,7 @@ void Application::LoadDefaultScene()
 
 
 	vec3 color(1.0f, 1.0f, 1.0f);
-	float inten = 3000;
+	float inten = 1200;
 
 	ECS::Entity* light1 = world->create();
 	Transform transform1;
@@ -489,24 +550,6 @@ void Application::LoadDefaultScene()
 	transform4.position = vec3(10.0f, -10.0f, 10.0f);
 	light4->assign<TransformComponent>(transform4);
 	light4->assign<LightComponent>(color, inten, vec3(0));
-
-
-	//lights
-
-	// lights
-	// ------
-	Array<glm::vec3> lightPositions;
-	lightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
-
-	
-	Array<glm::vec3> lightColors;
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
-	lightColors.push_back(glm::vec3(3000.0f, 3000.0f, 3000.0f));
 
 
 }

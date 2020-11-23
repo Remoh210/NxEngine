@@ -63,7 +63,7 @@ public:
 		return newModel;
 	}
 
-	inline static IndexedModel CreateSphere(float radius, uint32 sectorCount, uint32 stackCount, vec3& color)
+	inline static IndexedModel CreateSphere(float radius, uint32 sectorCount, uint32 stackCount, vec3 color)
 	{
 		IndexedModel newModel;
 		newModel.AllocateElement(3); // Positions

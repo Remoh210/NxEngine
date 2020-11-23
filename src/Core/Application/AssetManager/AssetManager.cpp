@@ -45,7 +45,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 			{
 				if (Texture* cachedTex = FindTexture(texture_it.first))
 				{
-					newMesh->material->diffuseTextures.push_back(cachedTex);
+					newMesh->material->diffuseTexture = cachedTex;
 				}
 				else
 				{
@@ -53,7 +53,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 					ArrayBitmap bitmap;
 					bitmap.Load(textureFile);
 					Texture* texture = new Texture(renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
-					newMesh->material->diffuseTextures.push_back(texture);
+					newMesh->material->diffuseTexture = texture;
 					importedTextures[textureFile] = texture;
 				}
 			}
@@ -61,7 +61,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 			{
 				if (Texture* cachedTex = FindTexture(texture_it.first))
 				{
-					newMesh->material->diffuseTextures.push_back(cachedTex);
+					newMesh->material->diffuseTexture = cachedTex;
 				}
 				else
 				{
@@ -69,7 +69,7 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 					ArrayBitmap bitmap;
 					bitmap.Load(textureFile);
 					Texture* texture = new Texture(renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
-					newMesh->material->normalMaps.push_back(texture);
+					newMesh->material->normalMap = texture;
 					importedTextures[textureFile] = texture;
 				}
 			}

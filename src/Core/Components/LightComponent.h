@@ -1,5 +1,4 @@
 #pragma once
-
 #include "Common/CommonTypes.h"
 
 struct LightComponent
@@ -17,6 +16,7 @@ struct LightComponent
         ,relativePosition(posIn)
     {
     }
+
     vec3 color;
     float intensity;
     vec3 relativePosition;

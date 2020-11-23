@@ -105,31 +105,31 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 			rapidjson::Value meshInfoObjectValue(rapidjson::kObjectType);
 			rapidjson::Value materialValue(rapidjson::kObjectType);
 
-			if(meshInfo->material->diffuseTextures.size() > 0)
-			{
-				rapidjson::Value textureArray(rapidjson::kArrayType);
-				for(Texture* texture : meshInfo->material->diffuseTextures)
-				{
-					rapidjson::Value textureObjectValue(rapidjson::kObjectType);
-					rapidjson::Value textureNameValue(texture->GetFileName().c_str(), allocator);
-					textureObjectValue.AddMember("TextureFile", textureNameValue, allocator);
-					rapidjson::Value isCompressedValue(texture->IsCompressed());
-					textureObjectValue.AddMember("IsCompressed", isCompressedValue, allocator);
-					rapidjson::Value hasMipMapsValue(texture->HasMipmaps());
-					textureObjectValue.AddMember("HasMipmaps", hasMipMapsValue, allocator);
-					textureArray.PushBack(textureObjectValue, allocator);
-				}
-				materialValue.AddMember("DiffuseTexures", textureArray, allocator);
-			}
-			else
-			{
-				rapidjson::Value colorValue(rapidjson::kArrayType);
-	 			for (int i = 0; i < 3; i++) {
-	 				rapidjson::Value temp(meshInfo->material->color[i]);
-	 				colorValue.PushBack(temp, allocator);
-	 			}
-				materialValue.AddMember("DiffuseColor", colorValue, allocator);
-			}
+			//if(meshInfo->material->diffuseTextures.size() > 0)
+			//{
+			//	rapidjson::Value textureArray(rapidjson::kArrayType);
+			//	for(Texture* texture : meshInfo->material->diffuseTextures)
+			//	{
+			//		rapidjson::Value textureObjectValue(rapidjson::kObjectType);
+			//		rapidjson::Value textureNameValue(texture->GetFileName().c_str(), allocator);
+			//		textureObjectValue.AddMember("TextureFile", textureNameValue, allocator);
+			//		rapidjson::Value isCompressedValue(texture->IsCompressed());
+			//		textureObjectValue.AddMember("IsCompressed", isCompressedValue, allocator);
+			//		rapidjson::Value hasMipMapsValue(texture->HasMipmaps());
+			//		textureObjectValue.AddMember("HasMipmaps", hasMipMapsValue, allocator);
+			//		textureArray.PushBack(textureObjectValue, allocator);
+			//	}
+			//	materialValue.AddMember("DiffuseTexures", textureArray, allocator);
+			//}
+			//else
+			//{
+			//	rapidjson::Value colorValue(rapidjson::kArrayType);
+	 	//		for (int i = 0; i < 3; i++) {
+	 	//			rapidjson::Value temp(meshInfo->material->color[i]);
+	 	//			colorValue.PushBack(temp, allocator);
+	 	//		}
+			//	materialValue.AddMember("DiffuseColor", colorValue, allocator);
+			//}
 			meshInfoObjectValue.AddMember("Material", materialValue, allocator);
 			subMeshArray.PushBack(meshInfoObjectValue, allocator);
 

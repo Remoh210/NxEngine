@@ -460,6 +460,7 @@ GLint OpenGLRenderDevice::GetOpenGLFormat(PixelFormat format)
 	case PixelFormat::FORMAT_R: return GL_RED;
 	case PixelFormat::FORMAT_RG: return GL_RG;
 	case PixelFormat::FORMAT_RGB: return GL_RGB;
+	case PixelFormat::FORMAT_SRGB: return GL_SRGB;
 	case PixelFormat::FORMAT_RGBA: return GL_RGBA;
 	case PixelFormat::FORMAT_DEPTH: return GL_DEPTH_COMPONENT;
 	case PixelFormat::FORMAT_DEPTH_AND_STENCIL: return GL_DEPTH_STENCIL;
@@ -927,10 +928,8 @@ void OpenGLRenderDevice::SetShaderUniform3f(uint32 shader, const NString& unifor
 
 void OpenGLRenderDevice::SetArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value)
 {
-
+	SetShader(shader);
 	glUniform3fv(shaderProgramMap.at(shader).uniformMap.at(uniformName), size, value);
-
-	
 }
 
 void OpenGLRenderDevice::SetShaderUniform4f(uint32 shader, const NString& uniformName, float* value)

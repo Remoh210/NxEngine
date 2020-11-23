@@ -15,10 +15,20 @@ struct Material
 		ambientOcclusion = 0.0f;
 		metallic = 0.0f;
 		roughness = 0.0f;
+
+		diffuseTexture = nullptr;
+		normalMap = nullptr;
+		metallicMap = nullptr;
+		roughnessMap = nullptr;
+		aoMap = nullptr;
 	}
 
-    Array<Texture*> diffuseTextures;
-    Array<Texture*> normalMaps;
+	//TODO: Make Map of textures maybe
+	Texture* diffuseTexture;
+	Texture* normalMap;
+	Texture* metallicMap;
+	Texture* roughnessMap;
+	Texture* aoMap;
 
 	// color and alpha transparency
 	vec4 color;
