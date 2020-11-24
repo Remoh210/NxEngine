@@ -163,8 +163,8 @@ void main()
 	{
 		if(bUseMetallicMap || bUseRoughnessMap || bUseAoMap)
 		{ 
-			metallic  = texture(metallicMap, TexCoords).r;
-			roughness = texture(metallicMap, TexCoords).b;
+			metallic  = texture(metallicMap, TexCoords).b;
+			roughness = texture(metallicMap, TexCoords).g;
 			ao = texture(aoMap, TexCoords).b;
 		}
 	}
