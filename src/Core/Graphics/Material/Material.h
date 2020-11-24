@@ -16,19 +16,22 @@ struct Material
 		metallic = 0.0f;
 		roughness = 0.0f;
 
-		diffuseTexture = nullptr;
-		normalMap = nullptr;
-		metallicMap = nullptr;
-		roughnessMap = nullptr;
-		aoMap = nullptr;
+		//diffuseTexture = nullptr;
+		//normalMap = nullptr;
+		//metallicMap = nullptr;
+		//roughnessMap = nullptr;
+		//aoMap = nullptr;
 	}
 
-	//TODO: Make Map of textures maybe
-	Texture* diffuseTexture;
-	Texture* normalMap;
-	Texture* metallicMap;
-	Texture* roughnessMap;
-	Texture* aoMap;
+
+	Map<NString, Texture*> textures;
+
+	////TODO: Make Map of textures maybe
+	//Texture* diffuseTexture;
+	//Texture* normalMap;
+	//Texture* metallicMap;
+	//Texture* roughnessMap;
+	//Texture* aoMap;
 
 	// color and alpha transparency
 	vec4 color;

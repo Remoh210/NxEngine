@@ -64,77 +64,19 @@ void EditorRenderContext::Flush()
 		Shader * modelShader = it->first.second;
 		modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
+		//might be unnecessary
+		modelShader->SetUniform1f("bUseAlbedoMap", false);
+		modelShader->SetUniform1f("bUseNormalMap", false);
+		modelShader->SetUniform1f("bUseMetallicMap", false);
+
+		
+
 		for (MeshInfo* mesh : it->first.first)
 		{
-            
+           
+			SetTextures(mesh, modelShader);
+			
 			VertexArray* vertexArray = mesh->vertexArray;
-
-			uint32 samplerUnit = 0;
-			//Diffuse
-			Texture* DiffuseTexture = mesh->material->diffuseTexture;
-			if (DiffuseTexture != nullptr)
-			{
-				modelShader->SetSampler("albedoMap", *DiffuseTexture, *sampler, samplerUnit);
-				modelShader->SetUniform1f("bUseAlbedoMap", true);
-			}
-			else
-			{
-				//TODO: Change That
-				modelShader->SetUniform4f("uColorAlpha", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
-				modelShader->SetUniform1f("bUseAlbedoMap", false);
-			}
-			//Normal
-			Texture* normalTexture = mesh->material->normalMap;
-			if (normalTexture != nullptr)
-			{
-				samplerUnit++;
-				modelShader->SetSampler("normalMap", *normalTexture, *sampler, samplerUnit);
-				modelShader->SetUniform1f("bUseNormalMap", true);
-			}
-			else
-			{
-				modelShader->SetUniform1f("bUseNormalMap", false);
-			}
-			Texture* metallicTexture = mesh->material->metallicMap;
-			if (metallicTexture != nullptr)
-			{
-				samplerUnit++;
-				modelShader->SetSampler("metallicMap", *metallicTexture, *sampler, samplerUnit);
-				modelShader->SetUniform1f("bUseMetallicMap", true);
-			}
-			else
-			{
-				modelShader->SetUniform1f("uMetallic", 0.9f);
-				modelShader->SetUniform1f("bUseMetallicMap", false);
-			}
-			//Roughness
-			Texture* roughnessTexture = mesh->material->roughnessMap;
-			if (roughnessTexture != nullptr)
-			{
-				samplerUnit++;
-				modelShader->SetSampler("roughnessMap", *roughnessTexture, *sampler, samplerUnit);
-				modelShader->SetUniform1f("bUseMetallicMap", true);
-			}
-			else
-			{
-				modelShader->SetUniform1f("bUseRoughnessMap", false);
-				modelShader->SetUniform1f("uRoughness", 0.3f);
-			}
-			//Ao
-			Texture* AoTexture = mesh->material->aoMap;
-			if (AoTexture)
-			{
-				samplerUnit++;
-				modelShader->SetSampler("aoMap", *AoTexture, *sampler, samplerUnit);
-				modelShader->SetUniform1f("bUseAoMap", true);
-			}
-			else
-			{
-				modelShader->SetUniform1f("bUseAoMap", false);
-				modelShader->SetUniform1f("uAo", 0.2f);
-			}
-			
-			
 			
 			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 			if (vertexArray->GetNumIndices() == 0)
@@ -202,4 +144,74 @@ void EditorRenderContext::DrawDebugShapes()
 
     //HACK...
 	MatrixUniformBuffer->ResetOffset();
+}
+
+
+void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
+{
+
+	uint32 samplerUnit = 0;
+
+	Texture* albedoTexture = mesh->material->textures.Find(TEXTURE_ALBEDO);
+	if (albedoTexture != nullptr)
+	{
+		shader->SetSampler("albedoMap", *albedoTexture, *sampler, samplerUnit);
+		shader->SetUniform1f("bUseAlbedoMap", true);
+	}
+	else
+	{
+		//TODO: Change That
+		shader->SetUniform4f("uColorAlpha", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		shader->SetUniform1f("bUseAlbedoMap", false);
+	}
+	//Normal
+	Texture* normalTexture = mesh->material->textures.Find(TEXTURE_NORMAL);
+	if (normalTexture != nullptr)
+	{
+		samplerUnit++;
+		shader->SetSampler("normalMap", *normalTexture, *sampler, samplerUnit);
+		shader->SetUniform1f("bUseNormalMap", true);
+	}
+	else
+	{
+		shader->SetUniform1f("bUseNormalMap", false);
+	}
+	Texture* metallicTexture = mesh->material->textures.Find(TEXTURE_METALLIC);
+	if (metallicTexture != nullptr)
+	{
+		samplerUnit++;
+		shader->SetSampler("metallicMap", *metallicTexture, *sampler, samplerUnit);
+		shader->SetUniform1f("bUseMetallicMap", true);
+	}
+	else
+	{
+		shader->SetUniform1f("uMetallic", 0.9f);
+		shader->SetUniform1f("bUseMetallicMap", false);
+	}
+	//Roughness
+	Texture* roughnessTexture = mesh->material->textures.Find(TEXTURE_ROUGHNESS);
+	if (roughnessTexture != nullptr)
+	{
+		samplerUnit++;
+		shader->SetSampler("roughnessMap", *roughnessTexture, *sampler, samplerUnit);
+		shader->SetUniform1f("bUseMetallicMap", true);
+	}
+	else
+	{
+		shader->SetUniform1f("bUseRoughnessMap", false);
+		shader->SetUniform1f("uRoughness", 0.3f);
+	}
+	//Ao
+	Texture* AoTexture = mesh->material->textures.Find(TEXTURE_AO);
+	if (AoTexture)
+	{
+		samplerUnit++;
+		shader->SetSampler("aoMap", *AoTexture, *sampler, samplerUnit);
+		shader->SetUniform1f("bUseAoMap", true);
+	}
+	else
+	{
+		shader->SetUniform1f("bUseAoMap", false);
+		shader->SetUniform1f("uAo", 0.2f);
+	}
 }

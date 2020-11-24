@@ -4,6 +4,12 @@
 #include "RenderDevice.h"
 #include "Common/dataStructs/String.h"
 
+#define TEXTURE_ALBEDO    "texture_albedo"
+#define TEXTURE_NORMAL    "texture_normal"
+#define TEXTURE_METALLIC  "texture_metallic"
+#define TEXTURE_ROUGHNESS "texture_roughness"
+#define TEXTURE_AO		  "texture_ao"
+
 enum TextureType
 {
     Diffuse,

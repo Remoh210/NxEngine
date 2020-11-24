@@ -56,6 +56,7 @@ public:
 	void DrawDebugShapes();
 	
     void Flush();
+	void SetTextures(MeshInfo* mesh, Shader* shader);
     //~EditorRenderContext();
 
 	

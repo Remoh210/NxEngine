@@ -425,7 +425,7 @@ void Application::LoadDefaultScene()
 	MeshInfo* meshInfo1 = new MeshInfo();
 	meshInfo1->vertexArray = vertexArray;
 	Material* material1 = new Material();
-	material1->diffuseTexture = testtex;
+	material1->textures[TEXTURE_ALBEDO] = testtex;
 	meshInfo1->material = material1;
 	StaticMeshComponent renderableMesh;
 	renderableMesh.meshAssetFile = monkeyMesh;
@@ -450,7 +450,7 @@ void Application::LoadDefaultScene()
 	MeshInfo* meshInfo2 = new MeshInfo;
 	meshInfo2->vertexArray = vertexArray2;
 	Material* material2 = new Material();
-	material2->diffuseTexture = testtex2;
+	material2->textures[TEXTURE_ALBEDO] = testtex2;
 	meshInfo2->material = material2;
 	StaticMeshComponent renderableMesh2;
 	renderableMesh2.meshAssetFile = rockMesh;
@@ -480,11 +480,11 @@ void Application::LoadDefaultScene()
 	MeshInfo* pbrTestMesh = new MeshInfo();
 	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material* material4 = new Material();
-	material4->diffuseTexture = albedo;
-	material4->normalMap = normal;
-	material4->metallicMap = metallic;
-	material4->roughnessMap = roughness;
-	material4->aoMap = ao;
+	material4->textures[TEXTURE_ALBEDO] = albedo;
+	material4->textures[TEXTURE_NORMAL] = normal;
+	material4->textures[TEXTURE_METALLIC] = metallic;
+	material4->textures[TEXTURE_ROUGHNESS] = roughness;
+	material4->textures[TEXTURE_AO] = ao;
 
 	//material3.diffuseTextures.Add(&testtex);
 	pbrTestMesh->material = material4;
