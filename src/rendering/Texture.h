@@ -4,12 +4,6 @@
 #include "RenderDevice.h"
 #include "Common/dataStructs/String.h"
 
-#define TEXTURE_ALBEDO    "texture_albedo"
-#define TEXTURE_NORMAL    "texture_normal"
-#define TEXTURE_METALLIC  "texture_metallic"
-#define TEXTURE_ROUGHNESS "texture_roughness"
-#define TEXTURE_AO		  "texture_ao"
-
 enum TextureType
 {
     Diffuse,
@@ -32,6 +26,12 @@ public:
     {
 		texData.Clean();
 	}
+
+	inline Texture(uint32 id)
+		:id(id)
+	{
+	}
+
     inline uint32 GetId() { return id; };
     inline NString GetFileName() {return fileName; };
     inline uint32 GetWidth() { return width; };

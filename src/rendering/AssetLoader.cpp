@@ -1,130 +1,24 @@
 #include "AssetLoader.h"
-#include <assimp/Importer.hpp>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include "Core/FileSystem/FileSystem.h"
-#include <iostream>
-#include <stb_image.h>
 
+#include <iostream>
+
+#include "common/CommonTypes.h"
+#include "Core/FileSystem/FileSystem.h"
+
+#include "assimp/Importer.hpp"
+#include "assimp/pbrmaterial.h"
+#include "assimp/scene.h"
+#include "assimp/postprocess.h"
+
+#include "stb_image.h"
+
+
+Array<NString*> AssetLoader::mLoadedTextures;
 
 void AssetLoader::SetShouldFlipVTexture(bool bValue)
 {
 	stbi_set_flip_vertically_on_load(bValue);
 }
-
-NString AssetLoader::mModelDirectory = "NULL_DIR";
-Array<NString*> AssetLoader::mLoadedTextures;
-
-bool AssetLoader::LoadModels(const NString& fileName,
-	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<MaterialSpec>& materials)
-{
-	NString absoluteFilePath = Nx::FileSystem::GetPath(fileName);
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(absoluteFilePath.c_str(),
-		aiProcess_Triangulate |
-		aiProcess_GenSmoothNormals |
-		aiProcess_FlipUVs |
-		aiProcess_CalcTangentSpace);
-
-	if (!scene) {
-		DEBUG_LOG(LOG_TYPE_IO, LOG_ERROR, "Mesh load failed!: %s",
-			absoluteFilePath.c_str());
-		return false;
-	}
-
-	for (uint32 j = 0; j < scene->mNumMeshes; j++) {
-		const aiMesh* model = scene->mMeshes[j];
-		modelMaterialIndices.push_back(model->mMaterialIndex);
-
-		IndexedModel newModel;
-		newModel.AllocateElement(3); // Positions
-		newModel.AllocateElement(2); // TexCoords
-		newModel.AllocateElement(3); // Normals
-		newModel.AllocateElement(3); // Tangents
-		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
-		newModel.AllocateElement(16); // Transform matrix
-
-		const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
-		for (uint32 i = 0; i < model->mNumVertices; i++) {
-			const aiVector3D pos = model->mVertices[i];
-			const aiVector3D normal = model->mNormals[i];
-			const aiVector3D texCoord = model->HasTextureCoords(0)
-				? model->mTextureCoords[0][i] : aiZeroVector;
-			const aiVector3D tangent = model->mTangents[i];
-
-			newModel.AddElement3f(0, pos.x, pos.y, pos.z);
-			newModel.AddElement2f(1, texCoord.x, texCoord.y);
-			newModel.AddElement3f(2, normal.x, normal.y, normal.z);
-			newModel.AddElement3f(3, tangent.x, tangent.y, tangent.z);
-		}
-		for (uint32 i = 0; i < model->mNumFaces; i++)
-		{
-			const aiFace& face = model->mFaces[i];
-			assert(face.mNumIndices == 3);
-			newModel.AddIndices3i(face.mIndices[0], face.mIndices[1],
-				face.mIndices[2]);
-		}
-
-		models.push_back(newModel);
-	}
-
-	for (uint32 i = 0; i < scene->mNumMaterials; i++) {
-		const aiMaterial* material = scene->mMaterials[i];
-		MaterialSpec spec;
-
-		// Currently only handles diffuse textures.
-		aiString texturePath;
-		if (material->GetTextureCount(aiTextureType_DIFFUSE) > 0 &&
-			material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath)
-			!= AI_SUCCESS) {
-			NString str(texturePath.data);
-			spec.textureNames["diffuse"] = str;
-		}
-		//materials.push_back(spec);
-	}
-
-	return true;
-}
-
-
-unsigned int AssetLoader::TextureFromFile(NString path)
-{
-    unsigned int textureID;
-    glGenTextures(1, &textureID);
-
-    int width, height, nrComponents;
-    uint8 *data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
-    if (data)
-    {
-        GLenum format;
-        if (nrComponents == 1)
-            format = GL_RED;
-        else if (nrComponents == 3)
-            format = GL_RGB;
-        else if (nrComponents == 4)
-            format = GL_RGBA;
-
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        stbi_image_free(data);
-    }
-    else
-    {
-        std::cout << "Texture failed to load at path: " << path << std::endl;
-        stbi_image_free(data);
-    }
-
-    return textureID;
-}
-
 
 bool AssetLoader::LoadModel(const NString& fileName,
 	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
@@ -214,19 +108,31 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	MaterialSpec spec;
 
-	LoadMaterialTextures(fileName, material, aiTextureType_DIFFUSE, spec, "texture_diffuse");
-	LoadMaterialTextures(fileName, material, aiTextureType_SPECULAR, spec, "texture_specular");
-	LoadMaterialTextures(fileName, material, aiTextureType_NORMALS, spec, "texture_normal");
-	LoadMaterialTextures(fileName, material, aiTextureType_HEIGHT, spec, "texture_normal");
-	LoadMaterialTextures(fileName, material, aiTextureType_AMBIENT, spec, "texture_height");
+
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_DIFFUSE, spec, TEXTURE_ALBEDO);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_SPECULAR, spec, TEXTURE_SPECULAR);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_NORMALS, spec, TEXTURE_NORMAL);
+	//LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_METALLIC);
+	//LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_ROUGHNESS);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT, spec, TEXTURE_AO);
+
+	//Load PRB glFT
+	NString& fileExtension = GetFileExtension(fileName);
+	if(fileExtension == ".glb" || fileExtension == ".gltf")
+	{
+		LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_MR);
+	}
+
+
 
 	materials.push_back(spec);
 
 }
 
 
-void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat, aiTextureType type, MaterialSpec& material, NString typeName)
-{	
+void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat, const aiScene* scene, aiTextureType type, MaterialSpec& material, NString typeName)
+{
+
 	// retrieve the directory path of the filepath
 	NString myDirectory = filePath.substr(0, filePath.find_last_of('/'));
 
@@ -234,10 +140,110 @@ void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat,
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 	{
 		aiString str;
-		mat->GetTexture(type, i, &str);
-		NString mystr(str.C_Str());
-		DEBUG_LOG_TEMP("Texture Name: %s", str.C_Str());
-		NString TexturePath = myDirectory + "/" + str.C_Str();
-		material.textureNames[typeName] = TexturePath;
+		mat->Get(AI_MATKEY_TEXTURE(type, 1), str);
+		auto texture = scene->GetEmbeddedTexture(str.C_Str());
+		if (texture != nullptr)
+		{
+			NString filename = filePath.substr(filePath.find_last_of('/') + 1);
+			//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
+			Texture* newTexture = new Texture(TextureFromAssimp(texture));
+			material.textures[typeName] = newTexture;
+		}
+		else 
+		{
+			mat->GetTexture(type, i, &str);
+			TexturePath = myDirectory + "/" + str.C_Str();
+			material.textureNames[typeName] = TexturePath;
+			DEBUG_LOG_TEMP("Texture Name: %s", str.C_Str());
+		}
+		
+
 	}
 }
+
+unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
+{
+	//TODO: Move To RenderDevice
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+
+	texture->achFormatHint;
+
+
+	stbi_set_flip_vertically_on_load(false);
+
+
+	unsigned char *image_data = nullptr;
+	int width, height, components_per_pixel;
+
+
+
+	if (texture->mHeight == 0)
+	{
+		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(texture->pcData), texture->mWidth, &width, &height, &components_per_pixel, 0);
+	}
+	else
+	{
+		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(texture->pcData), texture->mWidth * texture->mHeight, &width, &height, &components_per_pixel, 0);
+	}
+
+	GLenum format;
+	if (components_per_pixel == 1)
+		format = GL_RED;
+	else if (components_per_pixel == 3)
+		format = GL_RGB;
+	else if (components_per_pixel == 4)
+		format = GL_RGBA;
+
+
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	//glTexImage2D(GL_TEXTURE_2D, 0, format, texture->mWidth, texture->mHeight, 0, format, GL_UNSIGNED_BYTE, texture->pcData);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
+		image_data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	return textureID;
+}
+
+unsigned int AssetLoader::TextureFromFile(NString path)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+
+	int width, height, nrComponents;
+	uint8 *data = stbi_load(path.c_str(), &width, &height, &nrComponents, 0);
+	if (data)
+	{
+		GLenum format;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::cout << "Texture failed to load at path: " << path << std::endl;
+		stbi_image_free(data);
+	}
+
+	return textureID;
+}
+

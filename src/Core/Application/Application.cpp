@@ -368,6 +368,7 @@ void Application::LoadDefaultScene()
 
 	NString TEST_MODEL_FILE = monkeyMesh;
 	NString TEST_MODEL_FILE2 = rockMesh;
+	NString TEST_MODEL_FILE3 = "res/models/PBRPistol.glb";
 	NString TEST_TEXTURE_FILE2 = "res/models/rock/rock.png";
 
    //PBR Texture Test
@@ -413,7 +414,7 @@ void Application::LoadDefaultScene()
 	Array<IndexedModel> models;
 	Array<uint32> modelMaterialIndices;
 	Array<MaterialSpec> modelMaterials;
-	AssetLoader::LoadModels(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
+	AssetLoader::LoadModel(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
 	//VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 	VertexArray* vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 
@@ -431,11 +432,8 @@ void Application::LoadDefaultScene()
 	renderableMesh.meshAssetFile = monkeyMesh;
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh.meshes.Add(meshInfo1);
-	//renderableMesh.material->diffuseTextures.Add(testtex);
-	//renderableMesh.material->shader = &shader;
 	TransformComponent transformComp;
 	transformComp.transform.position = vec3(0.9f, 222.15f, -40.0f);
-	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp.transform.scale = vec3(7.0f);
 
 	//model2 
@@ -444,7 +442,7 @@ void Application::LoadDefaultScene()
 	//VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
 
 	ArrayBitmap testBitmap2;
-	testBitmap2.Load(modelMaterials[0].textureNames["texture_diffuse"]);
+	testBitmap2.Load(modelMaterials[1].textureNames[TEXTURE_ALBEDO]);
 	Texture* testtex2 = new Texture (renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
 
 	MeshInfo* meshInfo2 = new MeshInfo;
@@ -458,28 +456,38 @@ void Application::LoadDefaultScene()
 	renderableMesh2.meshes.Add(meshInfo2);
 	renderableMesh2.numInst = 100;
 	TransformComponent transformComp2;
-	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
-	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp2.transform.scale = vec3(7.0f);
 
-
+	AssetLoader::LoadModel(TEST_MODEL_FILE3, models, modelMaterialIndices, modelMaterials);
 	MeshInfo* meshInfo3 = new MeshInfo();
-	meshInfo3->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_DYNAMIC_DRAW);
-	Material* material3 = new Material();
+	meshInfo3->vertexArray = new VertexArray(renderDevice, models[2], USAGE_STATIC_DRAW);
 
-	//material3.diffuseTextures.Add(&testtex);
+	Material* material3 = new Material();
+	for (auto textureTypeToFile : modelMaterials[2].textureNames)
+	{
+		ArrayBitmap bm;
+		bm.Load(textureTypeToFile.second);
+		Texture* tex = new Texture(renderDevice, bm, PixelFormat::FORMAT_RGBA, false, false);
+		material3->textures[textureTypeToFile.first] = tex;
+	}
+	for (auto textureTypeToTex : modelMaterials[2].textures)
+	{
+		material3->textures[textureTypeToTex.first] = textureTypeToTex.second;
+	}
 	meshInfo3->material = material3;
 	StaticMeshComponent renderableMesh3;
 	renderableMesh3.shader = ShaderManager::GetMainShader();
 	renderableMesh3.meshes.Add(meshInfo3);
 	TransformComponent transformComp3;
-	//transformComp.transform.position = vec3(0.9f, -0.15f, -40.0f);
-	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-	transformComp3.transform.scale = vec3(10.0f);
+	transformComp3.transform.position = vec3(0.1f, -2.0f, -34.0f);
+	transformComp3.transform.rotation = vec3(0.0, 0.0f, 0.0f);
+	transformComp3.transform.scale = vec3(5.5f);
 
 	MeshInfo* pbrTestMesh = new MeshInfo();
 	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material* material4 = new Material();
+
+
 	material4->textures[TEXTURE_ALBEDO] = albedo;
 	material4->textures[TEXTURE_NORMAL] = normal;
 	material4->textures[TEXTURE_METALLIC] = metallic;
@@ -497,17 +505,17 @@ void Application::LoadDefaultScene()
 	transformComp4.transform.scale = vec3(5);
 
 
-	//ECS::Entity* ent = world->create();
-	//ent->assign<TransformComponent>(transformComp);
-	//ent->assign<StaticMeshComponent>(renderableMesh);
+/*	ECS::Entity* ent = world->create();
+	ent->assign<TransformComponent>(transformComp);
+	ent->assign<StaticMeshComponent>(renderableMesh)*/;
 
 	ECS::Entity* ent2 = world->create();
 	ent2->assign<TransformComponent>(transformComp2);
 	ent2->assign<StaticMeshComponent>(renderableMesh2);
 
-	//ECS::Entity* ent3 = world->create();
-	//ent3->assign<TransformComponent>(transformComp3);
-	//ent3->assign<StaticMeshComponent>(renderableMesh3);
+	ECS::Entity* ent3 = world->create();
+	ent3->assign<TransformComponent>(transformComp3);
+	ent3->assign<StaticMeshComponent>(renderableMesh3);
 
 	ECS::Entity* ent4 = world->create();
 	ent4->assign<TransformComponent>(transformComp4);

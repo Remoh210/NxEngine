@@ -40,6 +40,7 @@ uniform vec4  uColorAlpha;
 uniform float uMetallic;
 uniform float uRoughness;
 uniform float uAo;
+uniform int   uPBRTexType;
 
 //Material parameters bu textures
 uniform sampler2D albedoMap;
@@ -131,26 +132,43 @@ void main()
     vec3 V = normalize(camPos - WorldPos);
 	
 	vec3 N;
-	vec3 albedo;
-    float metallic;
-    float roughness;
-    float ao;
+	vec3 albedo = uColorAlpha.rgb;
+    float metallic = uMetallic;
+    float roughness = uRoughness;
+    float ao = uAo;
+	
 	
 	if(bUseAlbedoMap){ albedo = pow(texture(albedoMap, TexCoords).rgb, vec3(2.2));}
-	else{albedo = uColorAlpha.rgb;}
 	
 	if(bUseNormalMap){N = getNormalFromMap();}
 	else{N = normalize(Normal);}
 	
-	if(bUseMetallicMap){ metallic  = texture(metallicMap, TexCoords).r;}
-	else{metallic = uMetallic;}
-	
-	if(bUseRoughnessMap){roughness = texture(roughnessMap, TexCoords).r;}
-	else{roughness = uRoughness;}
-	
-	if(bUseAoMap){ao = texture(aoMap, TexCoords).r;}
-	else{ao = uAo;}
-	
+	if(uPBRTexType == 0)
+	{
+		if(bUseMetallicMap) { metallic  = texture(metallicMap, TexCoords).r;}
+		if(bUseRoughnessMap){roughness = texture(roughnessMap, TexCoords).r;}
+		if(bUseAoMap)		{ao = texture(aoMap, TexCoords).r;}
+	}
+	//glTF PBR texture
+	else if(uPBRTexType == 1)
+	{
+		if(bUseMetallicMap)
+		{ 
+			metallic  = texture(metallicMap, TexCoords).r;
+			roughness = texture(metallicMap, TexCoords).g;
+		}
+	}
+	//UE4 PBR texture
+	else if(uPBRTexType == 2)
+	{
+		if(bUseMetallicMap || bUseRoughnessMap || bUseAoMap)
+		{ 
+			metallic  = texture(metallicMap, TexCoords).r;
+			roughness = texture(metallicMap, TexCoords).b;
+			ao = texture(aoMap, TexCoords).b;
+		}
+	}
+
 
     // calculate reflectance at normal incidence; if dia-electric (like plastic) use F0 
     // of 0.04 and if it's a metal, use the albedo color as F0 (metallic workflow)    

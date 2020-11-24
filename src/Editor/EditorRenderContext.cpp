@@ -176,30 +176,45 @@ void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
 	{
 		shader->SetUniform1f("bUseNormalMap", false);
 	}
-	Texture* metallicTexture = mesh->material->textures.Find(TEXTURE_METALLIC);
-	if (metallicTexture != nullptr)
+
+	//Look for glTF PBR metallic roughness texure
+	Texture* MRTexture = mesh->material->textures.Find(TEXTURE_MR);
+	if(MRTexture != nullptr)
 	{
+		shader->SetUniform1i("uPBRTexType", PBR_TEXTURE_MR);
+
 		samplerUnit++;
-		shader->SetSampler("metallicMap", *metallicTexture, *sampler, samplerUnit);
-		shader->SetUniform1f("bUseMetallicMap", true);
+		shader->SetSampler("metallicMap", *MRTexture, *sampler, samplerUnit);
 	}
 	else
 	{
-		shader->SetUniform1f("uMetallic", 0.9f);
-		shader->SetUniform1f("bUseMetallicMap", false);
-	}
-	//Roughness
-	Texture* roughnessTexture = mesh->material->textures.Find(TEXTURE_ROUGHNESS);
-	if (roughnessTexture != nullptr)
-	{
-		samplerUnit++;
-		shader->SetSampler("roughnessMap", *roughnessTexture, *sampler, samplerUnit);
-		shader->SetUniform1f("bUseMetallicMap", true);
-	}
-	else
-	{
-		shader->SetUniform1f("bUseRoughnessMap", false);
-		shader->SetUniform1f("uRoughness", 0.3f);
+		shader->SetUniform1i("uPBRTexType", PBR_TEXTURE_SPLIT);
+
+		Texture* metallicTexture = mesh->material->textures.Find(TEXTURE_METALLIC);
+		if (metallicTexture != nullptr)
+		{
+			samplerUnit++;
+			shader->SetSampler("metallicMap", *metallicTexture, *sampler, samplerUnit);
+			shader->SetUniform1f("bUseMetallicMap", true);
+		}
+		else
+		{
+			shader->SetUniform1f("uMetallic", 0.9f);
+			shader->SetUniform1f("bUseMetallicMap", false);
+		}
+		//Roughness
+		Texture* roughnessTexture = mesh->material->textures.Find(TEXTURE_ROUGHNESS);
+		if (roughnessTexture != nullptr)
+		{
+			samplerUnit++;
+			shader->SetSampler("roughnessMap", *roughnessTexture, *sampler, samplerUnit);
+			shader->SetUniform1f("bUseMetallicMap", true);
+		}
+		else
+		{
+			shader->SetUniform1f("bUseRoughnessMap", false);
+			shader->SetUniform1f("uRoughness", 0.3f);
+		}
 	}
 	//Ao
 	Texture* AoTexture = mesh->material->textures.Find(TEXTURE_AO);

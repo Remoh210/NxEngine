@@ -10,12 +10,8 @@ public:
 
 	static void SetShouldFlipVTexture(bool bValue);
 
-
-	static bool LoadModels(const NString& fileName,
-			Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-			Array<MaterialSpec>& materials);
-
 	static unsigned int TextureFromFile(NString path);
+	static unsigned int TextureFromAssimp(const aiTexture* texture);
 
 	static bool LoadModel(const NString& fileName,
 		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
@@ -31,7 +27,13 @@ private:
 		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
 		Array<MaterialSpec>& materials);
 
-	static void LoadMaterialTextures(const NString& filePath, aiMaterial *mat, aiTextureType type, MaterialSpec& material, NString typeName);
+	static void LoadMaterialTextures(const NString& filePath, aiMaterial* mat, const aiScene* scene, aiTextureType type, MaterialSpec& material, NString typeName);
+
+	static NString GetFileExtension(NString fileName)
+	{
+		std::size_t found = fileName.find_last_of('.');
+		return fileName.substr(found);
+	}
 
 	static NString mModelDirectory;
 	static Array<NString*> mLoadedTextures;
