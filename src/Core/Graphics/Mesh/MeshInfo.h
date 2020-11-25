@@ -6,8 +6,8 @@
 
 struct MeshInfo
 {
-	VertexArray* vertexArray;
-	Material* material;
+	VertexArray* vertexArray = nullptr;
+	Material* material = nullptr;
 
 	~MeshInfo()
 	{

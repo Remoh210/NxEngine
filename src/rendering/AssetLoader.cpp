@@ -176,7 +176,7 @@ unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
 	unsigned char *image_data = nullptr;
 	int width, height, components_per_pixel;
 
-
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //JPG?
 
 	if (texture->mHeight == 0)
 	{
@@ -190,6 +190,8 @@ unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
 	GLenum format;
 	if (components_per_pixel == 1)
 		format = GL_RED;
+	else if (components_per_pixel == 2)
+		format = GL_RG;
 	else if (components_per_pixel == 3)
 		format = GL_RGB;
 	else if (components_per_pixel == 4)
@@ -198,7 +200,7 @@ unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
 
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	//glTexImage2D(GL_TEXTURE_2D, 0, format, texture->mWidth, texture->mHeight, 0, format, GL_UNSIGNED_BYTE, texture->pcData);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
 		image_data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 

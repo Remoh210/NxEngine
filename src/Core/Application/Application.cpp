@@ -98,10 +98,10 @@ int Application::Run()
 	DebugRenderer debugRenderer(*editorRenderContext);
 	for (int i = 0; i < 1; i++)
 	{
-		debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0));
+		//debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0));
 	}
 	
-	debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
+	//debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
 	vec3 debugSpherePos(0.0f);
 
 
@@ -368,18 +368,20 @@ void Application::LoadDefaultScene()
 
 	NString TEST_MODEL_FILE = monkeyMesh;
 	NString TEST_MODEL_FILE2 = rockMesh;
-	NString TEST_MODEL_FILE3 = "res/models/PBRPistol.glb";
+
+	//Assim PBR********************************************************
+	//PBRSphere.glb = binary and embedded textures
+	//PBRSphere2.gltf = embedded textures
+	NString TEST_MODEL_FILE3 = "res/models/PBRSphere3.gltf"; 
+	//Assim PBR********************************************************
+	
+
+
 	NString TEST_TEXTURE_FILE2 = "res/models/rock/rock.png";
 
-   //PBR Texture Test
-	
+	//Manual texure loading 
 	NString TexureType = "rusted_iron";
-	//NString TexureType = "wall";
-	//NString TexureType = "plastic";
-	//NString TexureType = "grass";
-	//NString TexureType = "gold";
 	NString TexurePathBase = "res/textures/pbr";
-
 	NString file_albedoTex = TexurePathBase + "/" + TexureType + "/" + "albedo.png";
 	NString file_normalTex = TexurePathBase + "/" + TexureType + "/" + "normal.png";
 	NString file_metallicTex = TexurePathBase + "/" + TexureType + "/" + "metallic.png";
@@ -405,10 +407,6 @@ void Application::LoadDefaultScene()
 	ArrayBitmap aoBitMap;
 	aoBitMap.Load(file_aoTex);
 	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, false, false);
-
-
-
-
 
 	//model 1
 	Array<IndexedModel> models;
@@ -449,7 +447,7 @@ void Application::LoadDefaultScene()
 	meshInfo2->vertexArray = vertexArray2;
 	Material* material2 = new Material();
 	material2->textures[TEXTURE_ALBEDO] = testtex2;
-	meshInfo2->material = material2;
+	//meshInfo2->material = material2;
 	StaticMeshComponent renderableMesh2;
 	renderableMesh2.meshAssetFile = rockMesh;
 	renderableMesh2.shader = ShaderManager::GetMainShader();
@@ -479,7 +477,8 @@ void Application::LoadDefaultScene()
 	renderableMesh3.shader = ShaderManager::GetMainShader();
 	renderableMesh3.meshes.Add(meshInfo3);
 	TransformComponent transformComp3;
-	transformComp3.transform.position = vec3(0.1f, -2.0f, -34.0f);
+	//transformComp3.transform.position = vec3(10.1f, 0.0f, -40.0f);
+	transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp3.transform.rotation = vec3(0.0, 0.0f, 0.0f);
 	transformComp3.transform.scale = vec3(5.5f);
 
@@ -509,22 +508,22 @@ void Application::LoadDefaultScene()
 	ent->assign<TransformComponent>(transformComp);
 	ent->assign<StaticMeshComponent>(renderableMesh)*/;
 
-	ECS::Entity* ent2 = world->create();
-	ent2->assign<TransformComponent>(transformComp2);
-	ent2->assign<StaticMeshComponent>(renderableMesh2);
+	//ECS::Entity* ent2 = world->create();
+	//ent2->assign<TransformComponent>(transformComp2);
+	//ent2->assign<StaticMeshComponent>(renderableMesh2);
 
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
 	ent3->assign<StaticMeshComponent>(renderableMesh3);
 
-	ECS::Entity* ent4 = world->create();
-	ent4->assign<TransformComponent>(transformComp4);
-	ent4->assign<StaticMeshComponent>(renderableMesh4);
+	//ECS::Entity* ent4 = world->create();
+	//ent4->assign<TransformComponent>(transformComp4);
+	//ent4->assign<StaticMeshComponent>(renderableMesh4);
 
 	//SceneManager::currentScene.sceneObjects.Add(ent);
-	SceneManager::currentScene.sceneObjects.Add(ent2);
+	//SceneManager::currentScene.sceneObjects.Add(ent2);
 	//SceneManager::currentScene.sceneObjects.Add(ent3);
-	SceneManager::currentScene.sceneObjects.Add(ent4);
+	//SceneManager::currentScene.sceneObjects.Add(ent4);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();

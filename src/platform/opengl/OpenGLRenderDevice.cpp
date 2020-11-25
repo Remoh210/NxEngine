@@ -904,7 +904,7 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
     SetShader(shader);
     glActiveTexture(GL_TEXTURE0 + unit);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glBindSampler(unit, sampler);
+	glBindSampler(unit, sampler);
     glUniform1i(shaderProgramMap.at(shader).samplerMap.at(samplerName), unit);
 }
 
