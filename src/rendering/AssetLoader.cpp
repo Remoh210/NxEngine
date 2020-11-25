@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "common/CommonTypes.h"
+#include "Common/CommonTypes.h"
 #include "Core/FileSystem/FileSystem.h"
 
 #include "assimp/Importer.hpp"
@@ -117,7 +117,7 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT, spec, TEXTURE_AO);
 
 	//Load PRB glFT
-	NString& fileExtension = GetFileExtension(fileName);
+	const NString& fileExtension = GetFileExtension(fileName);
 	if(fileExtension == ".glb" || fileExtension == ".gltf")
 	{
 		LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_MR);
