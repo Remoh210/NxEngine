@@ -13,6 +13,7 @@ ArrayBitmap::ArrayBitmap(/*const string& fileName*/)
 
 bool ArrayBitmap::Load(const string& fileName) 
 {
+	stbi_set_flip_vertically_on_load(true);
 	texturefile = fileName;
 	bool bResult = false;
 	int nrComponents;
@@ -36,7 +37,7 @@ bool ArrayBitmap::Load(const string& fileName)
 		DEBUG_LOG(LOG_TYPE_ArrayBitmap, LOG_ERROR, "Failed to load ArrayBitmap: %s", fileName.c_str());
 		stbi_image_free(data);
 	}
-
+	stbi_set_flip_vertically_on_load(false);
 	return bResult;
 }
 

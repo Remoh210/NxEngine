@@ -234,6 +234,6 @@ void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
 	//else
 	//{
 	//	shader->SetUniform1f("bUseAoMap", false);
-	//	shader->SetUniform1f("uAo", 0.02f);
+	//	shader->SetUniform1f("uAo", 0.001f);
 	//}
 }

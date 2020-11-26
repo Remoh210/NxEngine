@@ -120,8 +120,44 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	const NString& fileExtension = GetFileExtension(fileName);
 	if(fileExtension == ".glb" || fileExtension == ".gltf")
 	{
-		LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_MR);
+		aiString fileMetallicRoughness;
+		material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &fileMetallicRoughness);
+		auto texture = scene->GetEmbeddedTexture(fileMetallicRoughness.C_Str());
+		if (texture != nullptr)
+		{
+			NString filename = fileName.substr(fileName.find_last_of('/') + 1);
+			//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
+			Texture* newTexture = new Texture(TextureFromAssimp(texture));
+			spec.textures[TEXTURE_MR] = newTexture;
+		}
+		else
+		{
+			//mat->GetTexture(type, i, &fileMetallicRoughness);
+			//TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
+			//material.textureNames[typeName] = TexturePath;
+			//DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());
+		}
+
+		aiString fileAlbedo;
+		material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &fileAlbedo);
+		auto textureAlbedo = scene->GetEmbeddedTexture(fileAlbedo.C_Str());
+		if (textureAlbedo != nullptr)
+		{
+			NString filename = fileName.substr(fileName.find_last_of('/') + 1);
+			//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
+			Texture* newTexture = new Texture(TextureFromAssimp(textureAlbedo));
+			spec.textures[TEXTURE_ALBEDO] = newTexture;
+		}
+		else
+		{
+			//mat->GetTexture(type, i, &fileMetallicRoughness);
+			//TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
+			//material.textureNames[typeName] = TexturePath;
+			//DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());
+		}
 	}
+
+
 
 
 
@@ -140,7 +176,7 @@ void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat,
 	for (unsigned int i = 0; i < mat->GetTextureCount(type); i++)
 	{
 		aiString str;
-		mat->Get(AI_MATKEY_TEXTURE(type, 1), str);
+		mat->GetTexture(type, i, &str);
 		auto texture = scene->GetEmbeddedTexture(str.C_Str());
 		if (texture != nullptr)
 		{
@@ -151,13 +187,10 @@ void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat,
 		}
 		else 
 		{
-			mat->GetTexture(type, i, &str);
 			TexturePath = myDirectory + "/" + str.C_Str();
 			material.textureNames[typeName] = TexturePath;
 			DEBUG_LOG_TEMP("Texture Name: %s", str.C_Str());
 		}
-		
-
 	}
 }
 
@@ -200,7 +233,7 @@ unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
 
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	//glTexImage2D(GL_TEXTURE_2D, 0, format, texture->mWidth, texture->mHeight, 0, format, GL_UNSIGNED_BYTE, texture->pcData);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
 		image_data);
 	glGenerateMipmap(GL_TEXTURE_2D);
 

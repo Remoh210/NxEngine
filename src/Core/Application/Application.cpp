@@ -372,7 +372,7 @@ void Application::LoadDefaultScene()
 	//Assim PBR********************************************************
 	//PBRSphere.glb = binary and embedded textures
 	//PBRSphere2.gltf = embedded textures
-	NString TEST_MODEL_FILE3 = "res/models/PBRSphere3.gltf"; 
+	NString TEST_MODEL_FILE3 = "res/models/PBRSphere.glb"; 
 	//Assim PBR********************************************************
 	
 
@@ -390,23 +390,23 @@ void Application::LoadDefaultScene()
 
 	ArrayBitmap albedoBitMap;
 	albedoBitMap.Load(file_albedoTex);
-	Texture* albedo = new Texture(renderDevice, albedoBitMap, PixelFormat::FORMAT_RGBA, false, false);
+	Texture* albedo = new Texture(renderDevice, albedoBitMap, PixelFormat::FORMAT_RGBA, true, false);
 
 	ArrayBitmap normalBitMap;
 	normalBitMap.Load(file_normalTex);
-	Texture* normal = new Texture(renderDevice, normalBitMap, PixelFormat::FORMAT_RGBA, false, false);
+	Texture* normal = new Texture(renderDevice, normalBitMap, PixelFormat::FORMAT_RGBA, true, false);
 
 	ArrayBitmap metallicBitMap;
 	metallicBitMap.Load(file_metallicTex);
-	Texture* metallic = new Texture(renderDevice, metallicBitMap, PixelFormat::FORMAT_RGBA, false, false);
+	Texture* metallic = new Texture(renderDevice, metallicBitMap, PixelFormat::FORMAT_RGBA, true, false);
 
 	ArrayBitmap roughnessBitMap;
 	roughnessBitMap.Load(file_roughnessTex);
-	Texture* roughness = new Texture(renderDevice, roughnessBitMap, PixelFormat::FORMAT_RGBA, false, false);
+	Texture* roughness = new Texture(renderDevice, roughnessBitMap, PixelFormat::FORMAT_RGBA, true, false);
 
 	ArrayBitmap aoBitMap;
 	aoBitMap.Load(file_aoTex);
-	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, false, false);
+	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, true, false);
 
 	//model 1
 	Array<IndexedModel> models;
@@ -456,31 +456,44 @@ void Application::LoadDefaultScene()
 	TransformComponent transformComp2;
 	transformComp2.transform.scale = vec3(7.0f);
 
-	AssetLoader::LoadModel(TEST_MODEL_FILE3, models, modelMaterialIndices, modelMaterials);
-	MeshInfo* meshInfo3 = new MeshInfo();
-	meshInfo3->vertexArray = new VertexArray(renderDevice, models[2], USAGE_STATIC_DRAW);
+	Array<IndexedModel> PBRLoadedMeshes;
+	Array<uint32> PBRMaterialIndices;
+	Array<MaterialSpec> PBRLoadedMaterials;
+	AssetLoader::LoadModel(TEST_MODEL_FILE3, PBRLoadedMeshes, PBRMaterialIndices, PBRLoadedMaterials);
 
-	Material* material3 = new Material();
-	for (auto textureTypeToFile : modelMaterials[2].textureNames)
-	{
-		ArrayBitmap bm;
-		bm.Load(textureTypeToFile.second);
-		Texture* tex = new Texture(renderDevice, bm, PixelFormat::FORMAT_RGBA, false, false);
-		material3->textures[textureTypeToFile.first] = tex;
-	}
-	for (auto textureTypeToTex : modelMaterials[2].textures)
-	{
-		material3->textures[textureTypeToTex.first] = textureTypeToTex.second;
-	}
-	meshInfo3->material = material3;
+
 	StaticMeshComponent renderableMesh3;
+	
+	for(int i = 0; i < PBRLoadedMeshes.size(); i++)
+	{
+		MeshInfo* curMesh = new MeshInfo();
+		curMesh->vertexArray = new VertexArray(renderDevice, PBRLoadedMeshes[i], USAGE_STATIC_DRAW);
+		renderableMesh3.meshes.Add(curMesh);
+
+		Material* material3 = new Material();
+		for (int j = 0; j < PBRLoadedMaterials.size(); j++)
+		{
+			for (auto textureTypeToFile : PBRLoadedMaterials[i].textureNames)
+			{
+				ArrayBitmap bm;
+				bm.Load(textureTypeToFile.second);
+				Texture* tex = new Texture(renderDevice, bm, PixelFormat::FORMAT_RGBA, false, false);
+				material3->textures[textureTypeToFile.first] = tex;
+			}
+			for (auto textureTypeToTex : PBRLoadedMaterials[i].textures)
+			{
+				material3->textures[textureTypeToTex.first] = textureTypeToTex.second;
+			}
+		}
+		curMesh->material = material3;
+	}
+
 	renderableMesh3.shader = ShaderManager::GetMainShader();
-	renderableMesh3.meshes.Add(meshInfo3);
 	TransformComponent transformComp3;
-	//transformComp3.transform.position = vec3(10.1f, 0.0f, -40.0f);
-	transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
-	transformComp3.transform.rotation = vec3(0.0, 0.0f, 0.0f);
-	transformComp3.transform.scale = vec3(5.5f);
+	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
+	transformComp3.transform.position = vec3(15.1f, 0.0f, -40.0f);
+	transformComp3.transform.rotation = vec3(0.0, 0.0f, 0.f);
+	transformComp3.transform.scale = vec3(5);
 
 	MeshInfo* pbrTestMesh = new MeshInfo();
 	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
@@ -516,9 +529,9 @@ void Application::LoadDefaultScene()
 	ent3->assign<TransformComponent>(transformComp3);
 	ent3->assign<StaticMeshComponent>(renderableMesh3);
 
-	//ECS::Entity* ent4 = world->create();
-	//ent4->assign<TransformComponent>(transformComp4);
-	//ent4->assign<StaticMeshComponent>(renderableMesh4);
+	ECS::Entity* ent4 = world->create();
+	ent4->assign<TransformComponent>(transformComp4);
+	ent4->assign<StaticMeshComponent>(renderableMesh4);
 
 	//SceneManager::currentScene.sceneObjects.Add(ent);
 	//SceneManager::currentScene.sceneObjects.Add(ent2);
