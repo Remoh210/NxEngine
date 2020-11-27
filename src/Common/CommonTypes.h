@@ -13,12 +13,15 @@
 #define TEXTURE_AO		  "texture_ao"
 #define TEXTURE_SPECULAR   "texture_specular"
 
+//glTF
+#define TEXTURE_MR  "texture_metallic_roughness_ao"
+
+//PBR MRO texture type
 #define PBR_TEXTURE_SPLIT 0
 #define PBR_TEXTURE_MR 1
 #define PBR_TEXTURE_OMR 2
 
-//glTF
-#define TEXTURE_MR  "texture_metallic_roughness"
+
 
 typedef glm::vec2 vec2;
 typedef glm::vec3 vec3;

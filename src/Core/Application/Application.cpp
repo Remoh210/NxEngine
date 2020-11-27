@@ -73,7 +73,7 @@ int Application::Run()
 	ImGui::StyleColorsDark();
 
 
-	bool show_demo_window = true;
+	bool show_demo_window = false;
 	bool show_another_window = true;
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 	bool p_open = true;
@@ -155,7 +155,15 @@ int Application::Run()
 			fpsTimeCounter = 0;
 			fps = 0;
 		}
+		ImGui::Text("Camera Speed: %.1f)", MainCamera->MovementSpeed);
+
+		if (ImGui::Button("Show demo"))
+		{
+			show_demo_window = true;
+		}
+		
 		ImGui::End();
+
 
 		//// Scene Tree
 		//{
@@ -299,6 +307,14 @@ void Application::Initialize()
 	}
 	);
 
+	window->SetMouseScrollCallback
+	(
+		[this](float yoffset)
+	{
+		Application::GetMainCamera()->ProcessMouseScroll(yoffset);
+	}
+	);
+
 	renderDevice = new RenderDevice(window);
 
 
@@ -372,7 +388,7 @@ void Application::LoadDefaultScene()
 	//Assim PBR********************************************************
 	//PBRSphere.glb = binary and embedded textures
 	//PBRSphere2.gltf = embedded textures
-	NString TEST_MODEL_FILE3 = "res/models/PBRSphere.glb"; 
+	NString TEST_MODEL_FILE3 = "res/models/PBRTest.glb"; 
 	//Assim PBR********************************************************
 	
 
@@ -493,7 +509,7 @@ void Application::LoadDefaultScene()
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp3.transform.position = vec3(15.1f, 0.0f, -40.0f);
 	transformComp3.transform.rotation = vec3(0.0, 0.0f, 0.f);
-	transformComp3.transform.scale = vec3(5);
+	transformComp3.transform.scale = vec3(25);
 
 	MeshInfo* pbrTestMesh = new MeshInfo();
 	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
@@ -641,40 +657,25 @@ void Application::GUI_ShowMenuBar()
 			SceneManager::LoadScene("TestScene.json", *GetMainCamera());
 	
 		}
-
 		if (ImGui::MenuItem("Save As..")) {}
 		ImGui::Separator();
-		if (ImGui::BeginMenu("Options"))
-		{
-			static bool enabled = true;
-			ImGui::MenuItem("Enabled", "", &enabled);
-			ImGui::BeginChild("child", ImVec2(0, 60), true);
-			for (int i = 0; i < 10; i++)
-				ImGui::Text("Scrolling Text %d", i);
-			ImGui::EndChild();
-			static float f = 0.5f;
-			static int n = 0;
-			static bool b = true;
-			ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-			ImGui::InputFloat("Input", &f, 0.1f);
-			ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-			ImGui::Checkbox("Check", &b);
-			ImGui::EndMenu();
-		}
-		ImGui::EndMenu();
-	}
-	if (ImGui::BeginMenu("Examples"))
-	{
-		ImGui::MenuItem("Main menu bar", NULL/*, &show_app_main_menu_bar*/);
-		ImGui::MenuItem("Console", NULL/*, &show_app_console*/);
-		ImGui::MenuItem("Log", NULL/*, &show_app_log*/);
-		ImGui::EndMenu();
-	}
-	if (ImGui::BeginMenu("Tools"))
-	{
-		ImGui::MenuItem("Metrics", NULL/*, &show_app_metrics*/);
-		ImGui::MenuItem("Style Editor", NULL/*, &show_app_style_editor*/);
-		ImGui::MenuItem("About Dear ImGui", NULL/*, &show_app_about*/);
+		//if (ImGui::BeginMenu("Options"))
+		//{
+		//	static bool enabled = true;
+		//	ImGui::MenuItem("Enabled", "", &enabled);
+		//	ImGui::BeginChild("child", ImVec2(0, 60), true);
+		//	for (int i = 0; i < 10; i++)
+		//		ImGui::Text("Scrolling Text %d", i);
+		//	ImGui::EndChild();
+		//	static float f = 0.5f;
+		//	static int n = 0;
+		//	static bool b = true;
+		//	ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+		//	ImGui::InputFloat("Input", &f, 0.1f);
+		//	ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+		//	ImGui::Checkbox("Check", &b);
+		//	ImGui::EndMenu();
+		//}
 		ImGui::EndMenu();
 	}
 	ImGui::EndMenuBar();

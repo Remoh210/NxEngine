@@ -5,6 +5,7 @@
 
 std::function<void (int, int)> GLFWPlatformWindow::MouseCallbackFunc = [](int, int){};
 std::function<void (int, int)> GLFWPlatformWindow::FrameBufferResizeCallbackBackFunc = [](int, int){};
+std::function<void(float yoffset)> GLFWPlatformWindow::MouseScrollCallbackFunc = [](float) {};
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -20,6 +21,11 @@ void GLFWPlatformWindow::GLFWFrameBufferResizeCallback(GLFWwindow* window, int w
 {
     glViewport(0, 0, width, height);
     FrameBufferResizeCallbackBackFunc(width, height);
+}
+
+void GLFWPlatformWindow::GLFWMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	MouseScrollCallbackFunc(yoffset);
 }
 
 GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* title)
@@ -49,6 +55,7 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
 	glfwSwapInterval(1); // Enable vsync
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, GLFWPlatformWindow::GLFWMouseCallback);
+	glfwSetScrollCallback(window, GLFWPlatformWindow::GLFWMouseScrollCallback);
     gladLoadGL(glfwGetProcAddress);
 }
 

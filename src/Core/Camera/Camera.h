@@ -130,12 +130,18 @@ public:
 			return;
 		}
 
-        if (Zoom >= 1.0f && Zoom <= 45.0f)
-            Zoom -= yoffset;
-        if (Zoom <= 1.0f)
-            Zoom = 1.0f;
-        if (Zoom >= 45.0f)
-            Zoom = 45.0f;
+        //if (Zoom >= 1.0f && Zoom <= 45.0f)
+        //    Zoom -= yoffset;
+        //if (Zoom <= 1.0f)
+        //    Zoom = 1.0f;
+        //if (Zoom >= 45.0f)
+        //    Zoom = 45.0f;
+
+		float incrAmount = 0.5f;
+
+		MovementSpeed += yoffset * incrAmount;
+		//TODO: use clamp
+		MovementSpeed <= 1.0f ? MovementSpeed = 1.0f : MovementSpeed >= 1000.0f ? MovementSpeed = 1000.0f : false;
     }
 
 	void ToggleControls()

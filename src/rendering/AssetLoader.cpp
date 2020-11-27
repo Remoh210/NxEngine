@@ -29,7 +29,8 @@ bool AssetLoader::LoadModel(const NString& fileName,
 
 	// read file via ASSIMP
 	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(absoluteFilePath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+	//Do not use aiProcess_FlipUVs since we flipping the texture with stbimage
+	const aiScene* scene = importer.ReadFile(absoluteFilePath, aiProcess_Triangulate| aiProcess_CalcTangentSpace);
 	// check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
@@ -110,12 +111,16 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 
 
 	LoadMaterialTextures(fileName, material, scene, aiTextureType_DIFFUSE, spec, TEXTURE_ALBEDO);
-	LoadMaterialTextures(fileName, material, scene, aiTextureType_SPECULAR, spec, TEXTURE_SPECULAR);
+    //TODO: Implement specular workflow, for now we treat specular texture as metallic
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_SPECULAR, spec, TEXTURE_METALLIC);
 	LoadMaterialTextures(fileName, material, scene, aiTextureType_NORMALS, spec, TEXTURE_NORMAL);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_DIFFUSE_ROUGHNESS, spec, TEXTURE_ROUGHNESS);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT_OCCLUSION, spec, TEXTURE_AO);
+	//LoadMaterialTextures(fileName, material, scene, aiTextureType_METALNESS, spec, TEXTURE_METALLIC);
 	//LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_METALLIC);
-	//LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_ROUGHNESS);
-	LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT, spec, TEXTURE_AO);
+	//LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT, spec, TEXTURE_AO);
 
+	//TODO: Put in func
 	//Load PRB glFT
 	const NString& fileExtension = GetFileExtension(fileName);
 	if(fileExtension == ".glb" || fileExtension == ".gltf")
@@ -132,10 +137,10 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 		}
 		else
 		{
-			//mat->GetTexture(type, i, &fileMetallicRoughness);
-			//TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
-			//material.textureNames[typeName] = TexturePath;
-			//DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());
+			NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
+			NString TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
+			spec.textureNames[TEXTURE_MR] = TexturePath;
+			DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());;
 		}
 
 		aiString fileAlbedo;
@@ -150,10 +155,10 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 		}
 		else
 		{
-			//mat->GetTexture(type, i, &fileMetallicRoughness);
-			//TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
-			//material.textureNames[typeName] = TexturePath;
-			//DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());
+			NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
+			NString TexturePath = myDirectory + "/" + fileAlbedo.C_Str();
+			spec.textureNames[TEXTURE_ALBEDO] = TexturePath;
+			DEBUG_LOG_TEMP("Texture Name: %s", fileAlbedo.C_Str());;
 		}
 	}
 
@@ -203,7 +208,7 @@ unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
 	texture->achFormatHint;
 
 
-	stbi_set_flip_vertically_on_load(false);
+	stbi_set_flip_vertically_on_load(true);
 
 
 	unsigned char *image_data = nullptr;

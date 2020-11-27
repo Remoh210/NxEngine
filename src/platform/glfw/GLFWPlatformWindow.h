@@ -28,10 +28,15 @@ public:
 
 	inline void SetMouseCallback(std::function<void (int, int)> callbackFunc) { MouseCallbackFunc  = callbackFunc; }
     inline void SetFrameBufferResizeCallback(std::function<void (int, int)> callbackFunc) { FrameBufferResizeCallbackBackFunc  = callbackFunc; }
+	inline void SetMouseScrollCallback(std::function<void (float)> callbackFunc) 
+	{
+		MouseScrollCallbackFunc = callbackFunc;
+	}
 
 	static Camera* mainCamera;
 
     static std::function<void (int, int)> MouseCallbackFunc;
+	static std::function<void(float yoffset)> MouseScrollCallbackFunc;
     static std::function<void (int, int)> FrameBufferResizeCallbackBackFunc;
 private:
     WindowHandle window;
@@ -41,4 +46,5 @@ private:
 	
 	static void GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos);
     static void GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height);
+	static void GLFWMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 };

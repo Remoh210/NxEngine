@@ -35,6 +35,12 @@ in vec2 TexCoords;
 in vec3 WorldPos;
 in vec3 Normal;
 
+//Camera
+uniform vec3 uCamPos;
+
+//Global lighting uniforms
+uniform float uAmbient;
+
 // material parameters
 uniform vec4  uColorAlpha;
 uniform float uMetallic;
@@ -59,8 +65,6 @@ uniform bool bUseAoMap;
 // lights
 uniform vec3 lightPositions[4];
 uniform vec3 lightColors[4];
-
-uniform vec3 camPos;
 
 const float PI = 3.14159265359;
 
@@ -97,7 +101,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness)
     float denom = (NdotH2 * (a2 - 1.0) + 1.0);
     denom = PI * denom * denom;
 
-    return nom / max(denom, 0.001); // prevent divide by zero for roughness=0.0 and NdotH=1.0
+    return nom / max(denom,  0.00000001); // prevent divide by zero for roughness=0.0 and NdotH=1.0
 }
 // ----------------------------------------------------------------------------
 float GeometrySchlickGGX(float NdotV, float roughness)
@@ -129,7 +133,7 @@ vec3 fresnelSchlick(float cosTheta, vec3 F0)
 void main()
 {		
     
-    vec3 V = normalize(camPos - WorldPos);
+    vec3 V = normalize(uCamPos - WorldPos);
 	
 	vec3 N;
 	vec3 albedo = uColorAlpha.rgb;
@@ -215,7 +219,7 @@ void main()
     
     // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = vec3(0.6) * albedo * ao;
+    vec3 ambient = uAmbient * albedo * ao;
 
     vec3 color = ambient + Lo;
 

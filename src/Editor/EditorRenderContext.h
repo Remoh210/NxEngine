@@ -56,7 +56,7 @@ public:
 	void DrawDebugShapes();
 	
     void Flush();
-	void SetTextures(MeshInfo* mesh, Shader* shader);
+	void SetTextures(Material* material, Shader* shader);
     //~EditorRenderContext();
 
 	
@@ -79,5 +79,8 @@ private:
 	DrawParams editorGridDrawParams;
 	float editorGridSlices;
 	float editorGridScale;
+
+	//Rendering setting
+	float ambient;
 };
 

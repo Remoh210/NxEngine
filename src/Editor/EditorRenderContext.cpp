@@ -13,6 +13,9 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 			perspective(perspectiveIn),
 			mainCamera(CameraIn)
 {
+	//Settings
+	ambient = 0.03f;
+
 	 editorGridSlices = 200;
 	 editorGridScale = 1000;
 
@@ -53,6 +56,8 @@ void EditorRenderContext::Flush()
 	//Set lights 
 	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPosBuffer);
 	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColorBuffer);
+	ShaderManager::GetMainShader()->SetUniform1f("uAmbient", ambient);
+	ShaderManager::GetMainShader()->SetUniform3f("uCamPos", mainCamera->Position);
 
 	//Draw meshes
     for(Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
@@ -75,7 +80,7 @@ void EditorRenderContext::Flush()
 		{
 			if (mesh->material != nullptr)
 			{
-				SetTextures(mesh, modelShader);
+				SetTextures(mesh->material, modelShader);
 		    }
 			
 			
@@ -95,6 +100,9 @@ void EditorRenderContext::Flush()
 			it->second.clear();
 		}
     }
+
+	//HACK...
+	MatrixUniformBuffer->ResetOffset();
 
 	meshRenderBuffer.clear();
 }
@@ -146,16 +154,16 @@ void EditorRenderContext::DrawDebugShapes()
 	debugShapeBuffer.clear();
 
     //HACK...
-	MatrixUniformBuffer->ResetOffset();
+	//MatrixUniformBuffer->ResetOffset();
 }
 
 
-void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
+void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 {
 	uint32 samplerUnit = 1;
 
 	//Albedo
-	Texture* albedoTexture = mesh->material->textures.Find(TEXTURE_ALBEDO);
+	Texture* albedoTexture = material->textures.Find(TEXTURE_ALBEDO);
 	if (albedoTexture != nullptr)
 	{
 		shader->SetSampler("albedoMap", *albedoTexture, *sampler, samplerUnit);
@@ -168,12 +176,12 @@ void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
 		shader->SetUniform1f("bUseAlbedoMap", false);
 	}
 	//Normal
-	Texture* normalTexture = mesh->material->textures.Find(TEXTURE_NORMAL);
+	Texture* normalTexture = material->textures.Find(TEXTURE_NORMAL);
 	if (normalTexture != nullptr)
 	{
 		samplerUnit++;
 		shader->SetSampler("normalMap", *normalTexture, *sampler, samplerUnit);
-		shader->SetUniform1f("bUseNormalMap", false);
+		shader->SetUniform1f("bUseNormalMap", true);
 	}
 	else
 	{
@@ -181,18 +189,22 @@ void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
 	}
 
 	//Look for glTF PBR metallic roughness texure
-	Texture* MRTexture = mesh->material->textures.Find(TEXTURE_MR);
+	Texture* MRTexture = material->textures.Find(TEXTURE_MR);
 	if (MRTexture != nullptr)
 	{
 		samplerUnit++;
 		shader->SetUniform1i("uPBRTexType", PBR_TEXTURE_MR);
 		shader->SetUniform1f("bUseMetallicMap", true);
 		shader->SetSampler("metallicMap", *MRTexture, *sampler, samplerUnit);
+
+		//TODO: Use texture channel
+		//Ao
+		shader->SetUniform1f("uAo", material->ambientOcclusion);
 	}
 	else
 	{
 		shader->SetUniform1i("uPBRTexType", PBR_TEXTURE_SPLIT);
-		Texture* metallicTexture = mesh->material->textures.Find(TEXTURE_METALLIC);
+		Texture* metallicTexture = material->textures.Find(TEXTURE_METALLIC);
 		if (metallicTexture != nullptr)
 		{
 			samplerUnit++;
@@ -201,11 +213,10 @@ void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
 		}
 		else
 		{
-			shader->SetUniform1f("uMetallic", 0.4f);
 			shader->SetUniform1f("bUseMetallicMap", false);
+			shader->SetUniform1f("uMetallic", material->metallic);
 		}
-
-		Texture* roughnessTexture = mesh->material->textures.Find(TEXTURE_ROUGHNESS);
+		Texture* roughnessTexture = material->textures.Find(TEXTURE_ROUGHNESS);
 		if (roughnessTexture != nullptr)
 		{
 			samplerUnit++;
@@ -215,25 +226,23 @@ void EditorRenderContext::SetTextures(MeshInfo* mesh, Shader* shader)
 		else
 		{
 			shader->SetUniform1f("bUseRoughnessMap", false);
-			shader->SetUniform1f("uRoughness", 0.3f);
+			shader->SetUniform1f("uRoughness", material->roughness);
+		}
+
+		Texture* AoTexture = material->textures.Find(TEXTURE_AO);
+		if (AoTexture)
+		{
+			samplerUnit++;
+			shader->SetSampler("aoMap", *AoTexture, *sampler, samplerUnit);
+			shader->SetUniform1f("bUseAoMap", true);
+		}
+		else
+		{
+			//Ao
+			shader->SetUniform1f("bUseAoMap", false);
+			shader->SetUniform1f("uAo", material->ambientOcclusion);
 		}
 	}
 
 
-	//Ao
-	shader->SetUniform1f("bUseAoMap", false);
-	shader->SetUniform1f("uAo", 0.02f);
-
-	//Texture* AoTexture = mesh->material->textures.Find(TEXTURE_AO);
-	//if (AoTexture)
-	//{
-	//	samplerUnit++;
-	//	shader->SetSampler("aoMap", *AoTexture, *sampler, samplerUnit);
-	//	shader->SetUniform1f("bUseAoMap", true);
-	//}
-	//else
-	//{
-	//	shader->SetUniform1f("bUseAoMap", false);
-	//	shader->SetUniform1f("uAo", 0.001f);
-	//}
 }
