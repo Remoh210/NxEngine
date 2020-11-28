@@ -14,7 +14,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 			mainCamera(CameraIn)
 {
 	//Settings
-	ambient = 0.03f;
+	ambient = 0.02f;
 
 	 editorGridSlices = 200;
 	 editorGridScale = 1000;
@@ -53,9 +53,29 @@ void EditorRenderContext::Flush()
 	DrawEditorHelpers();
 	DrawDebugShapes();
 
-	//Set lights 
-	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPosBuffer);
-	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColorBuffer);
+	//TODO: Set as struct in glsl
+	//Set lights
+	Array<int> lightTypes;
+	Array<vec3> lightColors;
+	Array<vec3> lightPositions;
+	Array<vec3> lightDirections;
+
+	int numLights = lightBuffer.size();
+	ShaderManager::GetMainShader()->SetUniform1i("uNumLights", numLights < 50 ? numLights : 50);
+	
+	for (std::pair<ECS::ComponentHandle<LightComponent>, vec3> light : lightBuffer)
+	{
+		lightTypes.push_back(light.first->lightType);
+		lightColors.push_back(light.first->color * light.first->intensity);
+		lightDirections.push_back(light.first->direction);
+		lightPositions.push_back(light.second);	
+	}
+
+	ShaderManager::GetMainShader()->SetUniform1iv("lightTypes[0]", lightTypes);
+	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColors);
+	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPositions);
+	ShaderManager::GetMainShader()->SetUniform3fv("lightDirections[0]", lightDirections);
+
 	ShaderManager::GetMainShader()->SetUniform1f("uAmbient", ambient);
 	ShaderManager::GetMainShader()->SetUniform3f("uCamPos", mainCamera->Position);
 
@@ -104,6 +124,7 @@ void EditorRenderContext::Flush()
 	//HACK...
 	MatrixUniformBuffer->ResetOffset();
 
+	lightBuffer.clear();
 	meshRenderBuffer.clear();
 }
 

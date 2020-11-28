@@ -180,6 +180,8 @@ public:
 	void SetShaderUniform1i(uint32 shader, const NString& uniformName,
 		int value);
 
+	void SetArrayUniform1iv(uint32 shader, const NString& uniformName, uint32 size, int* value);
+
 	void SetShaderUniform1f(uint32 shader, const NString& uniformName,
 		float value);
 

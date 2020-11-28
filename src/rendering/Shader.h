@@ -27,6 +27,11 @@ public:
 		mRenderDevice->SetShaderUniform1i(mProgramId, name, value);
 	}
 
+	inline void SetUniform1iv(const NString& name, Array<int> value)
+	{
+		mRenderDevice->SetArrayUniform1iv(mProgramId, name, value.size(), &value[0]);
+	}
+
 	inline void SetUniform1f(const NString& name, float value)
 	{
 		mRenderDevice->SetShaderUniform1f(mProgramId, name, value);

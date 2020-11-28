@@ -388,7 +388,7 @@ void Application::LoadDefaultScene()
 	//Assim PBR********************************************************
 	//PBRSphere.glb = binary and embedded textures
 	//PBRSphere2.gltf = embedded textures
-	NString TEST_MODEL_FILE3 = "res/models/PBRTest.glb"; 
+	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb"; 
 	//Assim PBR********************************************************
 	
 
@@ -509,7 +509,7 @@ void Application::LoadDefaultScene()
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp3.transform.position = vec3(15.1f, 0.0f, -40.0f);
 	transformComp3.transform.rotation = vec3(0.0, 0.0f, 0.f);
-	transformComp3.transform.scale = vec3(25);
+	transformComp3.transform.scale = vec3(0.5);
 
 	MeshInfo* pbrTestMesh = new MeshInfo();
 	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
@@ -559,6 +559,15 @@ void Application::LoadDefaultScene()
 	renderableMesh3.shader = ShaderManager::GetMainShader();
 
 
+	//Directional
+	vec3 dirColor(1.0f, 1.0f, 1.0f);
+	vec3 dir(0.0f, -0.5f, 1.0f);
+	float dirInten = 1.1f;
+	ECS::Entity* lightDir = world->create();
+	lightDir->assign<TransformComponent>(Transform());
+	lightDir->assign<LightComponent>(dirColor, dirInten, vec3(0), dir);
+
+	//Point;
 	vec3 color(1.0f, 1.0f, 1.0f);
 	float inten = 1200;
 
@@ -586,8 +595,6 @@ void Application::LoadDefaultScene()
 	transform4.position = vec3(10.0f, -10.0f, 10.0f);
 	light4->assign<TransformComponent>(transform4);
 	light4->assign<LightComponent>(color, inten, vec3(0));
-
-
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

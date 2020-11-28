@@ -10,6 +10,13 @@ struct Transform
 		rotation = vec3(0.0f, 0.0f, 0.0f);
 	}
 
+	Transform(vec3 posIn, vec3 rotIn = vec3(0.f), vec3 scaleIn = vec3(1.f))
+		:position(posIn)
+		,rotation(rotIn)
+		,scale(scaleIn)
+	{
+	}
+
 
 	//inline void AdjustRot(glm::vec3 adjAngleEuler, bool bIsDegrees = false)
 	//{

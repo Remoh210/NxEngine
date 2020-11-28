@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/ECS/ECS.h"
 #include "rendering/RenderDevice.h"
 #include "rendering/RenderContext.h"
 #include "rendering/Shader.h"
@@ -41,10 +42,9 @@ public:
 	}
 
 
-	inline void RenderLight(vec3 position, vec3 color)
+	inline void RenderLight(ECS::ComponentHandle<LightComponent> lightComp, vec3 positionIn)
 	{
-		lightPosBuffer.push_back(position);
-		lightColorBuffer.push_back(color);
+		lightBuffer.push_back(std::make_pair(lightComp, positionIn));
 	}
 
 	inline void RenderDebugShapes(DebugShape* shapeIn, const mat4& transformIn)
@@ -68,8 +68,8 @@ private:
 	mat4 perspective;
 	Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4>> meshRenderBuffer;
 	Map<DebugShape*, Array<mat4>> debugShapeBuffer;
-	Array<vec3> lightPosBuffer; // pos color
-	Array<vec3> lightColorBuffer;
+
+	Array<std::pair<ECS::ComponentHandle<LightComponent>, vec3>> lightBuffer; // pos color
 
 	Camera* mainCamera;
 

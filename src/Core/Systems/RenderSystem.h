@@ -26,7 +26,7 @@ namespace ECS
 		{
 			world->each<TransformComponent, LightComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<LightComponent> lightComp) -> void 
 			{
-				context->RenderLight(transform->transform.position + lightComp->relativePosition, lightComp->color * lightComp->intensity);
+				context->RenderLight(lightComp, transform->transform.position);
 			});
 
 			world->each<TransformComponent, StaticMeshComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<StaticMeshComponent> mesh) -> void {
