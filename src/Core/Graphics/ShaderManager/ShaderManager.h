@@ -22,9 +22,20 @@ public:
 		return mainPipelineShader;
 	}
 
+	inline static void AddPBRShader(NString shaderName, Shader* shader)
+	{
+		PBRShaders[shaderName] = shader;
+	}
+
+	inline static Shader* GetPBRShader(NString shaderName)
+	{
+		return PBRShaders.Find(shaderName);
+	}
+
 
 private:
 	static Map<NString, Shader*> importedShaders;
+	static Map<NString, Shader*> PBRShaders;
 	static Shader* mainPipelineShader;
 	static RenderDevice* renderDevice;
 };

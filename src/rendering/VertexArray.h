@@ -42,7 +42,7 @@ public:
     }
 
 	inline uint32 GetId() { return id; };
-	inline uint32 GetNumIndices(){ return numIndices; };
+	inline uint32 GetNumIndices() { return numIndices; };
 
 private:
     Shader* shader;

@@ -32,6 +32,13 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 editorGridVA->SetShader(grid_shader);
 	 editorGridVA->GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
+	 Shader* PBRShader = ShaderManager::GetPBRShader("PBR_SHADER");
+	 if (!PBRShader)
+	 {
+		 PBRShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+		 DEBUG_LOG_TEMP("NO PBR SHADER"); return;
+	 }
+
 	 editorGridTransform.scale = vec3(editorGridScale);
 	 editorGridTransform.position.x = -0.5 * editorGridScale;
 	 editorGridTransform.position.z = -0.5 * editorGridScale;
@@ -39,8 +46,29 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 
 
-	 Shader* mainShader = ShaderManager::GetMainShader();
-	 //mainShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+
+
+
+	 //CUBE_MAP*******************
+	 NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/road.hdr";
+	 ArrayBitmap hdrBitMap;
+	 hdrBitMap.Load(SKYBOX_TEXTURE_FILE, true);
+	 Texture* hdr_texture = new Texture(mRenderDevice, hdrBitMap, PixelFormat::FORMAT_RGB16F, true, false, true);
+
+	 uint32 test = hdr_texture->GetWidth();
+	 Cubemap* cubemap = new Cubemap(mRenderDevice, 512, 512);
+	 cubemapRT = new CubemapRenderTarget(deviceIn, cubemap, 512, 512);
+	 
+	 cubemapRT->Generate(ShaderManager::GetPBRShader("EQ_TO_CUBE_SHADER"), hdr_texture);
+
+	 if (!ShaderManager::GetPBRShader("SKYBOX_SHADER"))
+	 {
+		 ShaderManager::GetPBRShader("SKYBOX_SHADER")->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+		 DEBUG_LOG_TEMP("NO PBR SHADER"); return;
+	 }
+
+	
+
 	
 }
 
@@ -48,6 +76,10 @@ void EditorRenderContext::Flush()
 {
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
 	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
+
+
+	//Draw Skybox
+	cubemapRT->TEST_DrawSkybox(ShaderManager::GetPBRShader("SKYBOX_SHADER"));
 
 	//Draw Editor stuff first
 	DrawEditorHelpers();
@@ -61,7 +93,13 @@ void EditorRenderContext::Flush()
 	Array<vec3> lightDirections;
 
 	int numLights = lightBuffer.size();
-	ShaderManager::GetMainShader()->SetUniform1i("uNumLights", numLights < 50 ? numLights : 50);
+
+	Shader* PBRShader = ShaderManager::GetPBRShader("PBR_SHADER");
+	if (!PBRShader) 
+	{ 
+		DEBUG_LOG_TEMP("NO PBR SHADER"); return; 
+	}
+	PBRShader->SetUniform1i("uNumLights", numLights < 50 ? numLights : 50);
 	
 	for (std::pair<ECS::ComponentHandle<LightComponent>, vec3> light : lightBuffer)
 	{
@@ -71,13 +109,13 @@ void EditorRenderContext::Flush()
 		lightPositions.push_back(light.second);	
 	}
 
-	ShaderManager::GetMainShader()->SetUniform1iv("lightTypes[0]", lightTypes);
-	ShaderManager::GetMainShader()->SetUniform3fv("lightColors[0]", lightColors);
-	ShaderManager::GetMainShader()->SetUniform3fv("lightPositions[0]", lightPositions);
-	ShaderManager::GetMainShader()->SetUniform3fv("lightDirections[0]", lightDirections);
+	PBRShader->SetUniform1iv("lightTypes[0]", lightTypes);
+	PBRShader->SetUniform3fv("lightColors[0]", lightColors);
+	PBRShader->SetUniform3fv("lightPositions[0]", lightPositions);
+	PBRShader->SetUniform3fv("lightDirections[0]", lightDirections);
 
-	ShaderManager::GetMainShader()->SetUniform1f("uAmbient", ambient);
-	ShaderManager::GetMainShader()->SetUniform3f("uCamPos", mainCamera->Position);
+	PBRShader->SetUniform1f("uAmbient", ambient);
+	PBRShader->SetUniform3f("uCamPos", mainCamera->Position);
 
 	//Draw meshes
     for(Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
@@ -87,14 +125,13 @@ void EditorRenderContext::Flush()
 		size_t numTransforms = it->second.size();
 		//Shader* modelShader = it->first.second;
 		Shader * modelShader = it->first.second;
-		modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+		//modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
 		//might be unnecessary
 		modelShader->SetUniform1f("bUseAlbedoMap", false);
 		modelShader->SetUniform1f("bUseNormalMap", false);
 		modelShader->SetUniform1f("bUseMetallicMap", false);
 
-		
 
 		for (MeshInfo* mesh : it->first.first)
 		{
@@ -138,7 +175,6 @@ void EditorRenderContext::DrawEditorHelpers()
 
     Draw(*editorGridVA->GetShader(), *editorGridVA, editorGridDrawParams, 1);
 
-	
 }
 
 void EditorRenderContext::DrawDebugShapes()

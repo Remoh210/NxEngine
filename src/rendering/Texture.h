@@ -16,16 +16,29 @@ class Texture
 
 public:
     inline Texture(RenderDevice* deviceIn, ArrayBitmap& texData, PixelFormat interalPixelFormat,
-            bool bGenerateMipMaps = true, bool bCompress = true)
+            bool bGenerateMipMaps = true, bool bCompress = true, bool bFloatType = false)
             :device(deviceIn),
             width(texData.GetWidth()), height(texData.GetHeight()),
             bIsCompressed(bCompress), bHasMipmaps(bGenerateMipMaps), 
-            fileName(texData.GetFileName()),
-            id(deviceIn->CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
-            texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress))
+            fileName(texData.GetFileName())
     {
+		id = deviceIn->CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
+			texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress, bFloatType);
+
 		texData.Clean();
 	}
+
+	//inline Texture(RenderDevice* deviceIn, ArrayBitmap& texData, PixelFormat interalPixelFormat,
+	//	bool bGenerateMipMaps = true, bool bCompress = true)
+	//	:device(deviceIn),
+	//	width(texData.GetWidth()), height(texData.GetHeight()),
+	//	bIsCompressed(bCompress), bHasMipmaps(bGenerateMipMaps),
+	//	fileName(texData.GetFileName()),
+	//	id(deviceIn->CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
+	//		texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress))
+	//{
+	//	texData.Clean();
+	//}
 
 	inline Texture(uint32 id)
 		:id(id)

@@ -15,6 +15,8 @@
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
 #include "Core/Components/StaticMeshComponent.h"
 #include "Core/Components/LightComponent.h"
+#include "Core/Graphics/Cubemap/CubemapRenderTarget.h"
+#include "Core/Graphics/Cubemap/Cubemap.h"
 #include "rendering/UniformBuffer.h"
 
 class EditorRenderContext : public RenderContext
@@ -26,11 +28,6 @@ public:
 	{
 		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(transformIn);
 	}
-
-	//inline void RenderMesh(Array<MeshInfo*> meshes, const mat4& transformIn)
-	//{
-	//	meshRenderBuffer[meshes].push_back(perspective * transformIn);
-	//}
 
 	inline void RenderPrimitives(VertexArray* vertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
 	{
@@ -82,5 +79,8 @@ private:
 
 	//Rendering setting
 	float ambient;
+
+
+	CubemapRenderTarget* cubemapRT;
 };
 

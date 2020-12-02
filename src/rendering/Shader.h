@@ -1,6 +1,7 @@
 #pragma once
 #include "RenderDevice.h"
 #include "Texture.h"
+#include "Core/Graphics/Cubemap/Cubemap.h"
 #include "UniformBuffer.h"
 #include "Sampler.h"
 
@@ -21,41 +22,47 @@ public:
 	{
 		mRenderDevice->SetShaderUniformBuffer(mProgramId, name, buffer.GetId());
 	}
-
 	inline void SetUniform1i(const NString& name, int value)
 	{
 		mRenderDevice->SetShaderUniform1i(mProgramId, name, value);
 	}
-
 	inline void SetUniform1iv(const NString& name, Array<int> value)
 	{
 		mRenderDevice->SetArrayUniform1iv(mProgramId, name, value.size(), &value[0]);
 	}
-
 	inline void SetUniform1f(const NString& name, float value)
 	{
 		mRenderDevice->SetShaderUniform1f(mProgramId, name, value);
 	}
-
 	inline void SetUniform3f(const NString& name, vec3 value)
 	{
 		mRenderDevice->SetShaderUniform3f(mProgramId, name, glm::value_ptr(value));
 	}
-
 	inline void SetUniform4f(const NString& name, vec4 value)
 	{
 		mRenderDevice->SetShaderUniform4f(mProgramId, name, glm::value_ptr(value));
 	}
-
     inline void SetSampler(const NString& name, Texture& texture, Sampler& sampler,
             uint32 unit)
     {
         mRenderDevice->SetShaderSampler(mProgramId, name, texture.GetId(), sampler.GetId(), unit);
     }
-
+	inline void SetSampler3D(const NString& name, Cubemap& texture, Sampler& sampler,
+		uint32 unit)
+	{
+		mRenderDevice->SetShaderSampler3D(mProgramId, name, texture.GetId(), sampler.GetId(), unit);
+	}
 	inline void SetUniform3fv(const NString& name, Array<vec3> value)
 	{
 		mRenderDevice->SetArrayUniform3fv(mProgramId, name, value.size(), glm::value_ptr(value[0]));
+	}
+	inline void SetUniform4fv(const NString& name, Array<vec4> value)
+	{
+		mRenderDevice->SetShaderUniform4fv(mProgramId, name, value.size(), glm::value_ptr(value[0]));
+	}
+	inline void SetUniformMat4(const NString& name, mat4 value)
+	{
+		mRenderDevice->SetShaderUniformMat4(mProgramId, name, glm::value_ptr(value[0]));//??
 	}
 
 private:

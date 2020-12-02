@@ -44,6 +44,7 @@ enum PixelFormat
 	FORMAT_R,
 	FORMAT_RG,
 	FORMAT_RGB,
+	FORMAT_RGB16F,
 	FORMAT_SRGB,
 	FORMAT_RGBA,
 	FORMAT_DEPTH,
@@ -152,6 +153,10 @@ public:
 		const DrawParams& drawParams,
 		uint32 numVertecies);
 
+	//Draw Elements
+	void GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
+		const DrawParams& drawParams, uint32 numElements, uint32 count);
+
 	void UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
 			const void* data, uintptr dataSize);
 
@@ -166,7 +171,11 @@ public:
 			const vec4& color, uint32 stencil);
 
     uint32 CreateTexture2D(uint32 width, uint32 height, PixelFormat dataFormat,
-			const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
+			const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress, bool bFloatType = false);
+
+	uint32 CreateTextureCube(uint32 width, uint32 height, PixelFormat dataFormat,
+		const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress);
+
     void ReleaseTexture2D(uint32 texture2D);
 
 	uint32 CreateSampler(SamplerFilter minFilter, SamplerFilter magFilter,
@@ -176,6 +185,9 @@ public:
     
     void SetShaderSampler(uint32 shader, const NString& samplerName,
             uint32 texture, uint32 sampler, uint32 unit);
+
+	void SetShaderSampler3D(uint32 shader, const NString& samplerName,
+		uint32 texture, uint32 sampler, uint32 unit);
 
 	void SetShaderUniform1i(uint32 shader, const NString& uniformName,
 		int value);
@@ -192,6 +204,10 @@ public:
 
 	void SetShaderUniform4f(uint32 shader, const NString& uniformName,
 		float* value);
+
+	void SetShaderUniform4fv(uint32 shader, const NString& uniformName, uint32 size, float* value);
+
+	void SetShaderUniformMat4(uint32 shader, const NString& uniformName, float* value);
 
 	void SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
 		uint32 buffer);

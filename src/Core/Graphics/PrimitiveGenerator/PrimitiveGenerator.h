@@ -216,6 +216,8 @@ public:
 		return newModel;
 	}
 
+	inline static IndexedModel CreateCube(vec3 color = vec3(1, 0, 0));
+
 	
 
 	inline uint32 GetId()
@@ -236,3 +238,84 @@ private:
 	uint32 VAO;
 	uint32 shaderProgram;
 };
+
+IndexedModel PrimitiveGenerator::CreateCube(vec3 color /*= vec3(1, 0, 0)*/)
+{
+
+
+
+	IndexedModel newModel;
+
+
+	newModel.AllocateElement(3); // Positions
+	newModel.AllocateElement(2); // TexCoords
+	newModel.AllocateElement(3); // Normals
+	newModel.AllocateElement(3); // Color
+	newModel.SetInstancedElementStartIndex(4); // Begin instanced data
+	newModel.AllocateElement(16); // Transform matrix
+
+
+	//Vector3f(-1, -1, -1),
+	//	Vector3f(1, -1, -1),
+	//	Vector3f(1, 1, -1),
+	//	Vector3f(-1, 1, -1),
+	//	Vector3f(-1, -1, 1),
+	//	Vector3f(1, -1, 1),
+	//	Vector3f(1, 1, 1),
+	//	Vector3f(-1, 1, 1)
+	
+	newModel.AddElement3f(0, -1, -1, -1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+
+	newModel.AddElement3f(0, 1, -1, -1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+
+	newModel.AddElement3f(0, 1, 1, -1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+
+	newModel.AddElement3f(0, -1, 1, -1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+	
+	newModel.AddElement3f(0, -1, -1, 1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+
+	newModel.AddElement3f(0, 1, -1, 1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+
+	newModel.AddElement3f(0, 1, 1, 1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+
+	newModel.AddElement3f(0, -1, 1, 1);
+	newModel.AddElement3f(3, color[0], color[1], color[2]);
+
+	//Normals broken
+	newModel.AddElement3f(2, 0, 0, 1);
+	newModel.AddElement3f(2, 1, 0, 0);
+	newModel.AddElement3f(2, 0, 0, -1);
+	newModel.AddElement3f(2, -1, 0, 0);
+	newModel.AddElement3f(2, 0, 1, 0);
+	newModel.AddElement3f(2, 0, -1, 0);
+
+	newModel.AddElement2f(1, 0, 0);
+	newModel.AddElement2f(1, 1, 0);
+	newModel.AddElement2f(1, 1, 1);
+	newModel.AddElement2f(1, 1, 1);
+
+
+	newModel.AddIndices3i(0, 1, 3);
+	newModel.AddIndices3i(3, 1, 2);
+	newModel.AddIndices3i(1, 5, 2);
+	newModel.AddIndices3i(2, 5, 6);
+	newModel.AddIndices3i(5, 4, 6);
+	newModel.AddIndices3i(6, 4, 7);
+	newModel.AddIndices3i(4, 0, 7);
+	newModel.AddIndices3i(7, 0, 3);
+	newModel.AddIndices3i(3, 2, 7);
+	newModel.AddIndices3i(7, 2, 6);
+	newModel.AddIndices3i(4, 5, 0);
+	newModel.AddIndices3i(0, 5, 1);
+
+
+
+	return newModel;
+}

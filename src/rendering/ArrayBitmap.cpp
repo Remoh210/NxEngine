@@ -11,15 +11,22 @@ ArrayBitmap::ArrayBitmap(/*const string& fileName*/)
     //Load(fileName);
 }
 
-bool ArrayBitmap::Load(const string& fileName) 
+bool ArrayBitmap::Load(const string& fileName, bool bFloat)
 {
 	stbi_set_flip_vertically_on_load(true);
 	texturefile = fileName;
 	bool bResult = false;
 	int nrComponents;
 	NString textureFullPath = Nx::FileSystem::GetPath(fileName);
-	data = stbi_load(textureFullPath.c_str(), &width, &height, &nrComponents, 0);
-	
+	if (bFloat)
+	{
+		data = stbi_loadf(textureFullPath.c_str(), &width, &height, &nrComponents, 0);
+	}
+	else
+	{
+		data = stbi_load(textureFullPath.c_str(), &width, &height, &nrComponents, 0);
+	}
+
 	if (data)
 	{
 

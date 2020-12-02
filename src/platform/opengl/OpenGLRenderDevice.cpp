@@ -137,6 +137,24 @@ void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 	glDrawArrays(GL_LINES, 0, numVertecies);
 }
 
+void OpenGLRenderDevice::GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
+	const DrawParams& drawParams, uint32 numElements, uint32 count)
+{
+	SetFBO(fbo);
+	SetViewport(fbo);
+	SetBlending(drawParams.sourceBlend, drawParams.destBlend);
+	SetScissorTest(drawParams.useScissorTest,
+		drawParams.scissorStartX, drawParams.scissorStartY,
+		drawParams.scissorWidth, drawParams.scissorHeight);
+	SetFaceCulling(drawParams.faceCulling);
+	SetDepthTest(drawParams.shouldWriteDepth, drawParams.depthFunc);
+	SetShader(shader);
+	SetVAO(vao);
+
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + count, textureId, 0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
 uint32 OpenGLRenderDevice::ReleaseRenderTarget(uint32 fbo)
 {
 	if(fbo == 0) {
@@ -360,7 +378,7 @@ uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 }
 
 uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum PixelFormat dataFormat, 
-           const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress)
+           const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress, bool bFloatType)//TODO: TYPE ENUM
 {
  
     uint32 textureID;
@@ -371,7 +389,14 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
     if (data)
     {
         glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_UNSIGNED_BYTE, data);
+		if (bFloatType)
+		{
+			//TODO: Change that
+			glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_FLOAT, data);
+		}
+		else
+			glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_UNSIGNED_BYTE, data);
+			
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -424,6 +449,27 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
 
 }
 
+uint32 OpenGLRenderDevice::CreateTextureCube(uint32 width, uint32 height, PixelFormat dataFormat, const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress)
+{
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+	GLint GLDataFormat = GetOpenGLFormat(dataFormat);
+	GLint GLInternalFormat = GetOpenGLInternalFormat(internalFormat, bCompress);
+
+	for (unsigned int i = 0; i < 6; ++i)
+	{
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+	}
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	return textureID;
+}
+
 void OpenGLRenderDevice::ReleaseTexture2D(uint32 texture2D)
 {
 	glDeleteTextures(1, &texture2D);
@@ -460,6 +506,7 @@ GLint OpenGLRenderDevice::GetOpenGLFormat(PixelFormat format)
 	case PixelFormat::FORMAT_R: return GL_RED;
 	case PixelFormat::FORMAT_RG: return GL_RG;
 	case PixelFormat::FORMAT_RGB: return GL_RGB;
+	case PixelFormat::FORMAT_RGB16F: return GL_RGB16F;
 	case PixelFormat::FORMAT_SRGB: return GL_SRGB;
 	case PixelFormat::FORMAT_RGBA: return GL_RGBA;
 	case PixelFormat::FORMAT_DEPTH: return GL_DEPTH_COMPONENT;
@@ -725,7 +772,12 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 		glGetActiveUniform(shaderProgram, uniform, uniformName.size(),
 				&actualLength, &arraySize, &type, &uniformName[0]);
 		NString name((char*)&uniformName[0]);
-		if(type == GL_SAMPLER_2D) 
+		if(type == GL_SAMPLER_2D)
+		{
+			DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
+			samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
+		}
+		else if (type == GL_SAMPLER_CUBE)
 		{
 			DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
 			samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
@@ -881,6 +933,7 @@ GLint OpenGLRenderDevice::GetOpenGLInternalFormat(enum PixelFormat format, bool 
 		}
 	case PixelFormat::FORMAT_DEPTH: return GL_DEPTH_COMPONENT;
 	case PixelFormat::FORMAT_DEPTH_AND_STENCIL: return GL_DEPTH_STENCIL;
+	case PixelFormat::FORMAT_RGB16F: return GL_RGB16F;
 	default:
 		DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "PixelFormat %d is not a valid PixelFormat.",
 				format);
@@ -906,6 +959,15 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
     glBindTexture(GL_TEXTURE_2D, texture);
 	glBindSampler(unit, sampler);
     glUniform1i(shaderProgramMap.at(shader).samplerMap.at(samplerName), unit);
+}
+
+void OpenGLRenderDevice::SetShaderSampler3D(uint32 shader, const std::string &samplerName, uint32 texture, uint32 sampler, uint32 unit)
+{
+	SetShader(shader);
+	glActiveTexture(GL_TEXTURE0 + unit);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
+	glBindSampler(unit, sampler);
+	glUniform1i(shaderProgramMap.at(shader).samplerMap.at(samplerName), unit);
 }
 
 void OpenGLRenderDevice::SetShaderUniform1i(uint32 shader, const NString& uniformName, int value)
@@ -942,6 +1004,18 @@ void OpenGLRenderDevice::SetShaderUniform4f(uint32 shader, const NString& unifor
 {
 	SetShader(shader);
 	glUniform4f(shaderProgramMap.at(shader).uniformMap.at(uniformName), value[0], value[1], value[2], value[3]);
+}
+
+void OpenGLRenderDevice::SetShaderUniform4fv(uint32 shader, const NString& uniformName, uint32 size, float* value)
+{
+	SetShader(shader);
+	glUniform4fv(shaderProgramMap.at(shader).uniformMap.at(uniformName), size, value);
+}
+
+void OpenGLRenderDevice::SetShaderUniformMat4(uint32 shader, const NString& uniformName, float* value)
+{
+	SetShader(shader);
+	glUniformMatrix4fv(shaderProgramMap.at(shader).uniformMap.at(uniformName), 1, GL_FALSE, value);
 }
 
 void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,

@@ -284,8 +284,7 @@ Application::Application(float Width, float Height)
 void Application::Initialize()
 {
 	window = new Window(SCR_WIDTH, SCR_HEIGHT, "Test!");
-
-	// Put to init UI
+	//TODO: Put to init UI
 	window->SetMouseCallback
 	(
 		[this](int xpos, int ypos)
@@ -306,7 +305,6 @@ void Application::Initialize()
 		Application::GetMainCamera()->ProcessMouseMovement(xoffset, yoffset);
 	}
 	);
-
 	window->SetMouseScrollCallback
 	(
 		[this](float yoffset)
@@ -317,30 +315,39 @@ void Application::Initialize()
 
 	renderDevice = new RenderDevice(window);
 
+	
+	//Init Shaders**********************************************************
 
-
-
-	NString SHADER_TEXT_FILE = "res/shaders/basicShader.glsl";
+	//TODO: Move to cPipeline?
 	NString PBR_SHADER_TEXT_FILE = "res/shaders/PBR/pbr.glsl";
-	NString shaderText;
-	loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-	Shader* shader = new Shader(renderDevice, shaderText);
-
 	NString PBRshaderText;
 	loadTextFileWithIncludes(PBRshaderText, PBR_SHADER_TEXT_FILE, "#include");
 	Shader* PBRshader = new Shader(renderDevice, PBRshaderText);
-
-	//NString shaderText;
-	//loadTextFileWithIncludes(shaderText, SHADER_TEXT_FILE, "#include");
-	//Shader* shader = new Shader(renderDevice, shaderText);
 	ShaderManager::SetMainShader(PBRshader);
+	ShaderManager::AddPBRShader("PBR_SHADER", PBRshader);
 
 
+	NString EQ_TO_CUBEMAP_SHADER_TEXT_FILE = "res/shaders/PBR/eqToCube.glsl";
+	NString eqToCubeshaderText;
+	loadTextFileWithIncludes(eqToCubeshaderText, EQ_TO_CUBEMAP_SHADER_TEXT_FILE, "#include");
+	Shader* PBREqToCubeshader = new Shader(renderDevice, eqToCubeshaderText);
+	ShaderManager::AddPBRShader("EQ_TO_CUBE_SHADER", PBREqToCubeshader);
 
+	NString PBR_IR_CONV_SHADER_TEXT_FILE = "res/shaders/PBR/irConv.glsl";
+	NString IrConvShaderText;
+	loadTextFileWithIncludes(IrConvShaderText, PBR_IR_CONV_SHADER_TEXT_FILE, "#include");
+	Shader* IrConvShader = new Shader(renderDevice, IrConvShaderText);
+	ShaderManager::AddPBRShader("IR_CONV_SHADER", IrConvShader);
+
+	NString SKYBOX_SHADER_TEXT_FILE = "res/shaders/PBR/skybox.glsl";
+	NString SkyBoxShaderText;
+	loadTextFileWithIncludes(SkyBoxShaderText, SKYBOX_SHADER_TEXT_FILE, "#include");
+	Shader* SkyboxShader = new Shader(renderDevice, SkyBoxShaderText);
+	ShaderManager::AddPBRShader("SKYBOX_SHADER", SkyboxShader);
+
+	//Init Shaders**********************************************************
 
 	editorSampler = new Sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
-
-
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	drawParams.faceCulling = FACE_CULL_NONE;
@@ -385,11 +392,12 @@ void Application::LoadDefaultScene()
 	NString TEST_MODEL_FILE = monkeyMesh;
 	NString TEST_MODEL_FILE2 = rockMesh;
 
-	//Assim PBR********************************************************
+
+	//Assimp PBR********************************************************
 	//PBRSphere.glb = binary and embedded textures
 	//PBRSphere2.gltf = embedded textures
 	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb"; 
-	//Assim PBR********************************************************
+	//Assimp PBR********************************************************
 	
 
 
@@ -533,6 +541,28 @@ void Application::LoadDefaultScene()
 	transformComp4.transform.scale = vec3(5);
 
 
+
+
+	MeshInfo* mesh5 = new MeshInfo();
+	mesh5->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateCube(vec3(1.0f, 1.0f, 1.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	Material* material5 = new Material();
+	//material5->textures[TEXTURE_ALBEDO] = albedo;
+	//material5->textures[TEXTURE_NORMAL] = normal;
+	//material5->textures[TEXTURE_METALLIC] = metallic;
+	//material5->textures[TEXTURE_ROUGHNESS] = roughness;
+	//material5->textures[TEXTURE_AO] = ao;
+
+	//material3.diffuseTextures.Add(&testtex);
+	mesh5->material = material5;
+	StaticMeshComponent renderableMesh5;
+	renderableMesh5.shader = ShaderManager::GetMainShader();
+	renderableMesh5.meshes.Add(mesh5);
+	TransformComponent transformComp5;
+	transformComp5.transform.position = vec3(0, 20, -40);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp5.transform.scale = vec3(5);
+
+
 /*	ECS::Entity* ent = world->create();
 	ent->assign<TransformComponent>(transformComp);
 	ent->assign<StaticMeshComponent>(renderableMesh)*/;
@@ -548,6 +578,10 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent4 = world->create();
 	ent4->assign<TransformComponent>(transformComp4);
 	ent4->assign<StaticMeshComponent>(renderableMesh4);
+
+	ECS::Entity* ent5 = world->create();
+	ent5->assign<TransformComponent>(transformComp5);
+	ent5->assign<StaticMeshComponent>(renderableMesh5);
 
 	//SceneManager::currentScene.sceneObjects.Add(ent);
 	//SceneManager::currentScene.sceneObjects.Add(ent2);
