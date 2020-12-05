@@ -5,7 +5,7 @@
 #include "Core/Graphics/ShaderManager/ShaderManager.h"
 #include "Core/Graphics/Cubemap/CubemapManager.h"
 
-#define MAX_NUM_LIGHTS 1
+#define MAX_NUM_LIGHTS 20
 
 EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
 	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn)
