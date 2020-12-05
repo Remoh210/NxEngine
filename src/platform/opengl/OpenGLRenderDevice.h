@@ -166,6 +166,8 @@ public:
 
 	uint32 ReleaseRenderTarget(uint32 fbo);
 
+	void UpdateFBOSize(uint32 fbo, uint32 width, uint32 height);
+
 	void Clear(uint32 fbo,
 			bool bShouldClearColor, bool bShouldClearDepth, bool bShouldClearStencil,
 			const vec4& color, uint32 stencil);
@@ -280,7 +282,6 @@ private:
 	void SetScissorTest(bool bEnable, uint32 startX, uint32 startY,
 			uint32 width, uint32 height);
 	void SetViewport(uint32 fbo);
-	
 
 	static bool bIsInitialized;
 	//DeviceContext context;

@@ -13,10 +13,9 @@
 #include <Core/Camera/Camera.h>
 #include <Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h>
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
+#include "Core/Graphics/Cubemap/Cubemap.h"
 #include "Core/Components/StaticMeshComponent.h"
 #include "Core/Components/LightComponent.h"
-#include "Core/Graphics/Cubemap/CubemapRenderTarget.h"
-#include "Core/Graphics/Cubemap/Cubemap.h"
 #include "rendering/UniformBuffer.h"
 
 class EditorRenderContext : public RenderContext
@@ -37,6 +36,10 @@ public:
 		Draw(*InShader, *vertexArray, drawParamsIn, 1);
 
 	}
+
+	void RenderSkybox();
+
+	void SetLights();
 
 
 	inline void RenderLight(ECS::ComponentHandle<LightComponent> lightComp, vec3 positionIn)
@@ -80,7 +83,10 @@ private:
 	//Rendering setting
 	float ambient;
 
-
-	CubemapRenderTarget* cubemapRT;
+	//
+	VertexArray* cubeVA;
+	Cubemap* SkyboxTex;
+	Cubemap* IrradMap;
+	Sampler* cubemapSampler;
 };
 

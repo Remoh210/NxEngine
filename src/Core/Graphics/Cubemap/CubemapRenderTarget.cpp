@@ -9,15 +9,5 @@ CubemapRenderTarget::CubemapRenderTarget(RenderDevice* deviceIn, Cubemap* cubema
 	, cubemapTex->GetHeight(), FramebufferAttachment::ATTACHMENT_COLOR, 0, 0))
 
 {
-	IndexedModel& model = PrimitiveGenerator::CreateCube(vec3(1.0f, 1.0f, 1.0f));
-	CubeVAO = new VertexArray(mRenderDevice, model, USAGE_STATIC_DRAW);
-
-	sampler = new Sampler(mRenderDevice, SamplerFilter::FILTER_LINEAR);
-	DrawParams drawParams;
-	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	drawParams.faceCulling = FACE_CULL_NONE;
-	drawParams.shouldWriteDepth = true;
-	drawParams.depthFunc = DRAW_FUNC_LESS;
-	//Create Vao
 
 }

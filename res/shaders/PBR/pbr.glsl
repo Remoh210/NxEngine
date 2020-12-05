@@ -55,6 +55,9 @@ uniform sampler2D metallicMap;
 uniform sampler2D roughnessMap;
 uniform sampler2D aoMap;
 
+// IBL
+uniform samplerCube irradianceMap;
+
 //Material parameters bu textures
 uniform bool bUseAlbedoMap;
 uniform bool bUseNormalMap;
@@ -263,9 +266,14 @@ void main()
 
     }   
     
-    // ambient lighting (note that the next IBL tutorial will replace 
     // this ambient lighting with environment lighting).
-    vec3 ambient = uAmbient * albedo * ao;
+    // ambient lighting (we now use IBL as the ambient term)
+    vec3 kS = fresnelSchlick(max(dot(N, V), 0.0), F0);
+    vec3 kD = 1.0 - kS;
+    kD *= 1.0 - metallic;	  
+    vec3 irradiance = texture(irradianceMap, N).rgb;
+    vec3 diffuse      = irradiance * albedo;
+    vec3 ambient = (kD * diffuse) * ao;
 
     vec3 color = ambient + Lo;
 

@@ -8,6 +8,7 @@
 #include <Core/Systems/RenderSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
+#include <Core/Graphics/Cubemap/CubemapManager.h>
 #include <Core/Application/SceneManager/SceneManager.h>
 #include <Core/Graphics/ShaderManager/ShaderManager.h>
 
@@ -360,6 +361,7 @@ void Application::Initialize()
 	int wa = window->GetWidth();
 	mat4 projection = glm::perspective(glm::radians(45.0f), (float)window->GetWidth() / (float)window->GetHeight(), 0.1f, 10000.0f);
 
+	CubemapManager::Inititialize(renderDevice, PBREqToCubeshader, IrConvShader);
 	editorRenderTarget = new RenderTarget(renderDevice);
 	editorRenderContext = new EditorRenderContext(renderDevice, editorRenderTarget, drawParams, editorSampler, projection, MainCamera);
 
@@ -367,6 +369,8 @@ void Application::Initialize()
 	SceneManager::SetECS(world);
 	SceneManager::SetRenderDevice(renderDevice);
 	ShaderManager::SetRenderDevice(renderDevice);
+	
+	
 
 
 	//ECS
@@ -544,8 +548,10 @@ void Application::LoadDefaultScene()
 
 
 	MeshInfo* mesh5 = new MeshInfo();
-	mesh5->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateCube(vec3(1.0f, 1.0f, 1.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	mesh5->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material* material5 = new Material();
+	//material5->color(1.0)
+	material5->roughness = 0.8;
 	//material5->textures[TEXTURE_ALBEDO] = albedo;
 	//material5->textures[TEXTURE_NORMAL] = normal;
 	//material5->textures[TEXTURE_METALLIC] = metallic;

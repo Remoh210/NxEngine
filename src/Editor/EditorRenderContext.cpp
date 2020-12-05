@@ -3,7 +3,9 @@
 #include "Core/Application/Application.h"
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/Graphics/ShaderManager/ShaderManager.h"
+#include "Core/Graphics/Cubemap/CubemapManager.h"
 
+#define MAX_NUM_LIGHTS 1
 
 EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
 	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn)
@@ -14,7 +16,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 			mainCamera(CameraIn)
 {
 	//Settings
-	ambient = 0.02f;
+	 ambient = 0.02f;
 
 	 editorGridSlices = 200;
 	 editorGridScale = 1000;
@@ -23,7 +25,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 editorGridDrawParams.shouldWriteDepth = true;
 	 editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
 	 editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
-                 //Load and set shaders
+     //Load and set shaders
      NString LINE_SHADER_TEXT_FILE = "res/shaders/EditorGridSimpleShader.glsl";
      NString LineShaderText;
      Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
@@ -45,21 +47,19 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 
 	 MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 
-
-
+	 
+	 cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
 
 
 	 //CUBE_MAP*******************
+	 //NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/newport_loft.hdr";
 	 NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/road.hdr";
 	 ArrayBitmap hdrBitMap;
 	 hdrBitMap.Load(SKYBOX_TEXTURE_FILE, true);
 	 Texture* hdr_texture = new Texture(mRenderDevice, hdrBitMap, PixelFormat::FORMAT_RGB16F, true, false, true);
 
-	 uint32 test = hdr_texture->GetWidth();
-	 Cubemap* cubemap = new Cubemap(mRenderDevice, 512, 512);
-	 cubemapRT = new CubemapRenderTarget(deviceIn, cubemap, 512, 512);
-	 
-	 cubemapRT->Generate(ShaderManager::GetPBRShader("EQ_TO_CUBE_SHADER"), hdr_texture);
+	 Cubemap* hdrCubemap = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 32, 32);
+	 IrradMap = CubemapManager::GenerateIrradianceMapFromCubeMap(hdrCubemap, 32, 32);
 
 	 if (!ShaderManager::GetPBRShader("SKYBOX_SHADER"))
 	 {
@@ -67,55 +67,25 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 		 DEBUG_LOG_TEMP("NO PBR SHADER"); return;
 	 }
 
-	
+	 SkyboxTex = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 512, 512);
 
-	
+	 cubeVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateCube(vec3(1.f)), USAGE_STATIC_DRAW);
 }
 
 void EditorRenderContext::Flush()
 {
+	//Update mat UBO
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
 	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
 
 
-	//Draw Skybox
-	cubemapRT->TEST_DrawSkybox(ShaderManager::GetPBRShader("SKYBOX_SHADER"));
+	RenderSkybox();
 
 	//Draw Editor stuff first
 	DrawEditorHelpers();
 	DrawDebugShapes();
 
-	//TODO: Set as struct in glsl
-	//Set lights
-	Array<int> lightTypes;
-	Array<vec3> lightColors;
-	Array<vec3> lightPositions;
-	Array<vec3> lightDirections;
-
-	int numLights = lightBuffer.size();
-
-	Shader* PBRShader = ShaderManager::GetPBRShader("PBR_SHADER");
-	if (!PBRShader) 
-	{ 
-		DEBUG_LOG_TEMP("NO PBR SHADER"); return; 
-	}
-	PBRShader->SetUniform1i("uNumLights", numLights < 50 ? numLights : 50);
-	
-	for (std::pair<ECS::ComponentHandle<LightComponent>, vec3> light : lightBuffer)
-	{
-		lightTypes.push_back(light.first->lightType);
-		lightColors.push_back(light.first->color * light.first->intensity);
-		lightDirections.push_back(light.first->direction);
-		lightPositions.push_back(light.second);	
-	}
-
-	PBRShader->SetUniform1iv("lightTypes[0]", lightTypes);
-	PBRShader->SetUniform3fv("lightColors[0]", lightColors);
-	PBRShader->SetUniform3fv("lightPositions[0]", lightPositions);
-	PBRShader->SetUniform3fv("lightDirections[0]", lightDirections);
-
-	PBRShader->SetUniform1f("uAmbient", ambient);
-	PBRShader->SetUniform3f("uCamPos", mainCamera->Position);
+	SetLights();
 
 	//Draw meshes
     for(Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
@@ -165,16 +135,70 @@ void EditorRenderContext::Flush()
 	meshRenderBuffer.clear();
 }
 
+void EditorRenderContext::RenderSkybox()
+{
+	//Draw Skybox
+	DrawParams drawParams2;
+	Shader* skyboxShader = ShaderManager::GetPBRShader("SKYBOX_SHADER");
+	drawParams2.primitiveType = PRIMITIVE_TRIANGLES;
+	drawParams2.faceCulling = FACE_CULL_NONE;
+	drawParams2.shouldWriteDepth = true;
+	drawParams2.depthFunc = DRAW_FUNC_LEQUAL;
+	skyboxShader->SetSampler3D("environmentMap", *SkyboxTex, *cubemapSampler, 0);
+	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
+	//drawParams.destBlend = BLEND_FUNC_ONE;
+	Draw(*skyboxShader, *cubeVA, drawParams2, 1);
+	mRenderDevice->Draw(0, skyboxShader->GetId(), skyboxShader->GetId(), drawParams, 1, cubeVA->GetNumIndices());
+}
+
+void EditorRenderContext::SetLights()
+{
+	//TODO: Set as struct in glsl
+	//Set lights
+	Array<int> lightTypes;
+	Array<vec3> lightColors;
+	Array<vec3> lightPositions;
+	Array<vec3> lightDirections;
+
+	int numLights = lightBuffer.size();
+
+	Shader* PBRShader = ShaderManager::GetPBRShader("PBR_SHADER");
+	if (!PBRShader)
+	{
+		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
+	}
+
+	PBRShader->SetUniform1i("uNumLights", numLights < MAX_NUM_LIGHTS ? numLights : MAX_NUM_LIGHTS);
+
+	for (std::pair<ECS::ComponentHandle<LightComponent>, vec3> light : lightBuffer)
+	{
+		lightTypes.push_back(light.first->lightType);
+		lightColors.push_back(light.first->color * light.first->intensity);
+		lightDirections.push_back(light.first->direction);
+		lightPositions.push_back(light.second);
+	}
+
+	PBRShader->SetUniform1iv("lightTypes[0]", lightTypes);
+	PBRShader->SetUniform3fv("lightColors[0]", lightColors);
+	PBRShader->SetUniform3fv("lightPositions[0]", lightPositions);
+	PBRShader->SetUniform3fv("lightDirections[0]", lightDirections);
+
+	//PBRShader->SetUniform1f("uAmbient", ambient);
+	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 0);
+
+
+	PBRShader->SetUniform3f("uCamPos", mainCamera->Position);
+
+}
+
 void EditorRenderContext::DrawEditorHelpers()
 {
     Array<mat4> transforms;
-
     transforms.push_back(editorGridTransform.ToMatrix());
 
 	editorGridVA->UpdateBuffer(4, &transforms[0], sizeof(mat4));
 
     Draw(*editorGridVA->GetShader(), *editorGridVA, editorGridDrawParams, 1);
-
 }
 
 void EditorRenderContext::DrawDebugShapes()
@@ -183,7 +207,6 @@ void EditorRenderContext::DrawDebugShapes()
 	for (Map<DebugShape*, Array<mat4>>::iterator it
 		= debugShapeBuffer.begin(); it != debugShapeBuffer.end(); ++it)
 	{
-
 		DebugShape* shapeToDraw = it->first;
 
 		VertexArray* vertexArray = shapeToDraw->vertexArray;
@@ -209,9 +232,6 @@ void EditorRenderContext::DrawDebugShapes()
 		
 	}
 	debugShapeBuffer.clear();
-
-    //HACK...
-	//MatrixUniformBuffer->ResetOffset();
 }
 
 

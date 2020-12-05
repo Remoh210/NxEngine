@@ -355,6 +355,11 @@ void OpenGLRenderDevice::SetViewport(uint32 fbo)
 	viewportFBO = fbo;
 }
 
+void OpenGLRenderDevice::UpdateFBOSize(uint32 fbo, uint32 width, uint32 height)
+{
+	fboMap[fbo].width = width;
+	fboMap[fbo].height = height;
+}
 
 uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 		uint32 width, uint32 height,
@@ -964,6 +969,7 @@ void OpenGLRenderDevice::SetShaderSampler(uint32 shader, const std::string &samp
 void OpenGLRenderDevice::SetShaderSampler3D(uint32 shader, const std::string &samplerName, uint32 texture, uint32 sampler, uint32 unit)
 {
 	SetShader(shader);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glActiveTexture(GL_TEXTURE0 + unit);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, texture);
 	glBindSampler(unit, sampler);

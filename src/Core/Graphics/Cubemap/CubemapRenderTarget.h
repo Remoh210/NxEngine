@@ -14,7 +14,7 @@ public:
 	CubemapRenderTarget(RenderDevice* deviceIn, Cubemap* cubemapIn,
 		uint32 width, uint32 height);
 
-	inline ~CubemapRenderTarget() { CubeVAO->~VertexArray(); }
+	inline ~CubemapRenderTarget() { /*mRenderDevice->ReleaseRenderTarget(id);*/ }
 
 	inline void Generate(Shader* shader, Texture* hdrTexture)
 	{
@@ -48,6 +48,23 @@ public:
 			
 			mRenderDevice->Draw(id, shader->GetId(), CubeVAO->GetId(), drawParams, 1, CubeVAO->GetNumIndices());
 		}
+
+
+
+		//Convolution
+		//mRenderDevice->SetFbo
+		mRenderDevice->UpdateFBOSize(id, 32, 32);
+		Shader* conv = ShaderManager::GetPBRShader("IR_CONV_SHADER");
+		conv->SetSampler3D("environmentMap", *cubemapTex, *sampler, 0);
+		conv->SetUniformMat4("projection", captureProjection);
+		for (unsigned int i = 0; i < 6; ++i)
+		{
+			conv->SetUniformMat4("view", captureViews[i]);
+			mRenderDevice->GenerateCubemap(id, conv->GetId(), irradianceMapCubemap->GetId(),
+				CubeVAO->GetId(), drawParams, CubeVAO->GetNumIndices(), i);
+
+			mRenderDevice->Draw(id, conv->GetId(), CubeVAO->GetId(), drawParams, 1, CubeVAO->GetNumIndices());
+		}
 	}
 
 	inline void TEST_DrawSkybox(Shader* shader)
@@ -56,7 +73,7 @@ public:
 		drawParams.primitiveType = PRIMITIVE_TRIANGLES;
 		drawParams.faceCulling = FACE_CULL_NONE;
 		drawParams.shouldWriteDepth = true;
-		drawParams.depthFunc = DRAW_FUNC_ALWAYS;
+		drawParams.depthFunc = DRAW_FUNC_LEQUAL;
 		shader->SetSampler3D("environmentMap", *cubemapTex, *sampler, 0);
 		//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
 		//drawParams.destBlend = BLEND_FUNC_ONE;
@@ -65,10 +82,14 @@ public:
 
 	inline uint32 GetId() { return id; }
 
+	Cubemap* cubemapTex;
+	Cubemap* irradianceMapCubemap;
+	Sampler* sampler;
+
 private:
 	RenderDevice* mRenderDevice;
-	Sampler* sampler;
-	Cubemap* cubemapTex;
+	
+
 	VertexArray* CubeVAO;
 	uint32 id;
 

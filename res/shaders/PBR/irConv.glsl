@@ -4,20 +4,15 @@
 layout (location = 0) in vec3 position;
 out vec3 WorldPos;
 
-layout (std140) uniform Matrices
-{
-    mat4 projection;
-    mat4 view;
-};
+
+uniform  mat4 projection;
+uniform  mat4 view;
+
 
 void main()
 {
-    WorldPos = position;
-
-	mat4 rotView = mat4(mat3(view));
-	vec4 clipPos = projection * rotView * vec4(WorldPos, 1.0);
-
-	gl_Position = clipPos.xyww;
+    WorldPos = position;  
+    gl_Position =  projection * view * vec4(WorldPos, 1.0);
 }
 
 #elif defined(FS_BUILD)
@@ -42,8 +37,8 @@ void main()
     
     // tangent space calculation from origin point
     vec3 up    = vec3(0.0, 1.0, 0.0);
-    vec3 right = cross(up, N);
-    up            = cross(N, right);
+    vec3 right = normalize(cross(up, N));
+    up         = normalize(cross(N, right));
        
     float sampleDelta = 0.025;
     float nrSamples = 0.0;

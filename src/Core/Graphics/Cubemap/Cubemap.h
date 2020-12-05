@@ -1,4 +1,5 @@
 #pragma once 
+
 #include "rendering/ArrayBitmap.h"
 #include "rendering/RenderDevice.h"
 
@@ -11,8 +12,6 @@ public:
 	inline uint32 GetId() { return id; }
 	inline uint32 GetWidth() { return width; }
 	inline uint32 GetHeight() { return height; }
-
-
 
 
 private:

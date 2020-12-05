@@ -12,12 +12,8 @@ uniform mat4 view;
 
 void main()
 {
-    WorldPos = position;
-
-	mat4 rotView = mat4(mat3(view));
-	vec4 clipPos = projection * rotView * vec4(WorldPos, 1.0);
-
-	gl_Position = clipPos.xyww;
+    WorldPos = position;  
+    gl_Position =  projection * view * vec4(WorldPos, 1.0);
 }
 
 #elif defined(FS_BUILD)
