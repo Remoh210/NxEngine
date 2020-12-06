@@ -41,6 +41,8 @@ public:
 
 	void SetLights();
 
+	void GenerateBRDF();
+
 
 	inline void RenderLight(ECS::ComponentHandle<LightComponent> lightComp, vec3 positionIn)
 	{
@@ -87,6 +89,8 @@ private:
 	VertexArray* cubeVA;
 	Cubemap* SkyboxTex;
 	Cubemap* IrradMap;
+	Cubemap* PrefilterCubemap;
 	Sampler* cubemapSampler;
+	Texture* brdfLUTTexture;
 };
 

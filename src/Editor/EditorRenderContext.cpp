@@ -15,7 +15,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 			perspective(perspectiveIn),
 			mainCamera(CameraIn)
 {
-	//Settings
+
+	 //Settings
 	 ambient = 0.02f;
 
 	 editorGridSlices = 200;
@@ -46,10 +47,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 editorGridTransform.position.z = -0.5 * editorGridScale;
 
 	 MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
-
-	 
 	 cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
-
 
 	 //CUBE_MAP*******************
 	 //NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/newport_loft.hdr";
@@ -61,6 +59,11 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 Cubemap* hdrCubemap = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 32, 32);
 	 IrradMap = CubemapManager::GenerateIrradianceMapFromCubeMap(hdrCubemap, 32, 32);
 
+	 Cubemap* Cubemap128 = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 128, 128, true);
+	 PrefilterCubemap = CubemapManager::GenerateSpecularMapFromCubeMap(Cubemap128, ShaderManager::GetPBRShader("PREFILTER_SHADER"), 128, 128);
+
+	 
+
 	 if (!ShaderManager::GetPBRShader("SKYBOX_SHADER"))
 	 {
 		 ShaderManager::GetPBRShader("SKYBOX_SHADER")->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
@@ -70,6 +73,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 SkyboxTex = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 512, 512);
 
 	 cubeVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateCube(vec3(1.f)), USAGE_STATIC_DRAW);
+
+	 GenerateBRDF();
 }
 
 void EditorRenderContext::Flush()
@@ -77,7 +82,6 @@ void EditorRenderContext::Flush()
 	//Update mat UBO
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
 	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
-
 
 	RenderSkybox();
 
@@ -148,7 +152,6 @@ void EditorRenderContext::RenderSkybox()
 	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
 	//drawParams.destBlend = BLEND_FUNC_ONE;
 	Draw(*skyboxShader, *cubeVA, drawParams2, 1);
-	mRenderDevice->Draw(0, skyboxShader->GetId(), skyboxShader->GetId(), drawParams, 1, cubeVA->GetNumIndices());
 }
 
 void EditorRenderContext::SetLights()
@@ -186,9 +189,22 @@ void EditorRenderContext::SetLights()
 	//PBRShader->SetUniform1f("uAmbient", ambient);
 	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 0);
 
-
 	PBRShader->SetUniform3f("uCamPos", mainCamera->Position);
 
+}
+
+void EditorRenderContext::GenerateBRDF()
+{
+	brdfLUTTexture = new Texture(mRenderDevice, 512, 512, FORMAT_RG, FORMAT_RGB16F, false, false, true);
+	 //CubemapRenderTarget brdfTarget(mRenderDevice, brdfLUTTexture, 512, 512);
+	RenderTarget* brdfTarget = new RenderTarget(*mRenderDevice, *brdfLUTTexture, ATTACHMENT_COLOR, 0, 0);
+	VertexArray* quadArray = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(vec3(1.f)), USAGE_STATIC_DRAW);
+	DrawParams drawParamsTEST;
+	drawParamsTEST.primitiveType = PRIMITIVE_TRIANGLES;
+	drawParamsTEST.faceCulling = FACE_CULL_NONE;
+	drawParamsTEST.shouldWriteDepth = true;
+	drawParamsTEST.depthFunc = DRAW_FUNC_ALWAYS;
+	mRenderDevice->Draw(brdfTarget->GetId(), ShaderManager::GetPBRShader("BRDF_SHADER")->GetId(), quadArray->GetId(), drawParamsTEST, 1, quadArray->GetNumIndices());
 }
 
 void EditorRenderContext::DrawEditorHelpers()

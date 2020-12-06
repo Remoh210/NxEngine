@@ -155,7 +155,7 @@ public:
 
 	//Draw Elements
 	void GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
-		const DrawParams& drawParams, uint32 numElements, uint32 count);
+		const DrawParams& drawParams, uint32 numElements, uint32 count, bool bUseMipLevel = false, uint32 mip = 0);
 
 	void UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
 			const void* data, uintptr dataSize);

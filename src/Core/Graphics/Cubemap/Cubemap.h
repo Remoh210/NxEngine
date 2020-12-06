@@ -6,7 +6,7 @@
 class Cubemap
 {
 public:
-	Cubemap(RenderDevice* deviceIn, uint32 widthIn, uint32 heightIn);
+	Cubemap(RenderDevice* deviceIn, uint32 widthIn, uint32 heightIn, bool bGenerateMipmaps = false);
 	~Cubemap() { device->ReleaseTexture2D(id); }
 
 	inline uint32 GetId() { return id; }

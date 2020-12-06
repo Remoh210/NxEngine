@@ -82,6 +82,7 @@ OpenGLRenderDevice::OpenGLRenderDevice(Window* window) :
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(DRAW_FUNC_ALWAYS);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glDepthMask(GL_FALSE);
 //	glEnable(GL_FRAMEBUFFER_SRGB);
 	glFrontFace(GL_CW);
@@ -138,20 +139,17 @@ void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 }
 
 void OpenGLRenderDevice::GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
-	const DrawParams& drawParams, uint32 numElements, uint32 count)
+	const DrawParams& drawParams, uint32 numElements, uint32 count, bool bUseMipLevel, uint32 mip)
 {
-	SetFBO(fbo);
-	SetViewport(fbo);
-	SetBlending(drawParams.sourceBlend, drawParams.destBlend);
-	SetScissorTest(drawParams.useScissorTest,
-		drawParams.scissorStartX, drawParams.scissorStartY,
-		drawParams.scissorWidth, drawParams.scissorHeight);
-	SetFaceCulling(drawParams.faceCulling);
-	SetDepthTest(drawParams.shouldWriteDepth, drawParams.depthFunc);
-	SetShader(shader);
-	SetVAO(vao);
 
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + count, textureId, 0);
+	if (bUseMipLevel)
+	{
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + count, textureId, mip);
+	}
+	else
+	{
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + count, textureId, 0);
+	}
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
@@ -359,6 +357,8 @@ void OpenGLRenderDevice::UpdateFBOSize(uint32 fbo, uint32 width, uint32 height)
 {
 	fboMap[fbo].width = width;
 	fboMap[fbo].height = height;
+	glViewport(0, 0, width, height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
 }
 
 uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
@@ -391,66 +391,44 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
 	GLint GLDataFormat = GetOpenGLFormat(dataFormat);
 	GLint GLInternalFormat = GetOpenGLInternalFormat(internalFormat, bCompress);
 
-    if (data)
-    {
-        glBindTexture(GL_TEXTURE_2D, textureID);
-		if (bFloatType)
-		{
-			//TODO: Change that
-			glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_FLOAT, data);
-		}
-		else
-			glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_UNSIGNED_BYTE, data);
-			
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	if (bFloatType)
+	{
+		//TODO: Change that
+		glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_FLOAT, data);
+	}
+	else
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_UNSIGNED_BYTE, data);
+	}
+		
 
-		if (bGenerateMipmaps)
-		{
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
-		}
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    }
-    else
-    {
-       DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "Missing data");
-    }
+	if (bGenerateMipmaps)
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
+		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
+	}
+
+    
+    //else
+    //{
+    //   DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "Missing data");
+    //}
 
     return textureID;
     
-//    GLint format = GetOpenGLFormat(dataFormat);
-//	GLint TexinternalFormat = GetOpenGLInternalFormat(internalFormat, bCompress);
-//	GLenum textureTarget = GL_TEXTURE_2D;
-//	GLuint textureHandle;
-//
-//    glGenTextures(1, &textureHandle);
-//	glBindTexture(textureTarget, textureHandle);
-//	glTexParameterf(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//	glTexParameterf(textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-//	glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-//	glTexImage2D(textureTarget, 0, TexinternalFormat, width, height, 0, format,
-//			GL_UNSIGNED_BYTE, data);
-//
-//    if(bGenerateMipmaps)
-//    {
-//		glGenerateMipmap(textureTarget);
-//	}
-//	else
-//    {
-//		glTexParameteri(textureTarget, GL_TEXTURE_BASE_LEVEL, 0);
-//		glTexParameteri(textureTarget, GL_TEXTURE_MAX_LEVEL, 0);
-//	}
-//
-//	return textureHandle;
 
 }
 
@@ -470,8 +448,18 @@ uint32 OpenGLRenderDevice::CreateTextureCube(uint32 width, uint32 height, PixelF
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	if (bGenerateMipmaps)
+	{
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+	}
+	else
+	{
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
+
 	return textureID;
 }
 
@@ -779,17 +767,17 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 		NString name((char*)&uniformName[0]);
 		if(type == GL_SAMPLER_2D)
 		{
-			DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
+			//DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
 			samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
 		}
 		else if (type == GL_SAMPLER_CUBE)
 		{
-			DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
+			//DEBUG_LOG_TEMP("Sampler uniform: %s", (char*)&uniformName[0]);
 			samplerMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
 		}
 		else
 		{
-			DEBUG_LOG_TEMP("Uniform: %s", (char*)&uniformName[0]);
+			//DEBUG_LOG_TEMP("Uniform: %s", (char*)&uniformName[0]);
 			uniformMap[name] = glGetUniformLocation(shaderProgram, (char*)&uniformName[0]);
 		}
 

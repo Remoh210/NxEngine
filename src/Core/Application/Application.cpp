@@ -340,6 +340,18 @@ void Application::Initialize()
 	Shader* IrConvShader = new Shader(renderDevice, IrConvShaderText);
 	ShaderManager::AddPBRShader("IR_CONV_SHADER", IrConvShader);
 
+	NString PREFILTER_SHADER_TEXT_FILE = "res/shaders/PBR/prefilter.glsl";
+	NString PrefilterShaderText;
+	loadTextFileWithIncludes(PrefilterShaderText, PREFILTER_SHADER_TEXT_FILE, "#include");
+	Shader* PrefilterShader = new Shader(renderDevice, PrefilterShaderText);
+	ShaderManager::AddPBRShader("PREFILTER_SHADER", PrefilterShader);
+
+	NString BRDF_SHADER_TEXT_FILE = "res/shaders/PBR/brdf.glsl";
+	NString brdfShaderText;
+	loadTextFileWithIncludes(brdfShaderText, BRDF_SHADER_TEXT_FILE, "#include");
+	Shader* brdfShader = new Shader(renderDevice, brdfShaderText);
+	ShaderManager::AddPBRShader("BRDF_SHADER", brdfShader);
+
 	NString SKYBOX_SHADER_TEXT_FILE = "res/shaders/PBR/skybox.glsl";
 	NString SkyBoxShaderText;
 	loadTextFileWithIncludes(SkyBoxShaderText, SKYBOX_SHADER_TEXT_FILE, "#include");

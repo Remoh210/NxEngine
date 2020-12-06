@@ -3,6 +3,7 @@
 #include "rendering/RenderDevice.h"
 #include "rendering/VertexArray.h"
 #include "rendering/IndexedModel.h"
+#include "rendering/Texture.h"
 #include "rendering/Shader.h"
 
 
@@ -12,6 +13,9 @@ class CubemapRenderTarget
 {
 public:
 	CubemapRenderTarget(RenderDevice* deviceIn, Cubemap* cubemapIn,
+		uint32 width, uint32 height);
+
+	CubemapRenderTarget(RenderDevice* deviceIn, Texture* texture,
 		uint32 width, uint32 height);
 
 	inline ~CubemapRenderTarget() {}

@@ -11,3 +11,13 @@ CubemapRenderTarget::CubemapRenderTarget(RenderDevice* deviceIn, Cubemap* cubema
 {
 
 }
+
+CubemapRenderTarget::CubemapRenderTarget(RenderDevice* deviceIn, Texture* texture,
+	uint32 width, uint32 height)
+	:mRenderDevice(deviceIn)
+	, id(mRenderDevice->CreateRenderTarget(texture->GetId(), width
+		, height, FramebufferAttachment::ATTACHMENT_COLOR, 0, 0))
+
+{
+
+}

@@ -24,8 +24,18 @@ public:
     {
 		id = deviceIn->CreateTexture2D(texData.GetWidth(), texData.GetHeight(), texData.GetFormat(),
 			texData.GetData(), interalPixelFormat, bGenerateMipMaps, bCompress, bFloatType);
-
 		texData.Clean();
+	}
+
+	inline Texture(RenderDevice* deviceIn, uint32 widthIn,
+		uint32 heightIn, PixelFormat pixelFormat, PixelFormat internalPixelFormat, bool bGenerateMipMaps = true, bool bCompress = true, bool bFloatType = false)
+		:device(deviceIn),
+		width(widthIn), height(heightIn),
+		bIsCompressed(bCompress), bHasMipmaps(bGenerateMipMaps),
+		fileName("")
+	{
+		id = deviceIn->CreateTexture2D(widthIn, heightIn, pixelFormat,
+			nullptr, internalPixelFormat, bGenerateMipMaps, bCompress, bFloatType);
 	}
 
 	//inline Texture(RenderDevice* deviceIn, ArrayBitmap& texData, PixelFormat interalPixelFormat,
@@ -44,6 +54,7 @@ public:
 		:id(id)
 	{
 	}
+
 
     inline uint32 GetId() { return id; };
     inline NString GetFileName() {return fileName; };
