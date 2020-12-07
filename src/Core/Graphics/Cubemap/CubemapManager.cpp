@@ -110,7 +110,6 @@ Cubemap* CubemapManager::GenerateSpecularMapFromCubeMap(Cubemap* cubemap, Shader
 		device->UpdateFBOSize(renderTarget.GetId(), mipWidth, mipHeight);
 
 		float roughness = (float)mip / (float)(maxMipLevels - 1);
-
 		prefilterShader->SetUniform1f("roughness", roughness);
 		for (unsigned int i = 0; i < 6; ++i)
 		{

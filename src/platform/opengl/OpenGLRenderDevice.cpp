@@ -82,9 +82,9 @@ OpenGLRenderDevice::OpenGLRenderDevice(Window* window) :
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(DRAW_FUNC_ALWAYS);
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glDepthMask(GL_FALSE);
-//	glEnable(GL_FRAMEBUFFER_SRGB);
+	//glEnable(GL_FRAMEBUFFER_SRGB);
 	glFrontFace(GL_CW);
 }
 
@@ -457,7 +457,8 @@ uint32 OpenGLRenderDevice::CreateTextureCube(uint32 width, uint32 height, PixelF
 	}
 	else
 	{
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		//glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	}
 
 	return textureID;

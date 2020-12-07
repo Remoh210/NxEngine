@@ -53,7 +53,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 brdfSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR, WRAP_CLAMP);
 
 	 //CUBE_MAP*******************
-	 NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/newport_loft.hdr";
+	 NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/sky.jpg";
 	 //NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/road.hdr";
 	 ArrayBitmap hdrBitMap;
 	 hdrBitMap.Load(SKYBOX_TEXTURE_FILE, true);
@@ -151,7 +151,7 @@ void EditorRenderContext::RenderSkybox()
 	drawParams2.faceCulling = FACE_CULL_NONE;
 	drawParams2.shouldWriteDepth = true;
 	drawParams2.depthFunc = DRAW_FUNC_LEQUAL;
-	skyboxShader->SetSampler3D("environmentMap", *SkyboxTex, *cubemapSampler, 0);
+	skyboxShader->SetSampler3D("environmentMap", *PrefilterCubemap, *prefilterSampler, 0);
 	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
 	//drawParams.destBlend = BLEND_FUNC_ONE;
 	Draw(*skyboxShader, *cubeVA, drawParams2, 1);
@@ -192,7 +192,7 @@ void EditorRenderContext::SetLights()
 
 
 	//PBRShader->SetUniform1f("uAmbient", ambient);
-	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 10);
+	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 0);
 
 	//
 	PBRShader->SetSampler3D("prefilterMap", *PrefilterCubemap, *prefilterSampler, 11);
