@@ -14,7 +14,7 @@ void CubemapManager::Inititialize(RenderDevice* deviceIn, Shader* capShader, Sha
 	device = deviceIn;
 	captureShader = capShader;
 	irradShader = irShader;
-	IndexedModel& model = PrimitiveGenerator::CreateCube(vec3(1.0f, 1.0f, 1.0f));
+	const IndexedModel& model = PrimitiveGenerator::CreateCube(vec3(1.0f, 1.0f, 1.0f));
 	cubeVAO = new VertexArray(device, model, USAGE_STATIC_DRAW);
 	cubemapSampler = new Sampler(device, SamplerFilter::FILTER_LINEAR);
 
