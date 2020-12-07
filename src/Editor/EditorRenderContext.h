@@ -43,6 +43,8 @@ public:
 
 	void GenerateBRDF();
 
+	void GeneratePBRMapsFromTexture(NString HDRtexture);
+
 
 	inline void RenderLight(ECS::ComponentHandle<LightComponent> lightComp, vec3 positionIn)
 	{

@@ -172,6 +172,19 @@ int Application::Run()
 		
 		ImGui::SliderFloat("roughness", &staticMesh->meshes[0]->material->roughness, 0.0f, 1.0f);
 		ImGui::SliderFloat("metallic", &staticMesh->meshes[0]->material->metallic, 0.0f, 1.0f);
+
+		if (ImGui::Button("Sky Env"))
+		{
+			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/sky.jpg");
+		}
+		if (ImGui::Button("Road Env"))
+		{
+			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/road.hdr");
+		}
+		if (ImGui::Button("Room Env"))
+		{
+			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/newport_loft.hdr");
+		}
 		
 		ImGui::End();
 
@@ -422,7 +435,8 @@ void Application::LoadDefaultScene()
 	//Assimp PBR********************************************************
 	//PBRSphere.glb = binary and embedded textures
 	//PBRSphere2.gltf = embedded textures
-	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb"; 
+	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb";
+	NString TEST_MODEL_FILE6 = "res/models/PBRTest.glb";
 	//Assimp PBR********************************************************
 	
 
@@ -511,7 +525,6 @@ void Application::LoadDefaultScene()
 	Array<MaterialSpec> PBRLoadedMaterials;
 	AssetLoader::LoadModel(TEST_MODEL_FILE3, PBRLoadedMeshes, PBRMaterialIndices, PBRLoadedMaterials);
 
-
 	StaticMeshComponent renderableMesh3;
 	
 	for(int i = 0; i < PBRLoadedMeshes.size(); i++)
@@ -592,6 +605,46 @@ void Application::LoadDefaultScene()
 	transformComp5.transform.scale = vec3(5);
 
 
+
+	Array<IndexedModel> PBRLoadedMeshes6;
+	Array<uint32> PBRMaterialIndices6;
+	Array<MaterialSpec> PBRLoadedMaterials6;
+	AssetLoader::LoadModel(TEST_MODEL_FILE6, PBRLoadedMeshes6, PBRMaterialIndices6, PBRLoadedMaterials6);
+
+	StaticMeshComponent renderableMesh6;
+
+	for (int i = 0; i < PBRLoadedMeshes6.size(); i++)
+	{
+		MeshInfo* curMesh = new MeshInfo();
+		curMesh->vertexArray = new VertexArray(renderDevice, PBRLoadedMeshes6[i], USAGE_STATIC_DRAW);
+		renderableMesh6.meshes.Add(curMesh);
+
+		Material* material3 = new Material();
+		for (int j = 0; j < PBRLoadedMaterials6.size(); j++)
+		{
+			for (auto textureTypeToFile : PBRLoadedMaterials6[i].textureNames)
+			{
+				ArrayBitmap bm;
+				bm.Load(textureTypeToFile.second);
+				Texture* tex = new Texture(renderDevice, bm, PixelFormat::FORMAT_RGBA, false, false);
+				material3->textures[textureTypeToFile.first] = tex;
+			}
+			for (auto textureTypeToTex : PBRLoadedMaterials6[i].textures)
+			{
+				material3->textures[textureTypeToTex.first] = textureTypeToTex.second;
+			}
+		}
+		curMesh->material = material3;
+	}
+
+	renderableMesh6.shader = ShaderManager::GetMainShader();
+	TransformComponent transformComp6;
+	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
+	transformComp6.transform.position = vec3(-15.1f, 0.0f, -40.0f);
+	transformComp6.transform.rotation = vec3(0.0, 0.0f, 0.f);
+	transformComp6.transform.scale = vec3(25.5);
+
+
 /*	ECS::Entity* ent = world->create();
 	ent->assign<TransformComponent>(transformComp);
 	ent->assign<StaticMeshComponent>(renderableMesh)*/;
@@ -611,6 +664,10 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent5 = world->create();
 	ent5->assign<TransformComponent>(transformComp5);
 	ent5->assign<StaticMeshComponent>(renderableMesh5);
+
+	ECS::Entity* ent6 = world->create();
+	ent6->assign<TransformComponent>(transformComp6);
+	ent6->assign<StaticMeshComponent>(renderableMesh6);
 
 	//SceneManager::currentScene.sceneObjects.Add(ent);
 	//SceneManager::currentScene.sceneObjects.Add(ent2);

@@ -51,32 +51,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
 	 prefilterSampler = new Sampler(mRenderDevice, FILTER_LINEAR_MIPMAP_LINEAR);
 	 brdfSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR, WRAP_CLAMP);
-
-	 //CUBE_MAP*******************
-	 NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/sky.jpg";
-	 //NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/road.hdr";
-	 ArrayBitmap hdrBitMap;
-	 hdrBitMap.Load(SKYBOX_TEXTURE_FILE, true);
-	 Texture* hdr_texture = new Texture(mRenderDevice, hdrBitMap, PixelFormat::FORMAT_RGB16F, true, false, true);
-
-	 Cubemap* hdrCubemap = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 32, 32);
-	 IrradMap = CubemapManager::GenerateIrradianceMapFromCubeMap(hdrCubemap, 32, 32);
-
-	 Cubemap* Cubemap128 = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 512, 512, true);
-	 PrefilterCubemap = CubemapManager::GenerateSpecularMapFromCubeMap(Cubemap128, ShaderManager::GetPBRShader("PREFILTER_SHADER"), 128, 128);
-
-	 
-
-	 if (!ShaderManager::GetPBRShader("SKYBOX_SHADER"))
-	 {
-		 ShaderManager::GetPBRShader("SKYBOX_SHADER")->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
-		 DEBUG_LOG_TEMP("NO PBR SHADER"); return;
-	 }
-
-	 SkyboxTex = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 2048, 2048);
-
-	 cubeVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateCube(vec3(1.f)), USAGE_STATIC_DRAW);
-
+	
+	 GeneratePBRMapsFromTexture("res/textures/HDR/sky.jpg");
 	 GenerateBRDF();
 }
 
@@ -151,7 +127,7 @@ void EditorRenderContext::RenderSkybox()
 	drawParams2.faceCulling = FACE_CULL_NONE;
 	drawParams2.shouldWriteDepth = true;
 	drawParams2.depthFunc = DRAW_FUNC_LEQUAL;
-	skyboxShader->SetSampler3D("environmentMap", *PrefilterCubemap, *prefilterSampler, 0);
+	skyboxShader->SetSampler3D("environmentMap", *SkyboxTex, *cubemapSampler, 0);
 	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
 	//drawParams.destBlend = BLEND_FUNC_ONE;
 	Draw(*skyboxShader, *cubeVA, drawParams2, 1);
@@ -192,15 +168,43 @@ void EditorRenderContext::SetLights()
 
 
 	//PBRShader->SetUniform1f("uAmbient", ambient);
-	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 0);
+	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 11);
 
 	//
-	PBRShader->SetSampler3D("prefilterMap", *PrefilterCubemap, *prefilterSampler, 11);
+	PBRShader->SetSampler3D("prefilterMap", *PrefilterCubemap, *prefilterSampler, 12);
 
-	PBRShader->SetSampler("brdfLUT", *brdfLUTTexture, *brdfSampler, 12);
+	PBRShader->SetSampler("brdfLUT", *brdfLUTTexture, *brdfSampler, 13);
 
 	PBRShader->SetUniform3f("uCamPos", mainCamera->Position);
 
+}
+
+void EditorRenderContext::GeneratePBRMapsFromTexture(NString HDRtexture)
+{
+	//CUBE_MAP*******************
+	NString SKYBOX_TEXTURE_FILE = HDRtexture;
+	//NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/road.hdr";
+	ArrayBitmap hdrBitMap;
+	hdrBitMap.Load(SKYBOX_TEXTURE_FILE, true);
+	Texture* hdr_texture = new Texture(mRenderDevice, hdrBitMap, PixelFormat::FORMAT_RGB16F, true, false, true);
+
+	Cubemap* hdrCubemap = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 32, 32);
+	IrradMap = CubemapManager::GenerateIrradianceMapFromCubeMap(hdrCubemap, 32, 32);
+
+	Cubemap* Cubemap128 = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 512, 512, true);
+	PrefilterCubemap = CubemapManager::GenerateSpecularMapFromCubeMap(Cubemap128, ShaderManager::GetPBRShader("PREFILTER_SHADER"), 512, 512);
+
+
+
+	if (!ShaderManager::GetPBRShader("SKYBOX_SHADER"))
+	{
+		ShaderManager::GetPBRShader("SKYBOX_SHADER")->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
+	}
+
+	SkyboxTex = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 2048, 2048);
+
+	cubeVA = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateCube(vec3(1.f)), USAGE_STATIC_DRAW);
 }
 
 void EditorRenderContext::GenerateBRDF()

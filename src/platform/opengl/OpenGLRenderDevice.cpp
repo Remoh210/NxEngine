@@ -82,7 +82,7 @@ OpenGLRenderDevice::OpenGLRenderDevice(Window* window) :
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(DRAW_FUNC_ALWAYS);
-	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glDepthMask(GL_FALSE);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
 	glFrontFace(GL_CW);
@@ -385,7 +385,6 @@ uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum PixelFormat dataFormat, 
            const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress, bool bFloatType)//TODO: TYPE ENUM
 {
- 
     uint32 textureID;
     glGenTextures(1, &textureID);
 	GLint GLDataFormat = GetOpenGLFormat(dataFormat);
