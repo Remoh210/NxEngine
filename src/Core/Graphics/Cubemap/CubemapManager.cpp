@@ -55,7 +55,6 @@ Cubemap* CubemapManager::GenerateCubemapFromHDR(Texture* texture, uint32 width, 
 
 		device->Draw(renderTarget.GetId(), captureShader->GetId(), cubeVAO->GetId(), drawParams, 1, cubeVAO->GetNumIndices());
 	}
-
 	return cubemap;
 }
 
@@ -111,8 +110,8 @@ Cubemap* CubemapManager::GenerateSpecularMapFromCubeMap(Cubemap* cubemap, Shader
 		device->UpdateFBOSize(renderTarget.GetId(), mipWidth, mipHeight);
 
 		float roughness = (float)mip / (float)(maxMipLevels - 1);
-		roughness *= 0.1f;
-		prefilterShader->SetUniform1f("uRoughness", roughness);
+
+		prefilterShader->SetUniform1f("roughness", roughness);
 		for (unsigned int i = 0; i < 6; ++i)
 		{
 			prefilterShader->SetUniformMat4("view", captureViews[i]);

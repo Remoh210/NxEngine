@@ -12,7 +12,7 @@ struct Material
 	Material()
 	{
 		color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		ambientOcclusion = 0.2f;
+		ambientOcclusion = 1.0f;
 		metallic = 0.3f;
 		roughness = 0.6f;
 

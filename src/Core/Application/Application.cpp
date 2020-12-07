@@ -162,6 +162,16 @@ int Application::Run()
 		{
 			show_demo_window = true;
 		}
+
+		if (ImGui::Button("Draw Grid"))
+		{
+			editorRenderContext->ToggleGrid();
+		}
+
+		auto staticMesh = SceneManager::currentScene.sceneObjects[0]->get<StaticMeshComponent>();
+		
+		ImGui::SliderFloat("roughness", &staticMesh->meshes[0]->material->roughness, 0.0f, 1.0f);
+		ImGui::SliderFloat("metallic", &staticMesh->meshes[0]->material->metallic, 0.0f, 1.0f);
 		
 		ImGui::End();
 
@@ -562,8 +572,9 @@ void Application::LoadDefaultScene()
 	MeshInfo* mesh5 = new MeshInfo();
 	mesh5->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material* material5 = new Material();
-	//material5->color(1.0)
-	material5->roughness = 0.8;
+	//material5->color(1.0);
+	material5->metallic = 0.99;
+	material5->roughness = 0.01;
 	//material5->textures[TEXTURE_ALBEDO] = albedo;
 	//material5->textures[TEXTURE_NORMAL] = normal;
 	//material5->textures[TEXTURE_METALLIC] = metallic;
@@ -604,7 +615,7 @@ void Application::LoadDefaultScene()
 	//SceneManager::currentScene.sceneObjects.Add(ent);
 	//SceneManager::currentScene.sceneObjects.Add(ent2);
 	//SceneManager::currentScene.sceneObjects.Add(ent3);
-	//SceneManager::currentScene.sceneObjects.Add(ent4);
+	SceneManager::currentScene.sceneObjects.Add(ent5);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();

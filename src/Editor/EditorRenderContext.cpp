@@ -21,6 +21,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 
 	 editorGridSlices = 200;
 	 editorGridScale = 1000;
+	 bDrawGrid = true;
 
 	 editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
 	 editorGridDrawParams.shouldWriteDepth = true;
@@ -48,10 +49,12 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 
 	 MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 	 cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
+	 prefilterSampler = new Sampler(mRenderDevice, FILTER_LINEAR_MIPMAP_LINEAR);
+	 brdfSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR, WRAP_CLAMP);
 
 	 //CUBE_MAP*******************
-	 //NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/newport_loft.hdr";
-	 NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/road.hdr";
+	 NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/newport_loft.hdr";
+	 //NString SKYBOX_TEXTURE_FILE = "res/textures/HDR/road.hdr";
 	 ArrayBitmap hdrBitMap;
 	 hdrBitMap.Load(SKYBOX_TEXTURE_FILE, true);
 	 Texture* hdr_texture = new Texture(mRenderDevice, hdrBitMap, PixelFormat::FORMAT_RGB16F, true, false, true);
@@ -59,7 +62,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	 Cubemap* hdrCubemap = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 32, 32);
 	 IrradMap = CubemapManager::GenerateIrradianceMapFromCubeMap(hdrCubemap, 32, 32);
 
-	 Cubemap* Cubemap128 = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 128, 128, true);
+	 Cubemap* Cubemap128 = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 512, 512, true);
 	 PrefilterCubemap = CubemapManager::GenerateSpecularMapFromCubeMap(Cubemap128, ShaderManager::GetPBRShader("PREFILTER_SHADER"), 128, 128);
 
 	 
@@ -70,7 +73,7 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 		 DEBUG_LOG_TEMP("NO PBR SHADER"); return;
 	 }
 
-	 SkyboxTex = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 512, 512);
+	 SkyboxTex = CubemapManager::GenerateCubemapFromHDR(hdr_texture, 2048, 2048);
 
 	 cubeVA = new VertexArray(deviceIn, PrimitiveGenerator::CreateCube(vec3(1.f)), USAGE_STATIC_DRAW);
 
@@ -186,8 +189,15 @@ void EditorRenderContext::SetLights()
 	PBRShader->SetUniform3fv("lightPositions[0]", lightPositions);
 	PBRShader->SetUniform3fv("lightDirections[0]", lightDirections);
 
+
+
 	//PBRShader->SetUniform1f("uAmbient", ambient);
-	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 0);
+	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 10);
+
+	//
+	PBRShader->SetSampler3D("prefilterMap", *PrefilterCubemap, *prefilterSampler, 11);
+
+	PBRShader->SetSampler("brdfLUT", *brdfLUTTexture, *brdfSampler, 12);
 
 	PBRShader->SetUniform3f("uCamPos", mainCamera->Position);
 
@@ -209,6 +219,7 @@ void EditorRenderContext::GenerateBRDF()
 
 void EditorRenderContext::DrawEditorHelpers()
 {
+	if (!bDrawGrid) { return; }
     Array<mat4> transforms;
     transforms.push_back(editorGridTransform.ToMatrix());
 

@@ -61,7 +61,7 @@ public:
 	void SetTextures(Material* material, Shader* shader);
     //~EditorRenderContext();
 
-	
+	inline void ToggleGrid() { bDrawGrid = !bDrawGrid; }
 private:
 	DrawParams drawParams;
 	//Shader& shader;
@@ -91,6 +91,10 @@ private:
 	Cubemap* IrradMap;
 	Cubemap* PrefilterCubemap;
 	Sampler* cubemapSampler;
+	Sampler* prefilterSampler;
+	Sampler* brdfSampler;
 	Texture* brdfLUTTexture;
+
+	bool bDrawGrid;
 };
 

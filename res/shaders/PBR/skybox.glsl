@@ -31,7 +31,7 @@ uniform samplerCube environmentMap;
 
 void main()
 {		
-    vec3 envColor = texture(environmentMap, WorldPos, 5).rgb;
+    vec3 envColor = texture(environmentMap, WorldPos, 3.9).rgb;
     
     // HDR tonemap and gamma correct
     envColor = envColor / (envColor + vec3(1.0));
