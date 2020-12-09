@@ -1,104 +1,36 @@
 {
     "Camera": {
-        "Speed": 100.0,
+        "Speed": 50.0,
         "Position": [
-            1.8022712469100953,
-            45.58818435668945,
-            163.61874389648438
+            -0.006029494572430849,
+            9.417341232299805,
+            16.099220275878908
         ],
-        "Yaw": -90.20001983642578,
-        "Pitch": -16.799999237060548
+        "Yaw": -89.9000015258789,
+        "Pitch": -0.30000001192092898
     },
     "GameObjects": [
-        {
-            "MeshFile": "res/models/monkey3.obj",
-            "SubMeshArray": [
-                {
-                    "Material": {
-                        "DiffuseTexures": [
-                            {
-                                "TextureFile": "res/textures/stmpnk.jpg",
-                                "IsCompressed": false,
-                                "HasMipmaps": false
-                            }
-                        ]
-                    }
-                }
-            ],
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Rotation": [
-                0.0,
-                14.810243606567383,
-                0.0
-            ],
-            "Scale": [
-                7.0,
-                7.0,
-                7.0
-            ]
-        },
-        {
-            "MeshFile": "res/models/rock/rock.obj",
-            "SubMeshArray": [
-                {
-                    "Material": {
-                        "DiffuseTexures": [
-                            {
-                                "TextureFile": "res/models/rock/rock.png",
-                                "IsCompressed": false,
-                                "HasMipmaps": false
-                            }
-                        ]
-                    }
-                }
-            ],
-            "Position": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Rotation": [
-                0.0,
-                0.0,
-                0.0
-            ],
-            "Scale": [
-                7.0,
-                7.0,
-                7.0
-            ]
-        },
         {
             "MeshFile": "",
             "SubMeshArray": [
                 {
-                    "Material": {
-                        "DiffuseColor": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
+                    "Material": {}
                 }
             ],
             "Position": [
                 0.0,
-                0.0,
-                0.0
+                20.0,
+                -40.0
             ],
             "Rotation": [
                 0.0,
-                14.810243606567383,
+                4.147626876831055,
                 0.0
             ],
             "Scale": [
-                10.0,
-                10.0,
-                10.0
+                5.0,
+                5.0,
+                5.0
             ]
         }
     ]

@@ -53,7 +53,7 @@ void key_callback(GLFWwindow* window,
 	int action,
 	int mods);
 
-
+int MSAA_num = 8;
 Application* Application::Create(float Width, float Height)
 {
 	return new Application(Width, Height);
@@ -124,13 +124,14 @@ int Application::Run()
 		ImVec2 VecScreen(windowWidth/5, windowHeight/5);
 		ImVec2 VecPosRel = ImGui::GetMainViewport()->Pos;
 		ImVec2 VecPos(150, 150);
-		ImGui::SetNextWindowSize(VecScreen);
+		//ImGui::SetNextWindowSize(VecScreen);
 		ImGui::SetNextWindowPos(VecPosRel);
 		ImGuiWindowFlags window_flags = 0;
 		//window_flags |= ImGuiWindowFlags_NoTitleBar;
 		//if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
 		window_flags |= ImGuiWindowFlags_MenuBar;
 		window_flags |= ImGuiWindowFlags_NoDocking;
+		window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
 		//window_flags |= ImGuiWindowFlags_NoMove;
 		//window_flags |= ImGuiWindowFlags_NoResize;
 		//window_flags |= ImGuiWindowFlags_NoCollapse;
@@ -172,20 +173,20 @@ int Application::Run()
 		
 		ImGui::SliderFloat("roughness", &staticMesh->meshes[0]->material->roughness, 0.0f, 1.0f);
 		ImGui::SliderFloat("metallic", &staticMesh->meshes[0]->material->metallic, 0.0f, 1.0f);
-
-		if (ImGui::Button("Sky Env"))
+		ImGui::Text("Environments:");
+		if (ImGui::Button("Sky"))
 		{
 			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/sky.jpg");
 		}
-		if (ImGui::Button("Road Env"))
+		if (ImGui::Button("Road"))
 		{
 			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/road.hdr");
 		}
-		if (ImGui::Button("Room Env"))
+		if (ImGui::Button("Room"))
 		{
 			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/newport_loft.hdr");
 		}
-		
+
 		ImGui::End();
 
 
@@ -296,7 +297,7 @@ Application::Application(float Width, float Height)
 	windowHeight = Height;
 	if (!MainCamera)
 	{
-		MainCamera = new Camera(glm::vec3(0.0f, 10.0f, 80.0f));
+		MainCamera = new Camera(glm::vec3(0.0f, 10.0f, 16.0f));
 		MainCamera->bControlled = false;
 		MainCamera->MovementSpeed = 50.0f;
 	}

@@ -26,6 +26,8 @@ public:
     inline uint32 GetHeight() { return mHeight; }
     inline uint32 GetWidth() { return mWidth; }
 
+	//inline void SetMSAA(uint32 numSamples) { glfwWindowHint(GLFW_SAMPLES, numSamples); }
+
 	inline void SetMouseCallback(std::function<void (int, int)> callbackFunc) { MouseCallbackFunc  = callbackFunc; }
     inline void SetFrameBufferResizeCallback(std::function<void (int, int)> callbackFunc) { FrameBufferResizeCallbackBackFunc  = callbackFunc; }
 	inline void SetMouseScrollCallback(std::function<void (float)> callbackFunc) 
