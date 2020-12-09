@@ -40,7 +40,9 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
 
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GL_FALSE);
+    glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_FALSE);
+    //glfwWindowHint(GLFW_SCALE, GL_FALSE);
 #endif
 
     // glfw window creation
@@ -56,6 +58,9 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
 	glfwSetCursorPosCallback(window, GLFWPlatformWindow::GLFWMouseCallback);
 	glfwSetScrollCallback(window, GLFWPlatformWindow::GLFWMouseScrollCallback);
     gladLoadGL(glfwGetProcAddress);
+    int width_w, height_w;
+    glfwGetFramebufferSize(window, &width_w, &height_w);
+    DEBUG_LOG_TEMP("x: %d, y: %d", width_w, height_w);
 }
 
 void GLFWPlatformWindow::Resize(int width, int height)
