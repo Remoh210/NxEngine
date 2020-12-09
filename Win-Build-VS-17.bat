@@ -5,7 +5,7 @@ cmake -G "Visual Studio 15 2017" -A x64 -DCMAKE_BUILD_TYPE=Release ../
 mkdir Debug
 mkdir Release
 
-msbuild C:\Users\bogbon\Desktop\Projects\NxEngine\build\NxEngine.vcxproj /p:Configuration=Release
+msbuild NxEngine.vcxproj /p:Configuration=Release
 Release\NxEngine.exe
 
 copy ..\lib\_bin\ Debug
