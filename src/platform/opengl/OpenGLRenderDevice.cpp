@@ -141,7 +141,8 @@ void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 void OpenGLRenderDevice::GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
 	const DrawParams& drawParams, uint32 numElements, uint32 count, bool bUseMipLevel, uint32 mip)
 {
-
+	SetFBO(fbo);
+	SetViewport(fbo);
 	if (bUseMipLevel)
 	{
 		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + count, textureId, mip);
@@ -350,15 +351,19 @@ void OpenGLRenderDevice::SetViewport(uint32 fbo)
 		return;
 	}
 	glViewport(0, 0, fboMap[fbo].width, fboMap[fbo].height);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, fboMap[fbo].width, fboMap[fbo].height);
 	viewportFBO = fbo;
+
 }
 
 void OpenGLRenderDevice::UpdateFBOSize(uint32 fbo, uint32 width, uint32 height)
 {
 	fboMap[fbo].width = width;
 	fboMap[fbo].height = height;
+	SetViewport(fbo);
 	glViewport(0, 0, width, height);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+
 }
 
 uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
