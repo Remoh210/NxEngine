@@ -68,7 +68,9 @@ int Application::Run()
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 	ImGui_ImplGlfw_InitForOpenGL(window->GetWindowHandle(), true);
-	ImGui_ImplOpenGL3_Init("#version 410");
+	NString glVersionImgui;
+	glVersionImgui = "#version " + renderDevice->GetShaderVersion();
+	ImGui_ImplOpenGL3_Init(glVersionImgui.c_str());
 	ImGui::StyleColorsDark();
 
 
