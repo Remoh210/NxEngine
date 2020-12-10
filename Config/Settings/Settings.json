@@ -1,0 +1,11 @@
+{
+    "Window": {
+        "Width": 1600,
+		"Height": 1000
+    },
+	    "API": {
+        "Version Major": 4,
+		"Version Minor": 1
+    }
+    
+}

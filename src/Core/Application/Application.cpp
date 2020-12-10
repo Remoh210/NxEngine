@@ -10,6 +10,7 @@
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 #include <Core/Graphics/Cubemap/CubemapManager.h>
 #include <Core/Application/SceneManager/SceneManager.h>
+#include <Core/Application/Settings/GlobalSettings.h>
 #include <Core/Graphics/ShaderManager/ShaderManager.h>
 
 #include <rendering/Sampler.h>
@@ -23,7 +24,6 @@
 //Standard includes
 #include <fstream>
 #include <sstream>
-
 
 // settings
 const unsigned int SCR_WIDTH = 1600;
@@ -41,7 +41,6 @@ double Application::gScrollOffset = 0;
 double Application::gXoffset = 0;
 double Application::gYoffset = 0;
 Camera* Application::MainCamera = nullptr;
-
 
 
 //void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -307,7 +306,9 @@ Application::Application(float Width, float Height)
 
 void Application::Initialize()
 {
-	window = new Window(SCR_WIDTH, SCR_HEIGHT, "Test!");
+	GlobalSettings::LoadSettings("Settings.json");
+
+	window = new Window(GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), "OpenGL");
 	//TODO: Put to init UI
 	window->SetMouseCallback
 	(

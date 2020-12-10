@@ -1,0 +1,37 @@
+#include "GlobalSettings.h"
+
+#include "Core/FileSystem/FileSystem.h"
+
+#include "rapidjson/document.h"
+#include "rapidjson/filereadstream.h"
+#include "rapidjson/filewritestream.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#include "rapidjson/prettywriter.h"
+
+int GlobalSettings::windowWidth     = 1600;
+int GlobalSettings::windowHeight    = 1000;
+
+int GlobalSettings::APIVersionMajor = 3;
+int GlobalSettings::APIVersionMinor = 3;
+
+bool GlobalSettings::LoadSettings(NString configFile)
+{
+	std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/Config/Settings/" + configFile;
+
+	rapidjson::Document doc;
+	FILE* fp = fopen(fileToLoadFullPath.c_str(), "rb"); // non-Windows use "r"
+	if (!fp) { DEBUG_LOG("InitSetting", "ERROR", "No Config file: %s", fileToLoadFullPath.c_str()); return false; }
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	doc.ParseStream(is);
+	fclose(fp);
+
+	windowWidth = doc["Window"]["Width"].GetInt();
+	windowHeight = doc["Window"]["Height"].GetInt();
+
+	APIVersionMajor = doc["API"]["Version Major"].GetInt();
+	APIVersionMinor = doc["API"]["Version Minor"].GetInt();
+
+	return true;
+}

@@ -1,4 +1,5 @@
 #include "GLFWPlatformWindow.h"
+#include "Core/Application/Settings/GlobalSettings.h"
 #define LOG_TYPE_WINDOW "Window"
 
 //Camera* GLFWPlatformWindow::MainCamera;
@@ -33,8 +34,8 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
 	mHeight(height)
 {
     glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GlobalSettings::GetAPIVersionMajor());
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GlobalSettings::GetAPIVersionMinor());
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_FALSE);
     glfwWindowHint(GLFW_SAMPLES, 8);
