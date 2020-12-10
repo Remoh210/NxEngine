@@ -310,7 +310,13 @@ void Application::Initialize()
 {
 	GlobalSettings::LoadSettings("Settings.json");
 
-	window = new Window(GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), "OpenGL");
+	int verMaj = GlobalSettings::GetAPIVersionMajor();
+	int verMin = GlobalSettings::GetAPIVersionMinor();
+	int sw = GlobalSettings::GetWindowWidth();
+	int sh = GlobalSettings::GetWindowHeight();
+	char title[50];
+	sprintf(title, "OpenGL %d.%d [%dx%d]", verMaj, verMin, sw, sh);
+	window = new Window(GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), title);
 	//TODO: Put to init UI
 	window->SetMouseCallback
 	(

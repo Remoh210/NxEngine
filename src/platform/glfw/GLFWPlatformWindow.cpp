@@ -10,6 +10,11 @@ std::function<void(float yoffset)> GLFWPlatformWindow::MouseScrollCallbackFunc =
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+	int verMaj = GlobalSettings::GetAPIVersionMajor();
+	int verMin = GlobalSettings::GetAPIVersionMinor();
+	char title[50];
+	sprintf(title, "OpenGL %d.%d [%dx%d]", verMaj, verMin, width, height);
+	glfwSetWindowTitle(window, title);
     glViewport(0, 0, width, height);
 }
 
@@ -20,7 +25,6 @@ void GLFWPlatformWindow::GLFWMouseCallback(GLFWwindow* window, double xpos, doub
 
 void GLFWPlatformWindow::GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, width, height);
     FrameBufferResizeCallbackBackFunc(width, height);
 }
 
@@ -55,6 +59,7 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
     }
     glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // Enable vsync
+	//TODO: Change this 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, GLFWPlatformWindow::GLFWMouseCallback);
 	glfwSetScrollCallback(window, GLFWPlatformWindow::GLFWMouseScrollCallback);
