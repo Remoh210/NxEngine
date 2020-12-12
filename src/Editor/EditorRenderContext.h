@@ -14,6 +14,7 @@
 #include <Core/Graphics/PrimitiveGenerator/PrimitiveGenerator.h>
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
 #include "Core/Graphics/Cubemap/Cubemap.h"
+#include "Core/Graphics/PostFX/ChromaticAberration.h"
 #include "Core/Components/StaticMeshComponent.h"
 #include "Core/Components/LightComponent.h"
 #include "rendering/UniformBuffer.h"
@@ -37,7 +38,7 @@ public:
 
 	}
 
-	void RenderSkybox();
+	void RenderSkybox(RenderTarget* renderTarget);
 
 	void SetLights();
 
@@ -56,8 +57,10 @@ public:
 		debugShapeBuffer[shapeIn].push_back(perspective * mainCamera->GetViewMatrix() * transformIn);
 	}
 
-	void DrawEditorHelpers();
-	void DrawDebugShapes();
+	void InitEditorHelpers();
+	void DrawScene(RenderTarget* renderTarget);
+	void DrawEditorHelpers(RenderTarget* renderTarget);
+	void DrawDebugShapes(RenderTarget* renderTarget);
 	
     void Flush();
 	void SetTextures(Material* material, Shader* shader);
@@ -77,15 +80,25 @@ private:
 
 	Camera* mainCamera;
 
+	//Screen
+	DrawParams screenQuadDrawParams;
+	VertexArray* screenQuadVAO;
+	Shader* screenShader;
+	RenderTarget* sceneRenderTarget;
+	Texture* offscreenTexture;
+	Sampler* screenTextureSampler;
+
+	CromaticAberration* chromaFX;
+	Texture* chromaTexture;
+	RenderTarget* chromaRenderTarget;
+
+
 	//Grid VO
 	Transform editorGridTransform;
 	VertexArray* editorGridVA;
 	DrawParams editorGridDrawParams;
 	float editorGridSlices;
 	float editorGridScale;
-
-	//Rendering setting
-	float ambient;
 
 	//
 	VertexArray* cubeVA;
@@ -98,5 +111,7 @@ private:
 	Texture* brdfLUTTexture;
 
 	bool bDrawGrid;
+
+	
 };
 

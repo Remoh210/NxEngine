@@ -37,8 +37,8 @@ Cubemap* CubemapManager::GenerateCubemapFromHDR(Texture* texture, uint32 width, 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	drawParams.faceCulling = FACE_CULL_NONE;
-	drawParams.shouldWriteDepth = true;
-	drawParams.depthFunc = DRAW_FUNC_ALWAYS;
+	drawParams.shouldWriteDepth = false;
+	drawParams.depthFunc = DRAW_FUNC_LEQUAL;
 
 	Cubemap* cubemap = new Cubemap(device, width, height, bGenerateMip);
 	CubemapRenderTarget renderTarget(device, cubemap, width, height);
@@ -63,8 +63,8 @@ Cubemap* CubemapManager::GenerateIrradianceMapFromCubeMap(Cubemap* cubemap, uint
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	drawParams.faceCulling = FACE_CULL_NONE;
-	drawParams.shouldWriteDepth = true;
-	drawParams.depthFunc = DRAW_FUNC_ALWAYS;
+	drawParams.shouldWriteDepth = false;
+	drawParams.depthFunc = DRAW_FUNC_LEQUAL;
 
 	Cubemap* IrradCubemap = new Cubemap(device, width, height);
 
@@ -97,8 +97,8 @@ Cubemap* CubemapManager::GenerateSpecularMapFromCubeMap(Cubemap* cubemap, Shader
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	drawParams.faceCulling = FACE_CULL_NONE;
-	drawParams.shouldWriteDepth = true;
-	drawParams.depthFunc = DRAW_FUNC_ALWAYS;
+	drawParams.shouldWriteDepth = false;
+	drawParams.depthFunc = DRAW_FUNC_LEQUAL;
 
 	CubemapRenderTarget renderTarget(device, prefilterMap, width, height);
 	unsigned int maxMipLevels = 5;

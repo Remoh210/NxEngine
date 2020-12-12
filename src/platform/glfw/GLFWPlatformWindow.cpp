@@ -44,6 +44,8 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
 	glfwWindowHint(GLFW_SCALE_TO_MONITOR, GL_FALSE);
     glfwWindowHint(GLFW_SAMPLES, 8);
 
+
+
 #ifdef __APPLE__
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GL_FALSE);
@@ -66,7 +68,14 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
     gladLoadGL(glfwGetProcAddress);
     int width_w, height_w;
     glfwGetFramebufferSize(window, &width_w, &height_w);
-    DEBUG_LOG_TEMP("x: %d, y: %d", width_w, height_w);
+    
+	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+	glfwWindowHint(GLFW_RED_BITS, 32);
+	glfwWindowHint(GLFW_GREEN_BITS, 32);
+	glfwWindowHint(GLFW_BLUE_BITS, 32);
+	glfwWindowHint(GLFW_REFRESH_RATE, 60);
 }
 
 void GLFWPlatformWindow::Resize(int width, int height)

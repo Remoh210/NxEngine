@@ -1,5 +1,6 @@
 
 #include "OpenGLRenderDevice.h"
+#include <iostream>
 #include <stb_image.h>
 
 
@@ -79,13 +80,13 @@ OpenGLRenderDevice::OpenGLRenderDevice(Window* window) :
 	fboWindowData.width = window->GetWidth();
 	fboWindowData.height = window->GetHeight();
 	fboMap[0] = fboWindowData;
-
+	//glDisable(GL_DITHER);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(DRAW_FUNC_ALWAYS);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	glDepthMask(GL_FALSE);
 	//glEnable(GL_FRAMEBUFFER_SRGB);
-	glFrontFace(GL_CW);
+	//glFrontFace(GL_CW);
 }
 
 void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
@@ -280,16 +281,21 @@ void OpenGLRenderDevice::SetStencilWriteMask(uint32 mask)
 
 void OpenGLRenderDevice::SetDepthTest(bool bShouldWrite, DrawFunc depthFunc)
 {
-	if(bShouldWrite != bShouldWriteDepth) {
-		glDepthMask(bShouldWrite ? GL_TRUE : GL_FALSE);
-		bShouldWriteDepth = bShouldWrite;
-	}
+	if (bShouldWrite != bShouldWriteDepth)
+	{
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_TRUE);
 
-	if(depthFunc == currentDepthFunc) {
-		return;
+		if (depthFunc != currentDepthFunc)
+		{
+			glDepthFunc(depthFunc);
+			currentDepthFunc = depthFunc;
+		}
 	}
-	glDepthFunc(depthFunc);
-	currentDepthFunc = depthFunc;
+	else
+	{
+		glDisable(GL_DEPTH_TEST);
+	}
 }
 
 void OpenGLRenderDevice::SetFaceCulling(FaceCulling cullingMode)
@@ -371,13 +377,41 @@ uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 		FramebufferAttachment attachment,
 		uint32 attachmentNumber, uint32 mipLevel)
 {
+
 	uint32 fbo;
 	glGenFramebuffers(1, &fbo);
 	SetFBO(fbo);
-
 	GLenum attachmentTypeGL = attachment + attachmentNumber;
-	glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentTypeGL,
-			GL_TEXTURE_2D, texture, mipLevel);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentTypeGL, GL_TEXTURE_2D, texture, mipLevel);
+	// create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+	unsigned int rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "Framebuffer is not complete!");
+	
+	struct FBOData data;
+	data.width = width;
+	data.height = height;
+	fboMap[fbo] = data;
+	
+	return fbo;
+}
+
+uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 width, uint32 height)
+{
+
+	uint32 fbo;
+	uint32 rbo;
+	glGenFramebuffers(1, &fbo);
+	glGenRenderbuffers(1, &rbo);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 
 	struct FBOData data;
 	data.width = width;
@@ -447,7 +481,7 @@ uint32 OpenGLRenderDevice::CreateTextureCube(uint32 width, uint32 height, PixelF
 
 	for (unsigned int i = 0; i < 6; ++i)
 	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_FLOAT, data);
 	}
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);

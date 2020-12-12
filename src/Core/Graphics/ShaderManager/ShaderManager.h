@@ -27,6 +27,16 @@ public:
 		PBRShaders[shaderName] = shader;
 	}
 
+	inline static void AddPostFXshader(NString shaderName, Shader* shader)
+	{
+		PostFXShaders[shaderName] = shader;
+	}
+
+	inline static Shader* GetPostFXshader(NString shaderName)
+	{
+		return PostFXShaders.Find(shaderName);
+	}
+
 	inline static Shader* GetPBRShader(NString shaderName)
 	{
 		return PBRShaders.Find(shaderName);
@@ -36,6 +46,7 @@ public:
 private:
 	static Map<NString, Shader*> importedShaders;
 	static Map<NString, Shader*> PBRShaders;
+	static Map<NString, Shader*> PostFXShaders;
 	static Shader* mainPipelineShader;
 	static RenderDevice* renderDevice;
 };

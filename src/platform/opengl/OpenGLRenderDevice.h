@@ -164,6 +164,8 @@ public:
 			FramebufferAttachment attachment, uint32
 			attachmentNumber, uint32 mipLevel);
 
+	uint32 CreateRenderTarget(uint32 width, uint32 height);
+
 	uint32 ReleaseRenderTarget(uint32 fbo);
 
 	void UpdateFBOSize(uint32 fbo, uint32 width, uint32 height);

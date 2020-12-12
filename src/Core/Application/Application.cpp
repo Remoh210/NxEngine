@@ -9,9 +9,10 @@
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 #include <Core/Graphics/Cubemap/CubemapManager.h>
+#include <Core/Graphics/ShaderManager/ShaderManager.h>
 #include <Core/Application/SceneManager/SceneManager.h>
 #include <Core/Application/Settings/GlobalSettings.h>
-#include <Core/Graphics/ShaderManager/ShaderManager.h>
+#include <Core/Time/NxTime.h>
 
 #include <rendering/Sampler.h>
 #include <rendering/RenderDevice.h>
@@ -245,7 +246,8 @@ int Application::Run()
 		debugRenderer.Update(deltaTime);
 		world->tick(deltaTime);
 		editorRenderContext->Flush();
-
+		
+		NxTime::Update(deltaTime);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		ImGui::Render();
@@ -390,16 +392,30 @@ void Application::Initialize()
 	Shader* SkyboxShader = new Shader(renderDevice, SkyBoxShaderText);
 	ShaderManager::AddPBRShader("SKYBOX_SHADER", SkyboxShader);
 
+	NString screenShaderText;
+	loadTextFileWithIncludes(screenShaderText, "res/shaders/ScreenShader.glsl", "#include");
+	Shader* screenShader = new Shader(renderDevice, screenShaderText);
+	ShaderManager::AddPBRShader("SCREEN_SHADER", screenShader);
+
+	NString chromaShaderText;
+	loadTextFileWithIncludes(chromaShaderText, "res/shaders/PostFX/Chroma.glsl", "#include");
+	Shader* chromaShader = new Shader(renderDevice, chromaShaderText);
+	ShaderManager::AddPostFXshader("CHROMA_SHADER", chromaShader);
+
 	//Init Shaders**********************************************************
 
 	editorSampler = new Sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
+	//DrawParams drawParams;
+	//drawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	//drawParams.faceCulling = FACE_CULL_BACK;
+	//drawParams.shouldWriteDepth = true;
+	//drawParams.depthFunc = DRAW_FUNC_LESS;
+
 	DrawParams drawParams;
-	drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	drawParams.faceCulling = FACE_CULL_NONE;
+	drawParams.primitiveType = PRIMITIVE_TRIANGLES ;
+	//drawParams.faceCulling = FACE_CULL_NONE;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
-	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
-	//drawParams.destBlend = BLEND_FUNC_ONE;
 
 	int ha = window->GetHeight();
 	int wa = window->GetWidth();

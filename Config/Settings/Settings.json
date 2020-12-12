@@ -4,8 +4,8 @@
 		"Height": 1000
     },
 	    "API": {
-        "Version Major": 4,
-		"Version Minor": 1
+        "Version Major": 3,
+		"Version Minor": 3
     }
     
 }

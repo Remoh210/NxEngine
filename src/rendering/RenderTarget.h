@@ -24,21 +24,26 @@ public:
             uint32 width, uint32 height, 
             FramebufferAttachment attachmentType = FramebufferAttachment::ATTACHMENT_COLOR,
             uint32 attachmentNumber = 0, uint32 mipLevel = 0):
-            mRenderDevice(&deviceIn), id(deviceIn.CreateRenderTarget(width, height, 
+            mRenderDevice(&deviceIn), texture(&texture),
+			id(deviceIn.CreateRenderTarget(width, height, 
             texture.GetHeight(), attachmentType, attachmentNumber, mipLevel))
             {}
 
     inline RenderTarget(RenderDevice& deviceIn, Texture& texture,
             FramebufferAttachment attachmentType = FramebufferAttachment::ATTACHMENT_COLOR,
             uint32 attachmentNumber = 0, uint32 mipLevel = 0):
-            mRenderDevice(&deviceIn), id(deviceIn.CreateRenderTarget(texture.GetId(), texture.GetWidth(), 
+            mRenderDevice(&deviceIn), texture(&texture),
+			id(deviceIn.CreateRenderTarget(texture.GetId(), texture.GetWidth(), 
             texture.GetHeight(), attachmentType, attachmentNumber, mipLevel))
             {}
     
     inline uint32 GetId() { return id; };
+	inline Texture* GetTexture() { return texture; };
+	inline uint32 GetTexreId() { return texture->GetId(); };
 
 private:
     RenderDevice* mRenderDevice;
+	Texture* texture;
     uint32 id;
     
 };

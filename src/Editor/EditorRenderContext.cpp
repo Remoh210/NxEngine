@@ -1,6 +1,7 @@
 #include "EditorRenderContext.h"
 #include "rendering/VertexArray.h"
 #include "Core/Application/Application.h"
+#include <Core/Application/Settings/GlobalSettings.h>
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/Graphics/ShaderManager/ShaderManager.h"
 #include "Core/Graphics/Cubemap/CubemapManager.h"
@@ -15,112 +16,60 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 			perspective(perspectiveIn),
 			mainCamera(CameraIn)
 {
+	MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
 
-	 //Settings
-	 ambient = 0.02f;
-
-	 editorGridSlices = 200;
-	 editorGridScale = 1000;
-	 bDrawGrid = true;
-
-	 editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
-	 editorGridDrawParams.shouldWriteDepth = true;
-	 editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
-	 editorGridVA = new VertexArray(deviceIn,PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
-     //Load and set shaders
-     NString LINE_SHADER_TEXT_FILE = "res/shaders/EditorGridSimpleShader.glsl";
-     NString LineShaderText;
-     Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-     Shader* grid_shader = new Shader(deviceIn, LineShaderText);
-	 MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
-	 editorGridVA->SetShader(grid_shader);
-	 editorGridVA->GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
-
-	 Shader* PBRShader = ShaderManager::GetPBRShader("PBR_SHADER");
-	 if (!PBRShader)
-	 {
-		 PBRShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
-		 DEBUG_LOG_TEMP("NO PBR SHADER"); return;
-	 }
-
-	 editorGridTransform.scale = vec3(editorGridScale);
-	 editorGridTransform.position.x = -0.5 * editorGridScale;
-	 editorGridTransform.position.z = -0.5 * editorGridScale;
-
-	 MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
-	 cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
-	 prefilterSampler = new Sampler(mRenderDevice, FILTER_LINEAR_MIPMAP_LINEAR);
-	 brdfSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR, WRAP_CLAMP);
+	InitEditorHelpers();
 	
-	 GeneratePBRMapsFromTexture("res/textures/HDR/sky.jpg");
-	 GenerateBRDF();
+	offscreenTexture = new Texture(deviceIn, GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), PixelFormat::FORMAT_RGB, PixelFormat::FORMAT_RGB16F, false, false, true);
+	sceneRenderTarget = new RenderTarget(*mRenderDevice, *offscreenTexture);
+	screenQuadVAO = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
+	screenShader = ShaderManager::GetPBRShader("SCREEN_SHADER");
+	screenTextureSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR);
+
+	chromaTexture = new Texture(deviceIn, GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), PixelFormat::FORMAT_RGBA, PixelFormat::FORMAT_RGBA, false, false, false);
+	chromaRenderTarget = new RenderTarget(*mRenderDevice, *chromaTexture);
+
+	Shader* PBRShader = ShaderManager::GetPBRShader("PBR_SHADER");
+	if (!PBRShader)
+	{
+		PBRShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
+	}
+
+
+	MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
+	cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
+	prefilterSampler = new Sampler(mRenderDevice, FILTER_LINEAR_MIPMAP_LINEAR);
+	brdfSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR, WRAP_CLAMP);
+
+	GeneratePBRMapsFromTexture("res/textures/HDR/road.hdr");
+	GenerateBRDF();
+
+	screenQuadDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	screenQuadDrawParams.shouldWriteDepth = false;
+	chromaFX = new CromaticAberration(deviceIn, ShaderManager::GetPostFXshader("CHROMA_SHADER"), screenQuadVAO, screenTextureSampler);
 }
 
 void EditorRenderContext::Flush()
 {
-	//Update mat UBO
-	mat4 viewMatrix = mainCamera->GetViewMatrix();
-	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
+	vec4 clearColor(0.0f, 0.6f, 0.3f, 1.0f);
+	mRenderDevice->Clear(sceneRenderTarget->GetId(), true, true, true, clearColor, 0);
+	DrawScene(sceneRenderTarget);	
 
-	RenderSkybox();
+	//chromaFX->Apply(sceneRenderTarget, chromaRenderTarget);
 
-	//Draw Editor stuff first
-	DrawEditorHelpers();
-	DrawDebugShapes();
+	//Draw screen quad
+	screenShader->SetSampler("Texture", *offscreenTexture, *screenTextureSampler, 0);
 
-	SetLights();
-
-	//Draw meshes
-    for(Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
-            = meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
-    {
-		mat4* transforms = &it->second[0];
-		size_t numTransforms = it->second.size();
-		//Shader* modelShader = it->first.second;
-		Shader * modelShader = it->first.second;
-		//modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
-
-		//might be unnecessary
-		modelShader->SetUniform1f("bUseAlbedoMap", false);
-		modelShader->SetUniform1f("bUseNormalMap", false);
-		modelShader->SetUniform1f("bUseMetallicMap", false);
+	mRenderDevice->Draw(mRenderTarget->GetId(), screenShader->GetId(), 
+		screenQuadVAO->GetId(), screenQuadDrawParams, 1, screenQuadVAO->GetNumIndices());
 
 
-		for (MeshInfo* mesh : it->first.first)
-		{
-			if (mesh->material != nullptr)
-			{
-				SetTextures(mesh->material, modelShader);
-		    }
-			
-			
-			VertexArray* vertexArray = mesh->vertexArray;
-			
-			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
-			if (vertexArray->GetNumIndices() == 0)
-			{
-				mRenderDevice->DrawArrays(mRenderTarget->GetId(), modelShader->GetId(), vertexArray->GetId(),
-					drawParams, 300);
-			}
-			else
-			{
-				Draw(*modelShader, *vertexArray, drawParams, numTransforms);
-			}
 
-			it->second.clear();
-		}
-    }
-
-	//HACK...
-	MatrixUniformBuffer->ResetOffset();
-
-	lightBuffer.clear();
-	meshRenderBuffer.clear();
 }
 
-void EditorRenderContext::RenderSkybox()
+void EditorRenderContext::RenderSkybox(RenderTarget* renderTarget)
 {
-	//Draw Skybox
 	DrawParams drawParams2;
 	Shader* skyboxShader = ShaderManager::GetPBRShader("SKYBOX_SHADER");
 	drawParams2.primitiveType = PRIMITIVE_TRIANGLES;
@@ -128,9 +77,7 @@ void EditorRenderContext::RenderSkybox()
 	drawParams2.shouldWriteDepth = true;
 	drawParams2.depthFunc = DRAW_FUNC_LEQUAL;
 	skyboxShader->SetSampler3D("environmentMap", *SkyboxTex, *cubemapSampler, 0);
-	//drawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
-	//drawParams.destBlend = BLEND_FUNC_ONE;
-	Draw(*skyboxShader, *cubeVA, drawParams2, 1);
+	mRenderDevice->Draw(renderTarget->GetId(), skyboxShader->GetId(), cubeVA->GetId(), drawParams2, 1, cubeVA->GetNumIndices());
 }
 
 void EditorRenderContext::SetLights()
@@ -221,7 +168,95 @@ void EditorRenderContext::GenerateBRDF()
 	mRenderDevice->Draw(brdfTarget->GetId(), ShaderManager::GetPBRShader("BRDF_SHADER")->GetId(), quadArray->GetId(), drawParamsTEST, 1, quadArray->GetNumIndices());
 }
 
-void EditorRenderContext::DrawEditorHelpers()
+void EditorRenderContext::InitEditorHelpers()
+{
+	editorGridSlices = 200;
+	editorGridScale = 1000;
+	bDrawGrid = true;
+
+	editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
+	editorGridDrawParams.shouldWriteDepth = false;
+	editorGridDrawParams.depthFunc = DRAW_FUNC_ALWAYS;
+	editorGridVA = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	//Load and set shaders
+	NString LINE_SHADER_TEXT_FILE = "res/shaders/EditorGridSimpleShader.glsl";
+	NString LineShaderText;
+	Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
+	Shader* grid_shader = new Shader(mRenderDevice, LineShaderText);
+	editorGridVA->SetShader(grid_shader);
+	editorGridVA->GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+
+	editorGridTransform.scale = vec3(editorGridScale);
+	editorGridTransform.position.x = -0.5 * editorGridScale;
+	editorGridTransform.position.z = -0.5 * editorGridScale;
+}
+
+void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
+{
+	//Update mat UBO
+	mat4 viewMatrix = mainCamera->GetViewMatrix();
+	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
+
+	RenderSkybox(renderTarget);
+	//Draw Editor stuff first
+    DrawEditorHelpers(renderTarget);
+    DrawDebugShapes(renderTarget);
+
+	SetLights();
+
+	//Draw meshes
+	for (Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
+		= meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
+	{
+		mat4* transforms = &it->second[0];
+		size_t numTransforms = it->second.size();
+		//Shader* modelShader = it->first.second;
+		Shader * modelShader = it->first.second;
+		//modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+
+		//might be unnecessary
+		modelShader->SetUniform1f("bUseAlbedoMap", false);
+		modelShader->SetUniform1f("bUseNormalMap", false);
+		modelShader->SetUniform1f("bUseMetallicMap", false);
+
+
+		for (MeshInfo* mesh : it->first.first)
+		{
+			if (mesh->material != nullptr)
+			{
+				SetTextures(mesh->material, modelShader);
+			}
+
+
+			VertexArray* vertexArray = mesh->vertexArray;
+
+			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
+			if (vertexArray->GetNumIndices() == 0)
+			{
+				mRenderDevice->DrawArrays(renderTarget->GetId(), modelShader->GetId(), vertexArray->GetId(),
+					drawParams, 300);
+			}
+			else
+			{
+				mRenderDevice->Draw(renderTarget->GetId(), modelShader->GetId(), vertexArray->GetId(),
+					drawParams, 1, vertexArray->GetNumIndices());
+
+				//Draw to default framebuffer
+				//Draw(*modelShader, *vertexArray, drawParams, numTransforms);
+			}
+
+			it->second.clear();
+		}
+	}
+
+	//HACK...
+	MatrixUniformBuffer->ResetOffset();
+
+	lightBuffer.clear();
+	meshRenderBuffer.clear();
+}
+
+void EditorRenderContext::DrawEditorHelpers(RenderTarget* renderTarget)
 {
 	if (!bDrawGrid) { return; }
     Array<mat4> transforms;
@@ -229,10 +264,11 @@ void EditorRenderContext::DrawEditorHelpers()
 
 	editorGridVA->UpdateBuffer(4, &transforms[0], sizeof(mat4));
 
-    Draw(*editorGridVA->GetShader(), *editorGridVA, editorGridDrawParams, 1);
+	mRenderDevice->Draw(renderTarget->GetId(), editorGridVA->GetShader()->GetId(),
+		editorGridVA->GetId(), editorGridDrawParams, 1, editorGridVA->GetNumIndices());
 }
 
-void EditorRenderContext::DrawDebugShapes()
+void EditorRenderContext::DrawDebugShapes(RenderTarget* renderTarget)
 {
 	Texture* currentTexture = nullptr;
 	for (Map<DebugShape*, Array<mat4>>::iterator it
@@ -259,8 +295,8 @@ void EditorRenderContext::DrawDebugShapes()
 		}
 		vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 
-		Draw(modelShader, *vertexArray, shapeDrawParams, numTransforms);
-		
+		mRenderDevice->Draw(renderTarget->GetId(), modelShader.GetId(), vertexArray->GetId(), 
+			shapeDrawParams, numTransforms, vertexArray->GetNumIndices());
 	}
 	debugShapeBuffer.clear();
 }
