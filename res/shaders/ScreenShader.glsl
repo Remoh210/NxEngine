@@ -25,6 +25,6 @@ out vec4 FragColor;
 void main()
 {		
 
-    FragColor = texture2D(Texture, UV);
+    FragColor = texture(Texture, UV);
 }
 #endif
