@@ -16,15 +16,16 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 			perspective(perspectiveIn),
 			mainCamera(CameraIn)
 {
+	//Settings
+	bPostFX = false;
+	bDrawGrid = true;
+
+	screenQuadVAO = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
+
 	MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
 
 	InitEditorHelpers();
-	
-	offscreenTexture = new Texture(deviceIn, GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), PixelFormat::FORMAT_RGB, PixelFormat::FORMAT_RGB16F, false, false, true);
-	sceneRenderTarget = new RenderTarget(*mRenderDevice, *offscreenTexture);
-	screenQuadVAO = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
-	screenShader = ShaderManager::GetPBRShader("SCREEN_SHADER");
-	screenTextureSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR);
+	GenerateBRDF();
 
 	chromaTexture = new Texture(deviceIn, GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), PixelFormat::FORMAT_RGBA, PixelFormat::FORMAT_RGBA, false, false, false);
 	chromaRenderTarget = new RenderTarget(*mRenderDevice, *chromaTexture);
@@ -36,14 +37,17 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
 	}
 
-
 	MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 	cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
 	prefilterSampler = new Sampler(mRenderDevice, FILTER_LINEAR_MIPMAP_LINEAR);
 	brdfSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR, WRAP_CLAMP);
 
+	offscreenTexture = new Texture(deviceIn, GlobalSettings::GetWindowWidth(), GlobalSettings::GetWindowHeight(), PixelFormat::FORMAT_RGB, PixelFormat::FORMAT_RGB16F, false, false, true);
+	sceneRenderTarget = new RenderTarget(*mRenderDevice, *offscreenTexture);
+	screenShader = ShaderManager::GetPBRShader("SCREEN_SHADER");
+	screenTextureSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR);
+
 	GeneratePBRMapsFromTexture("res/textures/HDR/road.hdr");
-	GenerateBRDF();
 
 	screenQuadDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	screenQuadDrawParams.shouldWriteDepth = false;
@@ -52,20 +56,22 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 
 void EditorRenderContext::Flush()
 {
-	vec4 clearColor(0.0f, 0.6f, 0.3f, 1.0f);
+	vec4 clearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	mRenderDevice->Clear(sceneRenderTarget->GetId(), true, true, true, clearColor, 0);
-	DrawScene(sceneRenderTarget);	
+	DrawScene(sceneRenderTarget);
 
-	//chromaFX->Apply(sceneRenderTarget, chromaRenderTarget);
-
-	//Draw screen quad
-	screenShader->SetSampler("Texture", *offscreenTexture, *screenTextureSampler, 0);
+	if (bPostFX)
+	{
+		chromaFX->Apply(sceneRenderTarget, chromaRenderTarget);
+		screenShader->SetSampler("Texture", *chromaRenderTarget->GetTexture(), *screenTextureSampler, 0);
+	}
+	else
+	{
+		screenShader->SetSampler("Texture", *sceneRenderTarget->GetTexture(), *screenTextureSampler, 0);
+	}
 
 	mRenderDevice->Draw(mRenderTarget->GetId(), screenShader->GetId(), 
 		screenQuadVAO->GetId(), screenQuadDrawParams, 1, screenQuadVAO->GetNumIndices());
-
-
-
 }
 
 void EditorRenderContext::RenderSkybox(RenderTarget* renderTarget)
@@ -157,26 +163,24 @@ void EditorRenderContext::GeneratePBRMapsFromTexture(NString HDRtexture)
 void EditorRenderContext::GenerateBRDF()
 {
 	brdfLUTTexture = new Texture(mRenderDevice, 512, 512, FORMAT_RG, FORMAT_RGB16F, false, false, true);
-	 //CubemapRenderTarget brdfTarget(mRenderDevice, brdfLUTTexture, 512, 512);
-	RenderTarget* brdfTarget = new RenderTarget(*mRenderDevice, *brdfLUTTexture, ATTACHMENT_COLOR, 0, 0);
-	VertexArray* quadArray = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(vec3(1.f)), USAGE_STATIC_DRAW);
+	RenderTarget* brdfTarget = new RenderTarget(*mRenderDevice, *brdfLUTTexture);
 	DrawParams drawParamsTEST;
 	drawParamsTEST.primitiveType = PRIMITIVE_TRIANGLES;
 	drawParamsTEST.faceCulling = FACE_CULL_NONE;
-	drawParamsTEST.shouldWriteDepth = true;
+	drawParamsTEST.shouldWriteDepth = false;
 	drawParamsTEST.depthFunc = DRAW_FUNC_ALWAYS;
-	mRenderDevice->Draw(brdfTarget->GetId(), ShaderManager::GetPBRShader("BRDF_SHADER")->GetId(), quadArray->GetId(), drawParamsTEST, 1, quadArray->GetNumIndices());
+	mRenderDevice->Draw(brdfTarget->GetId(), ShaderManager::GetPBRShader("BRDF_SHADER")->GetId(), screenQuadVAO->GetId(), drawParamsTEST
+		, 1, screenQuadVAO->GetNumIndices());
 }
 
 void EditorRenderContext::InitEditorHelpers()
 {
 	editorGridSlices = 200;
 	editorGridScale = 1000;
-	bDrawGrid = true;
 
-	editorGridDrawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	editorGridDrawParams.shouldWriteDepth = false;
-	editorGridDrawParams.depthFunc = DRAW_FUNC_ALWAYS;
+	editorGridDrawParams.primitiveType = PRIMITIVE_LINES;
+	editorGridDrawParams.shouldWriteDepth = true;
+	editorGridDrawParams.depthFunc = DRAW_FUNC_LESS;
 	editorGridVA = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateGridVA(editorGridSlices, vec3(0.3f)), BufferUsage::USAGE_DYNAMIC_DRAW);
 	//Load and set shaders
 	NString LINE_SHADER_TEXT_FILE = "res/shaders/EditorGridSimpleShader.glsl";

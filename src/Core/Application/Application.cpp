@@ -170,6 +170,11 @@ int Application::Run()
 			editorRenderContext->ToggleGrid();
 		}
 
+		if (ImGui::Button("PostFX"))
+		{
+			editorRenderContext->TogglePostFX();
+		}
+
 		auto staticMesh = SceneManager::currentScene.sceneObjects[0]->get<StaticMeshComponent>();
 		
 		ImGui::SliderFloat("roughness", &staticMesh->meshes[0]->material->roughness, 0.0f, 1.0f);

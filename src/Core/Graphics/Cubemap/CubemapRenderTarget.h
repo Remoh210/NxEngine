@@ -15,9 +15,6 @@ public:
 	CubemapRenderTarget(RenderDevice* deviceIn, Cubemap* cubemapIn,
 		uint32 width, uint32 height);
 
-	CubemapRenderTarget(RenderDevice* deviceIn, Texture* texture,
-		uint32 width, uint32 height);
-
 	inline ~CubemapRenderTarget() {}
 
 

@@ -383,20 +383,24 @@ uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 	SetFBO(fbo);
 	GLenum attachmentTypeGL = attachment + attachmentNumber;
 	glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentTypeGL, GL_TEXTURE_2D, texture, mipLevel);
+
 	// create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
 	unsigned int rbo;
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, width, height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
 		DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "Framebuffer is not complete!");
+	}
+		
 	
 	struct FBOData data;
 	data.width = width;
 	data.height = height;
 	fboMap[fbo] = data;
-	
+
 	return fbo;
 }
 

@@ -5,19 +5,19 @@ CubemapRenderTarget::CubemapRenderTarget(RenderDevice* deviceIn, Cubemap* cubema
 	uint32 width, uint32 height)
 	:mRenderDevice(deviceIn)
 	, cubemapTex(cubemapIn)
-	, id(mRenderDevice->CreateRenderTarget(cubemapTex->GetId(), cubemapTex->GetWidth()
-	, cubemapTex->GetHeight(), FramebufferAttachment::ATTACHMENT_COLOR, 0, 0))
+	, id(mRenderDevice->CreateRenderTarget(cubemapTex->GetWidth()
+	, cubemapTex->GetHeight()))
 
 {
 
 }
 
-CubemapRenderTarget::CubemapRenderTarget(RenderDevice* deviceIn, Texture* texture,
-	uint32 width, uint32 height)
-	:mRenderDevice(deviceIn)
-	, id(mRenderDevice->CreateRenderTarget(texture->GetId(), width
-		, height, FramebufferAttachment::ATTACHMENT_COLOR, 0, 0))
-
-{
-
-}
+//CubemapRenderTarget::CubemapRenderTarget(RenderDevice* deviceIn, Texture* texture,
+//	uint32 width, uint32 height)
+//	:mRenderDevice(deviceIn)
+//	, id(mRenderDevice->CreateRenderTarget(texture->GetId(), width
+//		, height, FramebufferAttachment::ATTACHMENT_COLOR, 0, 0))
+//
+//{
+//
+//}

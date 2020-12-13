@@ -3,18 +3,12 @@
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec2 texCoord;
 
-out vec3 WorldPos;
 out vec2 UV;
-
-uniform  mat4 projection;
-uniform  mat4 view;
-
 
 void main()
 {
-    WorldPos = position;
     UV = texCoord;
-    gl_Position =  projection * view * vec4(WorldPos, 1.0);
+    gl_Position =  vec4(position.x, position.y, 0.0, 1.0);
 }
 
 #elif defined(FS_BUILD)
@@ -33,9 +27,13 @@ void main()
 	float amount = 0.0;
 	
 	amount = (1.0 + sin(Time*6.0)) * 0.5;
-	amount *= 1.0 + sin(Time*16.0) * 0.5;
-	amount *= 1.0 + sin(Time*19.0) * 0.5;
-	amount *= 1.0 + sin(Time*27.0) * 0.5;
+	amount *= 1.0 + sin(Time*2.0) * 0.5;
+	amount *= 1.0 + sin(Time*9.0) * 0.5;
+	amount *= 1.0 + sin(Time*8.0) * 0.5;
+
+	//amount *= 1.0 + sin(Time*16.0) * 0.5;
+	//amount *= 1.0 + sin(Time*19.0) * 0.5;
+	//amount *= 1.0 + sin(Time*27.0) * 0.5;
 	amount = pow(amount, 3.0);
 
 	amount *= 0.05;

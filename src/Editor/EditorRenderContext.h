@@ -67,6 +67,7 @@ public:
     //~EditorRenderContext();
 
 	inline void ToggleGrid() { bDrawGrid = !bDrawGrid; }
+	inline void TogglePostFX() { bPostFX = !bPostFX; }
 private:
 	DrawParams drawParams;
 	//Shader& shader;
@@ -111,7 +112,6 @@ private:
 	Texture* brdfLUTTexture;
 
 	bool bDrawGrid;
-
-	
+	bool bPostFX;
 };
 
