@@ -64,11 +64,15 @@ void EditorRenderContext::Flush()
 	{
 		chromaFX->Apply(sceneRenderTarget, chromaRenderTarget);
 		screenShader->SetSampler("Texture", *chromaRenderTarget->GetTexture(), *screenTextureSampler, 0);
+		finalTexture = chromaRenderTarget->GetTexture();
 	}
 	else
 	{
 		screenShader->SetSampler("Texture", *sceneRenderTarget->GetTexture(), *screenTextureSampler, 0);
+		finalTexture = offscreenTexture;
 	}
+
+	
 
 	mRenderDevice->Draw(mRenderTarget->GetId(), screenShader->GetId(), 
 		screenQuadVAO->GetId(), screenQuadDrawParams, 1, screenQuadVAO->GetNumIndices());

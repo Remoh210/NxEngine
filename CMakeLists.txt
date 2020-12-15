@@ -39,27 +39,15 @@ set_target_properties(glad PROPERTIES FOLDER external/glad)
 add_library(glm INTERFACE)
 include_directories(glm PRIVATE external/glm)
 
-#soil
+#Includes
 target_include_directories(${PROJECT_NAME} PRIVATE external/soil/inc)
-
-#imgui
-# Add source files
-file(GLOB_RECURSE IMGUI_SOURCE_FILES
-  ${CMAKE_SOURCE_DIR}/external/imgui/*.cpp)
-	
-# Add header files
-file(GLOB_RECURSE IMGUI_HEADER_FILES 
-	${CMAKE_SOURCE_DIR}/external/imgui/*.h
-    ${CMAKE_SOURCE_DIR}/external/imgui/*.hpp)
-    
-add_library(imgui STATIC ${IMGUI_HEADER_FILES} ${IMGUI_SOURCE_FILES})
-set_target_properties(imgui PROPERTIES FOLDER external/imgui)
-target_link_libraries(imgui PRIVATE glfw)
-target_link_libraries(imgui PRIVATE glad)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/imgui)
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/rttr)
+
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/Include)
+
 
 #Stb_image
 add_library(stb_image STATIC ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.h ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.c)
@@ -74,7 +62,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      soil 
                      glm 
                      imgui
-                     stb_image)
+                     stb_image
+					 rttr_core_lib)
 
 # Path to code
 configure_file(Config/root_directory.h.in Config/root_directory.h)

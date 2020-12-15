@@ -20,6 +20,7 @@
 #include <rendering/AssetLoader.h>
 #include <rendering/Shader.h>
 #include <Editor/EditorRenderContext.h>
+#include <Editor/EditorUI/EditorUI.h>
 
 
 //Standard includes
@@ -61,19 +62,9 @@ Application* Application::Create(float Width, float Height)
 int Application::Run()
 {
 	Initialize();
+	EditorUI::Initialize(renderDevice->GetShaderVersion(), window);
 
 	ImGui::CreateContext();
-
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-	ImGui_ImplGlfw_InitForOpenGL(window->GetWindowHandle(), true);
-	NString glVersionImgui;
-	glVersionImgui = "#version " + renderDevice->GetShaderVersion();
-	ImGui_ImplOpenGL3_Init(glVersionImgui.c_str());
-	ImGui::StyleColorsDark();
-
 
 	bool show_demo_window = false;
 	bool show_another_window = true;
@@ -225,21 +216,6 @@ int Application::Run()
 		// input
 		// -----
 		
-		//// Start the Dear ImGui frame
-		//ImGui_ImplOpenGL3_NewFrame();
-		//ImGui_ImplGlfw_NewFrame();
-		////ImGui::NewFrame();
-
-		//ImGui::ShowDemoWindow();
-
-		//ImVec2 sizeP(250, 350);
-		//ImVec2 sizeW(400, 400);
-		//ImGui::SetNextWindowSize(sizeW);
-		//ImGui::Begin("TestImageWindow");
-		//ImGui::Image((void*)testtex.GetId(), sizeP);
-		//ImGui::End();
-
-
 		for (glm::vec3 pos : lightPositions)
 		{
 			debugRenderer.DrawDebugSphere(pos, 0.0f, 1.f);
@@ -255,15 +231,15 @@ int Application::Run()
 		NxTime::Update(deltaTime);
 
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-		processInput(window->GetWindowHandle());
+		EditorUI::DrawEditorView(editorRenderContext);
+		EditorUI::Draw();
+	    //InputManager::Update()
+		
 		glfwPollEvents();
 		window->Present();
-
+		processInput(glfwGetCurrentContext());
 		GLFWwindow* backup_current_context = glfwGetCurrentContext();
-		ImGui::UpdatePlatformWindows();
-		ImGui::RenderPlatformWindowsDefault();
+		EditorUI::UpdateWindows();
 		glfwMakeContextCurrent(backup_current_context);
 	}
 
@@ -271,9 +247,7 @@ int Application::Run()
 	ShutDown();
 
 	// UI Cleanup
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
+	EditorUI::Shutdown();
 
 	//glfwDestroyWindow(window);
 	glfwTerminate();
@@ -582,6 +556,7 @@ void Application::LoadDefaultScene()
 	}
 
 	renderableMesh3.shader = ShaderManager::GetMainShader();
+	renderableMesh3.meshAssetFile = "Mesh3";
 	TransformComponent transformComp3;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp3.transform.position = vec3(15.1f, 0.0f, -40.0f);
@@ -602,6 +577,7 @@ void Application::LoadDefaultScene()
 	//material3.diffuseTextures.Add(&testtex);
 	pbrTestMesh->material = material4;
 	StaticMeshComponent renderableMesh4;
+	renderableMesh4.meshAssetFile = "Mesh4";
 	renderableMesh4.shader = ShaderManager::GetMainShader();
 	renderableMesh4.meshes.Add(pbrTestMesh);
 	TransformComponent transformComp4;
@@ -627,6 +603,7 @@ void Application::LoadDefaultScene()
 	//material3.diffuseTextures.Add(&testtex);
 	mesh5->material = material5;
 	StaticMeshComponent renderableMesh5;
+	renderableMesh5.meshAssetFile = "Mesh5";
 	renderableMesh5.shader = ShaderManager::GetMainShader();
 	renderableMesh5.meshes.Add(mesh5);
 	TransformComponent transformComp5;
@@ -668,6 +645,7 @@ void Application::LoadDefaultScene()
 	}
 
 	renderableMesh6.shader = ShaderManager::GetMainShader();
+	renderableMesh6.numInst = 500;
 	TransformComponent transformComp6;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp6.transform.position = vec3(-15.1f, 0.0f, -40.0f);
@@ -686,10 +664,13 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
 	ent3->assign<StaticMeshComponent>(renderableMesh3);
+	SceneManager::currentScene.sceneObjects.Add(ent3);
 
 	ECS::Entity* ent4 = world->create();
 	ent4->assign<TransformComponent>(transformComp4);
 	ent4->assign<StaticMeshComponent>(renderableMesh4);
+
+	SceneManager::currentScene.sceneObjects.Add(ent4);
 
 	ECS::Entity* ent5 = world->create();
 	ent5->assign<TransformComponent>(transformComp5);
@@ -806,7 +787,7 @@ void Application::GUI_ShowMenuBar()
 		if (ImGui::MenuItem("Open", "Ctrl+O")) {}
 		if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
 		{  
-			SceneManager::SaveScene("TestScene", *GetMainCamera());
+			SceneManager::SaveScene("TestSceneRTT", *GetMainCamera());
 		}
 		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 		{

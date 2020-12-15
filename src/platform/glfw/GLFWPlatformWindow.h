@@ -40,13 +40,17 @@ public:
     static std::function<void (int, int)> MouseCallbackFunc;
 	static std::function<void(float yoffset)> MouseScrollCallbackFunc;
     static std::function<void (int, int)> FrameBufferResizeCallbackBackFunc;
+
+
+	static void GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos);
+	static void GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height);
+	static void GLFWMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
 private:
     WindowHandle window;
     int mWidth;
     int mHeight;
 
 	
-	static void GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos);
-    static void GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height);
-	static void GLFWMouseScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+
 };

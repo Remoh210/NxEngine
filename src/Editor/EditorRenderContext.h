@@ -61,6 +61,11 @@ public:
 	void DrawScene(RenderTarget* renderTarget);
 	void DrawEditorHelpers(RenderTarget* renderTarget);
 	void DrawDebugShapes(RenderTarget* renderTarget);
+	inline void ResizeViewPort(float width, float height)
+	{
+		mRenderDevice->UpdateFBOSize(sceneRenderTarget->GetId(), 1200, 700);
+		mRenderDevice->UpdateFBOSize(chromaRenderTarget->GetId(), 1600, 1000);
+	}
 	
     void Flush();
 	void SetTextures(Material* material, Shader* shader);
@@ -68,6 +73,7 @@ public:
 
 	inline void ToggleGrid() { bDrawGrid = !bDrawGrid; }
 	inline void TogglePostFX() { bPostFX = !bPostFX; }
+	inline Texture* GetScreenTexture() { return finalTexture; };
 private:
 	DrawParams drawParams;
 	//Shader& shader;
@@ -92,6 +98,8 @@ private:
 	CromaticAberration* chromaFX;
 	Texture* chromaTexture;
 	RenderTarget* chromaRenderTarget;
+
+	Texture* finalTexture;
 
 
 	//Grid VO

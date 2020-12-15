@@ -31,7 +31,7 @@ namespace ECS
 
 			world->each<TransformComponent, StaticMeshComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<StaticMeshComponent> mesh) -> void {
 
-				Transform newTrasform;
+				Transform newTrasform = transform->transform;
 
 				int num = mesh->numInst;
 
@@ -53,8 +53,8 @@ namespace ECS
 						newTrasform.position = glm::vec3(x, y, z);
 
 						// 2. scale: scale between 0.05 and 0.25f
-						float scale = (rand() % 20) / 100.0f + 0.08;
-						newTrasform.scale = glm::vec3(scale);
+						//float scale = (rand() % 20) / 100.0f + 0.08;
+						//newTrasform.scale = glm::vec3(scale);
 
 						// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
 						float rotAngle = (rand() % 360);

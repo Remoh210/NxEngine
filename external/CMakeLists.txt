@@ -48,10 +48,14 @@ option(ASSIMP_BUILD_ASSIMP_TOOLS "If the supplementary tools for Assimp are buil
 add_subdirectory(glfw)
 add_subdirectory(assimp)
 add_subdirectory(soil)
+add_subdirectory(imgui)
+add_subdirectory(rttr)
 
 #Grouping
 set_target_properties(soil PROPERTIES FOLDER external/soil)
 set_target_properties(glfw PROPERTIES FOLDER external/glfw)
+set_target_properties(imgui PROPERTIES FOLDER external/imgui)
+set_target_properties(rttr_core_lib PROPERTIES FOLDER external/rttr)
 set_target_properties(assimp PROPERTIES FOLDER external/assimp)
 set_target_properties(zlibstatic PROPERTIES FOLDER external/assimp)
 set_target_properties(zlib PROPERTIES FOLDER external/assimp)
