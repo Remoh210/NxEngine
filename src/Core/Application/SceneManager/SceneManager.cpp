@@ -202,18 +202,29 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 	{
 		
 
-		ECS::ComponentHandle<StaticMeshComponent> staticMeshComp = entity->get<StaticMeshComponent>();
+		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
 
-		if(!staticMeshComp)
+		if(!transformComp)
 		{
 			continue;
 		}
 
-		NString testJSON = Nx::to_json(staticMeshComp.get());
+		NString testJSON = Nx::to_json(transformComp.get());
 		outputFile << testJSON;
 		DEBUG_LOG_TEMP("testJSON: %s", testJSON.c_str());
 
+		NString str = rttr::type::get(transformComp.get()).get_name().to_string();
+		auto props = rttr::type::get(transformComp.get()).get_properties();
+		for (auto prop : props)
+		{
+			DEBUG_LOG_TEMP("%s", prop.get_type().get_name().to_string().c_str());
 
+			auto childProp = rttr::type::get(prop).get_properties();
+			for (auto propChild : childProp)
+			{
+				DEBUG_LOG_TEMP("%s", propChild.get_type().get_name().to_string().c_str());
+			}
+		}
 	}
 	outputFile.close();
 
@@ -233,84 +244,84 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 
 bool SceneManager::LoadScene(NString filename, class Camera& camera) 
 {
-	if (!world)
-	{
-		//TODO: Log
-		return false;
-	}
+	//if (!world)
+	//{
+	//	//TODO: Log
+	//	return false;
+	//}
 
-	ClearScene();
-	//return false;
+	//ClearScene();
+	////return false;
 
-	std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename;
+	//std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename;
 
-	rapidjson::Document doc;
-	FILE* fp = fopen(fileToLoadFullPath.c_str(), "rb"); // non-Windows use "r"
-	if (!fp)
-	{
-        DEBUG_LOG("SceneMager", "ERROR", "No such scene: %s", fileToLoadFullPath.c_str());
-		return false;
-	}
-	char readBuffer[65536];
-	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
-	doc.ParseStream(is);
-	fclose(fp);
+	//rapidjson::Document doc;
+	//FILE* fp = fopen(fileToLoadFullPath.c_str(), "rb"); // non-Windows use "r"
+	//if (!fp)
+	//{
+ //       DEBUG_LOG("SceneMager", "ERROR", "No such scene: %s", fileToLoadFullPath.c_str());
+	//	return false;
+	//}
+	//char readBuffer[65536];
+	//rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+	//doc.ParseStream(is);
+	//fclose(fp);
 
-	//Camera
-	float Speed;
-	glm::vec3 CameraPos;
-	rapidjson::Value& CameraPosArray = doc["Camera"]["Position"];
+	////Camera
+	//float Speed;
+	//glm::vec3 CameraPos;
+	//rapidjson::Value& CameraPosArray = doc["Camera"]["Position"];
 
-	camera.MovementSpeed = doc["Camera"]["Speed"].GetFloat();
-	for (rapidjson::SizeType i = 0; i < CameraPosArray.Size(); i++)
-	{
-		CameraPos[i] = CameraPosArray[i].GetFloat();
-		std::cout << "CameraPos: [ " << CameraPos[i] << " ]" << std::endl;
-	}
-	camera.Position = CameraPos;
+	//camera.MovementSpeed = doc["Camera"]["Speed"].GetFloat();
+	//for (rapidjson::SizeType i = 0; i < CameraPosArray.Size(); i++)
+	//{
+	//	CameraPos[i] = CameraPosArray[i].GetFloat();
+	//	std::cout << "CameraPos: [ " << CameraPos[i] << " ]" << std::endl;
+	//}
+	//camera.Position = CameraPos;
 
-	camera.Yaw = doc["Camera"]["Yaw"].GetFloat();
-	camera.Pitch = doc["Camera"]["Pitch"].GetFloat();
+	//camera.Yaw = doc["Camera"]["Yaw"].GetFloat();
+	//camera.Pitch = doc["Camera"]["Pitch"].GetFloat();
 
-	camera.updateCameraVectors();
+	//camera.updateCameraVectors();
 
-	const rapidjson::Value& GameObjects = doc["GameObjects"];
-	for (int i = 0; i < GameObjects.Size(); i++)
-	{
-		StaticMeshComponent staticMeshComp;
-		NString meshFile = GameObjects[i]["MeshFile"].GetString();
-		if(meshFile == "") 
-		{
-			DEBUG_LOG(LOG_ERROR, "Error", "No mesh file specified");
-			continue;
-		}
-		staticMeshComp.meshAssetFile = meshFile;
-		staticMeshComp.meshes = AssetManager::ImportModel(renderDevice, meshFile);
-		staticMeshComp.shader = ShaderManager::GetMainShader();
+	//const rapidjson::Value& GameObjects = doc["GameObjects"];
+	//for (int i = 0; i < GameObjects.Size(); i++)
+	//{
+	//	StaticMeshComponent staticMeshComp;
+	//	NString meshFile = GameObjects[i]["MeshFile"].GetString();
+	//	if(meshFile == "") 
+	//	{
+	//		DEBUG_LOG(LOG_ERROR, "Error", "No mesh file specified");
+	//		continue;
+	//	}
+	//	staticMeshComp.meshAssetFile = meshFile;
+	//	staticMeshComp.meshes = AssetManager::ImportModel(renderDevice, meshFile);
+	//	staticMeshComp.shader = ShaderManager::GetMainShader();
 
-		TransformComponent transformComponent;
-		const rapidjson::Value& PositionArray = GameObjects[i]["Position"];
-		for (rapidjson::SizeType i = 0; i < PositionArray.Size(); i++) 
-		{
-			transformComponent.transform.position[i] = PositionArray[i].GetFloat();
-		}
-		const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
-		for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++)
-		{
-			transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
-		}
-		const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
-		for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) 
-		{
-			transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
-		}
-		
-		ECS::Entity* ent = world->create();
-		ent->assign<TransformComponent>(transformComponent);
-		ent->assign<StaticMeshComponent>(staticMeshComp);
+	//	TransformComponent transformComponent;
+	//	const rapidjson::Value& PositionArray = GameObjects[i]["Position"];
+	//	for (rapidjson::SizeType i = 0; i < PositionArray.Size(); i++) 
+	//	{
+	//		transformComponent.transform.position[i] = PositionArray[i].GetFloat();
+	//	}
+	//	const rapidjson::Value& RotationArray = GameObjects[i]["Rotation"];
+	//	for (rapidjson::SizeType i = 0; i < RotationArray.Size(); i++)
+	//	{
+	//		transformComponent.transform.rotation[i] = RotationArray[i].GetFloat();
+	//	}
+	//	const rapidjson::Value& ScaleArray = GameObjects[i]["Scale"];
+	//	for (rapidjson::SizeType i = 0; i < ScaleArray.Size(); i++) 
+	//	{
+	//		transformComponent.transform.scale[i] = ScaleArray[i].GetFloat();
+	//	}
+	//	
+	//	ECS::Entity* ent = world->create();
+	//	ent->assign<TransformComponent>(transformComponent);
+	//	ent->assign<StaticMeshComponent>(staticMeshComp);
 
-		currentScene.sceneObjects.Add(ent);
-	}
+	//	currentScene.sceneObjects.Add(ent);
+	//}
 
 	return true;
 }

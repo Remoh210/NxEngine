@@ -22,6 +22,8 @@
 #include <Editor/EditorRenderContext.h>
 #include <Editor/EditorUI/EditorUI.h>
 
+#include "Common/Math/Math.h"
+
 
 //Standard includes
 #include <fstream>
@@ -105,6 +107,10 @@ int Application::Run()
 	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
 	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
 	lightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
+
+	vec3f vectest1(1.0f);
+	vectest1.ToVec().x += 23;
+	DEBUG_LOG_TEMP("testing vec3f: %f", vectest1.ToVec().x);
 
 	while (!window->ShouldClose())
 	{
@@ -645,7 +651,7 @@ void Application::LoadDefaultScene()
 	}
 
 	renderableMesh6.shader = ShaderManager::GetMainShader();
-	renderableMesh6.numInst = 500;
+	renderableMesh6.numInst = 1;
 	TransformComponent transformComp6;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp6.transform.position = vec3(-15.1f, 0.0f, -40.0f);

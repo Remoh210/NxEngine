@@ -26,7 +26,7 @@ namespace ECS
 		{
 			world->each<TransformComponent, LightComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<LightComponent> lightComp) -> void 
 			{
-				context->RenderLight(lightComp, transform->transform.position);
+				context->RenderLight(lightComp, transform->transform.position.ToVec());
 			});
 
 			world->each<TransformComponent, StaticMeshComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<StaticMeshComponent> mesh) -> void {
@@ -74,7 +74,7 @@ namespace ECS
 				}
 				else
 				{
-					transform->transform.rotation.y += 0.2f * deltaTime;
+					transform->transform.rotation.ToVec().y += 0.2f * deltaTime;
 					//transform->transform.position = vec3(0.0f);
 
 					context->RenderMesh(mesh->meshes, mesh->shader, transform->transform.ToMatrix());

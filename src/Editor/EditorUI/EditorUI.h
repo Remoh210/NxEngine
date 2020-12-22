@@ -14,6 +14,7 @@ public:
 
 	static void Initialize(NString apiVersion, Window* window);
 	static void DrawEditorView(EditorRenderContext* editorContext);
+	static void DrawInspector();
 	static void Shutdown();
 	static void UpdateWindows();
 	static void Draw();

@@ -195,8 +195,8 @@ void EditorRenderContext::InitEditorHelpers()
 	editorGridVA->GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
 	editorGridTransform.scale = vec3(editorGridScale);
-	editorGridTransform.position.x = -0.5 * editorGridScale;
-	editorGridTransform.position.z = -0.5 * editorGridScale;
+	editorGridTransform.position.ToVec().x = -0.5 * editorGridScale;
+	editorGridTransform.position.ToVec().z = -0.5 * editorGridScale;
 }
 
 void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
