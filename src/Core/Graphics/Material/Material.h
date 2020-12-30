@@ -13,8 +13,8 @@ struct Material
 	{
 		color = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 		ambientOcclusion = 1.0f;
-		metallic = 0.3f;
-		roughness = 0.6f;
+		metallic = 0.95f;
+		roughness = 0.95f;
 
 		//diffuseTexture = nullptr;
 		//normalMap = nullptr;

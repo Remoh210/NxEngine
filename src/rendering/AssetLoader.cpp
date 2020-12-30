@@ -126,45 +126,45 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	if(fileExtension == ".glb" || fileExtension == ".gltf")
 	{
 		aiString fileMetallicRoughness;
-		material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &fileMetallicRoughness);
-		auto texture = scene->GetEmbeddedTexture(fileMetallicRoughness.C_Str());
-		if (texture != nullptr)
+		if(material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &fileMetallicRoughness) == aiReturn_SUCCESS)
 		{
-			NString filename = fileName.substr(fileName.find_last_of('/') + 1);
-			//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
-			Texture* newTexture = new Texture(TextureFromAssimp(texture));
-			spec.textures[TEXTURE_MR] = newTexture;
-		}
-		else
-		{
-			NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
-			NString TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
-			spec.textureNames[TEXTURE_MR] = TexturePath;
-			DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());;
+			auto texture = scene->GetEmbeddedTexture(fileMetallicRoughness.C_Str());
+			if (texture != nullptr)
+			{
+				NString filename = fileName.substr(fileName.find_last_of('/') + 1);
+				//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
+				Texture* newTexture = new Texture(TextureFromAssimp(texture));
+				spec.textures[TEXTURE_MR] = newTexture;
+			}
+			else
+			{
+				NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
+				NString TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
+				spec.textureNames[TEXTURE_MR] = TexturePath;
+				DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());;
+			}
 		}
 
 		aiString fileAlbedo;
-		material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &fileAlbedo);
-		auto textureAlbedo = scene->GetEmbeddedTexture(fileAlbedo.C_Str());
-		if (textureAlbedo != nullptr)
+		if (material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &fileAlbedo) == aiReturn_SUCCESS)
 		{
-			NString filename = fileName.substr(fileName.find_last_of('/') + 1);
-			//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
-			Texture* newTexture = new Texture(TextureFromAssimp(textureAlbedo));
-			spec.textures[TEXTURE_ALBEDO] = newTexture;
-		}
-		else
-		{
-			NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
-			NString TexturePath = myDirectory + "/" + fileAlbedo.C_Str();
-			spec.textureNames[TEXTURE_ALBEDO] = TexturePath;
-			DEBUG_LOG_TEMP("Texture Name: %s", fileAlbedo.C_Str());;
+			auto textureAlbedo = scene->GetEmbeddedTexture(fileAlbedo.C_Str());
+			if (textureAlbedo != nullptr)
+			{
+				NString filename = fileName.substr(fileName.find_last_of('/') + 1);
+				//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
+				Texture* newTexture = new Texture(TextureFromAssimp(textureAlbedo));
+				spec.textures[TEXTURE_ALBEDO] = newTexture;
+			}
+			else
+			{
+				NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
+				NString TexturePath = myDirectory + "/" + fileAlbedo.C_Str();
+				spec.textureNames[TEXTURE_ALBEDO] = TexturePath;
+				DEBUG_LOG_TEMP("Texture Name: %s", fileAlbedo.C_Str());;
+			}
 		}
 	}
-
-
-
-
 
 	materials.push_back(spec);
 

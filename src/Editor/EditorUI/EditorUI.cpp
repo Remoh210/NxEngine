@@ -10,234 +10,109 @@ bool EditorUI::init = true;
 ImVec2 EditorUI::SceneViewSize;
 ImVec2 EditorUI::SceneViewPos;
 
-bool write_atomic_types_to_ui(const rttr::type& t, const rttr::variant& var);
-static void write_array(const rttr::variant_sequential_view& view);
-bool write_variant(const rttr::variant& var);
-void to_ui_rec(const rttr::instance& obj2);
-static void WriteVec(const rttr::variant_sequential_view& view, Array<rttr::variant>& varArray);
-
-void WriteVec(const rttr::variant_sequential_view& view, Array<rttr::variant>& varArray)
-{
-	for (const auto& item : view)
-	{
-		rttr::variant wrapped_var = item.extract_wrapped_value();
-		
-		rttr::type value_type = wrapped_var.get_type();
-		NString type = value_type.get_name().to_string();
-		varArray.push_back(wrapped_var);
-	}
-}
-
-
-bool write_atomic_types_to_ui(const rttr::type& t, const rttr::variant& var)
-{
-	if (t.is_arithmetic())
-	{
-		if (t == rttr::type::get<bool>())
-			return true;
-		else if (t == rttr::type::get<char>())
-			return true;
-		else if (t == rttr::type::get<int8_t>())
-			return true;
-		else if (t == rttr::type::get<int16_t>())
-			return true;
-		else if (t == rttr::type::get<int32_t>())
-			return true;
-		else if (t == rttr::type::get<int64_t>())
-			return true;
-		else if (t == rttr::type::get<uint8_t>())
-			return true;
-		else if (t == rttr::type::get<uint16_t>())
-			return true;
-		else if (t == rttr::type::get<uint32_t>())
-			return true;
-		else if (t == rttr::type::get<uint64_t>())
-			return true;
-		else if (t == rttr::type::get<float>())
-		{
-			//float tst = var.to_float();
-			//ImGui::DragFloat("test", &tst, 0.2f, -10000.0f, 10000.0f);
-			//return true;
-		}
-		else if (t == rttr::type::get<double>())
-			return true;
-		return true;
-	}
-	//else if (t.is_enumeration())
-	//{
-	//	bool ok = false;
-	//	auto result = var.to_string(&ok);
-	//	if (ok)
-	//	{
-	//		writer.String(var.to_string());
-	//	}
-	//	else
-	//	{
-	//		ok = false;
-	//		auto value = var.to_uint64(&ok);
-	//		if (ok)
-	//			writer.Uint64(value);
-	//		else
-	//			writer.Null();
-	//	}
-
-	//	return true;
-	//}
-	else if (t == rttr::type::get<std::string>())
-	{
-		return true;
-	}
-
-	return false;
-}
-
-static void write_array(const rttr::variant_sequential_view& view)
-{
-	for (const auto& item : view)
-	{
-		if (item.is_sequential_container())
-		{
-			write_array(item.create_sequential_view());
-		}
-		else
-		{
-			rttr::variant wrapped_var = item.extract_wrapped_value();
-			rttr::type value_type = wrapped_var.get_type();
-			if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
-			{
-				write_atomic_types_to_ui(value_type, wrapped_var);
-			}
-			else // object
-			{
-				to_ui_rec(wrapped_var);
-			}
-		}
-	}
-}
 
 float floatArray[3] = { 1,
 		2,
 		3
 };
 
-bool write_variant(const rttr::variant& var, const rttr::string_view& propertyName)
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+void fromjson_recursively(rttr::instance obj);
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+static void write_array_recursively(rttr::variant_sequential_view& view)
 {
-	auto value_type = var.get_type();
-	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
-	bool is_wrapper = wrapped_type != value_type;
+	////view.set_size(json_array_value.Size());
+	//const rttr::type array_value_type = view.get_rank_type(1);
 
-	//if (write_atomic_types_to_json(is_wrapper ? wrapped_type : value_type,
-	//	is_wrapper ? var.extract_wrapped_value() : var, writer))
+	//for (int i = 0; i < view.get_size(); ++i)
 	//{
+	//	auto& json_index_value = json_array_value[i];
+	//	if (json_index_value.IsArray())
+	//	{
+	//		auto sub_array_view = view.get_value(i).create_sequential_view();
+	//		write_array_recursively(sub_array_view);
+	//	}
+	//	else if (json_index_value.IsObject())
+	//	{
+	//		rttr::variant var_tmp = view.get_value(i);
+	//		rttr::variant wrapped_var = var_tmp.extract_wrapped_value();
+	//		fromjson_recursively(wrapped_var);
+	//		view.set_value(i, wrapped_var);
+	//	}
+	//	else
+	//	{
+	//		//rttr::variant extracted_value = extract_basic_types(json_index_value);
+	//		//if (extracted_value.convert(array_value_type))
+	//		//	view.set_value(i, extracted_value);
+	//	}
 	//}
-	NString testStrimg = value_type.get_name().to_string();
+}
 
 
-	if (value_type == rttr::type::get<float>())
+void fromjson_recursively(rttr::instance obj2)
+{
+	rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
+	const auto prop_list = obj.get_derived_type().get_properties();
+
+	for (auto prop : prop_list)
 	{
-		prop.set_value(obj, 12.f);
-		float test = var.to_float();
-		ImGui::DragFloat(propertyName.to_string().c_str(), &test, 0.2, -1000, 1000);
-	}
+		//Value::MemberIterator ret = json_object.FindMember(prop.get_name().data());
+		//if (ret == json_object.MemberEnd())
+		//	continue;
+		const rttr::type value_t = prop.get_type();
 
-	if (value_type == rttr::type::get<vec3f>())
-	{
-		const rttr::instance& obj2 = var;
 
-		rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
 
-		auto prop_list = obj.get_derived_type().get_properties();
-		for (auto prop : prop_list)
+		rttr::variant var;
+		if (value_t.is_sequential_container())
 		{
-
-			
-
-
-			Array<rttr::variant> arrayToWrite;
-			rttr::variant prop_value = prop.get_value(obj);
-			WriteVec(prop_value.create_sequential_view(), arrayToWrite);
-
-			if (arrayToWrite.size() == 3)
-			{
-				//float floatArray[3] = { arrayToWrite[0].to_float(),
-				//		arrayToWrite[1].to_float(),
-				//		arrayToWrite[2].to_float()
-				//};
-				//const rttr::property propTest = var;
-				if(ImGui::DragFloat3(propertyName.to_string().c_str(), floatArray, 0.2, -1000, 1000))
-				{
-
-					auto view = prop_value.create_sequential_view();
-					for (int i = 0; i < 3; i++)
-					{
-						
-						if (view.set_value(i, floatArray[i]))
-						{
-							DEBUG_LOG("TEST", "TEST", "SUCCESS");
-						}
-
-					}
-					prop.set_value(obj, view);
-
-				}
-				
-			}
-			
-		}
-
-		
-
-	}
-	if (var.is_sequential_container())
-	{
-		write_array(var.create_sequential_view());
-	}
-	//else if (var.is_associative_container())
-	//{
-	//	write_associative_container(var.create_associative_view(), writer);
-	//}
-	else
-	{
-		auto child_props = is_wrapper ? wrapped_type.get_properties() : value_type.get_properties();
-		if (!child_props.empty())
-		{
-			to_ui_rec(var);
+			var = prop.get_value(obj);
+			auto view = var.create_sequential_view();
+			write_array_recursively(view);
 		}
 		else
 		{
-			bool ok = false;
-			auto text = var.to_string(&ok);
-			if (!ok)
-			{
-				return false;
-			}
+			rttr::variant var = prop.get_value(obj);
+			fromjson_recursively(var);
+			prop.set_value(obj, var);
 		}
+
+		//auto& json_value = ret->value;
+		//switch (json_value.GetType())
+		//{
+		//case kArrayType:
+		//{
+		//
+		//	//else if (value_t.is_associative_container())
+		//	//{
+		//	//	var = prop.get_value(obj);
+		//	//	auto associative_view = var.create_associative_view();
+		//	//	write_associative_view_recursively(associative_view, json_value);
+		//	//}
+		//
+		//	prop.set_value(obj, var);
+		//	break;
+		//}
+		//case kObjectType:
+		//{
+		//	variant var = prop.get_value(obj);
+		//	fromjson_recursively(var, json_value);
+		//	prop.set_value(obj, var);
+		//	break;
+		//}
+		//default:
+		//{
+		//	variant extracted_value = extract_basic_types(json_value);
+		//	if (extracted_value.convert(value_t)) // REMARK: CONVERSION WORKS ONLY WITH "const type", check whether this is correct or not!
+		//		prop.set_value(obj, extracted_value);
+		//}
+		//}
 	}
-
-	return true;
-}
-
-void to_ui_rec(const rttr::instance& obj2)
-{
-	rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
-
-	auto prop_list = obj.get_derived_type().get_properties();
-	for (auto prop : prop_list)
-	{
-		if (prop.get_metadata("NO_SERIALIZE"))
-			continue;
-
-		rttr::variant prop_value = prop.get_value(obj);
-		if (!prop_value)
-			continue; // cannot serialize, because we cannot retrieve the value
-
-		const auto name = prop.get_name();
-		if (!write_variant(prop_value, name))
-		{
-			std::cerr << "cannot serialize property: " << name << std::endl;
-		}
-	}
-
 }
 
 
@@ -355,7 +230,7 @@ void EditorUI::DrawInspector()
 	//}
 	auto entity = SceneManager::currentScene.sceneObjects[0];
 	ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-	to_ui_rec(transformComp.get());
+	//fromjson_recursively(transformComp.get());
 	ImGui::End();
 }
 

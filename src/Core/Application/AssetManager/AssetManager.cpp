@@ -18,65 +18,57 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 	Array<uint32> materialIndices;
 
 	AssetLoader::LoadModel(file, models, materialIndices, materials);
-
 	Array<MeshInfo*> loadedMeshes;
+
 	for (int i = 0; i < models.size(); i++)
 	{
-		IndexedModel& model = models[i];
-		MeshInfo* newMesh = new MeshInfo();
+		MeshInfo* curMesh = new MeshInfo();
+		curMesh->vertexArray = new VertexArray(renderDevice, models[i], USAGE_STATIC_DRAW);
+		loadedMeshes.Add(curMesh);
 
-		newMesh->vertexArray = new VertexArray(renderDevice, model, BufferUsage::USAGE_DYNAMIC_DRAW);
+		Material* curMaterial = new Material();
 
 		//HACK!
 		if (materials.size() == 0)
 		{
 			//Use default material
-			newMesh->material = new Material();
+			curMesh->material = new Material();
 			continue;
 		}
-		
-		MaterialSpec& materialSpec = materials[materialIndices[i] - 1];
-		newMesh->material = new Material();
-		//Textures
-		for (auto texture_it : materialSpec.textureNames)
+
+		for (int j = 0; j < materials.size(); j++)
 		{
-			NString textureType = texture_it.first;
-			if (textureType == "texture_diffuse")
+			for (auto textureTypeToFile : materials[i].textureNames)
 			{
-				if (Texture* cachedTex = FindTexture(texture_it.first))
+				//TODO: Add check for empty string?
+				NString textureType = textureTypeToFile.first;
+				NString textureFileName = textureTypeToFile.second;
+
+				Texture* texture = importedTextures.Find(textureFileName);
+				if (texture != nullptr)
 				{
-					newMesh->material->textures[TEXTURE_ALBEDO] = cachedTex;
+					curMaterial->textures[textureType] = texture;
 				}
 				else
 				{
-					NString textureFile = texture_it.second;
 					ArrayBitmap bitmap;
-					bitmap.Load(textureFile);
-					Texture* texture = new Texture(renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
-					newMesh->material->textures[TEXTURE_ALBEDO] = texture;
-					importedTextures[textureFile] = texture;
+					bitmap.Load(textureTypeToFile.second);
+					texture = new Texture(renderDevice, bitmap, PixelFormat::FORMAT_RGB, true, false);
+					curMaterial->textures[textureTypeToFile.first] = texture;
+
+					importedTextures[textureFileName] = texture;
 				}
+
 			}
-			else if (textureType == "texture_normal")
+			//TODO: HACK for embedded texture
+			for (auto textureTypeToTex : materials[i].textures)
 			{
-				//if (Texture* cachedTex = FindTexture(texture_it.first))
-				//{
-				//	newMesh->material->diffuseTexture = cachedTex;
-				//}
-				//else
-				//{
-				//	NString textureFile = texture_it.second;
-				//	ArrayBitmap bitmap;
-				//	bitmap.Load(textureFile);
-				//	Texture* texture = new Texture(renderDevice, bitmap, PixelFormat::FORMAT_RGBA, false, false);
-				//	newMesh->material->normalMap = texture;
-				//	importedTextures[textureFile] = texture;
-				//}
+				curMaterial->textures[textureTypeToTex.first] = textureTypeToTex.second;
 			}
-
 		}
+		curMesh->material = curMaterial;
 
-		loadedMeshes.push_back(newMesh);
+		loadedMeshes.push_back(curMesh);
 	}
 
 	importedModels[file] = loadedMeshes;

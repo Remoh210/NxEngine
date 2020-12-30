@@ -74,7 +74,7 @@ namespace ECS
 				}
 				else
 				{
-					transform->transform.rotation.ToVec().y += 0.2f * deltaTime;
+					//transform->transform.rotation.ToVec().y += 0.2f * deltaTime;
 					//transform->transform.position = vec3(0.0f);
 
 					context->RenderMesh(mesh->meshes, mesh->shader, transform->transform.ToMatrix());

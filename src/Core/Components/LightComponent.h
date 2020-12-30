@@ -23,7 +23,7 @@ struct LightComponent
 		direction = vec3(0.0f);
     }
 
-	// Point light constructor
+	// Directional light constructor
 	LightComponent(vec3 colorIn, float intensityIn, vec3 posIn, vec3 directionIn)
 		:color(colorIn)
 		, intensity(intensityIn)

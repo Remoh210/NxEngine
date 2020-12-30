@@ -1,73 +1,79 @@
-#if defined(VS_BUILD)
+#define TILE_SIZE 1.0
+#define LINE_WIDTH 1.0
 
-out vec2 texCoord0;
-out vec3 VertColor;
+#define ANTIALIASED_LINES 0
 
-out vec3 nearPoint;
-out vec3 farPoint;
-
-out mat4 fragView;
-out mat4 fragProj;
-
-//In
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 texCoord;
-layout (location = 2) in vec3 normal;
-layout (location = 3) in vec3 color;
-layout (location = 4) in mat4 transformMat;
-
-layout (std140) uniform Matrices
+// gives the grid lines alpha factor
+float grid(in vec2 uv)
 {
-    mat4 projection;
-    mat4 view;
-};
-
-vec3 UnprojectPoint(float x, float y, float z, mat4 view, mat4 projection) {
-    mat4 viewInv = inverse(view);
-    mat4 projInv = inverse(projection);
-    vec4 unprojectedPoint =  viewInv * projInv * vec4(x, y, z, 1.0);
-    return unprojectedPoint.xyz / unprojectedPoint.w;
-}
-
-void main() {
-    vec3 p = position.xyz;
-    nearPoint = UnprojectPoint(p.x, p.y, 0.0, view, projection).xyz; // unprojecting on the near plane
-    farPoint = UnprojectPoint(p.x, p.y, 1.0, view, projection).xyz; // unprojecting on the far plane
-    gl_Position = vec4(p, 1.0); // using directly the clipped coordinates
-}
-
-#elif defined(FS_BUILD)
-
-in vec3 nearPoint;
-in vec3 farPoint;
-in mat4 fragView;
-in mat4 fragProj;
-layout(location = 0) out vec4 outColor;
-
-vec4 grid(vec3 fragPos3D, float scale, bool drawAxis) {
-    vec2 coord = fragPos3D.xz * scale;
-    vec2 derivative = fwidth(coord);
-    vec2 grid = abs(fract(coord - 0.5) - 0.5) / derivative;
-    float line = min(grid.x, grid.y);
-    float minimumz = min(derivative.y, 1);
-    float minimumx = min(derivative.x, 1);
-    vec4 color = vec4(0.2, 0.2, 0.2, 1.0 - min(line, 1.0));
-    // z axis
-    if(fragPos3D.x > -0.1 * minimumx && fragPos3D.x < 0.1 * minimumx)
-        color.z = 1.0;
-    // x axis
-    if(fragPos3D.z > -0.1 * minimumz && fragPos3D.z < 0.1 * minimumz)
-        color.x = 1.0;
-    return color;
-}
-float computeDepth(vec3 pos) {
-    vec4 clip_space_pos = fragProj * fragView * vec4(pos.xyz, 1.0);
-    return (clip_space_pos.z / clip_space_pos.w);
-}
-void main() {
-    float t = -nearPoint.y / (farPoint.y - nearPoint.y);
-    vec3 fragPos3D = nearPoint + t * (farPoint - nearPoint);
-    gl_FragDepth = computeDepth(fragPos3D);
-    outColor = grid(fragPos3D, 10, true) * float(t > 0);
-}
+    vec2 grid = vec2(0.0);
+    float line = 0.0;
+    
+    for (int i = 0; i < 3; ++i)
+    {
+#if ANTIALIASED_LINES == 1
+    	// antialiased lines
+    	grid = 1.0 * abs(mod(uv + 0.5*TILE_SIZE, TILE_SIZE * pow(10.0, float(i))) - 0.5) / fwidth(uv) / LINE_WIDTH;
+    	line = max(line, pow(4.0, float(i)) * (1.0 - min(min(grid.x, grid.y), 1.0)));
+#else
+    	// almost pixel-perfect lines
+    	grid = 1.0 * fwidth(uv)/mod(uv, pow(10.0, float(i)));
+    	line = max(line, pow(4.0, float(i)) * step(1.0/LINE_WIDTH, max(grid.x, grid.y)));
 #endif
+    }
+    
+    return line;
+}
+
+// intersection with floor plane
+bool iFloor(in vec3 ro, in vec3 rd, out float t)
+{
+    float floor_y = -1.5;
+    t = (floor_y - ro.y) / rd.y;
+    return t > 0.0;
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // Normalized pixel coordinates (from 0 to 1)
+    vec2 uv = fragCoord/iResolution.xy;
+    
+    // Normalized pixel coordinates (from -1 to 1)
+    vec2 nuv = -1.0 + 2.0 * uv;
+    nuv.x *= iResolution.x / iResolution.y; // aspect ratio correction
+
+    // Camera -> world matrix
+    vec3 obs = getValueAt(INDEX_POSITION).xyz;
+    vec3 vrp = obs + getValueAt(INDEX_DIRECTION).xyz;
+    vec3 up = vec3(0.0, 1.0, 0.0);
+    vec3 ww = normalize(obs - vrp);
+    vec3 uu = cross(up, ww);
+    vec3 vv = cross(ww, uu);
+    
+    // Ray origin / direction in world space
+   	vec3 ro = obs;
+    vec3 rd = uu * nuv.x + vv * nuv.y - ww * 2.8;
+    
+    // Background color
+    vec3 topColor = vec3(0.4);
+    vec3 botColor = vec3(0.1);
+    vec3 col = mix(botColor, topColor, smoothstep(-0.05, 0.1, rd.y));
+    
+    float t;
+    if (iFloor(ro, rd, t))
+    {
+        vec3 floorPos = ro + t*rd;
+        vec2 uv = floorPos.xz;
+        
+        float alpha = grid(uv);
+        
+        alpha = min(1.0, alpha/(t*t)); // distance attenuation
+        
+        col = mix(col, vec3(1.0), alpha);
+    }
+    
+    col = sqrt(col);
+
+    // Output to screen
+    fragColor = vec4(col,1.0);
+}

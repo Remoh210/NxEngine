@@ -11,6 +11,7 @@
 #include <Core/Graphics/Cubemap/CubemapManager.h>
 #include <Core/Graphics/ShaderManager/ShaderManager.h>
 #include <Core/Application/SceneManager/SceneManager.h>
+#include <Core/Application/AssetManager/AssetManager.h>
 #include <Core/Application/Settings/GlobalSettings.h>
 #include <Core/Time/NxTime.h>
 
@@ -60,6 +61,11 @@ Application* Application::Create(float Width, float Height)
 {
 	return new Application(Width, Height);
 }
+
+
+//Test
+float roughness = 1.0f;
+float metallic = 0.0f;
 
 int Application::Run()
 {
@@ -174,8 +180,22 @@ int Application::Run()
 
 		auto staticMesh = SceneManager::currentScene.sceneObjects[0]->get<StaticMeshComponent>();
 		
-		ImGui::SliderFloat("roughness", &staticMesh->meshes[0]->material->roughness, 0.0f, 1.0f);
-		ImGui::SliderFloat("metallic", &staticMesh->meshes[0]->material->metallic, 0.0f, 1.0f);
+		if(ImGui::SliderFloat("roughness", &roughness, 0.0f, 1.0f))
+		{
+			for(auto mesh : staticMesh->meshes)
+			{
+				mesh->material->roughness = roughness;
+			}
+		}
+		if (ImGui::SliderFloat("metallic", &metallic, 0.0f, 1.0f))
+		{
+			for (auto mesh : staticMesh->meshes)
+			{
+				mesh->material->metallic = metallic;
+			}
+		}
+		
+
 		ImGui::Text("Environments:");
 		if (ImGui::Button("Sky"))
 		{
@@ -389,7 +409,7 @@ void Application::Initialize()
 
 	//Init Shaders**********************************************************
 
-	editorSampler = new Sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR);
+	editorSampler = new Sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR, FILTER_LINEAR_MIPMAP_LINEAR);
 	//DrawParams drawParams;
 	//drawParams.primitiveType = PRIMITIVE_TRIANGLES;
 	//drawParams.faceCulling = FACE_CULL_BACK;
@@ -446,7 +466,7 @@ void Application::LoadDefaultScene()
 	//PBRSphere.glb = binary and embedded textures
 	//PBRSphere2.gltf = embedded textures
 	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb";
-	NString TEST_MODEL_FILE6 = "res/models/PBRTest.glb";
+	NString TEST_MODEL_FILE6 = "res/models/dust/fbx/dust.fbx";
 	//Assimp PBR********************************************************
 	
 
@@ -600,6 +620,7 @@ void Application::LoadDefaultScene()
 	//material5->color(1.0);
 	material5->metallic = 0.99;
 	material5->roughness = 0.01;
+	material5->color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
 	//material5->textures[TEXTURE_ALBEDO] = albedo;
 	//material5->textures[TEXTURE_NORMAL] = normal;
 	//material5->textures[TEXTURE_METALLIC] = metallic;
@@ -618,45 +639,16 @@ void Application::LoadDefaultScene()
 	transformComp5.transform.scale = vec3(5);
 
 
-
-	Array<IndexedModel> PBRLoadedMeshes6;
-	Array<uint32> PBRMaterialIndices6;
-	Array<MaterialSpec> PBRLoadedMaterials6;
-	AssetLoader::LoadModel(TEST_MODEL_FILE6, PBRLoadedMeshes6, PBRMaterialIndices6, PBRLoadedMaterials6);
-
 	StaticMeshComponent renderableMesh6;
-
-	for (int i = 0; i < PBRLoadedMeshes6.size(); i++)
-	{
-		MeshInfo* curMesh = new MeshInfo();
-		curMesh->vertexArray = new VertexArray(renderDevice, PBRLoadedMeshes6[i], USAGE_STATIC_DRAW);
-		renderableMesh6.meshes.Add(curMesh);
-
-		Material* material3 = new Material();
-		for (int j = 0; j < PBRLoadedMaterials6.size(); j++)
-		{
-			for (auto textureTypeToFile : PBRLoadedMaterials6[i].textureNames)
-			{
-				ArrayBitmap bm;
-				bm.Load(textureTypeToFile.second);
-				Texture* tex = new Texture(renderDevice, bm, PixelFormat::FORMAT_RGBA, false, false);
-				material3->textures[textureTypeToFile.first] = tex;
-			}
-			for (auto textureTypeToTex : PBRLoadedMaterials6[i].textures)
-			{
-				material3->textures[textureTypeToTex.first] = textureTypeToTex.second;
-			}
-		}
-		curMesh->material = material3;
-	}
-
+	renderableMesh6.meshes = AssetManager::ImportModel(renderDevice, TEST_MODEL_FILE6);
+	renderableMesh6.meshAssetFile = TEST_MODEL_FILE6;
 	renderableMesh6.shader = ShaderManager::GetMainShader();
 	renderableMesh6.numInst = 1;
 	TransformComponent transformComp6;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp6.transform.position = vec3(-15.1f, 0.0f, -40.0f);
-	transformComp6.transform.rotation = vec3(0.0, 0.0f, 0.f);
-	transformComp6.transform.scale = vec3(25.5);
+	transformComp6.transform.rotation = vec3(glm::radians(-90.0f), 0.0f, 0.f);
+	transformComp6.transform.scale = vec3(0.5);
 
 
 /*	ECS::Entity* ent = world->create();
@@ -670,13 +662,12 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
 	ent3->assign<StaticMeshComponent>(renderableMesh3);
-	SceneManager::currentScene.sceneObjects.Add(ent3);
+
 
 	ECS::Entity* ent4 = world->create();
 	ent4->assign<TransformComponent>(transformComp4);
 	ent4->assign<StaticMeshComponent>(renderableMesh4);
 
-	SceneManager::currentScene.sceneObjects.Add(ent4);
 
 	ECS::Entity* ent5 = world->create();
 	ent5->assign<TransformComponent>(transformComp5);
@@ -703,6 +694,14 @@ void Application::LoadDefaultScene()
 	ECS::Entity* lightDir = world->create();
 	lightDir->assign<TransformComponent>(Transform());
 	lightDir->assign<LightComponent>(dirColor, dirInten, vec3(0), dir);
+
+	//Directional
+	vec3 dirColor2(1.0f, 1.0f, 1.0f);
+	vec3 dir2(0.0f, -0.1f, -0.06f);
+	float dirInten2 = 10.1f;
+	ECS::Entity* lightDir2 = world->create();
+	lightDir2->assign<TransformComponent>(Transform());
+	lightDir2->assign<LightComponent>(dirColor2, dirInten2, vec3(0), dir2);
 
 	//Point;
 	vec3 color(1.0f, 1.0f, 1.0f);

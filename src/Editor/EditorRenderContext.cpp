@@ -324,7 +324,7 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 	else
 	{
 		//TODO: Change That
-		shader->SetUniform4f("uColorAlpha", glm::vec4(1.0f, 0.0f, 0.0f, 1.0f));
+		shader->SetUniform4f("uColorAlpha", material->color);
 		shader->SetUniform1f("bUseAlbedoMap", false);
 	}
 	//Normal

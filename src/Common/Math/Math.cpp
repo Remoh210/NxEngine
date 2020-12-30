@@ -3,8 +3,7 @@
 RTTR_REGISTRATION
 {
 		rttr::registration::class_<vec3f>("vec3f")
-		.property("data", &vec3f::Get,  &vec3f::Set)
-	    .property("data2", &vec3f::data2)
+		.property("data", &vec3f::Get, &vec3f::Set)
 	;
 }
 
