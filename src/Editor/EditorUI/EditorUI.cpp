@@ -19,12 +19,145 @@ float floatArray[3] = { 1,
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-void fromjson_recursively(rttr::instance obj);
+void reflectUI(rttr::instance obj);
+bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName);
+void reflectProperty(rttr::property& prop, rttr::instance& obj);
+void reflectArray(rttr::variant_sequential_view& view, rttr::instance& obj, NString propName);
+
+void reflectArray(rttr::variant_sequential_view& view, rttr::instance& obj, NString propName)
+{
+	int i = 0;
+	for (const auto& item : view)
+	{
+		if (item.is_sequential_container())
+		{
+			reflectArray(item.create_sequential_view(), obj, propName);
+		}
+		else
+		{
+			rttr::variant wrapped_var = item.extract_wrapped_value();
+			rttr::type value_type = wrapped_var.get_type();
+			if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
+			{
+				reflectBasicType(value_type, wrapped_var, propName + "##" + std::to_string(i));
+				view.set_value(i, wrapped_var);
+			}
+			else // object
+			{
+				//to_json_recursively(wrapped_var, writer);
+			}
+		}
+		i++;
+	}
+}
+
+
+void reflectProperty(rttr::property& prop, rttr::instance& obj)
+{
+	auto value_type = prop.get_type();
+	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
+	bool is_wrapper = wrapped_type != value_type;
+
+
+	//TODO: Fix wrapped types
+	if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
+	{
+		rttr::variant var = prop.get_value(obj);
+		var = is_wrapper ? var.extract_wrapped_value() : var;
+		reflectBasicType(is_wrapper ? wrapped_type : value_type, var,
+			prop.get_name().to_string());
+		prop.set_value(obj, var);
+	}
+	//if(reflectBasicType(is_wrapper ? wrapped_type : value_type, obj, prop))
+	//{
+	//}
+	else if (value_type.is_sequential_container())
+	{
+		rttr::variant var = prop.get_value(obj);
+		reflectArray(var.create_sequential_view(), obj, prop.get_name().to_string());
+		prop.set_value(obj, var);
+	}
+	else
+	{
+		auto child_props = is_wrapper ? wrapped_type.get_properties() : value_type.get_properties();
+		if (!child_props.empty())
+		{
+			rttr::variant var = prop.get_value(obj);
+			reflectUI(var);
+			prop.set_value(obj, var);
+		}
+
+	}
+}
+
+
+bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName)
+{
+	if (t.is_arithmetic())
+	{
+		if (t == rttr::type::get<bool>())
+		{
+
+		}
+		else if (t == rttr::type::get<char>())
+		{
+
+		}
+		else if (t == rttr::type::get<int8_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<int16_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<int32_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<int64_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<uint8_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<uint16_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<uint32_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<uint64_t>())
+		{
+
+		}
+		else if (t == rttr::type::get<float>())
+		{
+			float value = var.to_float();
+			if(ImGui::SliderFloat(propName.c_str(), &value, 100.0f, -100.f))
+			{
+				var = value;
+			}
+		}
+		else if (t == rttr::type::get<double>())
+		{
+
+		}
+
+		return true;
+	}
+
+	return false;
+}
 
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-static void write_array_recursively(rttr::variant_sequential_view& view)
+static void reflectArray(rttr::variant_sequential_view& view)
 {
 	////view.set_size(json_array_value.Size());
 	//const rttr::type array_value_type = view.get_rank_type(1);
@@ -54,64 +187,19 @@ static void write_array_recursively(rttr::variant_sequential_view& view)
 }
 
 
-void fromjson_recursively(rttr::instance obj2)
+void reflectUI(rttr::instance obj2)
 {
 	rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
 	const auto prop_list = obj.get_derived_type().get_properties();
 
 	for (auto prop : prop_list)
 	{
-		//Value::MemberIterator ret = json_object.FindMember(prop.get_name().data());
-		//if (ret == json_object.MemberEnd())
-		//	continue;
 		const rttr::type value_t = prop.get_type();
+	
+		//rttr::variant var = prop.get_value(obj);
+		reflectProperty(prop, obj);
+		//prop.set_value(obj, var);
 
-
-
-		rttr::variant var;
-		if (value_t.is_sequential_container())
-		{
-			var = prop.get_value(obj);
-			auto view = var.create_sequential_view();
-			write_array_recursively(view);
-		}
-		else
-		{
-			rttr::variant var = prop.get_value(obj);
-			fromjson_recursively(var);
-			prop.set_value(obj, var);
-		}
-
-		//auto& json_value = ret->value;
-		//switch (json_value.GetType())
-		//{
-		//case kArrayType:
-		//{
-		//
-		//	//else if (value_t.is_associative_container())
-		//	//{
-		//	//	var = prop.get_value(obj);
-		//	//	auto associative_view = var.create_associative_view();
-		//	//	write_associative_view_recursively(associative_view, json_value);
-		//	//}
-		//
-		//	prop.set_value(obj, var);
-		//	break;
-		//}
-		//case kObjectType:
-		//{
-		//	variant var = prop.get_value(obj);
-		//	fromjson_recursively(var, json_value);
-		//	prop.set_value(obj, var);
-		//	break;
-		//}
-		//default:
-		//{
-		//	variant extracted_value = extract_basic_types(json_value);
-		//	if (extracted_value.convert(value_t)) // REMARK: CONVERSION WORKS ONLY WITH "const type", check whether this is correct or not!
-		//		prop.set_value(obj, extracted_value);
-		//}
-		//}
 	}
 }
 
@@ -230,7 +318,7 @@ void EditorUI::DrawInspector()
 	//}
 	auto entity = SceneManager::currentScene.sceneObjects[0];
 	ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-	//fromjson_recursively(transformComp.get());
+	reflectUI(transformComp.get());
 	ImGui::End();
 }
 

@@ -28,6 +28,7 @@ struct Transform
 	vec3f rotation;
 	vec3f scale;
 
+	float nestedValue = 0.f;
 
 	RTTR_ENABLE();
 };

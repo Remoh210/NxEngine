@@ -17,8 +17,9 @@ mat4 Transform::ToMatrix()
 RTTR_REGISTRATION
 {
 		rttr::registration::class_<Transform>("TransformComponent")
+		.property("nestedValue", &Transform::nestedValue)
 		.property("position", &Transform::position)
-		.property("rotation", &Transform::rotation)
-		.property("scale",    &Transform::scale)
+		//.property("rotation", &Transform::rotation)
+		//.property("scale",    &Transform::scale)
 	;
 }

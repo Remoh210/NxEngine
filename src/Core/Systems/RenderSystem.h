@@ -74,6 +74,11 @@ namespace ECS
 				}
 				else
 				{
+					float rotSpeed = transform->rotSpeed;
+					if (transform->transform.nestedValue != 0.0f)
+					{
+						transform->transform.rotation.ToVec().y += transform->transform.nestedValue * deltaTime;
+					}
 					//transform->transform.rotation.ToVec().y += 0.2f * deltaTime;
 					//transform->transform.position = vec3(0.0f);
 

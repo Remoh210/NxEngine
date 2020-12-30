@@ -12,7 +12,7 @@ struct TransformComponent
 
 	Transform transform;
 
-	float testValue = 0.0f;
+	float rotSpeed = 0.0f;
 
 	RTTR_ENABLE();
 };
@@ -21,6 +21,6 @@ RTTR_REGISTRATION
 {
 	rttr::registration::class_<TransformComponent>("TransformComponent")
 		.property("transform", &TransformComponent::transform)
-		.property("testValue", &TransformComponent::testValue)
+		.property("Rotation Speed", &TransformComponent::rotSpeed)
 	;
 }
