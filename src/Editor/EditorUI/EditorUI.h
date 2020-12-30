@@ -21,7 +21,7 @@ public:
 	
 	//static void NewFrame();
 	//static void DrawGizmo();
-	static void EditorUI::EditTransform(const float* cameraView, float* cameraProjection, 
+	static void EditTransform(const float* cameraView, float* cameraProjection, 
 		float* matrix, bool editTransformDecomposition);
 	//static void ShutDown();
 

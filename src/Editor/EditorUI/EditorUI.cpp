@@ -68,7 +68,8 @@ void reflectArray(rttr::variant_sequential_view& view, NString propName)
 	{
 		if (item.is_sequential_container())
 		{
-			reflectArray(item.create_sequential_view(), propName);
+            auto view = item.create_sequential_view();
+			reflectArray(view, propName);
 		}
 		else
 		{
@@ -117,7 +118,8 @@ void reflectProperty(rttr::property& prop, rttr::instance& obj)
 	else if (value_type.is_sequential_container())
 	{
 		rttr::variant var = prop.get_value(obj);
-		reflectArray(var.create_sequential_view(), prop.get_name().to_string());
+        auto view = var.create_sequential_view();
+		reflectArray(view, prop.get_name().to_string());
 		prop.set_value(obj, var);
 	}
 	else
