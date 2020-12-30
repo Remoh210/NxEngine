@@ -64,8 +64,8 @@ Application* Application::Create(float Width, float Height)
 
 
 //Test
-float roughness = 1.0f;
-float metallic = 0.0f;
+float roughness = 0.1f;
+float metallic = 0.9;
 
 int Application::Run()
 {
@@ -681,6 +681,10 @@ void Application::LoadDefaultScene()
 	//SceneManager::currentScene.sceneObjects.Add(ent2);
 	//SceneManager::currentScene.sceneObjects.Add(ent3);
 	SceneManager::currentScene.sceneObjects.Add(ent5);
+
+	SceneManager::currentScene.sceneObjects.Add(ent4);
+	SceneManager::currentScene.sceneObjects.Add(ent3);
+	SceneManager::currentScene.sceneObjects.Add(ent6);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();

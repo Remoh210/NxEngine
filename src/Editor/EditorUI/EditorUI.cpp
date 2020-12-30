@@ -22,16 +22,53 @@ float floatArray[3] = { 1,
 void reflectUI(rttr::instance obj);
 bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName);
 void reflectProperty(rttr::property& prop, rttr::instance& obj);
-void reflectArray(rttr::variant_sequential_view& view, rttr::instance& obj, NString propName);
+void reflectArray(rttr::variant_sequential_view& view, NString propName);
+void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size);
 
-void reflectArray(rttr::variant_sequential_view& view, rttr::instance& obj, NString propName)
+void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size)
+{
+	auto value_type = var.get_type();
+	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
+	bool is_wrapper = wrapped_type != value_type;
+
+	auto child_props = is_wrapper ? wrapped_type.get_properties() : value_type.get_properties();
+	if (!child_props.empty())
+	{
+		rttr::instance obj2 = var;
+		rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
+		const auto prop_list = obj.get_derived_type().get_properties();
+
+		for (auto prop : prop_list)
+		{
+			Array<float> dataArray;
+			auto value = prop.get_value(obj);
+			auto view = value.create_sequential_view();
+			for (auto item : view)
+			{
+				rttr::variant wrapped_var = item.extract_wrapped_value();
+				dataArray.push_back(wrapped_var.to_float());
+			}
+
+			if(ImGui::DragFloat3(propName.c_str(), &dataArray[0], 0.05, -FLT_MAX, FLT_MAX, "%.3f"))
+			{
+				for (int i = 0; i < size; i++)
+				{
+					view.set_value(i, dataArray[i]);
+				}
+			}
+			prop.set_value(obj, value);
+		}
+	}
+}
+
+void reflectArray(rttr::variant_sequential_view& view, NString propName)
 {
 	int i = 0;
 	for (const auto& item : view)
 	{
 		if (item.is_sequential_container())
 		{
-			reflectArray(item.create_sequential_view(), obj, propName);
+			reflectArray(item.create_sequential_view(), propName);
 		}
 		else
 		{
@@ -71,10 +108,16 @@ void reflectProperty(rttr::property& prop, rttr::instance& obj)
 	//if(reflectBasicType(is_wrapper ? wrapped_type : value_type, obj, prop))
 	//{
 	//}
+	else if (value_type == rttr::type::get<vec3f>())
+	{
+		rttr::variant var = prop.get_value(obj);
+		reflectVec(var, obj, prop.get_name().to_string(), 3);
+		prop.set_value(obj, var);
+	}
 	else if (value_type.is_sequential_container())
 	{
 		rttr::variant var = prop.get_value(obj);
-		reflectArray(var.create_sequential_view(), obj, prop.get_name().to_string());
+		reflectArray(var.create_sequential_view(), prop.get_name().to_string());
 		prop.set_value(obj, var);
 	}
 	else
@@ -155,38 +198,6 @@ bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName)
 }
 
 
-/////////////////////////////////////////////////////////////////////////////////////////
-
-static void reflectArray(rttr::variant_sequential_view& view)
-{
-	////view.set_size(json_array_value.Size());
-	//const rttr::type array_value_type = view.get_rank_type(1);
-
-	//for (int i = 0; i < view.get_size(); ++i)
-	//{
-	//	auto& json_index_value = json_array_value[i];
-	//	if (json_index_value.IsArray())
-	//	{
-	//		auto sub_array_view = view.get_value(i).create_sequential_view();
-	//		write_array_recursively(sub_array_view);
-	//	}
-	//	else if (json_index_value.IsObject())
-	//	{
-	//		rttr::variant var_tmp = view.get_value(i);
-	//		rttr::variant wrapped_var = var_tmp.extract_wrapped_value();
-	//		fromjson_recursively(wrapped_var);
-	//		view.set_value(i, wrapped_var);
-	//	}
-	//	else
-	//	{
-	//		//rttr::variant extracted_value = extract_basic_types(json_index_value);
-	//		//if (extracted_value.convert(array_value_type))
-	//		//	view.set_value(i, extracted_value);
-	//	}
-	//}
-}
-
-
 void reflectUI(rttr::instance obj2)
 {
 	rttr::instance obj = obj2.get_type().get_raw_type().is_wrapper() ? obj2.get_wrapped_instance() : obj2;
@@ -194,12 +205,7 @@ void reflectUI(rttr::instance obj2)
 
 	for (auto prop : prop_list)
 	{
-		const rttr::type value_t = prop.get_type();
-	
-		//rttr::variant var = prop.get_value(obj);
 		reflectProperty(prop, obj);
-		//prop.set_value(obj, var);
-
 	}
 }
 
@@ -308,17 +314,66 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 
 void EditorUI::DrawInspector()
 {
-	ImGui::Begin("Inspector");
+	//ImGui::Begin("Inspector");
 	//for (auto entity : SceneManager::currentScene.sceneObjects)
 	//{
+	//	
+	//	ImGui::LabelText("mesh", entity->get<StaticMeshComponent>()->meshAssetFile.c_str());
 	//	ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-	//	auto props = rttr::type::get(transformComp.get()).get_properties();
-	//	to_ui_rec(transformComp.get());
+	//	reflectUI(transformComp.get());
 
 	//}
-	auto entity = SceneManager::currentScene.sceneObjects[0];
-	ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-	reflectUI(transformComp.get());
+	//ImGui::End();
+	
+
+
+	ImGui::Begin("Inspector");
+
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	static int selection_mask = (1 << 2);
+	int node_clicked = -1;
+	int i = 0;
+	for (auto entity : SceneManager::currentScene.sceneObjects)
+	{
+		// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+		ImGuiTreeNodeFlags node_flags = base_flags;
+		const bool is_selected = (selection_mask & (1 << i)) != 0;
+		if (is_selected)
+			node_flags |= ImGuiTreeNodeFlags_Selected;
+
+		//RenderComponent* RC = ecs.GetComponent<RenderComponent>(entity);
+		//if (RC)
+		//{
+			// Items 0..2 are Tree Node
+		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, entity->get<StaticMeshComponent>()->meshAssetFile.c_str(), i);
+		if (ImGui::IsItemClicked())
+		{
+			//    showInspector = true;
+			node_clicked = i;
+			//   selectedEntity = entity;
+		}
+
+		if (node_open)
+		{
+			ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
+			reflectUI(transformComp.get());
+
+			ImGui::TreePop();
+		}
+		//}
+		i++;
+	}
+	if (node_clicked != -1)
+	{
+		// Update selection state. Process outside of tree loop to avoid visual inconsistencies during the clicking-frame.
+		if (ImGui::GetIO().KeyCtrl)
+			selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
+		else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, this commented bit preserve selection when clicking on item that is part of the selection
+			selection_mask = (1 << node_clicked);           // Click to single-select
+	}
+
 	ImGui::End();
 }
 
