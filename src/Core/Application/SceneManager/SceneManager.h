@@ -11,7 +11,7 @@
 struct Scene
 {
 	NString sceneName;
-	Array<ECS::Entity*> sceneObjects;
+	NxArray<ECS::Entity*> sceneObjects;
 	inline uint32 GetNumObjects() { return sceneObjects.size(); }
 	void Clear();
 };

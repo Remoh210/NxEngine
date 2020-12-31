@@ -7,6 +7,8 @@
 #include "rendering/Texture.h"
 #include "rendering/Shader.h"
 
+#include "rttr/registration"
+
 struct Material
 {
 	Material()
@@ -15,29 +17,17 @@ struct Material
 		ambientOcclusion = 1.0f;
 		metallic = 0.95f;
 		roughness = 0.95f;
-
-		//diffuseTexture = nullptr;
-		//normalMap = nullptr;
-		//metallicMap = nullptr;
-		//roughnessMap = nullptr;
-		//aoMap = nullptr;
 	}
 
-
 	Map<NString, Texture*> textures;
-
-	////TODO: Make Map of textures maybe
-	//Texture* diffuseTexture;
-	//Texture* normalMap;
-	//Texture* metallicMap;
-	//Texture* roughnessMap;
-	//Texture* aoMap;
 
 	// color and alpha transparency
 	vec4 color;
 
 	//PBR properties
-	float ambientOcclusion;
 	float metallic;
 	float roughness;
+	float ambientOcclusion;
+
+	RTTR_ENABLE();
 };

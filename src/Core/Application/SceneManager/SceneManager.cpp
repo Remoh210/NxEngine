@@ -4,22 +4,24 @@
 //#include <iostream>
 //
 #include "Common/Transform/Transform.h"
+
+//#include <rapidjson/document.h>
+//#include <rapidjson/filereadstream.h>
+//#include <rapidjson/filewritestream.h>
+//#include <rapidjson/writer.h>
+//#include <rapidjson/stringbuffer.h>
+//#include <rapidjson/prettywriter.h>
+//#include <fstream>
 //
 #include "Core/Systems/RenderSystem.h"
-#include "Core/Components/StaticMeshComponent.h"
+#include "Core/Components/StaticMeshComponent/StaticMeshComponent.h"
 #include "Core/Camera/Camera.h"
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/Application/AssetManager/AssetManager.h"
 #include "Core/Graphics/ShaderManager/ShaderManager.h"
 #include "Core/Engine/Serialization/JSON.h"
 
-#include <rapidjson/document.h>
-#include <rapidjson/filereadstream.h>
-#include <rapidjson/filewritestream.h>
-#include <rapidjson/writer.h>
-#include <rapidjson/stringbuffer.h>
-#include <rapidjson/prettywriter.h>
-#include <fstream>
+
 
 Scene 		          SceneManager::currentScene;
 RenderDevice*         SceneManager::renderDevice = nullptr;
@@ -191,53 +193,53 @@ bool SceneManager::SaveScene(NString filename, Camera& camera)
 
 
 
-	char writeBuffer[65536];
-	std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
-	FILE* fp = fopen(fileToLoadFullPath.c_str(), "wb"); // non-Windows use "w"
+	//char writeBuffer[65536];
+	//std::string fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
+	//FILE* fp = fopen(fileToLoadFullPath.c_str(), "wb"); // non-Windows use "w"
 
-	std::ofstream outputFile;
-	outputFile.open(fileToLoadFullPath.c_str());
+	//std::ofstream outputFile;
+	//outputFile.open(fileToLoadFullPath.c_str());
 
-	for (const auto& entity : currentScene.sceneObjects)
-	{
-		
+	//for (const auto& entity : currentScene.sceneObjects)
+	//{
+	//	
 
-		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
+	//	ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
 
-		if(!transformComp)
-		{
-			continue;
-		}
+	//	if(!transformComp)
+	//	{
+	//		continue;
+	//	}
 
-		NString testJSON = Nx::to_json(transformComp.get());
-		outputFile << testJSON;
-		DEBUG_LOG_TEMP("testJSON: %s", testJSON.c_str());
+	//	NString testJSON = Nx::to_json(transformComp.get());
+	//	outputFile << testJSON;
+	//	DEBUG_LOG_TEMP("testJSON: %s", testJSON.c_str());
 
-		NString str = rttr::type::get(transformComp.get()).get_name().to_string();
-		auto props = rttr::type::get(transformComp.get()).get_properties();
-		for (auto prop : props)
-		{
-			DEBUG_LOG_TEMP("%s", prop.get_type().get_name().to_string().c_str());
+	//	NString str = rttr::type::get(transformComp.get()).get_name().to_string();
+	//	auto props = rttr::type::get(transformComp.get()).get_properties();
+	//	for (auto prop : props)
+	//	{
+	//		DEBUG_LOG_TEMP("%s", prop.get_type().get_name().to_string().c_str());
 
-			auto childProp = rttr::type::get(prop).get_properties();
-			for (auto propChild : childProp)
-			{
-				DEBUG_LOG_TEMP("%s", propChild.get_type().get_name().to_string().c_str());
-			}
-		}
-	}
-	outputFile.close();
+	//		auto childProp = rttr::type::get(prop).get_properties();
+	//		for (auto propChild : childProp)
+	//		{
+	//			DEBUG_LOG_TEMP("%s", propChild.get_type().get_name().to_string().c_str());
+	//		}
+	//	}
+	//}
+	//outputFile.close();
 
-	 
+	// 
 
-	 DEBUG_LOG_TEMP("SCENE: %s", fileToLoadFullPath.c_str());
+	// DEBUG_LOG_TEMP("SCENE: %s", fileToLoadFullPath.c_str());
 
-	 
+	// 
 
-	 //rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
-	 //rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(os);
-	 //doc.Accept(writer);
-	 
+	// //rapidjson::FileWriteStream os(fp, writeBuffer, sizeof(writeBuffer));
+	// //rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(os);
+	// //doc.Accept(writer);
+	// 
 
 	return true;
 }
@@ -320,7 +322,7 @@ bool SceneManager::LoadScene(NString filename, class Camera& camera)
 	//	ent->assign<TransformComponent>(transformComponent);
 	//	ent->assign<StaticMeshComponent>(staticMeshComp);
 
-	//	currentScene.sceneObjects.Add(ent);
+	//	currentScene.sceneObjects.push_back(ent);
 	//}
 
 	return true;

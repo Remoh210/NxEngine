@@ -2,7 +2,7 @@
 #include "glm.hpp"
 #include "gtc/type_ptr.hpp"
 #include "Common/Common.h"
-#include "Common/dataStructs/Array.h"
+#include "Common/dataStructs/NxArray.h"
 #include "rttr/registration"
 
 class vec3f
@@ -69,34 +69,24 @@ public:
 	//This function is used for reflection
 	inline std::vector<float> Get()
 	{
-		std::vector<float> arrayOut;
+		std::vector<float> NxArrayOut;
 		float* value = glm::value_ptr(data);
-		arrayOut.assign(value, value + 3);
-		return arrayOut;
+		NxArrayOut.assign(value, value + 3);
+		return NxArrayOut;
 	}
 
 	//This function is used for reflection
-	inline void Set(std::vector<float> arrayIn)
+	inline void Set(std::vector<float> NxArrayIn)
 	{
-		int size = arrayIn.size();
+		int size = NxArrayIn.size();
 		if (size < 3)
 		{
-			DEBUG_LOG("vec3", "Error", "Can't create vec3 from array of size = %d", size);
+			DEBUG_LOG("vec3", "Error", "Can't create vec3 from NxArray of size = %d", size);
 			return;
 		}
-		data = glm::make_vec3(&arrayIn[0]);
+		data = glm::make_vec3(&NxArrayIn[0]);
 	}
 
-	inline std::vector<float> GetTest() 
-	{
-		return data2;
-	}
-
-	inline void SetTest(std::vector<float> arrayIn)
-	{
-		data2 = arrayIn;
-	}
-	std::vector<float> data2;
 	RTTR_ENABLE();
 #pragma endregion
 

@@ -94,10 +94,10 @@ void EditorRenderContext::SetLights()
 {
 	//TODO: Set as struct in glsl
 	//Set lights
-	Array<int> lightTypes;
-	Array<vec3> lightColors;
-	Array<vec3> lightPositions;
-	Array<vec3> lightDirections;
+	NxArray<int> lightTypes;
+	NxArray<vec3> lightColors;
+	NxArray<vec3> lightPositions;
+	NxArray<vec3> lightDirections;
 
 	int numLights = lightBuffer.size();
 
@@ -213,7 +213,7 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 	SetLights();
 
 	//Draw meshes
-	for (Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4> >::iterator it
+	for (Map<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4> >::iterator it
 		= meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
 	{
 		mat4* transforms = &it->second[0];
@@ -236,21 +236,21 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 			}
 
 
-			VertexArray* vertexArray = mesh->vertexArray;
+			VertexArray* VertexArray = mesh->vertexArray;
 
-			vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
-			if (vertexArray->GetNumIndices() == 0)
+			VertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
+			if (VertexArray->GetNumIndices() == 0)
 			{
-				mRenderDevice->DrawArrays(renderTarget->GetId(), modelShader->GetId(), vertexArray->GetId(),
+				mRenderDevice->DrawNxArrays(renderTarget->GetId(), modelShader->GetId(), VertexArray->GetId(),
 					drawParams, 300);
 			}
 			else
 			{
-				mRenderDevice->Draw(renderTarget->GetId(), modelShader->GetId(), vertexArray->GetId(),
-					drawParams, 1, vertexArray->GetNumIndices());
+				mRenderDevice->Draw(renderTarget->GetId(), modelShader->GetId(), VertexArray->GetId(),
+					drawParams, 1, VertexArray->GetNumIndices());
 
 				//Draw to default framebuffer
-				//Draw(*modelShader, *vertexArray, drawParams, numTransforms);
+				//Draw(*modelShader, *VertexArray, drawParams, numTransforms);
 			}
 
 			it->second.clear();
@@ -267,7 +267,7 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 void EditorRenderContext::DrawEditorHelpers(RenderTarget* renderTarget)
 {
 	if (!bDrawGrid) { return; }
-    Array<mat4> transforms;
+    NxArray<mat4> transforms;
     transforms.push_back(editorGridTransform.ToMatrix());
 
 	editorGridVA->UpdateBuffer(4, &transforms[0], sizeof(mat4));
@@ -279,12 +279,12 @@ void EditorRenderContext::DrawEditorHelpers(RenderTarget* renderTarget)
 void EditorRenderContext::DrawDebugShapes(RenderTarget* renderTarget)
 {
 	Texture* currentTexture = nullptr;
-	for (Map<DebugShape*, Array<mat4>>::iterator it
+	for (Map<DebugShape*, NxArray<mat4>>::iterator it
 		= debugShapeBuffer.begin(); it != debugShapeBuffer.end(); ++it)
 	{
 		DebugShape* shapeToDraw = it->first;
 
-		VertexArray* vertexArray = shapeToDraw->vertexArray;
+		VertexArray* VertexArray = shapeToDraw->vertexArray;
 		Texture* texture = shapeToDraw->texture;
 		DrawParams shapeDrawParams = shapeToDraw->drawParams;
 		mat4* transforms = &it->second[0];
@@ -295,16 +295,16 @@ void EditorRenderContext::DrawDebugShapes(RenderTarget* renderTarget)
 			continue;
 		}
 
-		Shader& modelShader = *vertexArray->GetShader();
+		Shader& modelShader = *VertexArray->GetShader();
 
 		if (texture != currentTexture)
 		{
 			modelShader.SetSampler("diffuse", *texture, *sampler, 0);
 		}
-		vertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
+		VertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 
-		mRenderDevice->Draw(renderTarget->GetId(), modelShader.GetId(), vertexArray->GetId(), 
-			shapeDrawParams, numTransforms, vertexArray->GetNumIndices());
+		mRenderDevice->Draw(renderTarget->GetId(), modelShader.GetId(), VertexArray->GetId(), 
+			shapeDrawParams, numTransforms, VertexArray->GetNumIndices());
 	}
 	debugShapeBuffer.clear();
 }

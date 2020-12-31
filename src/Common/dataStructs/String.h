@@ -3,7 +3,7 @@
 #include <string>
 #include <sstream>
 #include "Common/Common.h"
-#include "Common/dataStructs/Array.h"
+#include "Common/dataStructs/NxArray.h"
 
 #define NString std::string
 
@@ -40,9 +40,9 @@ struct StringFuncs
 		return convert.str();
 	}
 
-	static Array<NString> split(const NString& s, char delim);
+	static NxArray<NString> split(const NString& s, char delim);
 	static NString getFilePath(const NString& fileName);
-	static bool loadTextFileWithIncludes(NString& output, const NString& fileName,
-	const NString& includeKeyword);
+	static bool loadTextFileWithIncludes(NString& output, const NString& fileName, const NString& includeKeyword);
+	static bool StartWith(const NString& stringIn, NString prefix);
 };
 

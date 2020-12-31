@@ -3,8 +3,8 @@
 #include <Core/Camera/Camera.h>
 #include <Common/CommonTypes.h>
 
-#include <Core/Components/TransformComponent.h>
-#include <Core/Components/LightComponent.h>
+#include <Core/Components/TransformComponent/TransformComponent.h>
+#include <Core/Components/LightComponent/LightComponent.h>
 #include <Core/Systems/RenderSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
@@ -108,7 +108,7 @@ int Application::Run()
 
 	LoadDefaultScene();
 
-	Array<glm::vec3> lightPositions;
+	NxArray<glm::vec3> lightPositions;
 	lightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f));
 	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
 	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
@@ -503,9 +503,9 @@ void Application::LoadDefaultScene()
 	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, true, false);
 
 	//model 1
-	Array<IndexedModel> models;
-	Array<uint32> modelMaterialIndices;
-	Array<MaterialSpec> modelMaterials;
+	NxArray<IndexedModel> models;
+	NxArray<uint32> modelMaterialIndices;
+	NxArray<MaterialSpec> modelMaterials;
 	AssetLoader::LoadModel(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
 	//VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 	VertexArray* vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
@@ -523,7 +523,7 @@ void Application::LoadDefaultScene()
 	StaticMeshComponent renderableMesh;
 	renderableMesh.meshAssetFile = monkeyMesh;
 	renderableMesh.shader = ShaderManager::GetMainShader();
-	renderableMesh.meshes.Add(meshInfo1);
+	renderableMesh.meshes.push_back(meshInfo1);
 	TransformComponent transformComp;
 	transformComp.transform.position = vec3(0.9f, 222.15f, -40.0f);
 	transformComp.transform.scale = vec3(7.0f);
@@ -545,14 +545,14 @@ void Application::LoadDefaultScene()
 	StaticMeshComponent renderableMesh2;
 	renderableMesh2.meshAssetFile = rockMesh;
 	renderableMesh2.shader = ShaderManager::GetMainShader();
-	renderableMesh2.meshes.Add(meshInfo2);
+	renderableMesh2.meshes.push_back(meshInfo2);
 	renderableMesh2.numInst = 100;
 	TransformComponent transformComp2;
 	transformComp2.transform.scale = vec3(7.0f);
 
-	Array<IndexedModel> PBRLoadedMeshes;
-	Array<uint32> PBRMaterialIndices;
-	Array<MaterialSpec> PBRLoadedMaterials;
+	NxArray<IndexedModel> PBRLoadedMeshes;
+	NxArray<uint32> PBRMaterialIndices;
+	NxArray<MaterialSpec> PBRLoadedMaterials;
 	AssetLoader::LoadModel(TEST_MODEL_FILE3, PBRLoadedMeshes, PBRMaterialIndices, PBRLoadedMaterials);
 
 	StaticMeshComponent renderableMesh3;
@@ -561,7 +561,7 @@ void Application::LoadDefaultScene()
 	{
 		MeshInfo* curMesh = new MeshInfo();
 		curMesh->vertexArray = new VertexArray(renderDevice, PBRLoadedMeshes[i], USAGE_STATIC_DRAW);
-		renderableMesh3.meshes.Add(curMesh);
+		renderableMesh3.meshes.push_back(curMesh);
 
 		Material* material3 = new Material();
 		for (int j = 0; j < PBRLoadedMaterials.size(); j++)
@@ -600,12 +600,12 @@ void Application::LoadDefaultScene()
 	material4->textures[TEXTURE_ROUGHNESS] = roughness;
 	material4->textures[TEXTURE_AO] = ao;
 
-	//material3.diffuseTextures.Add(&testtex);
+	//material3.diffuseTextures.push_back(&testtex);
 	pbrTestMesh->material = material4;
 	StaticMeshComponent renderableMesh4;
 	renderableMesh4.meshAssetFile = "Mesh4";
 	renderableMesh4.shader = ShaderManager::GetMainShader();
-	renderableMesh4.meshes.Add(pbrTestMesh);
+	renderableMesh4.meshes.push_back(pbrTestMesh);
 	TransformComponent transformComp4;
 	transformComp4.transform.position = vec3(0, 0, -40);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
@@ -627,12 +627,12 @@ void Application::LoadDefaultScene()
 	//material5->textures[TEXTURE_ROUGHNESS] = roughness;
 	//material5->textures[TEXTURE_AO] = ao;
 
-	//material3.diffuseTextures.Add(&testtex);
+	//material3.diffuseTextures.push_back(&testtex);
 	mesh5->material = material5;
 	StaticMeshComponent renderableMesh5;
 	renderableMesh5.meshAssetFile = "Mesh5";
 	renderableMesh5.shader = ShaderManager::GetMainShader();
-	renderableMesh5.meshes.Add(mesh5);
+	renderableMesh5.meshes.push_back(mesh5);
 	TransformComponent transformComp5;
 	transformComp5.transform.position = vec3(0, 20, -40);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
@@ -646,7 +646,7 @@ void Application::LoadDefaultScene()
 	renderableMesh6.numInst = 1;
 	TransformComponent transformComp6;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
-	transformComp6.transform.position = vec3(-15.1f, 0.0f, -40.0f);
+	transformComp6.transform.position = vec3(-180.1f, -10.0f, -40.0f);
 	transformComp6.transform.rotation = vec3(glm::radians(-90.0f), 0.0f, 0.f);
 	transformComp6.transform.scale = vec3(0.5);
 
@@ -677,14 +677,14 @@ void Application::LoadDefaultScene()
 	ent6->assign<TransformComponent>(transformComp6);
 	ent6->assign<StaticMeshComponent>(renderableMesh6);
 
-	//SceneManager::currentScene.sceneObjects.Add(ent);
-	//SceneManager::currentScene.sceneObjects.Add(ent2);
-	//SceneManager::currentScene.sceneObjects.Add(ent3);
-	SceneManager::currentScene.sceneObjects.Add(ent5);
+	//SceneManager::currentScene.sceneObjects.push_back(ent);
+	//SceneManager::currentScene.sceneObjects.push_back(ent2);
+	//SceneManager::currentScene.sceneObjects.push_back(ent3);
+	SceneManager::currentScene.sceneObjects.push_back(ent5);
 
-	SceneManager::currentScene.sceneObjects.Add(ent4);
-	SceneManager::currentScene.sceneObjects.Add(ent3);
-	SceneManager::currentScene.sceneObjects.Add(ent6);
+	SceneManager::currentScene.sceneObjects.push_back(ent4);
+	SceneManager::currentScene.sceneObjects.push_back(ent3);
+	SceneManager::currentScene.sceneObjects.push_back(ent6);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();

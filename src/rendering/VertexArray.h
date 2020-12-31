@@ -3,6 +3,7 @@
 #include "RenderDevice.h"
 #include "IndexedModel.h"
 #include "rendering/Shader.h"
+#include "Common/dataStructs/NxArray.h"
 
 class VertexArray
 {

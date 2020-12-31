@@ -6,7 +6,7 @@ Sampler*	  CubemapManager::cubemapSampler = nullptr;
 RenderDevice* CubemapManager::device = nullptr;
 Shader*		  CubemapManager::captureShader;
 Shader*		  CubemapManager::irradShader;
-Array<mat4>   CubemapManager::captureViews;
+NxArray<mat4>   CubemapManager::captureViews;
 mat4		  CubemapManager::captureProjection;
 
 void CubemapManager::Inititialize(RenderDevice* deviceIn, Shader* capShader, Shader* irShader)

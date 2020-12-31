@@ -60,7 +60,7 @@ uint32 IndexedModel::GetNumIndices() const
 void IndexedModel::AllocateElement(uint32 elementSize)
 {
 	elementSizes.push_back(elementSize);
-	elements.push_back(Array<float>());
+	elements.push_back(NxArray<float>());
 }
 
 void IndexedModel::SetInstancedElementStartIndex(uint32 elementIndex)
@@ -84,12 +84,12 @@ uint32 IndexedModel::CreateVertexArray(RenderDevice* device,
 		0 : (numVertexComponents - instancedElementsStartIndex);
 	numVertexComponents -= numInstanceComponents;
 
-	Array<const float*> vertexDataArray;
+	NxArray<const float*> vertexDataNxArray;
 	for (uint32 i = 0; i < numVertexComponents; i++) {
-		vertexDataArray.push_back(&(elements[i][0]));
+		vertexDataNxArray.push_back(&(elements[i][0]));
 	}
 
-	const float** vertexData = &vertexDataArray[0];
+	const float** vertexData = &vertexDataNxArray[0];
 	const uint32* vertexElementSizes = &elementSizes[0];
 
 	uint32 numVertices = elements[0].size() / vertexElementSizes[0];

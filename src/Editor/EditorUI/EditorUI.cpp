@@ -4,7 +4,7 @@
 #include "Common/CommonTypes.h"
 #include "Core/Application/SceneManager/SceneManager.h"
 #include "Core/Application/Settings/GlobalSettings.h"
-#include "Core/Components/TransformComponent.h"
+#include "Core/Components/TransformComponent/TransformComponent.h"
 
 bool EditorUI::init = true;
 ImVec2 EditorUI::SceneViewSize;
@@ -20,9 +20,9 @@ float floatArray[3] = { 1,
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void reflectUI(rttr::instance obj);
-bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName);
+bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant max, rttr::variant min);
 void reflectProperty(rttr::property& prop, rttr::instance& obj);
-void reflectArray(rttr::variant_sequential_view& view, NString propName);
+void reflectArray(rttr::property& prop, rttr::instance& obj);
 void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size);
 
 void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size)
@@ -40,7 +40,7 @@ void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint3
 
 		for (auto prop : prop_list)
 		{
-			Array<float> dataArray;
+			NxArray<float> dataArray;
 			auto value = prop.get_value(obj);
 			auto view = value.create_sequential_view();
 			for (auto item : view)
@@ -61,15 +61,18 @@ void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint3
 	}
 }
 
-void reflectArray(rttr::variant_sequential_view& view, NString propName)
+void reflectArray(rttr::property& prop, rttr::instance& obj)
 {
+	rttr::variant var = prop.get_value(obj);
+	auto view = var.create_sequential_view();
+
 	int i = 0;
 	for (const auto& item : view)
 	{
 		if (item.is_sequential_container())
 		{
             auto view = item.create_sequential_view();
-			reflectArray(view, propName);
+			reflectArray(prop, obj);
 		}
 		else
 		{
@@ -77,16 +80,21 @@ void reflectArray(rttr::variant_sequential_view& view, NString propName)
 			rttr::type value_type = wrapped_var.get_type();
 			if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
 			{
-				reflectBasicType(value_type, wrapped_var, propName + "##" + std::to_string(i));
+				rttr::variant max = prop.get_metadata("Max");
+				rttr::variant min = prop.get_metadata("Min");
+				reflectBasicType(value_type, wrapped_var, prop.get_name().to_string() + "##" + std::to_string(i), max, min);
 				view.set_value(i, wrapped_var);
 			}
 			else // object
 			{
+				reflectUI(wrapped_var);
 				//to_json_recursively(wrapped_var, writer);
 			}
 		}
 		i++;
 	}
+
+	prop.set_value(obj, view);
 }
 
 
@@ -96,14 +104,17 @@ void reflectProperty(rttr::property& prop, rttr::instance& obj)
 	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
 	bool is_wrapper = wrapped_type != value_type;
 
+	NString vType = value_type.get_name().to_string();
 
 	//TODO: Fix wrapped types
 	if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
 	{
 		rttr::variant var = prop.get_value(obj);
 		var = is_wrapper ? var.extract_wrapped_value() : var;
+		rttr::variant max = prop.get_metadata("Max");
+		rttr::variant min = prop.get_metadata("Min");
 		reflectBasicType(is_wrapper ? wrapped_type : value_type, var,
-			prop.get_name().to_string());
+			prop.get_name().to_string(), max, min);
 		prop.set_value(obj, var);
 	}
 	//if(reflectBasicType(is_wrapper ? wrapped_type : value_type, obj, prop))
@@ -119,7 +130,7 @@ void reflectProperty(rttr::property& prop, rttr::instance& obj)
 	{
 		rttr::variant var = prop.get_value(obj);
         auto view = var.create_sequential_view();
-		reflectArray(view, prop.get_name().to_string());
+		reflectArray(prop, obj);
 		prop.set_value(obj, var);
 	}
 	else
@@ -136,7 +147,7 @@ void reflectProperty(rttr::property& prop, rttr::instance& obj)
 }
 
 
-bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName)
+bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant max, rttr::variant min)
 {
 	if (t.is_arithmetic())
 	{
@@ -182,11 +193,17 @@ bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName)
 		}
 		else if (t == rttr::type::get<float>())
 		{
+			float maxValue = 100000.0f;
+			float minValue = -100000.0f;
+			if (max.is_valid())
+				maxValue = max.to_float();
+			if (min.is_valid())
+				minValue = min.to_float();
+
 			float value = var.to_float();
-			if(ImGui::SliderFloat(propName.c_str(), &value, 100.0f, -100.f))
-			{
+			float speed = maxValue * 0.005f;
+			if(ImGui::DragFloat(propName.c_str(), &value, speed, minValue, maxValue))
 				var = value;
-			}
 		}
 		else if (t == rttr::type::get<double>())
 		{
@@ -316,19 +333,6 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 
 void EditorUI::DrawInspector()
 {
-	//ImGui::Begin("Inspector");
-	//for (auto entity : SceneManager::currentScene.sceneObjects)
-	//{
-	//	
-	//	ImGui::LabelText("mesh", entity->get<StaticMeshComponent>()->meshAssetFile.c_str());
-	//	ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-	//	reflectUI(transformComp.get());
-
-	//}
-	//ImGui::End();
-	
-
-
 	ImGui::Begin("Inspector");
 
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
@@ -345,26 +349,18 @@ void EditorUI::DrawInspector()
 		if (is_selected)
 			node_flags |= ImGuiTreeNodeFlags_Selected;
 
-		//RenderComponent* RC = ecs.GetComponent<RenderComponent>(entity);
-		//if (RC)
-		//{
-			// Items 0..2 are Tree Node
 		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, entity->get<StaticMeshComponent>()->meshAssetFile.c_str(), i);
-		if (ImGui::IsItemClicked())
-		{
-			//    showInspector = true;
-			node_clicked = i;
-			//   selectedEntity = entity;
-		}
-
+		if (ImGui::IsItemClicked()) { node_clicked = i; }
 		if (node_open)
 		{
+			ImGui::Text("TransformComponent");
 			ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
 			reflectUI(transformComp.get());
-
+			ImGui::Text("StaticMeshComponent");
+			ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
+			reflectUI(meshComp.get());
 			ImGui::TreePop();
 		}
-		//}
 		i++;
 	}
 	if (node_clicked != -1)

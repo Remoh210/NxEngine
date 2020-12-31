@@ -26,7 +26,7 @@ struct DebugShape
 	~DebugShape()
 	{
 		delete vertexArray;
-		delete texture;
+		//delete texture;
 		//DEBUG_LOG_TEMP("Debug Shape Destructor Was Called");
 	}
 };

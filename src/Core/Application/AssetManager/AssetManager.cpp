@@ -2,10 +2,10 @@
 #include "rendering/AssetLoader.h"
 #include "Core/FileSystem/FileSystem.h"
 
-Map<NString, Array<MeshInfo*>> AssetManager::importedModels;
+Map<NString, NxArray<MeshInfo*>> AssetManager::importedModels;
 Map<NString, Texture*> AssetManager::importedTextures;
 
-Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString file)
+NxArray<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString file)
 {
 	auto iterator = importedModels.find(file);
 	if (iterator != importedModels.end())
@@ -13,18 +13,18 @@ Array<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString f
 		return iterator->second;
 	}
 
-	Array<IndexedModel> models;
-	Array<MaterialSpec> materials;
-	Array<uint32> materialIndices;
+	NxArray<IndexedModel> models;
+	NxArray<MaterialSpec> materials;
+	NxArray<uint32> materialIndices;
 
 	AssetLoader::LoadModel(file, models, materialIndices, materials);
-	Array<MeshInfo*> loadedMeshes;
+	NxArray<MeshInfo*> loadedMeshes;
 
 	for (int i = 0; i < models.size(); i++)
 	{
 		MeshInfo* curMesh = new MeshInfo();
 		curMesh->vertexArray = new VertexArray(renderDevice, models[i], USAGE_STATIC_DRAW);
-		loadedMeshes.Add(curMesh);
+		loadedMeshes.push_back(curMesh);
 
 		Material* curMaterial = new Material();
 

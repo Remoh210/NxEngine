@@ -25,17 +25,17 @@ public:
     {
         mRenderDevice->Clear(mRenderTarget->GetId(), true, bShouldClearDepth, false, color, 0);
     }
-	inline void Draw(Shader& shader, VertexArray& vertexArray,
+	inline void Draw(Shader& shader, VertexArray& VertexArray,
 			const DrawParams& drawParams, uint32 numInstances=1)
     {
-        mRenderDevice->Draw(mRenderTarget->GetId(), shader.GetId(), vertexArray.GetId(),
-                     drawParams, numInstances, vertexArray.GetNumIndices());
+        mRenderDevice->Draw(mRenderTarget->GetId(), shader.GetId(), VertexArray.GetId(),
+                     drawParams, numInstances, VertexArray.GetNumIndices());
     }
-	inline void Draw(Shader& shader, VertexArray& vertexArray,
+	inline void Draw(Shader& shader, VertexArray& VertexArray,
 			const DrawParams& drawParams, uint32 numInstances,
 			uint32 numIndices)
     {
-        mRenderDevice->Draw(mRenderTarget->GetId(), shader.GetId(), vertexArray.GetId(),
+        mRenderDevice->Draw(mRenderTarget->GetId(), shader.GetId(), VertexArray.GetId(),
                 drawParams, numInstances, numIndices);
     }
 

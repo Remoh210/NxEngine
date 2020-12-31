@@ -77,7 +77,7 @@ void DebugRenderer::DrawQuad()
 
 void DebugRenderer::Update(float dt)
 {
-	Array<DebugShape*> DrawArray = ShapesToDraw;
+	NxArray<DebugShape*> DrawArray = ShapesToDraw;
 
 
     for(DebugShape* shape : DrawArray)
@@ -85,7 +85,8 @@ void DebugRenderer::Update(float dt)
         shape->timeSinceCreated += dt;
         if((shape->lifetime != 0.0f && shape->timeSinceCreated > shape->lifetime) || shape->bShouldDelete)
         {
-			ShapesToDraw.Remove(shape);
+			ArrayFuncs::Remove(ShapesToDraw, shape);
+			//ShapesToDraw.Remove(shape);
             shape->~DebugShape();
         }
 		else

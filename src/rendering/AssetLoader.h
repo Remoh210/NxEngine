@@ -14,18 +14,18 @@ public:
 	static unsigned int TextureFromAssimp(const aiTexture* texture);
 
 	static bool LoadModel(const NString& fileName,
-		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-		Array<MaterialSpec>& materials);
+		NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
+		NxArray<MaterialSpec>& materials);
 
 private:
 
 	static void ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
-		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-		Array<MaterialSpec>& materials);
+		NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
+		NxArray<MaterialSpec>& materials);
 
 	static void ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString& fileName,
-		Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-		Array<MaterialSpec>& materials);
+		NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
+		NxArray<MaterialSpec>& materials);
 
 	static void LoadMaterialTextures(const NString& filePath, aiMaterial* mat, const aiScene* scene, aiTextureType type, MaterialSpec& material, NString typeName);
 
@@ -36,5 +36,5 @@ private:
 	}
 
 	static NString mModelDirectory;
-	static Array<NString*> mLoadedTextures;
+	static NxArray<NString*> mLoadedTextures;
 };

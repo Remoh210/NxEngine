@@ -2,7 +2,7 @@
 #include <Common/CommonTypes.h>
 #include <Common/Math/Math.h>
 #include "rttr/registration"
-#include "Common/dataStructs/Array.h"
+#include "Common/dataStructs/NxArray.h"
 
 struct Transform
 {

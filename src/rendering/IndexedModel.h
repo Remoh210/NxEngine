@@ -26,8 +26,8 @@ public:
 
 	uint32 GetNumIndices() const;
 private:
-	Array<uint32> indices;
-	Array<uint32> elementSizes;
-	Array<Array<float> > elements;
+	NxArray<uint32> indices;
+	NxArray<uint32> elementSizes;
+	NxArray<NxArray<float> > elements;
 	uint32 instancedElementsStartIndex;
 };

@@ -1,9 +1,11 @@
 #include "String.h"
 #include <fstream>
 
-Array<NString> StringFuncs::split(const NString& s, char delim)
+//rfind("classArray") == 0
+
+NxArray<NString> StringFuncs::split(const NString& s, char delim)
 {
-	Array<NString> elems;
+	NxArray<NString> elems;
         
     const char* cstr = s.c_str();
     unsigned int strLength = (unsigned int)s.length();
@@ -83,5 +85,10 @@ bool StringFuncs::loadTextFileWithIncludes(NString& output, const NString& fileN
 
 	output = ss.str();
 	return true;
+}
+
+bool StringFuncs::StartWith(const NString& stringIn, NString prefix)
+{
+	return stringIn.rfind(prefix) == 0;
 }
 

@@ -20,7 +20,7 @@ private:
 	static VertexArray*  cubeVAO;
 	static Sampler*		 cubemapSampler;
 	static RenderDevice* device;
-	static Array<mat4>  captureViews;
+	static NxArray<mat4>  captureViews;
 	static mat4 captureProjection;
 	static Shader* captureShader;
 	static Shader* irradShader;

@@ -7,7 +7,7 @@
 bool OpenGLRenderDevice::bIsInitialized = false;
 
 static bool AddShader(GLuint shaderProgram, const NString& text, GLenum type,
-		Array<GLuint>* shaders);
+		NxArray<GLuint>* shaders);
 static void AddAllAttributes(GLuint program, const NString& vertexShaderText, uint32 version);
 static bool CheckShaderError(GLuint shader, int flag,
 		bool isProgram, const NString& errorMessage);
@@ -120,7 +120,7 @@ void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
 	}
 }
 
-void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
+void OpenGLRenderDevice::DrawNxArrays(uint32 fbo, uint32 shader, uint32 vao,
 	const DrawParams& drawParams,
 	uint32 numVertecies)
 {
@@ -745,7 +745,7 @@ void OpenGLRenderDevice::SetVAO(uint32 vao)
 }
 
 static bool AddShader(GLuint shaderProgram, const NString& text, GLenum type,
-		Array<GLuint>* shaders)
+		NxArray<GLuint>* shaders)
 {
 	GLuint shader = glCreateShader(type);
 
@@ -790,7 +790,7 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 		glGetActiveUniformBlockiv(shaderProgram, block,
 				GL_UNIFORM_BLOCK_NAME_LENGTH, &nameLen);
 
-		Array<GLchar> name(nameLen);
+		NxArray<GLchar> name(nameLen);
 		glGetActiveUniformBlockName(shaderProgram, block, nameLen, NULL, &name[0]);
 		NString uniformBlockName((char*)&name[0], nameLen-1);
 		UBOMap[uniformBlockName] = glGetUniformBlockIndex(shaderProgram, &name[0]);
@@ -800,13 +800,13 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORMS, &numUniforms);
 	
 	// Would get GL_ACTIVE_UNIFORM_MAX_LENGTH, but buggy on some drivers
-	Array<GLchar> uniformName(256); 
+	NxArray<GLchar> uniformName(256); 
 	for(int32 uniform = 0; uniform < numUniforms; ++uniform) {
-		GLint arraySize = 0;
+		GLint NxArraySize = 0;
 		GLenum type = 0;
 		GLsizei actualLength = 0;
 		glGetActiveUniform(shaderProgram, uniform, uniformName.size(),
-				&actualLength, &arraySize, &type, &uniformName[0]);
+				&actualLength, &NxArraySize, &type, &uniformName[0]);
 		NString name((char*)&uniformName[0]);
 		if(type == GL_SAMPLER_2D)
 		{
@@ -847,14 +847,14 @@ static void AddAllAttributes(GLuint program, const NString& vertexShaderText, ui
 
 //	DEBUG_LOG_TEMP2("Adding attributes!");
 //	DEBUG_LOG_TEMP("%i %i", numActiveAttribs, maxAttribNameLength);
-	Array<GLchar> nameData(maxAttribNameLength);
+	NxArray<GLchar> nameData(maxAttribNameLength);
 	for(GLint attrib = 0; attrib < numActiveAttribs; ++attrib) {
-		GLint arraySize = 0;
+		GLint NxArraySize = 0;
 		GLenum type = 0;
 		GLsizei actualLength = 0;
 
 		glGetActiveAttrib(program, attrib, nameData.size(),
-				&actualLength, &arraySize, &type, &nameData[0]);
+				&actualLength, &NxArraySize, &type, &nameData[0]);
 		glBindAttribLocation(program, attrib, (char*)&nameData[0]);
 //		DEBUG_LOG_TEMP2("Adding attribute!");
 //		DEBUG_LOG_TEMP("%s: %d", (char*)&nameData[0], attrib);
@@ -1013,7 +1013,7 @@ void OpenGLRenderDevice::SetShaderUniform1i(uint32 shader, const NString& unifor
     glUniform1i(shaderProgramMap.at(shader).uniformMap.at(uniformName), value);
 }
 
-void OpenGLRenderDevice::SetArrayUniform1iv(uint32 shader, const NString& uniformName, uint32 size, int* value)
+void OpenGLRenderDevice::SetNxArrayUniform1iv(uint32 shader, const NString& uniformName, uint32 size, int* value)
 {
 	SetShader(shader);
 	glUniform1iv(shaderProgramMap.at(shader).uniformMap.at(uniformName), size, value);
@@ -1031,7 +1031,7 @@ void OpenGLRenderDevice::SetShaderUniform3f(uint32 shader, const NString& unifor
 	glUniform3f(shaderProgramMap.at(shader).uniformMap.at(uniformName), value[0], value[1], value[2]);
 }
 
-void OpenGLRenderDevice::SetArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value)
+void OpenGLRenderDevice::SetNxArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value)
 {
 	SetShader(shader);
 	glUniform3fv(shaderProgramMap.at(shader).uniformMap.at(uniformName), size, value);
@@ -1076,7 +1076,7 @@ uint32 OpenGLRenderDevice::ReleaseShaderProgram(uint32 shader)
 	}
 	const struct ShaderProgram* shaderProgram = &programIt->second;
 
-	for (Array<uint32>::const_iterator it = shaderProgram->shaders.begin();
+	for (NxArray<uint32>::const_iterator it = shaderProgram->shaders.begin();
 		it != shaderProgram->shaders.end(); ++it)
 	{
 		glDetachShader(shader, *it);

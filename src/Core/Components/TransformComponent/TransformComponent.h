@@ -16,11 +16,3 @@ struct TransformComponent
 
 	RTTR_ENABLE();
 };
-
-RTTR_REGISTRATION
-{
-	rttr::registration::class_<TransformComponent>("TransformComponent")
-		.property("transform", &TransformComponent::transform)
-		.property("Rotation Speed", &TransformComponent::rotSpeed)
-	;
-}

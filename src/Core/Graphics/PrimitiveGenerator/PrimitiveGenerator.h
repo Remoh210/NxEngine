@@ -1,7 +1,7 @@
 #pragma once
 #include <Common/Common.h>
 #include <Common/CommonTypes.h>
-#include <Common/dataStructs/Array.h>
+#include <Common/dataStructs/NxArray.h>
 #include <rendering/RenderDevice.h>
 #include <iostream>
 
@@ -27,7 +27,7 @@ public:
         
 		glm::vec3 extents(0.0f);
 
-        //Array<vec3> vertices;
+        //NxArray<vec3> vertices;
         for(uint32 j=0; j<=slices; ++j)
         {
           for(uint32 i=0; i<=slices; ++i)

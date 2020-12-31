@@ -5,7 +5,7 @@
 #include "Common/Common.h"
 #include "Common/CommonTypes.h"
 #include "Common/dataStructs/Map.h"
-#include "Common/dataStructs/Array.h"
+#include "Common/dataStructs/NxArray.h"
 #include "Common/dataStructs/String.h"
 #include "rendering/Window.h"
 
@@ -148,8 +148,8 @@ public:
 		const DrawParams& drawParams,
 		uint32 numInstances, uint32 numElements);
 
-	//Draw Arrays
-	void DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
+	//Draw NxArrays
+	void DrawNxArrays(uint32 fbo, uint32 shader, uint32 vao,
 		const DrawParams& drawParams,
 		uint32 numVertecies);
 
@@ -196,7 +196,7 @@ public:
 	void SetShaderUniform1i(uint32 shader, const NString& uniformName,
 		int value);
 
-	void SetArrayUniform1iv(uint32 shader, const NString& uniformName, uint32 size, int* value);
+	void SetNxArrayUniform1iv(uint32 shader, const NString& uniformName, uint32 size, int* value);
 
 	void SetShaderUniform1f(uint32 shader, const NString& uniformName,
 		float value);
@@ -204,7 +204,7 @@ public:
 	void SetShaderUniform3f(uint32 shader, const NString& uniformName,
 		float* value);
 
-	void SetArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value);
+	void SetNxArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value);
 
 	void SetShaderUniform4f(uint32 shader, const NString& uniformName,
 		float* value);
@@ -258,7 +258,7 @@ private:
 
 	struct ShaderProgram
 	{
-		Array<uint32> shaders;
+		NxArray<uint32> shaders;
 		Map<NString, int32> UBOMap;
 		Map<NString, int32> uniformMap;
 		Map<NString, int32> samplerMap;

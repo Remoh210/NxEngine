@@ -38,7 +38,7 @@ typedef uintptr_t uintptr;
 #define DEBUG_PRINT2(message) \
 	fprintf(stderr, "[%s] ", message); \
 	fprintf(stderr, "\n")
-#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
+#define NxArray_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
 
 inline int GetPercentOf(int percent, int number)

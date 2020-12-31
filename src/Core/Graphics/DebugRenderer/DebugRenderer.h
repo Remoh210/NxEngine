@@ -2,7 +2,7 @@
 
 #include "Editor/EditorRenderContext.h"
 #include "rendering/RenderDevice.h"
-#include "Common/dataStructs/Array.h"
+#include "Common/dataStructs/NxArray.h"
 #include "Common/Transform/Transform.h"
 #include "DebugShape.h"
 
@@ -24,7 +24,7 @@ public:
 
 private:
     EditorRenderContext& editorContext;
-    Array<DebugShape*> ShapesToDraw;
+    NxArray<DebugShape*> ShapesToDraw;
     Shader* shader;
     DrawParams debugDrawParams;
 };

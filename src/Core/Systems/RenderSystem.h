@@ -2,11 +2,11 @@
 
 #include "Core/ECS/ECS.h"
 //#include "utilComponents.hpp"
-#include "Core/Components/LightComponent.h"
+#include "Core/Components/LightComponent/LightComponent.h"
 #include "Editor/EditorRenderContext.h"
-#include "Core/Components/TransformComponent.h"
+#include "Core/Components/TransformComponent/TransformComponent.h"
 #include "Core/Graphics/Material/Material.h"
-#include "Core/Components/StaticMeshComponent.h"
+#include "Core/Components/StaticMeshComponent/StaticMeshComponent.h"
 
 namespace ECS
 {
@@ -59,13 +59,13 @@ namespace ECS
 						// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
 						float rotAngle = (rand() % 360);
 						newTrasform.rotation = glm::vec3(0.4f, 0.6f, 0.8f);
-						transformArray.push_back(newTrasform);
+						transformNxArray.push_back(newTrasform);
 					}
 					first = false;
 				}
 				else if (num > 1 && !first)
 				{
-					for (auto item : transformArray)
+					for (auto item : transformNxArray)
 					{
 
 						context->RenderMesh(mesh->meshes, mesh->shader, item.ToMatrix());
@@ -91,7 +91,7 @@ namespace ECS
 
 	private:
 		bool first = true;
-		Array<Transform> transformArray;
+		NxArray<Transform> transformNxArray;
 		EditorRenderContext* context;
 	};
 } // namespace ECS

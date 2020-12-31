@@ -13,7 +13,7 @@
 #include "stb_image.h"
 
 
-Array<NString*> AssetLoader::mLoadedTextures;
+NxArray<NString*> AssetLoader::mLoadedTextures;
 
 void AssetLoader::SetShouldFlipVTexture(bool bValue)
 {
@@ -21,8 +21,8 @@ void AssetLoader::SetShouldFlipVTexture(bool bValue)
 }
 
 bool AssetLoader::LoadModel(const NString& fileName,
-	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<MaterialSpec>& materials)
+	NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
+	NxArray<MaterialSpec>& materials)
 {
 	NString absoluteFilePath = Nx::FileSystem::GetPath(fileName);
 	//Create static mesh 
@@ -47,8 +47,8 @@ bool AssetLoader::LoadModel(const NString& fileName,
 
 
 void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
-	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<MaterialSpec>& materials)
+	NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
+	NxArray<MaterialSpec>& materials)
 {
 	// process each mesh located at the current node
 	for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -66,8 +66,8 @@ void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const NString&
 }
 
 void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString& fileName,
-	Array<IndexedModel>& models, Array<uint32>& modelMaterialIndices,
-	Array<MaterialSpec>& materials)
+	NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
+	NxArray<MaterialSpec>& materials)
 {
 	modelMaterialIndices.push_back(mesh->mMaterialIndex);
 

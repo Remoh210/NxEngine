@@ -15,8 +15,8 @@
 #include "Core/Graphics/DebugRenderer/DebugShape.h"
 #include "Core/Graphics/Cubemap/Cubemap.h"
 #include "Core/Graphics/PostFX/ChromaticAberration.h"
-#include "Core/Components/StaticMeshComponent.h"
-#include "Core/Components/LightComponent.h"
+#include "Core/Components/StaticMeshComponent/StaticMeshComponent.h"
+#include "Core/Components/LightComponent/LightComponent.h"
 #include "rendering/UniformBuffer.h"
 
 class EditorRenderContext : public RenderContext
@@ -24,17 +24,17 @@ class EditorRenderContext : public RenderContext
 public:
 	EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
 	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn);
-	inline void RenderMesh(Array<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
+	inline void RenderMesh(NxArray<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
 	{
 		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(transformIn);
 	}
 
-	inline void RenderPrimitives(VertexArray* vertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
+	inline void RenderPrimitives(VertexArray* VertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
 	{
-		Array<mat4> transforms;
+		NxArray<mat4> transforms;
 		transforms.push_back(transform);
-		vertexArray->UpdateBuffer(4, &transforms[0], transforms.size() * sizeof(mat4));
-		Draw(*InShader, *vertexArray, drawParamsIn, 1);
+		VertexArray->UpdateBuffer(4, &transforms[0], transforms.size() * sizeof(mat4));
+		Draw(*InShader, *VertexArray, drawParamsIn, 1);
 
 	}
 
@@ -80,10 +80,10 @@ private:
 	Sampler* sampler;
 	UniformBuffer* MatrixUniformBuffer;
 	mat4 perspective;
-	Map<std::pair<Array<MeshInfo*>, Shader*>, Array<mat4>> meshRenderBuffer;
-	Map<DebugShape*, Array<mat4>> debugShapeBuffer;
+	Map<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4>> meshRenderBuffer;
+	Map<DebugShape*, NxArray<mat4>> debugShapeBuffer;
 
-	Array<std::pair<ECS::ComponentHandle<LightComponent>, vec3>> lightBuffer; // pos color
+	NxArray<std::pair<ECS::ComponentHandle<LightComponent>, vec3>> lightBuffer; // pos color
 
 	Camera* mainCamera;
 
