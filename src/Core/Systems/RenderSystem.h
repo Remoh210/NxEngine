@@ -31,6 +31,8 @@ namespace ECS
 
 			world->each<TransformComponent, StaticMeshComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<StaticMeshComponent> mesh) -> void {
 
+				if (!mesh->bIsVisible) { return; }
+
 				Transform newTrasform = transform->transform;
 
 				int num = mesh->numInst;

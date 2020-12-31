@@ -6,9 +6,9 @@ mat4 Transform::ToMatrix()
 {
 	mat4 trans = mat4(1.0f);
 	trans = glm::translate(trans, position.ToVec());
-	trans = glm::rotate(trans, rotation.ToVec().x, glm::vec3(1.0f, 0.0f, 0.0f));
-	trans = glm::rotate(trans, rotation.ToVec().y, glm::vec3(0.0f, 1.0f, 0.0f));
-	trans = glm::rotate(trans, rotation.ToVec().z, glm::vec3(0.0f, 0.0f, 1.0f));
+	trans = glm::rotate(trans, glm::radians(rotation.ToVec().x), glm::vec3(1.0f, 0.0f, 0.0f));
+	trans = glm::rotate(trans, glm::radians(rotation.ToVec().y), glm::vec3(0.0f, 1.0f, 0.0f));
+	trans = glm::rotate(trans, glm::radians(rotation.ToVec().z), glm::vec3(0.0f, 0.0f, 1.0f));
 	trans = glm::scale(trans, scale.ToVec());
 	return trans;
 }
@@ -17,7 +17,6 @@ mat4 Transform::ToMatrix()
 RTTR_REGISTRATION
 {
 		rttr::registration::class_<Transform>("TransformComponent")
-		//.property("nestedValue", &Transform::nestedValue)
 		.property("position", &Transform::position)
 		.property("rotation", &Transform::rotation)
 		.property("scale",    &Transform::scale)

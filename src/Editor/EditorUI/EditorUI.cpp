@@ -63,38 +63,66 @@ void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint3
 
 void reflectArray(rttr::property& prop, rttr::instance& obj)
 {
-	rttr::variant var = prop.get_value(obj);
-	auto view = var.create_sequential_view();
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	int i = 0;
-	for (const auto& item : view)
+	bool base_open = ImGui::TreeNodeEx(prop.get_name().to_string().c_str(), base_flags);
+	if (base_open)
 	{
-		if (item.is_sequential_container())
-		{
-            auto view = item.create_sequential_view();
-			reflectArray(prop, obj);
-		}
-		else
-		{
-			rttr::variant wrapped_var = item.extract_wrapped_value();
-			rttr::type value_type = wrapped_var.get_type();
-			if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
-			{
-				rttr::variant max = prop.get_metadata("Max");
-				rttr::variant min = prop.get_metadata("Min");
-				reflectBasicType(value_type, wrapped_var, prop.get_name().to_string() + "##" + std::to_string(i), max, min);
-				view.set_value(i, wrapped_var);
-			}
-			else // object
-			{
-				reflectUI(wrapped_var);
-				//to_json_recursively(wrapped_var, writer);
-			}
-		}
-		i++;
-	}
+		rttr::variant var = prop.get_value(obj);
+		auto view = var.create_sequential_view();
 
-	prop.set_value(obj, view);
+		static int selection_mask = (1 << 2);
+		int node_clicked = -1;
+		int i = 0;
+		for (const auto& item : view)
+		{
+			// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+			ImGuiTreeNodeFlags node_flags = base_flags;
+			const bool is_selected = (selection_mask & (1 << i)) != 0;
+			if (is_selected)
+				node_flags |= ImGuiTreeNodeFlags_Selected;
+
+			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, std::to_string(i).c_str(), i);
+			if (ImGui::IsItemClicked()) { node_clicked = i; }
+			if (node_open)
+			{
+
+				if (item.is_sequential_container())
+				{
+					auto view = item.create_sequential_view();
+					reflectArray(prop, obj);
+				}
+				else
+				{
+					rttr::variant wrapped_var = item.extract_wrapped_value();
+					rttr::type value_type = wrapped_var.get_type();
+					if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
+					{
+						rttr::variant max = prop.get_metadata("Max");
+						rttr::variant min = prop.get_metadata("Min");
+						reflectBasicType(value_type, wrapped_var, prop.get_name().to_string() + "##" + std::to_string(i), max, min);
+						view.set_value(i, wrapped_var);
+					}
+					else // object
+					{
+						reflectUI(wrapped_var);
+					}
+				}
+				ImGui::TreePop();
+			}
+			i++;
+		}
+		if (node_clicked != -1)
+		{
+			if (ImGui::GetIO().KeyCtrl)
+				selection_mask ^= (1 << node_clicked);          
+			else 
+				selection_mask = (1 << node_clicked);
+		}
+		prop.set_value(obj, view);
+		ImGui::TreePop();
+	}
 }
 
 
@@ -153,7 +181,9 @@ bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName,
 	{
 		if (t == rttr::type::get<bool>())
 		{
-
+			bool value = var.to_bool();
+			ImGui::Checkbox(propName.c_str(), &value);
+			var = value;
 		}
 		else if (t == rttr::type::get<char>())
 		{

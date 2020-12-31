@@ -647,7 +647,7 @@ void Application::LoadDefaultScene()
 	TransformComponent transformComp6;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp6.transform.position = vec3(-180.1f, -10.0f, -40.0f);
-	transformComp6.transform.rotation = vec3(glm::radians(-90.0f), 0.0f, 0.f);
+	transformComp6.transform.rotation = vec3(-90.0f, 0.0f, 0.f);
 	transformComp6.transform.scale = vec3(0.5);
 
 

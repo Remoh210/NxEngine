@@ -7,11 +7,16 @@
 
 struct StaticMeshComponent
 {
+	StaticMeshComponent()
+	{
+		bool bIsVisible = true;
+	}
 	NString meshAssetFile; 
 	NxArray<MeshInfo*> meshes;
 	//TODO: Remove
 	Shader* shader;
 	int numInst = 1;
+	bool bIsVisible;
 
 	RTTR_ENABLE();
 };
