@@ -1,8 +1,10 @@
 #pragma once
 #include "Common/Common.h"
-#include "ArrayBitmap.h"
-#include "RenderDevice.h"
+#include "rendering/ArrayBitmap.h"
+#include "rendering/RenderDevice.h"
 #include "Common/dataStructs/String.h"
+
+#include "rttr/registration.h"
 
 enum TextureType
 {
@@ -57,6 +59,7 @@ public:
 
 
     inline uint32 GetId() { return id; };
+	inline void SetId(uint32 id) { };
     inline NString GetFileName() {return fileName; };
     inline uint32 GetWidth() { return width; };
     inline uint32 GetHeight() { return height; };
@@ -76,6 +79,9 @@ private:
     NString fileName;
 	bool bIsCompressed;
 	bool bHasMipmaps;
+
+
+	RTTR_ENABLE();
 };
 
 

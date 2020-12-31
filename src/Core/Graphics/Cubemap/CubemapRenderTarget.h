@@ -3,7 +3,7 @@
 #include "rendering/RenderDevice.h"
 #include "rendering/VertexArray.h"
 #include "rendering/IndexedModel.h"
-#include "rendering/Texture.h"
+#include "Core/Graphics/Texture/Texture.h"
 #include "rendering/Shader.h"
 
 

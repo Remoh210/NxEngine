@@ -1,6 +1,6 @@
 #pragma once
 #include "RenderDevice.h"
-#include "Texture.h"
+#include "Core/Graphics/Texture/Texture.h"
 #include "Core/Graphics/Cubemap/Cubemap.h"
 #include "UniformBuffer.h"
 #include "Sampler.h"

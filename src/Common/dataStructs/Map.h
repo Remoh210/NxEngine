@@ -2,28 +2,42 @@
 
 #include <map>
 
-template<class Key, class Value>
-class Map : public std::map<Key, Value>
+#define NxMap std::map
+
+//template<class Key, class Value>
+//class Map : public std::map<Key, Value>
+//{
+//public:
+//	NxMap<Key, Value>() : std::map<Key, Value>() {}
+//
+//	Value Find(Key key)
+//	{
+//		typename std::map<Key, Value>::iterator it;
+//
+//		it = this->find(key);
+//		if (it != this->end())
+//		{
+//			return it->second;
+//		}
+//
+//		return nullptr;
+//	}
+//};
+
+
+struct MapFuncs
 {
-public:
-	Map<Key, Value>() : std::map<Key, Value>() {}
-
-	Value Find(Key key)
+	template <class Key, class Value>
+	static inline Value Find(NxMap<Key, Value>& MapIn, Key& KeyIn)
 	{
-		typename std::map<Key, Value>::iterator it;
+		std::map<Key, Value>::iterator it;
 
-		it = this->find(key);
-		if (it != this->end())
+		it = MapIn.find(KeyIn);
+		if (it != MapIn.end())
 		{
 			return it->second;
 		}
 
 		return nullptr;
 	}
-
-	//Value& operator [] (Key key)
-	//{
-	//	return this->[key];
-	//};
-
 };

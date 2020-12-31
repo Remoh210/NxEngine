@@ -80,8 +80,8 @@ private:
 	Sampler* sampler;
 	UniformBuffer* MatrixUniformBuffer;
 	mat4 perspective;
-	Map<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4>> meshRenderBuffer;
-	Map<DebugShape*, NxArray<mat4>> debugShapeBuffer;
+	NxMap<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4>> meshRenderBuffer;
+	NxMap<DebugShape*, NxArray<mat4>> debugShapeBuffer;
 
 	NxArray<std::pair<ECS::ComponentHandle<LightComponent>, vec3>> lightBuffer; // pos color
 

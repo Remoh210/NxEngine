@@ -41,5 +41,5 @@ private:
 	static ECS::World* world;
 	static RenderDevice* renderDevice;
 
-	static Map<NString, Shader*> shaders;
+	static NxMap<NString, Shader*> shaders;
 };

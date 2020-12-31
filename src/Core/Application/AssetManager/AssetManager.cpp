@@ -2,8 +2,8 @@
 #include "rendering/AssetLoader.h"
 #include "Core/FileSystem/FileSystem.h"
 
-Map<NString, NxArray<MeshInfo*>> AssetManager::importedModels;
-Map<NString, Texture*> AssetManager::importedTextures;
+NxMap<NString, NxArray<MeshInfo*>> AssetManager::importedModels;
+NxMap<NString, Texture*> AssetManager::importedTextures;
 
 NxArray<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString file)
 {
@@ -44,7 +44,8 @@ NxArray<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString
 				NString textureType = textureTypeToFile.first;
 				NString textureFileName = textureTypeToFile.second;
 
-				Texture* texture = importedTextures.Find(textureFileName);
+				Texture* texture = MapFuncs::Find(importedTextures, textureFileName);
+				//Texture* texture = importedTextures.Find(textureFileName);
 				if (texture != nullptr)
 				{
 					curMaterial->textures[textureType] = texture;

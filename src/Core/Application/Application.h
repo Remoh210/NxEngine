@@ -57,7 +57,7 @@ private:
 
 	void GUI_ShowMenuBar();
 
-	Map<string, string> MapModelPaths;
+	NxMap<string, string> MapModelPaths;
 
 	bool isAppRunning;
 	static uint32 numInstances;

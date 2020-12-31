@@ -4,7 +4,7 @@
 #include "Common/dataStructs/Map.h"
 #include "Common/dataStructs/String.h"
 
-#include "rendering/Texture.h"
+#include "Core/Graphics/Texture/Texture.h"
 #include "rendering/Shader.h"
 
 #include "rttr/registration"
@@ -19,7 +19,7 @@ struct Material
 		roughness = 0.95f;
 	}
 
-	Map<NString, Texture*> textures;
+	NxMap<NString, Texture*> textures;
 
 	// color and alpha transparency
 	vec4 color;

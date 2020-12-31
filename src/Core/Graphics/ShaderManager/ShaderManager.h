@@ -34,19 +34,19 @@ public:
 
 	inline static Shader* GetPostFXshader(NString shaderName)
 	{
-		return PostFXShaders.Find(shaderName);
+		return MapFuncs::Find(PostFXShaders, shaderName);
 	}
 
 	inline static Shader* GetPBRShader(NString shaderName)
 	{
-		return PBRShaders.Find(shaderName);
+		return MapFuncs::Find(PBRShaders, shaderName);
 	}
 
 
 private:
-	static Map<NString, Shader*> importedShaders;
-	static Map<NString, Shader*> PBRShaders;
-	static Map<NString, Shader*> PostFXShaders;
+	static NxMap<NString, Shader*> importedShaders;
+	static NxMap<NString, Shader*> PBRShaders;
+	static NxMap<NString, Shader*> PostFXShaders;
 	static Shader* mainPipelineShader;
 	static RenderDevice* renderDevice;
 };

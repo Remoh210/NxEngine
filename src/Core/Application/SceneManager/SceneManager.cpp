@@ -25,7 +25,7 @@
 
 Scene 		          SceneManager::currentScene;
 RenderDevice*         SceneManager::renderDevice = nullptr;
-Map<NString, Shader*> SceneManager::shaders;
+NxMap<NString, Shader*> SceneManager::shaders;
 ECS::World*           SceneManager::world = nullptr;
 
 void Scene::Clear()

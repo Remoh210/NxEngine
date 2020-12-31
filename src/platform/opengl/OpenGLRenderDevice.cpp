@@ -12,7 +12,7 @@ static void AddAllAttributes(GLuint program, const NString& vertexShaderText, ui
 static bool CheckShaderError(GLuint shader, int flag,
 		bool isProgram, const NString& errorMessage);
 static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
-		Map<NString, GLint>& UBOMap, Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap);
+		NxMap<NString, GLint>& UBOMap, NxMap<NString, GLint>& uniformMap, NxMap<NString, GLint>& samplerMap);
 
 bool OpenGLRenderDevice::GlobalInit() 
 {
@@ -161,7 +161,7 @@ uint32 OpenGLRenderDevice::ReleaseRenderTarget(uint32 fbo)
 		return 0;
 	}
 
-	Map<uint32, FBOData>::iterator it = fboMap.find(fbo);
+	NxMap<uint32, FBOData>::iterator it = fboMap.find(fbo);
 	if(it == fboMap.end()) {
 		return 0;
 	}
@@ -198,7 +198,7 @@ void OpenGLRenderDevice::UpdateVertexArrayBuffer(uint32 vao, uint32 bufferIndex,
 		return;
 	}
 
-	Map<uint32, VertexArray>::iterator it = vaoMap.find(vao);
+	NxMap<uint32, VertexArray>::iterator it = vaoMap.find(vao);
 	if(it == vaoMap.end()) {
 		return;
 	}
@@ -719,7 +719,7 @@ uint32 OpenGLRenderDevice::ReleaseVertexArray(uint32 vao)
 	if (vao == 0) {
 		return 0;
 	}
-	Map<uint32, VertexArray>::iterator it = vaoMap.find(vao);
+	NxMap<uint32, VertexArray>::iterator it = vaoMap.find(vao);
 	if (it == vaoMap.end()) {
 		return 0;
 	}
@@ -781,7 +781,7 @@ static bool AddShader(GLuint shaderProgram, const NString& text, GLenum type,
 }
 
 static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
-		Map<NString, GLint>& UBOMap, Map<NString, GLint>& uniformMap, Map<NString, GLint>& samplerMap)
+		NxMap<NString, GLint>& UBOMap, NxMap<NString, GLint>& uniformMap, NxMap<NString, GLint>& samplerMap)
 {
 	GLint numBlocks;
 	glGetProgramiv(shaderProgram, GL_ACTIVE_UNIFORM_BLOCKS, &numBlocks);
@@ -1070,7 +1070,7 @@ uint32 OpenGLRenderDevice::ReleaseShaderProgram(uint32 shader)
 	if (shader == 0) {
 		return 0;
 	}
-	Map<uint32, ShaderProgram>::iterator programIt = shaderProgramMap.find(shader);
+	NxMap<uint32, ShaderProgram>::iterator programIt = shaderProgramMap.find(shader);
 	if (programIt == shaderProgramMap.end()) {
 		return 0;
 	}

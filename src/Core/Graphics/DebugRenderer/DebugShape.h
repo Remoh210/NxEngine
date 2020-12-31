@@ -3,7 +3,7 @@
 #include "Common/Common.h"
 
 #include "rendering/VertexArray.h"
-#include "rendering/Texture.h"
+#include "Core/Graphics/Texture/Texture.h"
 
 
 struct DebugShape

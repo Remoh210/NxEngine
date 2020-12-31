@@ -259,9 +259,9 @@ private:
 	struct ShaderProgram
 	{
 		NxArray<uint32> shaders;
-		Map<NString, int32> UBOMap;
-		Map<NString, int32> uniformMap;
-		Map<NString, int32> samplerMap;
+		NxMap<NString, int32> UBOMap;
+		NxMap<NString, int32> uniformMap;
+		NxMap<NString, int32> samplerMap;
 	};
 
 	struct FBOData
@@ -289,9 +289,9 @@ private:
 	//DeviceContext context;
 	NString shaderVersion;
 	uint32 version;
-	Map<uint32, VertexArray> vaoMap;
-	Map<uint32, FBOData> fboMap;
-	Map<uint32, ShaderProgram> shaderProgramMap;
+	NxMap<uint32, VertexArray> vaoMap;
+	NxMap<uint32, FBOData> fboMap;
+	NxMap<uint32, ShaderProgram> shaderProgramMap;
 
 	uint32 boundFBO;
 	uint32 viewportFBO;

@@ -213,7 +213,7 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 	SetLights();
 
 	//Draw meshes
-	for (Map<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4> >::iterator it
+	for (NxMap<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4> >::iterator it
 		= meshRenderBuffer.begin(); it != meshRenderBuffer.end(); ++it)
 	{
 		mat4* transforms = &it->second[0];
@@ -279,7 +279,7 @@ void EditorRenderContext::DrawEditorHelpers(RenderTarget* renderTarget)
 void EditorRenderContext::DrawDebugShapes(RenderTarget* renderTarget)
 {
 	Texture* currentTexture = nullptr;
-	for (Map<DebugShape*, NxArray<mat4>>::iterator it
+	for (NxMap<DebugShape*, NxArray<mat4>>::iterator it
 		= debugShapeBuffer.begin(); it != debugShapeBuffer.end(); ++it)
 	{
 		DebugShape* shapeToDraw = it->first;
@@ -315,7 +315,8 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 	uint32 samplerUnit = 1;
 
 	//Albedo
-	Texture* albedoTexture = material->textures.Find(TEXTURE_ALBEDO);
+	
+	Texture* albedoTexture = MapFuncs::Find(material->textures, NString(TEXTURE_ALBEDO));
 	if (albedoTexture != nullptr)
 	{
 		shader->SetSampler("albedoMap", *albedoTexture, *sampler, samplerUnit);
@@ -328,7 +329,7 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 		shader->SetUniform1f("bUseAlbedoMap", false);
 	}
 	//Normal
-	Texture* normalTexture = material->textures.Find(TEXTURE_NORMAL);
+	Texture* normalTexture = MapFuncs::Find(material->textures, NString(TEXTURE_NORMAL));
 	if (normalTexture != nullptr)
 	{
 		samplerUnit++;
@@ -341,7 +342,7 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 	}
 
 	//Look for glTF PBR metallic roughness texure
-	Texture* MRTexture = material->textures.Find(TEXTURE_MR);
+	Texture* MRTexture = MapFuncs::Find(material->textures, NString(TEXTURE_MR));
 	if (MRTexture != nullptr)
 	{
 		samplerUnit++;
@@ -356,7 +357,7 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 	else
 	{
 		shader->SetUniform1i("uPBRTexType", PBR_TEXTURE_SPLIT);
-		Texture* metallicTexture = material->textures.Find(TEXTURE_METALLIC);
+		Texture* metallicTexture = MapFuncs::Find(material->textures, NString(TEXTURE_METALLIC));
 		if (metallicTexture != nullptr)
 		{
 			samplerUnit++;
@@ -368,7 +369,7 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 			shader->SetUniform1f("bUseMetallicMap", false);
 			shader->SetUniform1f("uMetallic", material->metallic);
 		}
-		Texture* roughnessTexture = material->textures.Find(TEXTURE_ROUGHNESS);
+		Texture* roughnessTexture = MapFuncs::Find(material->textures, NString(TEXTURE_ROUGHNESS));
 		if (roughnessTexture != nullptr)
 		{
 			samplerUnit++;
@@ -380,8 +381,7 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 			shader->SetUniform1f("bUseRoughnessMap", false);
 			shader->SetUniform1f("uRoughness", material->roughness);
 		}
-
-		Texture* AoTexture = material->textures.Find(TEXTURE_AO);
+		Texture* AoTexture = MapFuncs::Find(material->textures, NString(TEXTURE_AO));
 		if (AoTexture)
 		{
 			samplerUnit++;

@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderDevice.h"
 #include "Common/Common.h"
-#include "Texture.h"
+#include "Core/Graphics/Texture/Texture.h"
 
 class RenderTarget
 {

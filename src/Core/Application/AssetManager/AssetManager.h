@@ -18,8 +18,8 @@ public:
 
 
 private:
-	static Map<NString, NxArray<MeshInfo*>> importedModels;
-	static Map<NString, Texture*> importedTextures;
+	static NxMap<NString, NxArray<MeshInfo*>> importedModels;
+	static NxMap<NString, Texture*> importedTextures;
 
 	inline static Texture* FindTexture(NString textureFile)
 	{

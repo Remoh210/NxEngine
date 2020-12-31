@@ -2,7 +2,8 @@
 
 RTTR_REGISTRATION
 {
-	rttr::registration::class_<Material>("Material")
+		rttr::registration::class_<Material>("Material")
+		.property("Textures", &Material::textures)
 		.property("Metallic", &Material::metallic)
 				  (
 					  rttr::metadata("Min", 0.0f),
