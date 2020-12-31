@@ -23,6 +23,7 @@ void reflectUI(rttr::instance obj);
 bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant max, rttr::variant min);
 void reflectProperty(rttr::property& prop, rttr::instance& obj);
 void reflectArray(rttr::property& prop, rttr::instance& obj);
+void reflectMap(rttr::property& prop, rttr::instance& obj);
 void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size);
 
 void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size)
@@ -125,6 +126,81 @@ void reflectArray(rttr::property& prop, rttr::instance& obj)
 	}
 }
 
+void reflectMap(rttr::property& prop, rttr::instance& obj)
+{
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	bool base_open = ImGui::TreeNodeEx(prop.get_name().to_string().c_str(), base_flags);
+	if (base_open)
+	{
+		rttr::variant var = prop.get_value(obj);
+		auto view = var.create_associative_view();
+
+		static int selection_mask = (1 << 2);
+		int node_clicked = -1;
+		int i = 0;
+		for (const auto& item : view)
+		{
+			// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+			ImGuiTreeNodeFlags node_flags = base_flags;
+			const bool is_selected = (selection_mask & (1 << i)) != 0;
+			if (is_selected)
+				node_flags |= ImGuiTreeNodeFlags_Selected;
+
+			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, std::to_string(i).c_str(), i);
+			if (ImGui::IsItemClicked()) { node_clicked = i; }
+			if (node_open)
+			{
+
+				rttr::variant var1 = item.first;
+				rttr::variant var2 = item.second;
+				rttr::type value_type1 = var1.get_type();
+				rttr::type value_type2 = var2.get_type();
+
+				if (value_type1.is_arithmetic() || value_type1 == rttr::type::get<std::string>() || value_type1.is_enumeration())
+				{
+					rttr::variant max = prop.get_metadata("Max");
+					rttr::variant min = prop.get_metadata("Min");
+					reflectBasicType(value_type1, var1, prop.get_name().to_string() + "##" + std::to_string(i) + "first", max, min);
+
+				}
+				else // object
+				{
+					reflectUI(var1);
+				}
+
+				if (value_type2.is_arithmetic() || value_type2 == rttr::type::get<std::string>() || value_type2.is_enumeration())
+				{
+					rttr::variant max = prop.get_metadata("Max");
+					rttr::variant min = prop.get_metadata("Min");
+					reflectBasicType(value_type1, var2, prop.get_name().to_string() + "##" + std::to_string(i) + "second", max, min);
+
+				}
+				else // object
+				{
+					reflectUI(value_type2);
+				}
+
+				view.insert(var1, var2);
+
+				ImGui::TreePop();
+
+			}
+			i++;
+		}
+		if (node_clicked != -1)
+		{
+			if (ImGui::GetIO().KeyCtrl)
+				selection_mask ^= (1 << node_clicked);
+			else
+				selection_mask = (1 << node_clicked);
+		}
+		prop.set_value(obj, view);
+		ImGui::TreePop();
+	}
+}
+
 
 void reflectProperty(rttr::property& prop, rttr::instance& obj)
 {
@@ -145,9 +221,6 @@ void reflectProperty(rttr::property& prop, rttr::instance& obj)
 			prop.get_name().to_string(), max, min);
 		prop.set_value(obj, var);
 	}
-	//if(reflectBasicType(is_wrapper ? wrapped_type : value_type, obj, prop))
-	//{
-	//}
 	else if (value_type == rttr::type::get<vec3f>())
 	{
 		rttr::variant var = prop.get_value(obj);
@@ -159,6 +232,13 @@ void reflectProperty(rttr::property& prop, rttr::instance& obj)
 		rttr::variant var = prop.get_value(obj);
         auto view = var.create_sequential_view();
 		reflectArray(prop, obj);
+		prop.set_value(obj, var);
+	}
+	else if (value_type.is_associative_container())
+	{
+		rttr::variant var = prop.get_value(obj);
+		auto view = var.create_sequential_view();
+		reflectMap(prop, obj);
 		prop.set_value(obj, var);
 	}
 	else
