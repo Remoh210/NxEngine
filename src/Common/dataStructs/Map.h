@@ -28,9 +28,9 @@
 struct MapFuncs
 {
 	template <class Key, class Value>
-	static inline Value Find(NxMap<Key, Value>& MapIn, Key& KeyIn)
+	static inline Value Find(NxMap<Key, Value>& MapIn, Key KeyIn)
 	{
-		std::map<Key, Value>::iterator it;
+        typename std::map<Key, Value>::iterator it;
 
 		it = MapIn.find(KeyIn);
 		if (it != MapIn.end())
