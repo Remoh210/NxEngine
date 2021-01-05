@@ -20,14 +20,14 @@ float floatArray[3] = { 1,
 /////////////////////////////////////////////////////////////////////////////////////////
 
 void reflectUI(rttr::instance obj);
-bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant max, rttr::variant min);
-void reflectProperty(rttr::property& prop, rttr::instance& obj);
-void reflectArray(rttr::property& prop, rttr::instance& obj);
-void reflectMap(rttr::property& prop, rttr::instance& obj);
-void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size);
-void reflectTexture(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size);
+bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant min, rttr::variant max);
+void reflectVariant(rttr::variant& var, NString propName, rttr::variant& min, rttr::variant& max);
+void reflectArray(rttr::variant_sequential_view& view, NString propName, rttr::variant& min, rttr::variant& max);
+void reflectMap(rttr::variant_associative_view& view, NString propName, rttr::variant& min, rttr::variant& max);
+void reflectVec(rttr::variant& var, NString propName, uint32 size);
+void reflectTexture(rttr::variant& var, NString propName, uint32 size = 128);
 
-void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size)
+void reflectVec(rttr::variant& var, NString propName, uint32 size)
 {
 	auto value_type = var.get_type();
 	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
@@ -63,7 +63,7 @@ void reflectVec(rttr::variant& var, rttr::instance& obj, NString propName, uint3
 	}
 }
 
-void reflectTexture(rttr::variant& var, rttr::instance& obj, NString propName, uint32 size)
+void reflectTexture(rttr::variant& var, NString propName, uint32 size)
 {
 	auto value_type = var.get_type();
 	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
@@ -88,17 +88,14 @@ void reflectTexture(rttr::variant& var, rttr::instance& obj, NString propName, u
 	}
 }
 
-void reflectArray(rttr::property& prop, rttr::instance& obj)
+void reflectArray(rttr::variant_sequential_view& view, NString propName, rttr::variant& min, rttr::variant& max)
 {
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	bool base_open = ImGui::TreeNodeEx(prop.get_name().to_string().c_str(), base_flags);
+	bool base_open = ImGui::TreeNodeEx(propName.c_str(), base_flags);
 	if (base_open)
 	{
-		rttr::variant var = prop.get_value(obj);
-		auto view = var.create_sequential_view();
-
 		static int selection_mask = (1 << 2);
 		int node_clicked = -1;
 		int i = 0;
@@ -117,8 +114,9 @@ void reflectArray(rttr::property& prop, rttr::instance& obj)
 
 				if (item.is_sequential_container())
 				{
+					//////////////
 					auto view = item.create_sequential_view();
-					reflectArray(prop, obj);
+					reflectArray(view, propName, min, max);
 				}
 				else
 				{
@@ -126,9 +124,8 @@ void reflectArray(rttr::property& prop, rttr::instance& obj)
 					rttr::type value_type = wrapped_var.get_type();
 					if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
 					{
-						rttr::variant max = prop.get_metadata("Max");
-						rttr::variant min = prop.get_metadata("Min");
-						reflectBasicType(value_type, wrapped_var, prop.get_name().to_string() + "##" + std::to_string(i), max, min);
+
+						reflectBasicType(value_type, wrapped_var, propName + "##" + std::to_string(i), min, max);
 						view.set_value(i, wrapped_var);
 					}
 					else // object
@@ -147,22 +144,19 @@ void reflectArray(rttr::property& prop, rttr::instance& obj)
 			else 
 				selection_mask = (1 << node_clicked);
 		}
-		prop.set_value(obj, view);
+		//prop.set_value(obj, view);
 		ImGui::TreePop();
 	}
 }
 
-void reflectMap(rttr::property& prop, rttr::instance& obj)
+void reflectMap(rttr::variant_associative_view& view, NString propName, rttr::variant& min, rttr::variant& max)
 {
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
 
-	bool base_open = ImGui::TreeNodeEx(prop.get_name().to_string().c_str(), base_flags);
+	bool base_open = ImGui::TreeNodeEx(propName.c_str(), base_flags);
 	if (base_open)
 	{
-		rttr::variant var = prop.get_value(obj);
-		auto view = var.create_associative_view();
-
 		int i = 0;
 		for (const auto& item : view)
 		{
@@ -174,9 +168,7 @@ void reflectMap(rttr::property& prop, rttr::instance& obj)
 
 			if (value_type1.is_arithmetic() || value_type1 == rttr::type::get<std::string>() || value_type1.is_enumeration())
 			{
-				rttr::variant max = prop.get_metadata("Max");
-				rttr::variant min = prop.get_metadata("Min");
-				reflectBasicType(value_type1, var1, prop.get_name().to_string() + "##" + std::to_string(i) + "first", max, min);
+				reflectBasicType(value_type1, var1, propName + "##" + std::to_string(i) + "first", min, max);
 
 			}
 			else // object
@@ -186,84 +178,125 @@ void reflectMap(rttr::property& prop, rttr::instance& obj)
 
 			if (value_type2.is_arithmetic() || value_type2 == rttr::type::get<std::string>() || value_type2.is_enumeration())
 			{
-				rttr::variant max = prop.get_metadata("Max");
-				rttr::variant min = prop.get_metadata("Min");
-				reflectBasicType(value_type1, var2, prop.get_name().to_string() + "##" + std::to_string(i) + "second", max, min);
+				reflectBasicType(value_type1, var2, propName + "##" + std::to_string(i) + "second", min, max);
 
 			}
 			else // object
 			{
-				reflectUI(var2);
+				reflectVariant(var2, propName, min, max);
 			}
 
 			view.insert(var1, var2);
 		}
-		prop.set_value(obj, view);
 		ImGui::TreePop();
 	}
 }
 
 
-void reflectProperty(rttr::property& prop, rttr::instance& obj)
+//void reflectProperty(rttr::property& prop, rttr::instance& obj)
+//{
+//	auto value_type = prop.get_type();
+//	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
+//	bool is_wrapper = wrapped_type != value_type;
+//
+//	NString vType = value_type.get_name().to_string();
+//
+//	//TODO: Fix wrapped types
+//	if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
+//	{
+//		rttr::variant var = prop.get_value(obj);
+//		var = is_wrapper ? var.extract_wrapped_value() : var;
+//		rttr::variant max = prop.get_metadata("Max");
+//		rttr::variant min = prop.get_metadata("Min");
+//		reflectBasicType(is_wrapper ? wrapped_type : value_type, var,
+//			prop.get_name().to_string(), max, min);
+//		prop.set_value(obj, var);
+//	}
+//	else if (value_type == rttr::type::get<vec3f>())
+//	{
+//		rttr::variant var = prop.get_value(obj);
+//		reflectVec(var, obj, prop.get_name().to_string(), 3);
+//		prop.set_value(obj, var);
+//	}
+//	else if (value_type == rttr::type::get<Texture>())
+//	{
+//		rttr::variant var = prop.get_value(obj);
+//		reflectTexture(var, obj, prop.get_name().to_string(), 3);
+//		//prop.set_value(obj, var);
+//	}
+//	else if (value_type.is_sequential_container())
+//	{
+//		rttr::variant var = prop.get_value(obj);
+//        auto view = var.create_sequential_view();
+//		reflectArray(prop, obj);
+//		prop.set_value(obj, var);
+//	}
+//	else if (value_type.is_associative_container())
+//	{
+//		rttr::variant var = prop.get_value(obj);
+//		auto view = var.create_sequential_view();
+//		reflectMap(prop, obj);
+//		prop.set_value(obj, var);
+//	}
+//	else
+//	{
+//		auto child_props = is_wrapper ? wrapped_type.get_properties() : value_type.get_properties();
+//		if (!child_props.empty())
+//		{
+//			rttr::variant var = prop.get_value(obj);
+//			reflectUI(var);
+//			prop.set_value(obj, var);
+//		}
+//
+//	}
+//}
+
+void reflectVariant(rttr::variant& var, NString propName, rttr::variant& min, rttr::variant& max)
 {
-	auto value_type = prop.get_type();
+	auto value_type = var.get_type();
 	auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
 	bool is_wrapper = wrapped_type != value_type;
+
 
 	NString vType = value_type.get_name().to_string();
 
 	//TODO: Fix wrapped types
 	if (value_type.is_arithmetic() || value_type == rttr::type::get<std::string>() || value_type.is_enumeration())
 	{
-		rttr::variant var = prop.get_value(obj);
 		var = is_wrapper ? var.extract_wrapped_value() : var;
-		rttr::variant max = prop.get_metadata("Max");
-		rttr::variant min = prop.get_metadata("Min");
 		reflectBasicType(is_wrapper ? wrapped_type : value_type, var,
-			prop.get_name().to_string(), max, min);
-		prop.set_value(obj, var);
+			propName, min, max);
 	}
 	else if (value_type == rttr::type::get<vec3f>())
 	{
-		rttr::variant var = prop.get_value(obj);
-		reflectVec(var, obj, prop.get_name().to_string(), 3);
-		prop.set_value(obj, var);
+		reflectVec(var, propName, 3);
 	}
-	else if (value_type == rttr::type::get<Texture>())
+	else if (value_type == rttr::type::get<Texture*>())
 	{
-		rttr::variant var = prop.get_value(obj);
-		reflectTexture(var, obj, prop.get_name().to_string(), 3);
-		//prop.set_value(obj, var);
+		reflectTexture(var, propName);
 	}
 	else if (value_type.is_sequential_container())
 	{
-		rttr::variant var = prop.get_value(obj);
-        auto view = var.create_sequential_view();
-		reflectArray(prop, obj);
-		prop.set_value(obj, var);
+		reflectArray(var.create_sequential_view(), propName, min, max);
+
 	}
 	else if (value_type.is_associative_container())
 	{
-		rttr::variant var = prop.get_value(obj);
-		auto view = var.create_sequential_view();
-		reflectMap(prop, obj);
-		prop.set_value(obj, var);
+		reflectMap(var.create_associative_view(), propName, min, max);
 	}
 	else
 	{
 		auto child_props = is_wrapper ? wrapped_type.get_properties() : value_type.get_properties();
 		if (!child_props.empty())
 		{
-			rttr::variant var = prop.get_value(obj);
 			reflectUI(var);
-			prop.set_value(obj, var);
 		}
 
 	}
 }
 
 
-bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant max, rttr::variant min)
+bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant min, rttr::variant max)
 {
 	if (t.is_arithmetic())
 	{
@@ -347,7 +380,14 @@ void reflectUI(rttr::instance obj2)
 
 	for (auto prop : prop_list)
 	{
-		reflectProperty(prop, obj);
+		rttr::variant max = prop.get_metadata("Max");
+		rttr::variant min = prop.get_metadata("Min");
+		NString propName = prop.get_name().to_string();
+		auto var = prop.get_value(obj);
+
+		reflectVariant(var, propName, min, max);
+
+		prop.set_value(obj, var);
 	}
 }
 

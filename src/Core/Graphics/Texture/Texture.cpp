@@ -3,6 +3,6 @@
 RTTR_REGISTRATION
 {
 	rttr::registration::class_<Texture>("Texture")
-		.property("Texture", &Texture::GetId, &Texture::SetId)
+		.property("Texture ID", &Texture::GetId, &Texture::SetId)
 	;
 }
