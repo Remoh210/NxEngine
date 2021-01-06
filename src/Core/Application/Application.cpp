@@ -431,6 +431,16 @@ void Application::Initialize()
 	editorRenderContext = new EditorRenderContext(renderDevice, editorRenderTarget, drawParams, editorSampler, projection, MainCamera);
 
 
+
+	window->SetFrameBufferResizeCallback
+	(
+		[this](float x, float y)
+	{
+		editorRenderContext->ResizeViewPort(x, y);
+	}
+	);
+
+
 	SceneManager::SetECS(world);
 	SceneManager::SetRenderDevice(renderDevice);
 	ShaderManager::SetRenderDevice(renderDevice);
@@ -776,7 +786,7 @@ void Application::processInput(GLFWwindow *window)
 
 void Application::ResizeWindow(uint32 width, uint32 height)
 {
-		GUI_ShowMenuBar();
+	GUI_ShowMenuBar();
 	windowHeight = height;
 	windowWidth = width;
 }

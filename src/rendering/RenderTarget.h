@@ -41,6 +41,18 @@ public:
 	inline Texture* GetTexture() { return texture; };
 	inline uint32 GetTexreId() { return texture->GetId(); };
 
+	inline void Resize(uint32 width, uint32 height)
+	{
+		mRenderDevice->UpdateFBOSize(id, width, height);
+
+		delete texture;
+		texture = new Texture(mRenderDevice, width, height, PixelFormat::FORMAT_RGB, PixelFormat::FORMAT_RGB16F, false, false, true);
+
+		mRenderDevice->ReleaseRenderTarget(id);
+
+		id = mRenderDevice->CreateRenderTarget(texture->GetId(), width, height, FramebufferAttachment::ATTACHMENT_COLOR, 0, 0);
+	};
+
 private:
     RenderDevice* mRenderDevice;
 	Texture* texture;

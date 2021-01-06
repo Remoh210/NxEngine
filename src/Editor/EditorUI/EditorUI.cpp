@@ -427,10 +427,6 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 	ImGui::End();
 
 
-
-
-
-	ImVec2 SceneViewSize;
 	if (init)
 	{
 		SceneViewSize = ImVec2(GlobalSettings::GetWindowWidth() / 2, GlobalSettings::GetWindowHeight() / 2);
@@ -439,14 +435,20 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 		ImGui::SetNextWindowPos(SceneViewPos);
 		init = false;
 	}
-	ImGui::Begin("Main2", nullptr, ImGuiTabBarFlags_None);
-	//ImGui::BeginChild("MainViews", VecScreen, true);
+	ImGui::Begin("Main View", nullptr, ImGuiTabBarFlags_None);
 	ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
 	ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
-
 	if (ImGui::BeginTabItem("Scene"))
 	{
-		SceneViewSize = ImGui::GetContentRegionAvail();
+		ImVec2 newSize = ImGui::GetWindowSize();
+		if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
+		{
+			SceneViewSize = newSize;
+			//DEBUG_LOG_TEMP("RESIZE()");
+			//editorContext->ResizeRenderTargets(newSize.x, newSize.y);
+
+		}
+		ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
 		//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
 		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::EndTabItem();

@@ -377,7 +377,6 @@ uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 		FramebufferAttachment attachment,
 		uint32 attachmentNumber, uint32 mipLevel)
 {
-
 	uint32 fbo;
 	glGenFramebuffers(1, &fbo);
 	SetFBO(fbo);
@@ -395,7 +394,6 @@ uint32 OpenGLRenderDevice::CreateRenderTarget(uint32 texture,
 		DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "Framebuffer is not complete!");
 	}
 		
-	
 	struct FBOData data;
 	data.width = width;
 	data.height = height;

@@ -61,10 +61,28 @@ public:
 	void DrawScene(RenderTarget* renderTarget);
 	void DrawEditorHelpers(RenderTarget* renderTarget);
 	void DrawDebugShapes(RenderTarget* renderTarget);
+	inline void ResizeRenderTargets(float width, float height)
+	{
+		if (width == 0 || height == 0)
+			return;
+
+		sceneRenderTarget->Resize(width, height);
+		chromaRenderTarget->Resize(width, height);
+		perspective = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 10000.0f);
+		MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
+		
+	}
+
 	inline void ResizeViewPort(float width, float height)
 	{
-		mRenderDevice->UpdateFBOSize(sceneRenderTarget->GetId(), 1200, 700);
-		mRenderDevice->UpdateFBOSize(chromaRenderTarget->GetId(), 1600, 1000);
+		if (width == 0 || height == 0)
+			return;
+
+		sceneRenderTarget->Resize(width, height);
+		chromaRenderTarget->Resize(width, height);
+		mRenderDevice->UpdateFBOSize(this->mRenderTarget->GetId(), width, height);
+		perspective = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 10000.0f);
+		MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 	}
 	
     void Flush();
@@ -98,7 +116,6 @@ private:
 	CromaticAberration* chromaFX;
 	Texture* chromaTexture;
 	RenderTarget* chromaRenderTarget;
-
 	Texture* finalTexture;
 
 

@@ -69,7 +69,7 @@ void EditorRenderContext::Flush()
 	else
 	{
 		screenShader->SetSampler("Texture", *sceneRenderTarget->GetTexture(), *screenTextureSampler, 0);
-		finalTexture = offscreenTexture;
+		finalTexture = sceneRenderTarget->GetTexture();
 	}
 
 	
