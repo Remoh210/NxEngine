@@ -30,6 +30,10 @@ ECS::World*           SceneManager::world = nullptr;
 
 void Scene::Clear()
 {
+	for (int i = 0; i < sceneObjects.size(); i++)
+	{
+		delete sceneObjects[i];
+	}
 	sceneObjects.clear();
 }
  
@@ -45,9 +49,8 @@ void SceneManager::ClearScene()
 
 	for (int i = 0; i < currentScene.GetNumObjects(); i++)
 	{
-		ECS::ComponentHandle<StaticMeshComponent> staticMeshComp = currentScene.sceneObjects[i]->get<StaticMeshComponent>();
-		DEBUG_LOG_TEMP("About to delete: %s", staticMeshComp->meshAssetFile.c_str());
-		world->destroy(currentScene.sceneObjects[i]);
+		DEBUG_LOG_TEMP("About to delete: %s", currentScene.sceneObjects[i]->objectName.c_str());
+		world->destroy(currentScene.sceneObjects[i]->entity);
 	}
 
 	currentScene.Clear();

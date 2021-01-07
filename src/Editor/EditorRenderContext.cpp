@@ -111,9 +111,9 @@ void EditorRenderContext::SetLights()
 
 	for (std::pair<ECS::ComponentHandle<LightComponent>, vec3> light : lightBuffer)
 	{
-		lightTypes.push_back(light.first->lightType);
-		lightColors.push_back(light.first->color * light.first->intensity);
-		lightDirections.push_back(light.first->direction);
+		lightTypes.push_back(static_cast<int>(light.first->lightType));
+		lightColors.push_back(light.first->color.ToVec() * light.first->intensity);
+		lightDirections.push_back(light.first->direction.ToVec());
 		lightPositions.push_back(light.second);
 	}
 

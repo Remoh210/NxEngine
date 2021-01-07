@@ -178,24 +178,7 @@ int Application::Run()
 			editorRenderContext->TogglePostFX();
 		}
 
-		auto staticMesh = SceneManager::currentScene.sceneObjects[0]->get<StaticMeshComponent>();
-		
-		if(ImGui::SliderFloat("roughness", &roughness, 0.0f, 1.0f))
-		{
-			for(auto mesh : staticMesh->meshes)
-			{
-				mesh->material->roughness = roughness;
-			}
-		}
-		if (ImGui::SliderFloat("metallic", &metallic, 0.0f, 1.0f))
-		{
-			for (auto mesh : staticMesh->meshes)
-			{
-				mesh->material->metallic = metallic;
-			}
-		}
-		
-
+	
 		ImGui::Text("Environments:");
 		if (ImGui::Button("Sky"))
 		{
@@ -477,6 +460,7 @@ void Application::LoadDefaultScene()
 	//PBRSphere2.gltf = embedded textures
 	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb";
 	NString TEST_MODEL_FILE6 = "res/models/dust/fbx/dust.fbx";
+	NString TEST_MODEL_FILE7 = "res/models/PBRTest.glb";
 	//Assimp PBR********************************************************
 	
 
@@ -660,14 +644,15 @@ void Application::LoadDefaultScene()
 	transformComp6.transform.rotation = vec3(-90.0f, 0.0f, 0.f);
 	transformComp6.transform.scale = vec3(0.5);
 
-
-/*	ECS::Entity* ent = world->create();
-	ent->assign<TransformComponent>(transformComp);
-	ent->assign<StaticMeshComponent>(renderableMesh)*/;
-
-	//ECS::Entity* ent2 = world->create();
-	//ent2->assign<TransformComponent>(transformComp2);
-	//ent2->assign<StaticMeshComponent>(renderableMesh2);
+	StaticMeshComponent renderableMesh7;
+	renderableMesh7.meshes = AssetManager::ImportModel(renderDevice, TEST_MODEL_FILE7);
+	renderableMesh7.meshAssetFile = TEST_MODEL_FILE7;
+	renderableMesh7.shader = ShaderManager::GetMainShader();
+	renderableMesh7.numInst = 1;
+	TransformComponent transformComp7;
+	transformComp7.transform.position = vec3(-20.1f, 10.0f, -40.0f);
+	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
+	transformComp7.transform.scale = vec3(35.5);
 
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
@@ -687,19 +672,22 @@ void Application::LoadDefaultScene()
 	ent6->assign<TransformComponent>(transformComp6);
 	ent6->assign<StaticMeshComponent>(renderableMesh6);
 
+	ECS::Entity* ent7 = world->create();
+	ent7->assign<TransformComponent>(transformComp7);
+	ent7->assign<StaticMeshComponent>(renderableMesh7);
+
 	//SceneManager::currentScene.sceneObjects.push_back(ent);
 	//SceneManager::currentScene.sceneObjects.push_back(ent2);
 	//SceneManager::currentScene.sceneObjects.push_back(ent3);
-	SceneManager::currentScene.sceneObjects.push_back(ent5);
-
-	SceneManager::currentScene.sceneObjects.push_back(ent4);
-	SceneManager::currentScene.sceneObjects.push_back(ent3);
-	SceneManager::currentScene.sceneObjects.push_back(ent6);
+	SceneManager::currentScene.AddObject("Red sphere", ent5);
+	SceneManager::currentScene.AddObject("Rust", ent4);
+	SceneManager::currentScene.AddObject("Pistol", ent3);
+	SceneManager::currentScene.AddObject("Dust Map", ent6);
+	SceneManager::currentScene.AddObject("Bottle", ent7);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();
 	renderableMesh3.shader = ShaderManager::GetMainShader();
-
 
 	//Directional
 	vec3 dirColor(1.0f, 1.0f, 1.0f);
@@ -708,6 +696,7 @@ void Application::LoadDefaultScene()
 	ECS::Entity* lightDir = world->create();
 	lightDir->assign<TransformComponent>(Transform());
 	lightDir->assign<LightComponent>(dirColor, dirInten, vec3(0), dir);
+	SceneManager::currentScene.AddObject("Dir light 1", lightDir);
 
 	//Directional
 	vec3 dirColor2(1.0f, 1.0f, 1.0f);
@@ -716,6 +705,7 @@ void Application::LoadDefaultScene()
 	ECS::Entity* lightDir2 = world->create();
 	lightDir2->assign<TransformComponent>(Transform());
 	lightDir2->assign<LightComponent>(dirColor2, dirInten2, vec3(0), dir2);
+	SceneManager::currentScene.AddObject("Dir light 2", lightDir2);
 
 	//Point;
 	vec3 color(1.0f, 1.0f, 1.0f);
@@ -726,12 +716,15 @@ void Application::LoadDefaultScene()
 	transform1.position = vec3(-10.0f, 10.0f, 10.0f);
 	light1->assign<TransformComponent>(transform1);
 	light1->assign<LightComponent>(color, inten, vec3(0));
+	
+	SceneManager::currentScene.AddObject("point light 1", light1);
 
 	ECS::Entity* light2 = world->create();
 	Transform transform2;
 	transform2.position = vec3(10.0f, 10.0f, 10.0f);
 	light2->assign<TransformComponent>(transform2);
 	light2->assign<LightComponent>(color, inten, vec3(0));
+	SceneManager::currentScene.AddObject("point light 2", light2);
 
 
 	ECS::Entity* light3 = world->create();
@@ -739,12 +732,14 @@ void Application::LoadDefaultScene()
 	transform3.position = vec3(-10.0f, -10.0f, 10.0f);
 	light3->assign<TransformComponent>(transform3);
 	light3->assign<LightComponent>(color, inten, vec3(0));
+	SceneManager::currentScene.AddObject("point light 3", light3);
 
 	ECS::Entity* light4 = world->create();
 	Transform transform4;
 	transform4.position = vec3(10.0f, -10.0f, 10.0f);
 	light4->assign<TransformComponent>(transform4);
 	light4->assign<LightComponent>(color, inten, vec3(0));
+	SceneManager::currentScene.AddObject("point light 4", light4);
 }
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly

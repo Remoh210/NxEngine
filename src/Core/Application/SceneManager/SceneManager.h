@@ -6,14 +6,31 @@
 #include "rendering/RenderDevice.h"
 #include "rendering/Shader.h"
 
+struct SceneObject
+{
+	SceneObject(NString nameIn, ECS::Entity* entityIn)
+		:objectName(nameIn)
+		,entity(entityIn)
+	{}
 
+	NString objectName;
+	ECS::Entity* entity;
+};
 
 struct Scene
 {
 	NString sceneName;
-	NxArray<ECS::Entity*> sceneObjects;
+	void AddObject(NString name, ECS::Entity* entity)
+	{
+		sceneObjects.push_back(new SceneObject(name, entity));
+	};
+
 	inline uint32 GetNumObjects() { return sceneObjects.size(); }
+	
 	void Clear();
+	NxArray<SceneObject*> sceneObjects;
+	
+	
 };
 
 class SceneManager

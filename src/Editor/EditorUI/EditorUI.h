@@ -13,6 +13,7 @@ class EditorUI
 public:
 
 	static void Initialize(NString apiVersion, Window* window);
+	static void DrawSceneTree();
 	static void DrawEditorView(EditorRenderContext* editorContext);
 	static void DrawInspector();
 	static void Shutdown();
@@ -28,5 +29,6 @@ public:
 private:
 	static ImVec2 SceneViewSize;
 	static ImVec2 SceneViewPos;
+	static int32 selectedEntity;
 	static bool init;
 };

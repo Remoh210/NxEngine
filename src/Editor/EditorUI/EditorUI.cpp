@@ -9,13 +9,7 @@
 bool EditorUI::init = true;
 ImVec2 EditorUI::SceneViewSize;
 ImVec2 EditorUI::SceneViewPos;
-
-
-float floatArray[3] = { 1,
-		2,
-		3
-};
-
+int32 EditorUI::selectedEntity = -1;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -363,6 +357,27 @@ bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName,
 
 		return true;
 	}
+	else if (t.is_enumeration())
+	{
+		auto names = t.get_enumeration().get_names();
+		NxArray<NString> enumNames;
+		for (auto& name : names) { enumNames.push_back(name.to_string()); }
+
+		int item_current = 0;
+		NxArray<const char*> enumNames_cStr;
+		for (int i = 0; i < enumNames.size(); i++)
+		{
+			if (var.to_string() == enumNames[i])
+			{
+				item_current = i;
+			}
+			enumNames_cStr.push_back(enumNames[i].c_str());
+		}
+
+		ImGui::Combo(propName.c_str(), &item_current, enumNames_cStr.data(), enumNames.size());
+		var = t.get_enumeration().name_to_value(enumNames[item_current]);
+		return true;
+	}
 	else if (t == rttr::type::get<std::string>())
 	{
 		ImGui::Text(var.to_string().c_str());
@@ -408,9 +423,54 @@ void EditorUI::Initialize(NString apiVersion, Window* window)
 	ImGui::StyleColorsDark();
 }
 
+void EditorUI::DrawSceneTree()
+{
+	ImGui::Begin("Scene", nullptr, ImGuiTabBarFlags_None);
+
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+
+		static int selection_mask = (1 << 2);
+		int node_clicked = -1;
+		int i = 0;
+		for (int entCount = 0; entCount < SceneManager::currentScene.GetNumObjects(); entCount++)
+		{
+			// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+			ImGuiTreeNodeFlags node_flags = base_flags;
+			const bool is_selected = (selection_mask & (1 << i)) != 0;
+			if (is_selected)
+				node_flags |= ImGuiTreeNodeFlags_Selected;
+
+			NString name = SceneManager::currentScene.sceneObjects[entCount]->objectName;
+			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, name.c_str(), i);
+			if (ImGui::IsItemClicked()) 
+			{ 
+				selectedEntity = i;
+				node_clicked = i;
+			}
+			if (node_open)
+			{
+				ImGui::TreePop();
+			}
+			i++;
+		}
+		if (node_clicked != -1)
+		{
+			if (ImGui::GetIO().KeyCtrl)
+				selection_mask ^= (1 << node_clicked);
+			else
+				selection_mask = (1 << node_clicked);
+		}
+
+	ImGui::End();
+}
+
 void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 {
 
+	DrawSceneTree();
+	DrawInspector();
 
 	static ImGuiID dockspaceID = 0;
 	bool active = true;
@@ -493,49 +553,72 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 	ImGui::End();
 
 
-	DrawInspector();
+	
 }
 
 void EditorUI::DrawInspector()
 {
 	ImGui::Begin("Inspector");
 
-	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
-		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
-
-	static int selection_mask = (1 << 2);
-	int node_clicked = -1;
-	int i = 0;
-	for (auto entity : SceneManager::currentScene.sceneObjects)
+	if (selectedEntity != -1)
 	{
-		// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
-		ImGuiTreeNodeFlags node_flags = base_flags;
-		const bool is_selected = (selection_mask & (1 << i)) != 0;
-		if (is_selected)
-			node_flags |= ImGuiTreeNodeFlags_Selected;
+		ECS::Entity* entity = SceneManager::currentScene.sceneObjects[selectedEntity]->entity;
 
-		bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, entity->get<StaticMeshComponent>()->meshAssetFile.c_str(), i);
-		if (ImGui::IsItemClicked()) { node_clicked = i; }
-		if (node_open)
-		{
-			ImGui::Text("TransformComponent");
-			ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-			reflectUI(transformComp.get());
+		ImGui::Text("TransformComponent");
+		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
+		if (transformComp) { reflectUI(transformComp.get()); }
+
+		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
+		if (meshComp) 
+		{ 
 			ImGui::Text("StaticMeshComponent");
-			ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
-			reflectUI(meshComp.get());
-			ImGui::TreePop();
+			reflectUI(meshComp.get()); 
 		}
-		i++;
+
+		ECS::ComponentHandle<LightComponent> lightComp = entity->get<LightComponent>();
+		if (lightComp) 
+		{ 
+			ImGui::Text("LightComponent");
+			reflectUI(lightComp.get()); 
+		}
+		
 	}
-	if (node_clicked != -1)
-	{
-		// Update selection state. Process outside of tree loop to avoid visual inconsistencies during the clicking-frame.
-		if (ImGui::GetIO().KeyCtrl)
-			selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
-		else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, this commented bit preserve selection when clicking on item that is part of the selection
-			selection_mask = (1 << node_clicked);           // Click to single-select
-	}
+	//static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
+	//	| ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	//static int selection_mask = (1 << 2);
+	//int node_clicked = -1;
+	//int i = 0;
+	//for (auto entity : SceneManager::currentScene.sceneObjects)
+	//{
+	//	// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+	//	ImGuiTreeNodeFlags node_flags = base_flags;
+	//	const bool is_selected = (selection_mask & (1 << i)) != 0;
+	//	if (is_selected)
+	//		node_flags |= ImGuiTreeNodeFlags_Selected;
+
+	//	bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, entity->get<StaticMeshComponent>()->meshAssetFile.c_str(), i);
+	//	if (ImGui::IsItemClicked()) { node_clicked = i; }
+	//	if (node_open)
+	//	{
+	//		ImGui::Text("TransformComponent");
+	//		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
+	//		reflectUI(transformComp.get());
+	//		ImGui::Text("StaticMeshComponent");
+	//		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
+	//		reflectUI(meshComp.get());
+	//		ImGui::TreePop();
+	//	}
+	//	i++;
+	//}
+	//if (node_clicked != -1)
+	//{
+	//	// Update selection state. Process outside of tree loop to avoid visual inconsistencies during the clicking-frame.
+	//	if (ImGui::GetIO().KeyCtrl)
+	//		selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
+	//	else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, this commented bit preserve selection when clicking on item that is part of the selection
+	//		selection_mask = (1 << node_clicked);           // Click to single-select
+	//}
 
 	ImGui::End();
 }
