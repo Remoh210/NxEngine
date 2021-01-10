@@ -5,6 +5,7 @@
 
 #include <Core/Components/TransformComponent/TransformComponent.h>
 #include <Core/Components/LightComponent/LightComponent.h>
+#include <Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h>
 #include <Core/Systems/RenderSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
@@ -654,6 +655,16 @@ void Application::LoadDefaultScene()
 	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
 	transformComp7.transform.scale = vec3(35.5);
 
+	SkinnedMeshComponent skinnedMesh;
+	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal(renderDevice, "res/models/chan.fbx");
+	//skinnedMesh.meshAssetFile = TEST_MODEL_FILE7;
+	//skinnedMesh.shader = ShaderManager::GetMainShader();
+	//skinnedMesh.numInst = 1;
+	TransformComponent transformCompSkinned;
+	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
+	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
+	transformCompSkinned.transform.scale = vec3(35.5);
+
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
 	ent3->assign<StaticMeshComponent>(renderableMesh3);
@@ -676,6 +687,10 @@ void Application::LoadDefaultScene()
 	ent7->assign<TransformComponent>(transformComp7);
 	ent7->assign<StaticMeshComponent>(renderableMesh7);
 
+	//ECS::Entity* ent8 = world->create();
+	//ent7->assign<TransformComponent>(transformComp7);
+	//ent7->assign<SkinnedMeshComponent>(skinnedMesh)
+
 	//SceneManager::currentScene.sceneObjects.push_back(ent);
 	//SceneManager::currentScene.sceneObjects.push_back(ent2);
 	//SceneManager::currentScene.sceneObjects.push_back(ent3);
@@ -684,6 +699,7 @@ void Application::LoadDefaultScene()
 	SceneManager::currentScene.AddObject("Pistol", ent3);
 	SceneManager::currentScene.AddObject("Dust Map", ent6);
 	SceneManager::currentScene.AddObject("Bottle", ent7);
+	//SceneManager::currentScene.AddObject("SkinnedMesh", ent8);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();

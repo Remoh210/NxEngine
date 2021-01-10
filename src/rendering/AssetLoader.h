@@ -1,8 +1,32 @@
 #pragma once
 
+
 #include "IndexedModel.h"
-#include <assimp/scene.h>
 #include "Material.h"
+#include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
+
+#include <assimp/scene.h>
+#include <array>
+
+const int MAX_BONES_PER_VERTEX = 4;
+
+struct VertexBoneData
+{
+	std::array<float, MAX_BONES_PER_VERTEX> ids;
+	std::array<float, MAX_BONES_PER_VERTEX> weights;
+
+	inline void AddBoneData(unsigned int BoneID, float Weight)
+	{
+		for (unsigned int Index = 0; Index < MAX_BONES_PER_VERTEX; Index++) {
+			if (this->weights[Index] == 0.0f) {
+				ids[Index] = (float)BoneID;
+				weights[Index] = Weight;
+				return;
+			}
+		}
+
+	}
+};
 
 class AssetLoader
 {
@@ -17,6 +41,10 @@ public:
 		NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
 		NxArray<MaterialSpec>& materials);
 
+	static const aiScene* LoadModelSkeletal(const NString& fileName,
+		NxArray<IndexedModel>& models, SkeletalData& skelData, NxArray<uint32>& modelMatIndices,
+		NxArray<MaterialSpec>& matArray);
+
 private:
 
 	static void ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
@@ -27,7 +55,15 @@ private:
 		NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
 		NxArray<MaterialSpec>& materials);
 
+	static void ProcessMeshSkeletal(aiMesh * mesh, const aiScene * scene, const NString & fileName, 
+		NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices, 
+		NxArray<MaterialSpec>& materials, const NxArray<VertexBoneData>& boneData);
+
 	static void LoadMaterialTextures(const NString& filePath, aiMaterial* mat, const aiScene* scene, aiTextureType type, MaterialSpec& material, NString typeName);
+
+	static void LoadMRTextures(const NString & filePath, aiMaterial * mat, const aiScene * scene, MaterialSpec & spec);
+
+	static void LoadBones(const aiMesh* Mesh, SkeletalData& skelData, NxArray<VertexBoneData>& boneData);
 
 	static NString GetFileExtension(NString fileName)
 	{

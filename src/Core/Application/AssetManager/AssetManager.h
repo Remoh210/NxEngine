@@ -3,6 +3,7 @@
 #include "Common/dataStructs/Map.h"
 #include "Common/dataStructs/String.h"
 #include "Core/Graphics/Mesh/MeshInfo.h"
+#include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
 
 //Material specs
 #include "rendering/IndexedModel.h"
@@ -14,11 +15,15 @@ public:
     AssetManager() {};
 
 	static NxArray<MeshInfo*> ImportModel(RenderDevice* renderDevice, NString file);
-
+	static SkinnedMeshInfo* ImportModelSkeletal(RenderDevice* renderDevice, NString file);
 
 
 private:
+
+	static Material* LoadMaterial(RenderDevice* renderDevic, MaterialSpec& matSpec);
+
 	static NxMap<NString, NxArray<MeshInfo*>> importedModels;
+	static NxMap<NString, SkinnedMeshInfo*> importedSkinnedModels;
 	static NxMap<NString, Texture*> importedTextures;
 
 	inline static Texture* FindTexture(NString textureFile)

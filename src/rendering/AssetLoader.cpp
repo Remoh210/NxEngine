@@ -12,6 +12,14 @@
 
 #include "stb_image.h"
 
+glm::mat4 AIMatrixToGLMMatrix(const aiMatrix4x4 &mat)
+{
+	return glm::mat4(
+		mat.a1, mat.b1, mat.c1, mat.d1,
+		mat.a2, mat.b2, mat.c2, mat.d2,
+		mat.a3, mat.b3, mat.c3, mat.d3,
+		mat.a4, mat.b4, mat.c4, mat.d4);
+}
 
 NxArray<NString*> AssetLoader::mLoadedTextures;
 
@@ -37,7 +45,6 @@ bool AssetLoader::LoadModel(const NString& fileName,
 		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
 		return false;
 	}
-;
 
 	//process ASSIMP's root node recursively
 	ProcessNode(scene->mRootNode, scene, fileName, models, modelMaterialIndices, materials);
@@ -45,6 +52,38 @@ bool AssetLoader::LoadModel(const NString& fileName,
 	return true;
 }
 
+
+const aiScene* AssetLoader::LoadModelSkeletal(const NString& fileName, NxArray<IndexedModel>& models, SkeletalData& skelData, NxArray<uint32>& modelMatIndices, NxArray<MaterialSpec>& matArray)
+{
+	NString absoluteFilePath = Nx::FileSystem::GetPath(fileName);
+	//Create static mesh 
+
+	// read file via ASSIMP
+	Assimp::Importer importer;
+	//Do not use aiProcess_FlipUVs since we flipping the texture with stbimage
+	const aiScene* scene = importer.ReadFile(absoluteFilePath, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+	// check for errors
+	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
+	{
+		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+		return nullptr;
+	}
+
+	skelData.m_numberOfVertices = scene->mMeshes[0]->mNumVertices;
+
+	// This is the vertex information for JUST the bone stuff
+	//skelData.vecVertexBoneData.resize(this->m_numberOfVertices);
+
+	//process ASSIMP's root node recursively
+	//ProcessNode(scene->mRootNode, scene, fileName, models, modelMatIndices, matArray, true);\
+
+	NxArray<VertexBoneData> vecBoneData(skelData.m_numberOfVertices);
+	LoadBones(scene->mMeshes[0], skelData, vecBoneData);
+
+	ProcessMeshSkeletal(scene->mMeshes[0], scene, fileName, models, modelMatIndices, matArray, vecBoneData);
+
+	return scene;
+}
 
 void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
 	NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
@@ -69,6 +108,7 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
 	NxArray<MaterialSpec>& materials)
 {
+
 	modelMaterialIndices.push_back(mesh->mMaterialIndex);
 
 	IndexedModel newModel;
@@ -76,11 +116,14 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	newModel.AllocateElement(2); // TexCoords
 	newModel.AllocateElement(3); // Normals
 	newModel.AllocateElement(3); // Tangents
+
 	newModel.SetInstancedElementStartIndex(4); // Begin instanced data
+	
 	newModel.AllocateElement(16); // Transform matrix
 
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
-	for (uint32 i = 0; i < mesh->mNumVertices; i++) {
+	for (uint32 i = 0; i < mesh->mNumVertices; i++)
+	{
 		const aiVector3D pos = mesh->mVertices[i];
 		const aiVector3D normal = mesh->HasNormals()
 			? mesh->mNormals[i] : aiZeroVector;
@@ -94,6 +137,7 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 		newModel.AddElement3f(2, normal.x, normal.y, normal.z);
 		newModel.AddElement3f(3, tangent.x, tangent.y, tangent.z);
 	}
+	
 	for (uint32 i = 0; i < mesh->mNumFaces; i++)
 	{
 		const aiFace& face = mesh->mFaces[i];
@@ -103,7 +147,6 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	}
 
 	models.push_back(newModel);
-
 
 	// process materials
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
@@ -120,56 +163,139 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	//LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_METALLIC);
 	//LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT, spec, TEXTURE_AO);
 
-	//TODO: Put in func
-	//Load PRB glFT
-	const NString& fileExtension = GetFileExtension(fileName);
-	if(fileExtension == ".glb" || fileExtension == ".gltf")
-	{
-		aiString fileMetallicRoughness;
-		if(material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &fileMetallicRoughness) == aiReturn_SUCCESS)
-		{
-			auto texture = scene->GetEmbeddedTexture(fileMetallicRoughness.C_Str());
-			if (texture != nullptr)
-			{
-				NString filename = fileName.substr(fileName.find_last_of('/') + 1);
-				//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
-				Texture* newTexture = new Texture(TextureFromAssimp(texture));
-				spec.textures[TEXTURE_MR] = newTexture;
-			}
-			else
-			{
-				NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
-				NString TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
-				spec.textureNames[TEXTURE_MR] = TexturePath;
-				DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());;
-			}
-		}
+	//For combined MR textures
+	LoadMRTextures(fileName, material, scene, spec);
 
-		aiString fileAlbedo;
-		if (material->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &fileAlbedo) == aiReturn_SUCCESS)
-		{
-			auto textureAlbedo = scene->GetEmbeddedTexture(fileAlbedo.C_Str());
-			if (textureAlbedo != nullptr)
-			{
-				NString filename = fileName.substr(fileName.find_last_of('/') + 1);
-				//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
-				Texture* newTexture = new Texture(TextureFromAssimp(textureAlbedo));
-				spec.textures[TEXTURE_ALBEDO] = newTexture;
-			}
-			else
-			{
-				NString myDirectory = fileName.substr(0, fileName.find_last_of('/'));
-				NString TexturePath = myDirectory + "/" + fileAlbedo.C_Str();
-				spec.textureNames[TEXTURE_ALBEDO] = TexturePath;
-				DEBUG_LOG_TEMP("Texture Name: %s", fileAlbedo.C_Str());;
-			}
-		}
+
+	materials.push_back(spec);
+}
+
+
+void AssetLoader::ProcessMeshSkeletal(aiMesh* mesh, const aiScene* scene, const NString& fileName,
+	NxArray<IndexedModel>& models, NxArray<uint32>& modelMaterialIndices,
+	NxArray<MaterialSpec>& materials, const NxArray<VertexBoneData>& boneData)
+{
+
+	modelMaterialIndices.push_back(mesh->mMaterialIndex);
+
+	IndexedModel newModel;
+	newModel.AllocateElement(3); // Positions
+	newModel.AllocateElement(2); // TexCoords
+	newModel.AllocateElement(3); // Normals
+	newModel.AllocateElement(3); // Tangents
+
+
+	newModel.AllocateElement(4); // Bone IDs
+	newModel.AllocateElement(4); // Bone Weights
+	newModel.SetInstancedElementStartIndex(6); // Begin instanced data
+
+	newModel.AllocateElement(16); // Transform matrix
+
+	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
+	for (uint32 i = 0; i < mesh->mNumVertices; i++)
+	{
+		const aiVector3D pos = mesh->mVertices[i];
+		const aiVector3D normal = mesh->HasNormals()
+			? mesh->mNormals[i] : aiZeroVector;
+		const aiVector3D texCoord = mesh->HasTextureCoords(0)
+			? mesh->mTextureCoords[0][i] : aiZeroVector;
+		const aiVector3D tangent = mesh->HasTangentsAndBitangents()
+			? mesh->mTangents[i] : aiZeroVector;
+
+		newModel.AddElement3f(0, pos.x, pos.y, pos.z);
+		newModel.AddElement2f(1, texCoord.x, texCoord.y);
+		newModel.AddElement3f(2, normal.x, normal.y, normal.z);
+		newModel.AddElement3f(3, tangent.x, tangent.y, tangent.z);
+
+
+		//// 4Bones: ids and weights
+		newModel.AddElement4f
+		(
+			4,
+			boneData[i].ids[0],
+			boneData[i].ids[1],
+			boneData[i].ids[2],
+			boneData[i].ids[3]
+		);
+		//// 4Bones: ids and weights
+		newModel.AddElement4f
+		(
+			5,
+			boneData[i].weights[0],
+			boneData[i].weights[1],
+			boneData[i].weights[2],
+			boneData[i].weights[3]
+		);		
 	}
+
+	for (uint32 i = 0; i < mesh->mNumFaces; i++)
+	{
+		const aiFace& face = mesh->mFaces[i];
+		assert(face.mNumIndices == 3);
+		newModel.AddIndices3i(face.mIndices[0], face.mIndices[1],
+			face.mIndices[2]);
+	}
+
+	models.push_back(newModel);
+
+	// process materials
+	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+	MaterialSpec spec;
+
+
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_DIFFUSE, spec, TEXTURE_ALBEDO);
+	//TODO: Implement specular workflow, for now we treat specular texture as metallic
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_SPECULAR, spec, TEXTURE_METALLIC);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_NORMALS, spec, TEXTURE_NORMAL);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_DIFFUSE_ROUGHNESS, spec, TEXTURE_ROUGHNESS);
+	LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT_OCCLUSION, spec, TEXTURE_AO);
+	//LoadMaterialTextures(fileName, material, scene, aiTextureType_METALNESS, spec, TEXTURE_METALLIC);
+	//LoadMaterialTextures(fileName, material, scene, aiTextureType_UNKNOWN, spec, TEXTURE_METALLIC);
+	//LoadMaterialTextures(fileName, material, scene, aiTextureType_AMBIENT, spec, TEXTURE_AO);
+
+	//For combined MR textures
+	LoadMRTextures(fileName, material, scene, spec);
+
+	//TODO: Put in func
+
 
 	materials.push_back(spec);
 
 }
 
+
+void AssetLoader::LoadBones(const aiMesh* Mesh, SkeletalData& skelData, NxArray<VertexBoneData>& boneData)
+{
+	for (unsigned int boneIndex = 0; boneIndex != Mesh->mNumBones; boneIndex++)
+	{
+		unsigned int BoneIndex = 0;
+		std::string BoneName(Mesh->mBones[boneIndex]->mName.data);
+
+		std::map<std::string, unsigned int>::iterator it = skelData.m_mapBoneNameToBoneIndex.find(BoneName);
+		if (it == skelData.m_mapBoneNameToBoneIndex.end())
+		{
+			BoneIndex = skelData.mNumBones;
+			skelData.mNumBones++;
+			BoneInfo bi;
+			skelData.mBoneInfo.push_back(bi);
+
+			skelData.mBoneInfo[BoneIndex].BoneOffset = AIMatrixToGLMMatrix(Mesh->mBones[boneIndex]->mOffsetMatrix);
+			skelData.m_mapBoneNameToBoneIndex[BoneName] = BoneIndex;
+		}
+		else
+		{
+			BoneIndex = it->second;
+		}
+
+		for (unsigned int WeightIndex = 0; WeightIndex != Mesh->mBones[boneIndex]->mNumWeights; WeightIndex++)
+		{
+			unsigned int VertexID = /*mMeshEntries[MeshIndex].BaseVertex +*/ Mesh->mBones[boneIndex]->mWeights[WeightIndex].mVertexId;
+			float Weight = Mesh->mBones[boneIndex]->mWeights[WeightIndex].mWeight;
+			boneData[VertexID].AddBoneData(BoneIndex, Weight);
+		}
+	}
+	return;
+}
 
 void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat, const aiScene* scene, aiTextureType type, MaterialSpec& material, NString typeName)
 {
@@ -196,6 +322,58 @@ void AssetLoader::LoadMaterialTextures(const NString& filePath, aiMaterial *mat,
 			material.textureNames[typeName] = TexturePath;
 			DEBUG_LOG_TEMP("Texture Name: %s", str.C_Str());
 		}
+	}
+}
+
+void AssetLoader::LoadMRTextures(const NString& filePath, aiMaterial* mat, const aiScene* scene, MaterialSpec& spec)
+{
+	//Load PRB glFT
+	const NString& fileExtension = GetFileExtension(filePath);
+	if (fileExtension == ".glb" || fileExtension == ".gltf")
+	{
+		aiString fileMetallicRoughness;
+		if (mat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_METALLICROUGHNESS_TEXTURE, &fileMetallicRoughness) == aiReturn_SUCCESS)
+		{
+			auto texture = scene->GetEmbeddedTexture(fileMetallicRoughness.C_Str());
+			if (texture != nullptr)
+			{
+				NString filename = filePath.substr(filePath.find_last_of('/') + 1);
+				//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
+				Texture* newTexture = new Texture(TextureFromAssimp(texture));
+				spec.textures[TEXTURE_MR] = newTexture;
+			}
+			else
+			{
+				NString myDirectory = filePath.substr(0, filePath.find_last_of('/'));
+				NString TexturePath = myDirectory + "/" + fileMetallicRoughness.C_Str();
+				spec.textureNames[TEXTURE_MR] = TexturePath;
+				DEBUG_LOG_TEMP("Texture Name: %s", fileMetallicRoughness.C_Str());;
+			}
+		}
+
+		aiString fileAlbedo;
+		if (mat->GetTexture(AI_MATKEY_GLTF_PBRMETALLICROUGHNESS_BASE_COLOR_TEXTURE, &fileAlbedo) == aiReturn_SUCCESS)
+		{
+			auto textureAlbedo = scene->GetEmbeddedTexture(fileAlbedo.C_Str());
+			if (textureAlbedo != nullptr)
+			{
+				NString filename = filePath.substr(filePath.find_last_of('/') + 1);
+				//filename = filePath.substr(filename.size(), filePath.find_last_of('.'));
+				Texture* newTexture = new Texture(TextureFromAssimp(textureAlbedo));
+				spec.textures[TEXTURE_ALBEDO] = newTexture;
+			}
+			else
+			{
+				NString myDirectory = filePath.substr(0, filePath.find_last_of('/'));
+				NString TexturePath = myDirectory + "/" + fileAlbedo.C_Str();
+				spec.textureNames[TEXTURE_ALBEDO] = TexturePath;
+				DEBUG_LOG_TEMP("Texture Name: %s", fileAlbedo.C_Str());;
+			}
+		}
+	}
+	else
+	{
+		//TODO
 	}
 }
 
