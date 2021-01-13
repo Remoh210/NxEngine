@@ -61,7 +61,9 @@ const aiScene* AssetLoader::LoadModelSkeletal(const NString& fileName, NxArray<I
 	// read file via ASSIMP
 	Assimp::Importer importer;
 	//Do not use aiProcess_FlipUVs since we flipping the texture with stbimage
-	const aiScene* scene = importer.ReadFile(absoluteFilePath, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+	
+	importer.ReadFile(absoluteFilePath, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.GetOrphanedScene();
 	// check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
@@ -190,6 +192,7 @@ void AssetLoader::ProcessMeshSkeletal(aiMesh* mesh, const aiScene* scene, const 
 	newModel.SetInstancedElementStartIndex(6); // Begin instanced data
 
 	newModel.AllocateElement(16); // Transform matrix
+	newModel.AllocateElement(16); // TransformInvT matrix
 
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (uint32 i = 0; i < mesh->mNumVertices; i++)

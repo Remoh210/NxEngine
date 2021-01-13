@@ -567,6 +567,11 @@ void EditorUI::DrawInspector()
 		ImGui::Text("TransformComponent");
 		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
 		if (transformComp) { reflectUI(transformComp.get()); }
+		else
+		{
+			int asd = 10;
+			asd++;
+		}
 
 		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
 		if (meshComp) 

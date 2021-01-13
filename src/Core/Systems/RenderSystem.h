@@ -7,6 +7,7 @@
 #include "Core/Components/TransformComponent/TransformComponent.h"
 #include "Core/Graphics/Material/Material.h"
 #include "Core/Components/StaticMeshComponent/StaticMeshComponent.h"
+#include "Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h"
 
 namespace ECS
 {
@@ -27,6 +28,11 @@ namespace ECS
 			world->each<TransformComponent, LightComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<LightComponent> lightComp) -> void 
 			{
 				context->RenderLight(lightComp, transform->transform.position.ToVec());
+			});
+
+			world->each<TransformComponent, SkinnedMeshComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<SkinnedMeshComponent> skinnedMesh) -> void
+			{
+				context->RenderSkinnedMesh(skinnedMesh->skinnedMeshInfo, transform->transform.ToMatrix());
 			});
 
 			world->each<TransformComponent, StaticMeshComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transform, ComponentHandle<StaticMeshComponent> mesh) -> void {

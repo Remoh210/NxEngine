@@ -53,6 +53,8 @@ SkinnedMeshInfo* AssetManager::ImportModelSkeletal(RenderDevice* renderDevice, N
 
 	const aiScene* scene = AssetLoader::LoadModelSkeletal(file, models, skeletalData, materialIndices, materials);
 
+	
+
 	if (scene != nullptr)
 	{
 		SkinnedMeshInfo* skinnedMeshInfo = new SkinnedMeshInfo();
@@ -62,7 +64,16 @@ SkinnedMeshInfo* AssetManager::ImportModelSkeletal(RenderDevice* renderDevice, N
 		curMesh->vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
 		skinnedMeshInfo->mesh = curMesh;
 		skinnedMeshInfo->skeletalData = skeletalData;
+		skinnedMeshInfo->mesh->material = LoadMaterial(renderDevice, materials[0]);
+		return skinnedMeshInfo;
 	}
+	else
+	{
+		DEBUG_LOG("Asset Loader", "Warning", "Error loading skeletal mesh");
+		return nullptr;
+	}
+
+	
 }
 
 Material * AssetManager::LoadMaterial(RenderDevice* renderDevice, MaterialSpec& matSpec)

@@ -247,20 +247,65 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 			{
 				mRenderDevice->Draw(renderTarget->GetId(), modelShader->GetId(), VertexArray->GetId(),
 					drawParams, 1, VertexArray->GetNumIndices());
-
-				//Draw to default framebuffer
-				//Draw(*modelShader, *VertexArray, drawParams, numTransforms);
 			}
 
 			it->second.clear();
 		}
 	}
 
+	DrawSkeletal(renderTarget);
+
 	//HACK...
 	MatrixUniformBuffer->ResetOffset();
 
 	lightBuffer.clear();
 	meshRenderBuffer.clear();
+}
+
+void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
+{
+	typedef NxMap<SkinnedMeshInfo*, NxArray<mat4>>::iterator it;
+	Shader * skinnedShader = ShaderManager::GetPBRShader("MAIN_SKELETAL");
+
+	SetLights(skinnedShader);
+
+	for (auto it = SkinnedMeshBuffer.begin(); it != SkinnedMeshBuffer.end(); ++it)
+	{
+		NxArray<mat4> InvTransposed;
+		for(mat4 curMat : it->second)
+		{
+			InvTransposed.push_back(glm::inverseTranspose(curMat));
+		}
+
+		mat4* transforms = &it->second[0];
+		mat4* transformsInvT = &InvTransposed[0];
+
+		size_t numTransforms = it->second.size();
+		
+
+		//modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
+
+		//might be unnecessary
+		skinnedShader->SetUniform1f("bUseAlbedoMap", false);
+		skinnedShader->SetUniform1f("bUseNormalMap", false);
+		skinnedShader->SetUniform1f("bUseMetallicMap", false);
+
+		MeshInfo* mesh = it->first->mesh;
+		if (mesh->material != nullptr)
+		{
+			SetTextures(mesh->material, skinnedShader);
+		}
+
+		VertexArray* VertexArray = mesh->vertexArray;
+
+		VertexArray->UpdateBuffer(6, transforms, numTransforms * sizeof(mat4));
+		VertexArray->UpdateBuffer(7, transformsInvT, numTransforms * sizeof(mat4));
+
+		mRenderDevice->Draw(renderTarget->GetId(), skinnedShader->GetId(), VertexArray->GetId(),
+			drawParams, 1, VertexArray->GetNumIndices());
+
+		it->second.clear();
+	}
 }
 
 void EditorRenderContext::DrawEditorHelpers(RenderTarget* renderTarget)

@@ -16,8 +16,11 @@
 #include "Core/Graphics/Cubemap/Cubemap.h"
 #include "Core/Graphics/PostFX/ChromaticAberration.h"
 #include "Core/Components/StaticMeshComponent/StaticMeshComponent.h"
+#include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
 #include "Core/Components/LightComponent/LightComponent.h"
 #include "rendering/UniformBuffer.h"
+
+#include "gtc/matrix_inverse.hpp"
 
 class EditorRenderContext : public RenderContext
 {
@@ -27,6 +30,11 @@ public:
 	inline void RenderMesh(NxArray<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
 	{
 		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(transformIn);
+	}
+
+	inline void RenderSkinnedMesh(SkinnedMeshInfo* SkinnedMesh, mat4 transformIn)
+	{
+		SkinnedMeshBuffer[SkinnedMesh].push_back(transformIn);// glm::inverseTranspose(transformIn))
 	}
 
 	inline void RenderPrimitives(VertexArray* VertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
@@ -59,6 +67,7 @@ public:
 
 	void InitEditorHelpers();
 	void DrawScene(RenderTarget* renderTarget);
+	void DrawSkeletal(RenderTarget* renderTarget);
 	void DrawEditorHelpers(RenderTarget* renderTarget);
 	void DrawDebugShapes(RenderTarget* renderTarget);
 	inline void ResizeRenderTargets(float width, float height)
@@ -98,6 +107,7 @@ private:
 	UniformBuffer* LightsUniformBuffer;
 	mat4 perspective;
 	NxMap<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4>> meshRenderBuffer;
+	NxMap<SkinnedMeshInfo*, NxArray<mat4>> SkinnedMeshBuffer;
 	NxMap<DebugShape*, NxArray<mat4>> debugShapeBuffer;
 
 	NxArray<std::pair<ECS::ComponentHandle<LightComponent>, vec3>> lightBuffer; // pos color

@@ -351,6 +351,11 @@ void Application::Initialize()
 	ShaderManager::AddPBRShader("PBR_SHADER", PBRshader);
 
 
+	NString SkinnedshaderText;
+	loadTextFileWithIncludes(SkinnedshaderText, "res/shaders/PBR/main_skinned.glsl", "#include");
+	Shader* SkinnedShader = new Shader(renderDevice, SkinnedshaderText);;
+	ShaderManager::AddPBRShader("MAIN_SKELETAL", SkinnedShader);
+
 	NString EQ_TO_CUBEMAP_SHADER_TEXT_FILE = "res/shaders/PBR/eqToCube.glsl";
 	NString eqToCubeshaderText;
 	loadTextFileWithIncludes(eqToCubeshaderText, EQ_TO_CUBEMAP_SHADER_TEXT_FILE, "#include");
@@ -663,7 +668,7 @@ void Application::LoadDefaultScene()
 	TransformComponent transformCompSkinned;
 	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-	transformCompSkinned.transform.scale = vec3(35.5);
+	transformCompSkinned.transform.scale = vec3(0.5);
 
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
@@ -687,9 +692,9 @@ void Application::LoadDefaultScene()
 	ent7->assign<TransformComponent>(transformComp7);
 	ent7->assign<StaticMeshComponent>(renderableMesh7);
 
-	//ECS::Entity* ent8 = world->create();
-	//ent7->assign<TransformComponent>(transformComp7);
-	//ent7->assign<SkinnedMeshComponent>(skinnedMesh)
+	ECS::Entity* ent8 = world->create();
+	ent8->assign<TransformComponent>(transformCompSkinned);
+	ent8->assign<SkinnedMeshComponent>(skinnedMesh);
 
 	//SceneManager::currentScene.sceneObjects.push_back(ent);
 	//SceneManager::currentScene.sceneObjects.push_back(ent2);
@@ -699,7 +704,7 @@ void Application::LoadDefaultScene()
 	SceneManager::currentScene.AddObject("Pistol", ent3);
 	SceneManager::currentScene.AddObject("Dust Map", ent6);
 	SceneManager::currentScene.AddObject("Bottle", ent7);
-	//SceneManager::currentScene.AddObject("SkinnedMesh", ent8);
+	SceneManager::currentScene.AddObject("SkinnedMesh", ent8);
 
 	renderableMesh.shader = ShaderManager::GetMainShader();
 	renderableMesh2.shader = ShaderManager::GetMainShader();
