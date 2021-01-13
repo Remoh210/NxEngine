@@ -6,7 +6,7 @@
 #include "Core/Graphics/ShaderManager/ShaderManager.h"
 #include "Core/Graphics/Cubemap/CubemapManager.h"
 
-#define MAX_NUM_LIGHTS 20
+#define MAX_NUM_LIGHTS 30
 
 EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
 	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn)
@@ -23,12 +23,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	screenQuadVAO = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
 
 	MatrixUniformBuffer = new UniformBuffer(deviceIn, BufferUsage::USAGE_STATIC_DRAW);
-
 	MatrixUniformBuffer->AllocateElement(sizeof(mat4));
 	MatrixUniformBuffer->AllocateElement(sizeof(mat4));
-	MatrixUniformBuffer->AllocateElement(sizeof(int));
-	MatrixUniformBuffer->AllocateElement(sizeof(int));
-	MatrixUniformBuffer->AllocateElement(sizeof(vec4));
 	
 	MatrixUniformBuffer->Generate();
 
@@ -97,10 +93,9 @@ void EditorRenderContext::RenderSkybox(RenderTarget* renderTarget)
 	mRenderDevice->Draw(renderTarget->GetId(), skyboxShader->GetId(), cubeVA->GetId(), drawParams2, 1, cubeVA->GetNumIndices());
 }
 
-void EditorRenderContext::SetLights()
+void EditorRenderContext::SetLights(Shader* shader)
 {
 	//TODO: Set as struct in glsl
-	//Set lights
 	NxArray<int> lightTypes;
 	NxArray<vec3> lightColors;
 	NxArray<vec3> lightPositions;
@@ -108,13 +103,12 @@ void EditorRenderContext::SetLights()
 
 	int numLights = lightBuffer.size();
 
-	Shader* PBRShader = ShaderManager::GetPBRShader("PBR_SHADER");
-	if (!PBRShader)
+	if (!shader)
 	{
-		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
+		DEBUG_LOG_TEMP("NO SHADER"); return;
 	}
 
-	PBRShader->SetUniform1i("uNumLights", numLights < MAX_NUM_LIGHTS ? numLights : MAX_NUM_LIGHTS);
+	shader->SetUniform1i("uNumLights", numLights < MAX_NUM_LIGHTS ? numLights : MAX_NUM_LIGHTS);
 
 	for (std::pair<ECS::ComponentHandle<LightComponent>, vec3> light : lightBuffer)
 	{
@@ -124,23 +118,18 @@ void EditorRenderContext::SetLights()
 		lightPositions.push_back(light.second);
 	}
 
-	PBRShader->SetUniform1iv("lightTypes[0]", lightTypes);
-	PBRShader->SetUniform3fv("lightColors[0]", lightColors);
-	PBRShader->SetUniform3fv("lightPositions[0]", lightPositions);
-	PBRShader->SetUniform3fv("lightDirections[0]", lightDirections);
-
-
+	shader->SetUniform1iv("lightTypes[0]", lightTypes);
+	shader->SetUniform3fv("lightColors[0]", lightColors);
+	shader->SetUniform3fv("lightPositions[0]", lightPositions);
+	shader->SetUniform3fv("lightDirections[0]", lightDirections);
 
 	//PBRShader->SetUniform1f("uAmbient", ambient);
-	PBRShader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 11);
+	shader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 11);
+	shader->SetSampler3D("prefilterMap", *PrefilterCubemap, *prefilterSampler, 12);
 
-	//
-	PBRShader->SetSampler3D("prefilterMap", *PrefilterCubemap, *prefilterSampler, 12);
+	shader->SetSampler("brdfLUT", *brdfLUTTexture, *brdfSampler, 13);
 
-	PBRShader->SetSampler("brdfLUT", *brdfLUTTexture, *brdfSampler, 13);
-
-	PBRShader->SetUniform3f("uCamPos", mainCamera->Position);
-
+	shader->SetUniform3f("uCamPos", mainCamera->Position);
 }
 
 void EditorRenderContext::GeneratePBRMapsFromTexture(NString HDRtexture)
@@ -212,12 +201,6 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
 	MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 16);
 	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 16);
-	int test1 = 42;
-	MatrixUniformBuffer->Update(&test1, sizeof(int), 4);
-	int test2 = 43;
-	MatrixUniformBuffer->Update(&test2, sizeof(int), 4);
-	vec4 testVec = vec4(1.0f, 2.0f, 3.0f, 4.0f);
-	MatrixUniformBuffer->Update(glm::value_ptr(testVec), sizeof(testVec), 16);
 
 
 	RenderSkybox(renderTarget);
@@ -225,7 +208,8 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
     DrawEditorHelpers(renderTarget);
     DrawDebugShapes(renderTarget);
 
-	SetLights();
+
+	SetLights(ShaderManager::GetMainShader());
 
 	//Draw meshes
 	for (NxMap<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4> >::iterator it

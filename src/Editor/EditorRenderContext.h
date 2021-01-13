@@ -40,7 +40,7 @@ public:
 
 	void RenderSkybox(RenderTarget* renderTarget);
 
-	void SetLights();
+	void SetLights(Shader* shader);
 
 	void GenerateBRDF();
 
@@ -69,7 +69,6 @@ public:
 		sceneRenderTarget->Resize(width, height);
 		chromaRenderTarget->Resize(width, height);
 		perspective = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 10000.0f);
-		//MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 		
 	}
 
@@ -82,7 +81,6 @@ public:
 		chromaRenderTarget->Resize(width, height);
 		mRenderDevice->UpdateFBOSize(this->mRenderTarget->GetId(), width, height);
 		perspective = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 10000.0f);
-		//MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 	}
 	
     void Flush();
@@ -97,6 +95,7 @@ private:
 	//Shader& shader;
 	Sampler* sampler;
 	UniformBuffer* MatrixUniformBuffer;
+	UniformBuffer* LightsUniformBuffer;
 	mat4 perspective;
 	NxMap<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4>> meshRenderBuffer;
 	NxMap<DebugShape*, NxArray<mat4>> debugShapeBuffer;
