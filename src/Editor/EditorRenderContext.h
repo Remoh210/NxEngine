@@ -69,7 +69,7 @@ public:
 		sceneRenderTarget->Resize(width, height);
 		chromaRenderTarget->Resize(width, height);
 		perspective = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 10000.0f);
-		MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
+		//MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 		
 	}
 
@@ -82,7 +82,7 @@ public:
 		chromaRenderTarget->Resize(width, height);
 		mRenderDevice->UpdateFBOSize(this->mRenderTarget->GetId(), width, height);
 		perspective = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 10000.0f);
-		MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
+		//MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 	}
 	
     void Flush();

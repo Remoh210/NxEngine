@@ -22,7 +22,15 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 
 	screenQuadVAO = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
 
-	MatrixUniformBuffer = new UniformBuffer(deviceIn, 2, sizeof(mat4), BufferUsage::USAGE_STATIC_DRAW);
+	MatrixUniformBuffer = new UniformBuffer(deviceIn, BufferUsage::USAGE_STATIC_DRAW);
+
+	MatrixUniformBuffer->AllocateElement(sizeof(mat4));
+	MatrixUniformBuffer->AllocateElement(sizeof(mat4));
+	MatrixUniformBuffer->AllocateElement(sizeof(int));
+	MatrixUniformBuffer->AllocateElement(sizeof(int));
+	MatrixUniformBuffer->AllocateElement(sizeof(vec4));
+	
+	MatrixUniformBuffer->Generate();
 
 	InitEditorHelpers();
 	GenerateBRDF();
@@ -37,7 +45,6 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
 	}
 
-	MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 0);
 	cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
 	prefilterSampler = new Sampler(mRenderDevice, FILTER_LINEAR_MIPMAP_LINEAR);
 	brdfSampler = new Sampler(mRenderDevice, FILTER_LINEAR, FILTER_LINEAR, WRAP_CLAMP);
@@ -203,7 +210,15 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 {
 	//Update mat UBO
 	mat4 viewMatrix = mainCamera->GetViewMatrix();
-	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 1);
+	MatrixUniformBuffer->Update(glm::value_ptr(perspective), sizeof(glm::mat4), 16);
+	MatrixUniformBuffer->Update(glm::value_ptr(viewMatrix), sizeof(glm::mat4), 16);
+	int test1 = 42;
+	MatrixUniformBuffer->Update(&test1, sizeof(int), 4);
+	int test2 = 43;
+	MatrixUniformBuffer->Update(&test2, sizeof(int), 4);
+	vec4 testVec = vec4(1.0f, 2.0f, 3.0f, 4.0f);
+	MatrixUniformBuffer->Update(glm::value_ptr(testVec), sizeof(testVec), 16);
+
 
 	RenderSkybox(renderTarget);
 	//Draw Editor stuff first
