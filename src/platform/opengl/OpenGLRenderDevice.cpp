@@ -1053,6 +1053,12 @@ void OpenGLRenderDevice::SetShaderUniformMat4(uint32 shader, const NString& unif
 	glUniformMatrix4fv(shaderProgramMap.at(shader).uniformMap.at(uniformName), 1, GL_FALSE, value);
 }
 
+void OpenGLRenderDevice::SetShaderUniformMat4v(uint32 shader, const NString& uniformName, uint32 size, float* value)
+{
+	SetShader(shader);
+	glUniformMatrix4fv(shaderProgramMap.at(shader).uniformMap.at(uniformName), size, GL_FALSE, value);
+}
+
 void OpenGLRenderDevice::SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
 	uint32 buffer)
 {

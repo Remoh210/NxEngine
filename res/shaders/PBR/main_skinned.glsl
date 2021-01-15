@@ -9,11 +9,17 @@ layout (location = 3) in vec3 color;
 layout (location = 4) in vec4 vBoneID;		// really passing it as 4 values
 layout (location = 5) in vec4 vBoneWeight;	
 layout (location = 6) in mat4 transformMat;
-layout (location = 7) in mat4 matModelInvTrans;
+// layout (location = 7) in mat4 matModelInvTrans;
+
 
 out vec2 TexCoords;
 out vec3 WorldPos;
 out vec3 Normal;
+
+uniform int numBonesUsed;
+const int MAXNUMBEROFBONES = 100;
+uniform mat4 bones[MAXNUMBEROFBONES];
+uniform mat4 matModelInvTrans;
 
 
 layout (std140) uniform Matrices
@@ -25,10 +31,47 @@ layout (std140) uniform Matrices
 void main()
 {
     TexCoords = texCoord;
-    WorldPos = vec3(transformMat * vec4(position, 1.0));
-    Normal = mat3(transformMat) * normal;   
 	
-    gl_Position =  projection * view * vec4(WorldPos, 1.0);
+	vec4 posTemp = vec4(position.xyz, 1.0);
+   
+	
+	//*****************************************************************
+	// Before I do the full MVP (screen space) calculation, 
+	// I'm going to adjust where the vertex is based on the 
+	// the bone locations
+	if(numBonesUsed >= 4){
+		mat4 BoneTransform 
+					=    bones[ int(vBoneID[0]) ] * vBoneWeight[0];
+		BoneTransform += bones[ int(vBoneID[1]) ] * vBoneWeight[1];
+		BoneTransform += bones[ int(vBoneID[2]) ] * vBoneWeight[2];
+		BoneTransform += bones[ int(vBoneID[3]) ] * vBoneWeight[3];
+		// You could also do bBoneID.x, .y, etc.
+				
+		
+		vec4 vertPositionFromBones = BoneTransform * posTemp;
+		//*****************************************************************
+		
+		mat4 MVP = projection * view * transformMat;
+		
+		gl_Position = MVP * vertPositionFromBones;			// ON SCREEN
+		
+		WorldPos = (transformMat * posTemp).xyz;
+		
+		mat4 matBoneTransform_InTrans = inverse(transpose(BoneTransform));
+		
+		vec4 vNormBone = matBoneTransform_InTrans * vec4(normalize(normal.xyz), 1.0f);
+		
+		Normal = (matModelInvTrans * vNormBone).xyz;
+
+	}
+	else
+	{
+		WorldPos = vec3(transformMat * vec4(position, 1.0));
+		Normal = mat3(transformMat) * normal;   
+		gl_Position =  projection * view * vec4(WorldPos, 1.0);
+	}
+	
+    //gl_Position =  projection * view * vec4(WorldPos, 1.0);
 }
 
 

@@ -4,6 +4,7 @@
 #include "Common/dataStructs/String.h"
 #include "Core/Graphics/Mesh/MeshInfo.h"
 #include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
+#include "Core/Graphics/Animation/AnimationInfo.h"
 
 //Material specs
 #include "rendering/IndexedModel.h"
@@ -16,6 +17,7 @@ public:
 
 	static NxArray<MeshInfo*> ImportModel(RenderDevice* renderDevice, NString file);
 	static SkinnedMeshInfo* ImportModelSkeletal(RenderDevice* renderDevice, NString file);
+	static AnimationInfo* ImportAnimation(NString file, NString name);
 
 
 private:
@@ -25,6 +27,7 @@ private:
 	static NxMap<NString, NxArray<MeshInfo*>> importedModels;
 	static NxMap<NString, SkinnedMeshInfo*> importedSkinnedModels;
 	static NxMap<NString, Texture*> importedTextures;
+	static NxMap<NString, AnimationInfo*> importedAnimations;
 
 	inline static Texture* FindTexture(NString textureFile)
 	{

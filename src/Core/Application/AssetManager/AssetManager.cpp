@@ -3,8 +3,9 @@
 #include "Core/FileSystem/FileSystem.h"
 
 NxMap<NString, NxArray<MeshInfo*>> AssetManager::importedModels;
-NxMap<NString, Texture*> AssetManager::importedTextures;
-NxMap<NString, SkinnedMeshInfo*> AssetManager::importedSkinnedModels;
+NxMap<NString, Texture*>           AssetManager::importedTextures;
+NxMap<NString, SkinnedMeshInfo*>   AssetManager::importedSkinnedModels;
+NxMap<NString, AnimationInfo*>     AssetManager::importedAnimations;
 
 NxArray<MeshInfo*> AssetManager::ImportModel(RenderDevice* renderDevice, NString file)
 {
@@ -74,6 +75,17 @@ SkinnedMeshInfo* AssetManager::ImportModelSkeletal(RenderDevice* renderDevice, N
 	}
 
 	
+}
+
+AnimationInfo* AssetManager::ImportAnimation(NString file, NString name)
+{
+	auto iterator = importedAnimations.find(file);
+	if (iterator != importedAnimations.end())
+	{
+		return iterator->second;
+	}
+
+	return AssetLoader::LoadMeshAnimation(name, file, false);
 }
 
 Material * AssetManager::LoadMaterial(RenderDevice* renderDevice, MaterialSpec& matSpec)

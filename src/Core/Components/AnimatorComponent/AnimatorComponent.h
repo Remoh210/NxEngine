@@ -8,6 +8,8 @@
 struct AnimatorComponent
 {
 	NxMap<NString /*animation FRIENDLY name*/,
-		AnimationInfo> animationFriendlyNameTo_pScene;// Animations
+		AnimationInfo*> animationFriendlyNameTo_pScene;// Animations
 
+	AnimationInfo* currentAnimation;
+	AnimationState animationState;
 };

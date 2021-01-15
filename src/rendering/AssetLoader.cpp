@@ -12,6 +12,8 @@
 
 #include "stb_image.h"
 
+#include "gtc/matrix_transform.hpp"
+
 glm::mat4 AIMatrixToGLMMatrix(const aiMatrix4x4 &mat)
 {
 	return glm::mat4(
@@ -52,6 +54,56 @@ bool AssetLoader::LoadModel(const NString& fileName,
 	return true;
 }
 
+unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
+{
+	//TODO: Move To RenderDevice
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+
+	texture->achFormatHint;
+
+
+	stbi_set_flip_vertically_on_load(true);
+
+
+	unsigned char *image_data = nullptr;
+	int width, height, components_per_pixel;
+
+	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //JPG?
+
+	if (texture->mHeight == 0)
+	{
+		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(texture->pcData), texture->mWidth, &width, &height, &components_per_pixel, 0);
+	}
+	else
+	{
+		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(texture->pcData), texture->mWidth * texture->mHeight, &width, &height, &components_per_pixel, 0);
+	}
+
+	GLenum format;
+	if (components_per_pixel == 1)
+		format = GL_RED;
+	else if (components_per_pixel == 2)
+		format = GL_RG;
+	else if (components_per_pixel == 3)
+		format = GL_RGB;
+	else if (components_per_pixel == 4)
+		format = GL_RGBA;
+
+
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	//glTexImage2D(GL_TEXTURE_2D, 0, format, texture->mWidth, texture->mHeight, 0, format, GL_UNSIGNED_BYTE, texture->pcData);
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
+		image_data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	return textureID;
+}
 
 const aiScene* AssetLoader::LoadModelSkeletal(const NString& fileName, NxArray<IndexedModel>& models, SkeletalData& skelData, NxArray<uint32>& modelMatIndices, NxArray<MaterialSpec>& matArray)
 {
@@ -61,8 +113,14 @@ const aiScene* AssetLoader::LoadModelSkeletal(const NString& fileName, NxArray<I
 	// read file via ASSIMP
 	Assimp::Importer importer;
 	//Do not use aiProcess_FlipUVs since we flipping the texture with stbimage
+	unsigned int Flags = aiProcess_Triangulate |
+		aiProcess_OptimizeMeshes |
+		aiProcess_OptimizeGraph |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_GenNormals |
+		aiProcess_CalcTangentSpace;
 	
-	importer.ReadFile(absoluteFilePath, aiProcess_Triangulate | aiProcess_CalcTangentSpace);
+	importer.ReadFile(absoluteFilePath, Flags);
 	const aiScene* scene = importer.GetOrphanedScene();
 	// check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
@@ -79,12 +137,56 @@ const aiScene* AssetLoader::LoadModelSkeletal(const NString& fileName, NxArray<I
 	//process ASSIMP's root node recursively
 	//ProcessNode(scene->mRootNode, scene, fileName, models, modelMatIndices, matArray, true);\
 
+	skelData.mGlobalInverseTransformation = AIMatrixToGLMMatrix(scene->mRootNode->mTransformation);
+	skelData.mGlobalInverseTransformation = glm::inverse(skelData.mGlobalInverseTransformation);
+
 	NxArray<VertexBoneData> vecBoneData(skelData.m_numberOfVertices);
 	LoadBones(scene->mMeshes[0], skelData, vecBoneData);
 
 	ProcessMeshSkeletal(scene->mMeshes[0], scene, fileName, models, modelMatIndices, matArray, vecBoneData);
 
 	return scene;
+}
+
+AnimationInfo* AssetLoader::LoadMeshAnimation(const std::string &friendlyName,
+	const std::string &filename, bool hasExitTime)
+{
+
+	//	std::map< std::string /*animationfile*/,
+	//		      const aiScene* > mapAnimationNameTo_pScene;		// Animations
+
+	unsigned int Flags = aiProcess_Triangulate | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_JoinIdenticalVertices;
+
+	NString absoluteFilePath = Nx::FileSystem::GetPath(filename);
+	//Create static mesh 
+
+	Assimp::Importer importer;
+	const aiScene* scene = importer.ReadFile(absoluteFilePath, Flags);
+	if (!scene || !scene->mRootNode) // if is Not Zero
+	{
+		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
+		return false;
+	}
+
+
+
+	AnimationInfo* animInfo = new AnimationInfo();
+	animInfo->name = friendlyName;
+	animInfo->fileName = filename;
+	animInfo->pAIScene = importer.GetOrphanedScene();
+	animInfo->bHasExitTime = hasExitTime;
+
+	//Get duration is seconds
+	animInfo->duration = animInfo->pAIScene->mAnimations[0]->mDuration / animInfo->pAIScene->mAnimations[0]->mTicksPerSecond;
+
+
+
+	if (!animInfo->pAIScene)
+	{
+		return nullptr;
+	}
+
+	return animInfo;
 }
 
 void AssetLoader::ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,
@@ -190,9 +292,10 @@ void AssetLoader::ProcessMeshSkeletal(aiMesh* mesh, const aiScene* scene, const 
 	newModel.AllocateElement(4); // Bone IDs
 	newModel.AllocateElement(4); // Bone Weights
 	newModel.SetInstancedElementStartIndex(6); // Begin instanced data
-
 	newModel.AllocateElement(16); // Transform matrix
 	newModel.AllocateElement(16); // TransformInvT matrix
+	
+	
 
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (uint32 i = 0; i < mesh->mNumVertices; i++)
@@ -290,9 +393,14 @@ void AssetLoader::LoadBones(const aiMesh* Mesh, SkeletalData& skelData, NxArray<
 			BoneIndex = it->second;
 		}
 
-		for (unsigned int WeightIndex = 0; WeightIndex != Mesh->mBones[boneIndex]->mNumWeights; WeightIndex++)
+ 		for (unsigned int WeightIndex = 0; WeightIndex != Mesh->mBones[boneIndex]->mNumWeights; WeightIndex++)
 		{
 			unsigned int VertexID = /*mMeshEntries[MeshIndex].BaseVertex +*/ Mesh->mBones[boneIndex]->mWeights[WeightIndex].mVertexId;
+			if (VertexID == 0)
+			{
+				std::cout << " wtg";
+			}
+			
 			float Weight = Mesh->mBones[boneIndex]->mWeights[WeightIndex].mWeight;
 			boneData[VertexID].AddBoneData(BoneIndex, Weight);
 		}
@@ -378,57 +486,6 @@ void AssetLoader::LoadMRTextures(const NString& filePath, aiMaterial* mat, const
 	{
 		//TODO
 	}
-}
-
-unsigned int AssetLoader::TextureFromAssimp(const aiTexture* texture)
-{
-	//TODO: Move To RenderDevice
-	unsigned int textureID;
-	glGenTextures(1, &textureID);
-
-	texture->achFormatHint;
-
-
-	stbi_set_flip_vertically_on_load(true);
-
-
-	unsigned char *image_data = nullptr;
-	int width, height, components_per_pixel;
-
-	//glPixelStorei(GL_UNPACK_ALIGNMENT, 1); //JPG?
-
-	if (texture->mHeight == 0)
-	{
-		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(texture->pcData), texture->mWidth, &width, &height, &components_per_pixel, 0);
-	}
-	else
-	{
-		image_data = stbi_load_from_memory(reinterpret_cast<unsigned char*>(texture->pcData), texture->mWidth * texture->mHeight, &width, &height, &components_per_pixel, 0);
-	}
-
-	GLenum format;
-	if (components_per_pixel == 1)
-		format = GL_RED;
-	else if (components_per_pixel == 2)
-		format = GL_RG;
-	else if (components_per_pixel == 3)
-		format = GL_RGB;
-	else if (components_per_pixel == 4)
-		format = GL_RGBA;
-
-
-	glBindTexture(GL_TEXTURE_2D, textureID);
-	//glTexImage2D(GL_TEXTURE_2D, 0, format, texture->mWidth, texture->mHeight, 0, format, GL_UNSIGNED_BYTE, texture->pcData);
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE,
-		image_data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	return textureID;
 }
 
 unsigned int AssetLoader::TextureFromFile(NString path)

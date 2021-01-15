@@ -274,7 +274,7 @@ void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
 		NxArray<mat4> InvTransposed;
 		for(mat4 curMat : it->second)
 		{
-			InvTransposed.push_back(glm::inverseTranspose(curMat));
+			InvTransposed.push_back(glm::inverse(glm::transpose(curMat))); //glm::inverseTranspose(curMat))
 		}
 
 		mat4* transforms = &it->second[0];
@@ -290,6 +290,18 @@ void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
 		skinnedShader->SetUniform1f("bUseNormalMap", false);
 		skinnedShader->SetUniform1f("bUseMetallicMap", false);
 
+		
+		if (it->first->vecFinalTransformation.size() > 0)
+		{
+			skinnedShader->SetUniform1i("numBonesUsed", it->first->vecFinalTransformation.size());
+			skinnedShader->SetUniformMat4v("bones[0]", it->first->vecFinalTransformation);
+		}
+		else
+		{
+			skinnedShader->SetUniform1i("numBonesUsed", 0);
+		}
+		
+
 		MeshInfo* mesh = it->first->mesh;
 		if (mesh->material != nullptr)
 		{
@@ -299,7 +311,8 @@ void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
 		VertexArray* VertexArray = mesh->vertexArray;
 
 		VertexArray->UpdateBuffer(6, transforms, numTransforms * sizeof(mat4));
-		VertexArray->UpdateBuffer(7, transformsInvT, numTransforms * sizeof(mat4));
+		skinnedShader->SetUniformMat4("matModelInvTrans", transformsInvT[0]);
+		//VertexArray->UpdateBuffer(7, transformsInvT, numTransforms * sizeof(mat4));
 
 		mRenderDevice->Draw(renderTarget->GetId(), skinnedShader->GetId(), VertexArray->GetId(),
 			drawParams, 1, VertexArray->GetNumIndices());

@@ -213,6 +213,8 @@ public:
 
 	void SetShaderUniformMat4(uint32 shader, const NString& uniformName, float* value);
 
+	void SetShaderUniformMat4v(uint32 shader, const NString& uniformName, uint32 size, float* value);
+
 	void SetShaderUniformBuffer(uint32 shader, const NString& uniformBufferName,
 		uint32 buffer);
 

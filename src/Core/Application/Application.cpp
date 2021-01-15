@@ -7,6 +7,7 @@
 #include <Core/Components/LightComponent/LightComponent.h>
 #include <Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h>
 #include <Core/Systems/RenderSystem.h>
+#include <Core/Systems/Animator/AnimatorSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 #include <Core/Graphics/Cubemap/CubemapManager.h>
@@ -96,6 +97,7 @@ int Application::Run()
 
 
 	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
+	ECS::EntitySystem* animatorSystem = world->registerSystem(new ECS::AnimatorSystem());
 
 	DebugRenderer debugRenderer(*editorRenderContext);
 	for (int i = 0; i < 1; i++)
@@ -669,6 +671,16 @@ void Application::LoadDefaultScene()
 	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
 	transformCompSkinned.transform.scale = vec3(0.5);
+	AnimatorComponent animComp;
+	animComp.currentAnimation = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "testAnim");
+
+	for (auto bone : skinnedMesh.skinnedMeshInfo->skeletalData.mBoneInfo)
+	{
+		vec4 test(1.0f);
+
+		test = bone.ObjectBoneTransformation * test;
+	}
+
 
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
@@ -695,6 +707,7 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent8 = world->create();
 	ent8->assign<TransformComponent>(transformCompSkinned);
 	ent8->assign<SkinnedMeshComponent>(skinnedMesh);
+	ent8->assign<AnimatorComponent>(animComp);
 
 	//SceneManager::currentScene.sceneObjects.push_back(ent);
 	//SceneManager::currentScene.sceneObjects.push_back(ent2);

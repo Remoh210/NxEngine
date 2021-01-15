@@ -34,5 +34,10 @@ struct SkinnedMeshInfo
 	SkeletalData skeletalData;
 	MeshInfo* mesh;
 
+	glm::vec3 minXYZ_from_SM_Bones;
+	glm::vec3 maxXYZ_from_SM_Bones;
+	std::vector<glm::mat4> vecFinalTransformation;
+	std::vector< glm::mat4x4 > vecObjectBoneTransformation;
+
 	const aiScene* AiScene;	// mesh we update and draw
 };

@@ -3,7 +3,11 @@
 
 #include "IndexedModel.h"
 #include "Material.h"
+
+//TODO: HAX?
 #include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
+#include "Core/Graphics/Animation/AnimationInfo.h"
+
 
 #include <assimp/scene.h>
 #include <array>
@@ -35,6 +39,7 @@ public:
 	static void SetShouldFlipVTexture(bool bValue);
 
 	static unsigned int TextureFromFile(NString path);
+
 	static unsigned int TextureFromAssimp(const aiTexture* texture);
 
 	static bool LoadModel(const NString& fileName,
@@ -44,6 +49,9 @@ public:
 	static const aiScene* LoadModelSkeletal(const NString& fileName,
 		NxArray<IndexedModel>& models, SkeletalData& skelData, NxArray<uint32>& modelMatIndices,
 		NxArray<MaterialSpec>& matArray);
+
+	static AnimationInfo* LoadMeshAnimation(const std::string &friendlyName,
+		const std::string &filename, bool hasExitTime);
 
 private:
 

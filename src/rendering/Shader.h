@@ -60,9 +60,14 @@ public:
 	{
 		mRenderDevice->SetShaderUniform4fv(mProgramId, name, value.size(), glm::value_ptr(value[0]));
 	}
-	inline void SetUniformMat4(const NString& name, mat4 value)
+	inline void SetUniformMat4(const NString& name, mat4 value)//?? HOW
 	{
 		mRenderDevice->SetShaderUniformMat4(mProgramId, name, glm::value_ptr(value[0]));//??
+	}
+
+	inline void SetUniformMat4v(const NString& name, NxArray<mat4> value)//?? HOW
+	{
+		mRenderDevice->SetShaderUniformMat4v(mProgramId, name, value.size(), glm::value_ptr(value[0]));//??
 	}
 
 private:
