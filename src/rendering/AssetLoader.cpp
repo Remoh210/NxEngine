@@ -165,7 +165,7 @@ AnimationInfo* AssetLoader::LoadMeshAnimation(const std::string &friendlyName,
 	if (!scene || !scene->mRootNode) // if is Not Zero
 	{
 		std::cout << "ERROR::ASSIMP:: " << importer.GetErrorString() << std::endl;
-		return false;
+		return nullptr;
 	}
 
 

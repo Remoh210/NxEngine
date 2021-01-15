@@ -17,8 +17,8 @@ int32 EditorUI::selectedEntity = -1;
 void reflectUI(rttr::instance obj);
 bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName, rttr::variant min, rttr::variant max);
 void reflectVariant(rttr::variant& var, NString propName, rttr::variant& min, rttr::variant& max);
-void reflectArray(rttr::variant_sequential_view& view, NString propName, rttr::variant& min, rttr::variant& max);
-void reflectMap(rttr::variant_associative_view& view, NString propName, rttr::variant& min, rttr::variant& max);
+void reflectArray(rttr::variant_sequential_view view, NString propName, rttr::variant& min, rttr::variant& max);
+void reflectMap(rttr::variant_associative_view view, NString propName, rttr::variant& min, rttr::variant& max);
 void reflectVec(rttr::variant& var, NString propName, uint32 size);
 void reflectTexture(rttr::variant& var, NString propName, uint32 size = 128);
 
@@ -83,7 +83,7 @@ void reflectTexture(rttr::variant& var, NString propName, uint32 size)
 	}
 }
 
-void reflectArray(rttr::variant_sequential_view& view, NString propName, rttr::variant& min, rttr::variant& max)
+void reflectArray(rttr::variant_sequential_view view, NString propName, rttr::variant& min, rttr::variant& max)
 {
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -144,7 +144,7 @@ void reflectArray(rttr::variant_sequential_view& view, NString propName, rttr::v
 	}
 }
 
-void reflectMap(rttr::variant_associative_view& view, NString propName, rttr::variant& min, rttr::variant& max)
+void reflectMap(rttr::variant_associative_view view, NString propName, rttr::variant& min, rttr::variant& max)
 {
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
