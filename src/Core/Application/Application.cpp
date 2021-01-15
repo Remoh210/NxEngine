@@ -409,7 +409,7 @@ void Application::Initialize()
 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES ;
-	//drawParams.faceCulling = FACE_CULL_NONE;
+	drawParams.faceCulling = FACE_CULL_NONE;
 	drawParams.shouldWriteDepth = true;
 	drawParams.depthFunc = DRAW_FUNC_LESS;
 
@@ -670,7 +670,7 @@ void Application::LoadDefaultScene()
 	TransformComponent transformCompSkinned;
 	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-	transformCompSkinned.transform.scale = vec3(0.5);
+	transformCompSkinned.transform.scale = vec3(0.4);
 	AnimatorComponent animComp;
 	animComp.currentAnimation = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "testAnim");
 

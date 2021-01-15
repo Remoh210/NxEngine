@@ -8,11 +8,15 @@
 
 #include "assimp/scene.h"
 
+#include "rttr/registration"
+
 struct BoneInfo
 {
 	mat4 BoneOffset;
 	mat4 FinalTransformation;
 	mat4 ObjectBoneTransformation;
+
+	RTTR_ENABLE();
 };
 
 struct SkeletalData
@@ -27,6 +31,8 @@ struct SkeletalData
 	NxMap<NString /*BoneName*/, unsigned int /*BoneIndex*/> m_mapBoneNameToBoneIndex;	//mMapping;
 	NxArray<BoneInfo> mBoneInfo;
 	unsigned int mNumBones = 0;	//mNums;
+
+	RTTR_ENABLE();
 };
 
 struct SkinnedMeshInfo
@@ -40,4 +46,6 @@ struct SkinnedMeshInfo
 	std::vector< glm::mat4x4 > vecObjectBoneTransformation;
 
 	const aiScene* AiScene;	// mesh we update and draw
+
+	RTTR_ENABLE();
 };

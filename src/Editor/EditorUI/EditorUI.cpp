@@ -5,6 +5,7 @@
 #include "Core/Application/SceneManager/SceneManager.h"
 #include "Core/Application/Settings/GlobalSettings.h"
 #include "Core/Components/TransformComponent/TransformComponent.h"
+#include "Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h"
 
 bool EditorUI::init = true;
 ImVec2 EditorUI::SceneViewSize;
@@ -567,17 +568,19 @@ void EditorUI::DrawInspector()
 		ImGui::Text("TransformComponent");
 		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
 		if (transformComp) { reflectUI(transformComp.get()); }
-		else
-		{
-			int asd = 10;
-			asd++;
-		}
 
 		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
 		if (meshComp) 
 		{ 
 			ImGui::Text("StaticMeshComponent");
 			reflectUI(meshComp.get()); 
+		}
+
+		ECS::ComponentHandle<SkinnedMeshComponent> skinnedMeshComp = entity->get<SkinnedMeshComponent>();
+		if (skinnedMeshComp)
+		{
+			ImGui::Text("Skeletal Mesh Component");
+			reflectUI(skinnedMeshComp.get());
 		}
 
 		ECS::ComponentHandle<LightComponent> lightComp = entity->get<LightComponent>();
