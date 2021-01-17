@@ -1,9 +1,82 @@
 #include "AnimatorSystem.h"
 #include "Common/CommonTypes.h"
-
+#include "Common/Input/Input.h"
+#include "Core/Components/Input/InputComponent.h"
 
 
 namespace ECS {
+
+
+	void AnimatorSystem::tick(class World *world, float deltaTime)
+	{
+		world->each<TransformComponent, 
+			SkinnedMeshComponent, 
+			AnimatorComponent,
+		    InputComponent>
+			([&](Entity *ent, 
+			ComponentHandle<TransformComponent> transform,
+			ComponentHandle<SkinnedMeshComponent> skinnedMesh, 
+			ComponentHandle<AnimatorComponent> animatorComp,
+			ComponentHandle<InputComponent> InputComp) -> void
+		{
+			AnimationInfo* curAnim = animatorComp->animations[animatorComp->currentState.activeAnimation.name];
+			animatorComp->currentState.activeAnimation.totalTime = GetDurationInSec(curAnim);
+
+			//if (animatorComp->currentState.activeAnimation.name != animatorComp->currentState.PrevAnimation.name)
+			//{
+			//	animatorComp->currentState.activeAnimation.currentTime = 0.0f;
+			//}
+
+			auto oldState = animatorComp->currentState;
+
+			animatorComp->currentState.activeAnimation.totalTime = GetDurationInSec(curAnim);
+			animatorComp->currentState.activeAnimation.frameStepTime = deltaTime;
+			animatorComp->currentState.activeAnimation.IncrementTime();
+
+
+			std::vector< glm::mat4x4 > vecOffsets;
+
+			BoneTransform(skinnedMesh->skinnedMeshInfo, curAnim, animatorComp->currentState, skinnedMesh->skinnedMeshInfo->vecFinalTransformation, skinnedMesh->skinnedMeshInfo->vecObjectBoneTransformation, vecOffsets);
+
+			if (animatorComp->currentState.transitionMap.size() > 0)
+			{
+				for (auto it : animatorComp->currentState.transitionMap)
+				{
+					if (it.second.ShouldTansit(InputComp->GetKeyPressed()))
+					{
+						animatorComp->currentState = animatorComp->animationStates[it.first];
+						return;
+					}
+				}
+			}
+			
+			bool bHasExitTime = animatorComp->currentState.activeAnimation.bHasExitTime;
+			bool bHasExited = animatorComp->currentState.activeAnimation.bExited;
+			if (InputComp->GetKeyPressed() == InputKey::KEY_NONE)
+			{
+				if (bHasExitTime && !bHasExited) { return; }
+
+				if (animatorComp->currentState.activeAnimation.bHasExitTime)
+				{
+					//Do blending?
+				}
+
+				NString NextState = animatorComp->currentState.nextAnimation.name;
+				if (NextState != "")
+				{
+					animatorComp->currentState = animatorComp->animationStates[NextState];
+				}
+				else
+				{
+					animatorComp->currentState = animatorComp->InitialState;
+				}
+			}
+
+			animatorComp->currentState.PrevAnimation = oldState.activeAnimation;
+		
+		});
+	}
+
 
 	void AnimatorSystem::BoneTransform(
 		SkinnedMeshInfo* skinnedMesh,
@@ -24,7 +97,7 @@ namespace ECS {
 
 		// use the "animation" file to look up these nodes
 		// (need the matOffset information from the animation file)
-		ReadNodeHeirarchy(AnimationTime, skinnedMesh, skinnedMesh->AiScene->mRootNode, animationInfo, animState, Identity);
+		ReadNodeHeirarchy(AnimationTime, skinnedMesh, skinnedMesh->AiScene->mRootNode, animationInfo, Identity);
 
 		int numBones = skinnedMesh->skeletalData.mNumBones;
 		FinalTransformation.resize(numBones);
@@ -44,17 +117,16 @@ namespace ECS {
 		SkinnedMeshInfo* skinnedMesh,
 		const aiNode * pNode,
 		AnimationInfo* animationInfo,
-		AnimationState& animState,
 		const glm::mat4 & ParentTransformMatrix)
 	{
 
 		aiString NodeName(pNode->mName.data);
 
 		// Original version picked the "main scene" animation...
-		const aiAnimation* pAnimation = skinnedMesh->AiScene->mAnimations[0];
+		//const aiAnimation* pAnimation = skinnedMesh->AiScene->mAnimations[0];
 
 		//TODO: remoce Cast
-		pAnimation = reinterpret_cast<const aiAnimation*>(animationInfo->pAIScene->mAnimations[0]);
+		const aiAnimation* pAnimation = reinterpret_cast<const aiAnimation*>(animationInfo->pAIScene->mAnimations[0]);
 
 
 		//aiMatrix4x4 NodeTransformation;
@@ -106,7 +178,7 @@ namespace ECS {
 		for (unsigned int ChildIndex = 0; ChildIndex != pNode->mNumChildren; ChildIndex++)
 		{
 			this->ReadNodeHeirarchy(AnimationTime, skinnedMesh,
-				pNode->mChildren[ChildIndex], animationInfo, animState, ObjectBoneTransformation);
+				pNode->mChildren[ChildIndex], animationInfo, ObjectBoneTransformation);
 		}
 	}
 

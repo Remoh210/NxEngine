@@ -266,6 +266,10 @@ void reflectVariant(rttr::variant& var, NString propName, rttr::variant& min, rt
 	{
 		reflectVec(var, propName, 3);
 	}
+	else if (value_type == rttr::type::get<vec4f>())
+	{
+		reflectVec(var, propName, 4);
+	}
 	else if (value_type == rttr::type::get<Texture*>())
 	{
 		reflectTexture(var, propName);

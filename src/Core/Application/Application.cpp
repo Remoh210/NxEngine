@@ -6,17 +6,19 @@
 #include <Core/Components/TransformComponent/TransformComponent.h>
 #include <Core/Components/LightComponent/LightComponent.h>
 #include <Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h>
+#include <Core/Components/Input/InputComponent.h>
 #include <Core/Systems/RenderSystem.h>
+#include <Core/Systems/Input/InputSystem.h>
 #include <Core/Systems/Animator/AnimatorSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 #include <Core/Graphics/Cubemap/CubemapManager.h>
 #include <Core/Graphics/ShaderManager/ShaderManager.h>
+#include <Core/Graphics/Animation/AnimationInfo.h>
 #include <Core/Application/SceneManager/SceneManager.h>
 #include <Core/Application/AssetManager/AssetManager.h>
 #include <Core/Application/Settings/GlobalSettings.h>
 #include <Core/Time/NxTime.h>
-
 #include <rendering/Sampler.h>
 #include <rendering/RenderDevice.h>
 #include <rendering/RenderTarget.h>
@@ -98,6 +100,7 @@ int Application::Run()
 
 	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 	ECS::EntitySystem* animatorSystem = world->registerSystem(new ECS::AnimatorSystem());
+	ECS::EntitySystem*  inputSystem = world->registerSystem(new ECS::InputSystem(window));
 
 	DebugRenderer debugRenderer(*editorRenderContext);
 	for (int i = 0; i < 1; i++)
@@ -504,6 +507,7 @@ void Application::LoadDefaultScene()
 	aoBitMap.Load(file_aoTex);
 	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, true, false);
 
+#pragma region loadMeshes
 	//model 1
 	NxArray<IndexedModel> models;
 	NxArray<uint32> modelMaterialIndices;
@@ -662,24 +666,52 @@ void Application::LoadDefaultScene()
 	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
 	transformComp7.transform.scale = vec3(35.5);
 
+#pragma endregion
+
+#pragma region Skinned Mesh
 	SkinnedMeshComponent skinnedMesh;
 	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal(renderDevice, "res/models/chan.fbx");
+	skinnedMesh.skinnedMeshInfo->mesh->material->textures.clear();
 	//skinnedMesh.meshAssetFile = TEST_MODEL_FILE7;
 	//skinnedMesh.shader = ShaderManager::GetMainShader();
 	//skinnedMesh.numInst = 1;
 	TransformComponent transformCompSkinned;
+	InputComponent InputCompSkinned;
 	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
 	transformCompSkinned.transform.scale = vec3(0.4);
 	AnimatorComponent animComp;
-	animComp.currentAnimation = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "testAnim");
+	animComp.animations["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
+	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
+	animComp.animations["walk_left"] = AssetManager::ImportAnimation("res/models/animations/walk_left.fbx", "walk_left");
+	animComp.animations["walk_right"] = AssetManager::ImportAnimation("res/models/animations/walk_right.fbx", "walk_right");
+	AnimationState idleState;
+	idleState.transitionMap["walk_left"] = AnimationState::AnimTransition(InputKey::KEY_A);
+	idleState.transitionMap["walk_right"] = AnimationState::AnimTransition(InputKey::KEY_D);
+	idleState.transitionMap["shoot"] = AnimationState::AnimTransition(InputKey::KEY_SPACE);
+	idleState.activeAnimation.name = "idle";
+	idleState.activeAnimation.bHasExitTime = true;
+	animComp.animationStates["idle"] = idleState;
+	//idleState.nextAnimation.name = "shoot";
+	//idleState.transitionKey = InputKey::KEY_SPACE;
 
-	for (auto bone : skinnedMesh.skinnedMeshInfo->skeletalData.mBoneInfo)
-	{
-		vec4 test(1.0f);
 
-		test = bone.ObjectBoneTransformation * test;
-	}
+	animComp.currentState = idleState;
+	animComp.InitialState = idleState;
+
+	AnimationState ShotState; 
+	ShotState.activeAnimation.name = "shoot";
+	animComp.animationStates["shoot"] = ShotState;
+
+	AnimationState WalkLeftState;
+	WalkLeftState.activeAnimation.name = "walk_left";
+	animComp.animationStates["walk_left"] = WalkLeftState;
+
+	AnimationState WalkRightState;
+	WalkRightState.activeAnimation.name = "walk_right";
+	animComp.animationStates["walk_right"] = WalkRightState;
+
+#pragma endregion
 
 
 	ECS::Entity* ent3 = world->create();
@@ -706,6 +738,7 @@ void Application::LoadDefaultScene()
 
 	ECS::Entity* ent8 = world->create();
 	ent8->assign<TransformComponent>(transformCompSkinned);
+	ent8->assign<InputComponent>(InputCompSkinned);
 	ent8->assign<SkinnedMeshComponent>(skinnedMesh);
 	ent8->assign<AnimatorComponent>(animComp);
 

@@ -1,10 +1,24 @@
 #pragma once
+#include "Common/Input/Input.h"
 
 
 class AnimationState
 {
 public:
-	AnimationState() {};
+	AnimationState()
+	{
+	};
+
+	struct AnimTransition
+	{
+		AnimTransition() {};
+		AnimTransition(InputKey KeyIn)
+			:conditionKey(KeyIn)
+		{}
+
+		virtual bool ShouldTansit(InputKey KeyIn) { return KeyIn == conditionKey; };
+		InputKey conditionKey = InputKey::KEY_NONE;
+	};
 
 	struct StateDetails
 	{
@@ -12,6 +26,7 @@ public:
 			currentTime(0.0f),
 			totalTime(0.0f),
 			bHasExitTime(false),
+			bExited(false),
 			frameStepTime(0.0f) {};
 		std::string name;
 		float currentTime;		// Time (frame) in current animation
@@ -29,6 +44,7 @@ public:
 			bExited = false;
 
 			this->currentTime += this->frameStepTime;
+			DEBUG_LOG_TEMP("%f", currentTime);
 			if (this->currentTime >= this->totalTime)
 			{
 				this->currentTime = 0.0f;
@@ -37,6 +53,11 @@ public:
 			}
 
 			return bDidWeReset;
+		}
+
+		bool operator == (const StateDetails& other) 
+		{
+			return other.name == this->name;
 		}
 	};
 
@@ -48,10 +69,13 @@ public:
 	// Store all the bones for this model, being updated per frame
 	std::vector< glm::mat4x4 > vecObjectBoneTransformation;
 
-	std::vector<StateDetails> vecAnimationQueue;
+	//std::vector<StateDetails> vecAnimationQueue;
 	StateDetails activeAnimation;
+	StateDetails nextAnimation;
 	StateDetails PrevAnimation;
-	StateDetails defaultAnimation;
+
+	NxMap<NString, AnimTransition> transitionMap;
+	//StateDetails defaultAnimation;
 };
 
 struct AnimationInfo

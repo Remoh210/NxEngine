@@ -5,11 +5,18 @@
 #include "Common/dataStructs/Map.h"
 #include "Common/dataStructs/String.h"
 
+
+
 struct AnimatorComponent
 {
-	NxMap<NString /*animation FRIENDLY name*/,
-		AnimationInfo*> animationFriendlyNameTo_pScene;// Animations
+	NxMap<NString, AnimationInfo*> animations;
 
 	AnimationInfo* currentAnimation;
-	AnimationState animationState;
+	AnimationState InitialState;
+	AnimationState currentState;
+
+    //States
+	NxMap<NString, AnimationState> animationStates;
+	//AnimatiorState currentState;
+	//
 };

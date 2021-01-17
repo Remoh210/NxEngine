@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common/CommonTypes.h"
+#include "Common/Math/Math.h"
 #include "Common/dataStructs/Map.h"
 #include "Common/dataStructs/String.h"
 
@@ -22,7 +23,7 @@ struct Material
 	NxMap<NString, Texture*> textures;
 
 	// color and alpha transparency
-	vec4 color;
+	vec4f color;
 
 	//PBR properties
 	float metallic;
