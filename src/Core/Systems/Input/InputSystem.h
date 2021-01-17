@@ -14,7 +14,7 @@ namespace ECS
 
 		}
 
-		void InputSystem::tick(class World *world, float deltaTime)
+		void tick(class World *world, float deltaTime)
 		{
 			world->each<InputComponent>([&](Entity *ent, ComponentHandle<InputComponent> inputComponent) -> void
 			{
