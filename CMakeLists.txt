@@ -48,11 +48,16 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/Include)
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/bullet/src)
+
 
 #Stb_image
 add_library(stb_image STATIC ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.h ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.c)
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/stb_image)
 set_target_properties(stb_image PROPERTIES FOLDER external/stb_image)
+
+
+
 
 # finally, link libs
 target_link_libraries(${PROJECT_NAME} PRIVATE 
@@ -63,7 +68,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      glm 
                      imgui
                      stb_image
-					 rttr_core_lib)
+					 rttr_core_lib
+					 bullet)
 
 # Path to code
 configure_file(Config/root_directory.h.in Config/root_directory.h)

@@ -50,6 +50,7 @@ add_subdirectory(assimp)
 add_subdirectory(soil)
 add_subdirectory(imgui)
 add_subdirectory(rttr)
+add_subdirectory(bullet)
 
 #Grouping
 set_target_properties(soil PROPERTIES FOLDER external/soil)
@@ -61,3 +62,6 @@ set_target_properties(zlibstatic PROPERTIES FOLDER external/assimp)
 set_target_properties(zlib PROPERTIES FOLDER external/assimp)
 set_target_properties(uninstall PROPERTIES FOLDER external/assimp)
 set_target_properties(IrrXML PROPERTIES FOLDER external/assimp)
+set_target_properties(bullet PROPERTIES FOLDER external/bullet)
+
+

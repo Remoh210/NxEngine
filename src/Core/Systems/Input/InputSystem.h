@@ -1,3 +1,6 @@
+#pragma once
+
+#include "Core/ECS/ECS.h"
 #include "Core/Components/Input/InputComponent.h"
 #include "Common/Input/Input.h"
 #include "rendering/Window.h"

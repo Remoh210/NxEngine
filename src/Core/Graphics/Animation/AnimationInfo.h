@@ -44,7 +44,7 @@ public:
 			bExited = false;
 
 			this->currentTime += this->frameStepTime;
-			DEBUG_LOG_TEMP("%f", currentTime);
+			//DEBUG_LOG_TEMP("%f", currentTime);
 			if (this->currentTime >= this->totalTime)
 			{
 				this->currentTime = 0.0f;
