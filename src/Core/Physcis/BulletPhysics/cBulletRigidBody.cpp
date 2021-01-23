@@ -6,6 +6,7 @@
 #include <gtx/quaternion.hpp>
 #include <mat4x4.hpp> 
 #include <gtc/matrix_transform.hpp>
+#include "Common/Common.h"
 
 namespace nPhysics {
 
@@ -282,7 +283,14 @@ namespace nPhysics {
 
 	glm::vec3 cBulletRigidBody::GetEulerRotation()
 	{
-		return glm::vec3();
+		btTransform tranform;
+		tranform =	mBody->getWorldTransform();
+		float x, y, z;
+		tranform.getRotation().getEulerZYX(z, y, x);
+
+		
+		return glm::vec3(x, y, z);
+
 	}
 
 	glm::mat4 cBulletRigidBody::GetMatRotation()

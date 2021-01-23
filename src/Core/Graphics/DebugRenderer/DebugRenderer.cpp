@@ -6,16 +6,25 @@
 //HACK
 #include <algorithm>
 
-DebugRenderer::DebugRenderer(EditorRenderContext& contextIn)
-    :editorContext(contextIn)
+EditorRenderContext* DebugRenderer::editorContext = nullptr;
+NxArray<DebugShape*> DebugRenderer::ShapesToDraw;
+Shader* DebugRenderer::shader = nullptr;
+DrawParams DebugRenderer::debugDrawParams;
+
+void DebugRenderer::SetContext(EditorRenderContext* contextIn)
 {
-    //Load and set shaders
-	NString LINE_SHADER_TEXT_FILE ="res/shaders/DebugShapeShader.glsl";
+	editorContext = contextIn;
+}
+
+void DebugRenderer::SetShader(/*TODO*/)
+{
+	//Load and set shaders
+	NString LINE_SHADER_TEXT_FILE = "res/shaders/DebugShapeShader.glsl";
 	NString LineShaderText;
 	Application::loadTextFileWithIncludes(LineShaderText, LINE_SHADER_TEXT_FILE, "#include");
-	shader = new Shader(editorContext.GetRenderDevice(), LineShaderText);
+	shader = new Shader(editorContext->GetRenderDevice(), LineShaderText);
 
-    debugDrawParams.primitiveType = PRIMITIVE_LINES;
+	debugDrawParams.primitiveType = PRIMITIVE_LINES;
 	debugDrawParams.shouldWriteDepth = true;
 	debugDrawParams.depthFunc = DRAW_FUNC_LESS;
 }
@@ -27,7 +36,7 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec
 
 	IndexedModel model = PrimitiveGenerator::CreateSphere(1, sectorCount, stackCount, color);
 
-	VertexArray* VA = new VertexArray(editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VertexArray* VA = new VertexArray(editorContext->GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
 
 	SphereShape->vertexArray = VA;
@@ -43,16 +52,16 @@ void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 col
 {
     DebugShape* lineShape = new DebugShape();
 
-	IndexedModel model = PrimitiveGenerator::CreateLine(color);
+	IndexedModel model = PrimitiveGenerator::CreateLine(color, start, end);
 
-	VertexArray* VA = new VertexArray(editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VertexArray* VA = new VertexArray(editorContext->GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
 
 	lineShape->vertexArray = VA;
 	lineShape->drawParams = debugDrawParams;
     lineShape->lifetime = time;
-    lineShape->transform.position = start;
-    lineShape->transform.scale = end;
+    lineShape->transform.position = vec3(0.0f);
+    lineShape->transform.scale = vec3(1.0f);
     ShapesToDraw.push_back(lineShape);
 }
 
@@ -62,7 +71,7 @@ void DebugRenderer::DrawQuad()
 
 	IndexedModel model = PrimitiveGenerator::CreateQuad();
 
-	VertexArray* VA = new VertexArray(editorContext.GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
+	VertexArray* VA = new VertexArray(editorContext->GetRenderDevice(), model, BufferUsage::USAGE_DYNAMIC_DRAW);
 	VA->SetShader(shader);
 
 	PlaneShape->vertexArray = VA;
@@ -91,7 +100,7 @@ void DebugRenderer::Update(float dt)
         }
 		else
 		{
-			editorContext.RenderDebugShapes(shape, shape->transform.ToMatrix());
+			editorContext->RenderDebugShapes(shape, shape->transform.ToMatrix());
 
 			if (shape->lifetime == 0.0f)
 			{

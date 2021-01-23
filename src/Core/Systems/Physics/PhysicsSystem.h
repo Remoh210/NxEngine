@@ -2,27 +2,41 @@
 
 #include "Core/ECS/ECS.h"
 #include "Core/Physcis/iPhysicsFactory.h"
-#include "Core/Physcis/BulletPhysics/cBulletPhysicsFactory.h"
+#include "Core/Physcis/iDebugRenderer.h"
 
-class PhysicsSystem
+namespace ECS
 {
-public:
-	PhysicsSystem()
+	class PhysicsSystem : public EntitySystem
 	{
-		physicsFactory = new cBulletPhysicsFactory();
-		physicsWorld = physicsFactory->CreatePhysicsWorld();
-	}
-	~PhysicsSystem();
+	public:
+		PhysicsSystem();
 
-private:
-	iPhysicsFactory* physicsFactory;
-	iPhysicsWorld* physicsWorld;
-};
+		virtual void tick(class World *world, float deltaTime);
+		~PhysicsSystem();
 
-PhysicsSystem::PhysicsSystem()
-{
-}
+		inline nPhysics::iPhysicsWorld* GetWorld()
+		{
+			return physicsWorld;
+		}
 
-PhysicsSystem::~PhysicsSystem()
-{
+		inline nPhysics::iPhysicsFactory* GetFactory()
+		{
+			return physicsFactory;
+		}
+
+		inline void ToggleDebugDraw()
+		{
+			debugDrawMode = !debugDrawMode;
+			physicsWorld->SetDebugDrawerMode(static_cast<int>(debugDrawMode));
+			
+		}
+
+	private:
+		nPhysics::iPhysicsFactory* physicsFactory;
+		nPhysics::iPhysicsWorld* physicsWorld;
+
+		nPhysics::iDebugRenderer* debugRenderer;
+
+		bool debugDrawMode;
+	};
 }

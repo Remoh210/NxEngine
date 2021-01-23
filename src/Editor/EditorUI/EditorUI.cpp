@@ -22,6 +22,238 @@ void reflectMap(rttr::variant_associative_view view, NString propName, rttr::var
 void reflectVec(rttr::variant& var, NString propName, uint32 size);
 void reflectTexture(rttr::variant& var, NString propName, uint32 size = 128);
 
+
+void EditorUI::Initialize(NString apiVersion, Window* window)
+{
+	ImGui::CreateContext();
+
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+	ImGui_ImplGlfw_InitForOpenGL(window->GetWindowHandle(), true);
+	NString glVersionImgui;
+	glVersionImgui = "#version " + apiVersion;
+	ImGui_ImplOpenGL3_Init(glVersionImgui.c_str());
+	ImGui::StyleColorsDark();
+}
+
+void EditorUI::DrawSceneTree()
+{
+	ImGui::Begin("Scene", nullptr, ImGuiTabBarFlags_None);
+
+	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
+		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+
+		static int selection_mask = (1 << 2);
+		int node_clicked = -1;
+		int i = 0;
+		for (int entCount = 0; entCount < SceneManager::currentScene.GetNumObjects(); entCount++)
+		{
+			// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+			ImGuiTreeNodeFlags node_flags = base_flags;
+			const bool is_selected = (selection_mask & (1 << i)) != 0;
+			if (is_selected)
+				node_flags |= ImGuiTreeNodeFlags_Selected;
+
+			NString name = SceneManager::currentScene.sceneObjects[entCount]->objectName;
+			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, name.c_str(), i);
+			if (ImGui::IsItemClicked()) 
+			{ 
+				selectedEntity = i;
+				node_clicked = i;
+			}
+			if (node_open)
+			{
+				ImGui::TreePop();
+			}
+			i++;
+		}
+		if (node_clicked != -1)
+		{
+			if (ImGui::GetIO().KeyCtrl)
+				selection_mask ^= (1 << node_clicked);
+			else
+				selection_mask = (1 << node_clicked);
+		}
+
+	ImGui::End();
+}
+
+void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
+{
+
+	DrawSceneTree();
+	DrawInspector();
+
+	static ImGuiID dockspaceID = 0;
+	bool active = true;
+	if (ImGui::Begin("Master Window", &active))
+	{
+	ImGui::TextUnformatted("DockSpace below");
+	}
+	if (active)
+	{
+		// Declare Central dockspace
+		dockspaceID = ImGui::GetID("HUB_DockSpace");
+		ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+	}
+	ImGui::End();
+
+
+	if (init)
+	{
+		SceneViewSize = ImVec2(GlobalSettings::GetWindowWidth() / 2, GlobalSettings::GetWindowHeight() / 2);
+		SceneViewPos = ImVec2(GlobalSettings::GetWindowWidth() / 2, GlobalSettings::GetWindowHeight() / 2);
+		ImGui::SetNextWindowSize(SceneViewSize);
+		ImGui::SetNextWindowPos(SceneViewPos);
+		
+	}
+	ImGui::Begin("Main View", nullptr, ImGuiTabBarFlags_None);
+	ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
+	ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
+	if (ImGui::BeginTabItem("Scene"))
+	{
+		ImVec2 newSize = ImGui::GetWindowSize();
+		if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
+		{
+			SceneViewSize = newSize;
+			//DEBUG_LOG_TEMP("RESIZE()");
+			//editorContext->ResizeRenderTargets(newSize.x, newSize.y);
+
+		}
+		ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
+		//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
+		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::EndTabItem();
+	}
+
+	ImGui::EndTabBar();
+	ImGui::End();
+
+
+
+
+	//ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Dockable Window"))
+	{
+		ImGui::TextUnformatted("Test");
+	}
+	ImGui::End();
+
+	//HACK
+	if (init)
+	{
+		init = false;
+	}
+}
+
+void EditorUI::DrawInspector()
+{
+	if (init)
+	{
+		ImVec2 size = ImVec2(GlobalSettings::GetWindowWidth() / 4, GlobalSettings::GetWindowHeight() / 2);
+		ImGui::SetNextWindowSize(size);
+	}
+
+	ImGui::Begin("Inspector");
+
+	if (selectedEntity != -1)
+	{
+		ECS::Entity* entity = SceneManager::currentScene.sceneObjects[selectedEntity]->entity;
+
+		ImGui::Text("TransformComponent");
+		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
+		if (transformComp) { reflectUI(transformComp.get()); }
+
+		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
+		if (meshComp) 
+		{ 
+			ImGui::Text("StaticMeshComponent");
+			reflectUI(meshComp.get()); 
+		}
+
+		ECS::ComponentHandle<SkinnedMeshComponent> skinnedMeshComp = entity->get<SkinnedMeshComponent>();
+		if (skinnedMeshComp)
+		{
+			ImGui::Text("Skeletal Mesh Component");
+			reflectUI(skinnedMeshComp.get());
+		}
+
+		ECS::ComponentHandle<LightComponent> lightComp = entity->get<LightComponent>();
+		if (lightComp) 
+		{ 
+			ImGui::Text("LightComponent");
+			reflectUI(lightComp.get()); 
+		}
+		
+	}
+	//static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
+	//	| ImGuiTreeNodeFlags_OpenOnDoubleClick;
+
+	//static int selection_mask = (1 << 2);
+	//int node_clicked = -1;
+	//int i = 0;
+	//for (auto entity : SceneManager::currentScene.sceneObjects)
+	//{
+	//	// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
+	//	ImGuiTreeNodeFlags node_flags = base_flags;
+	//	const bool is_selected = (selection_mask & (1 << i)) != 0;
+	//	if (is_selected)
+	//		node_flags |= ImGuiTreeNodeFlags_Selected;
+
+	//	bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, entity->get<StaticMeshComponent>()->meshAssetFile.c_str(), i);
+	//	if (ImGui::IsItemClicked()) { node_clicked = i; }
+	//	if (node_open)
+	//	{
+	//		ImGui::Text("TransformComponent");
+	//		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
+	//		reflectUI(transformComp.get());
+	//		ImGui::Text("StaticMeshComponent");
+	//		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
+	//		reflectUI(meshComp.get());
+	//		ImGui::TreePop();
+	//	}
+	//	i++;
+	//}
+	//if (node_clicked != -1)
+	//{
+	//	// Update selection state. Process outside of tree loop to avoid visual inconsistencies during the clicking-frame.
+	//	if (ImGui::GetIO().KeyCtrl)
+	//		selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
+	//	else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, this commented bit preserve selection when clicking on item that is part of the selection
+	//		selection_mask = (1 << node_clicked);           // Click to single-select
+	//}
+
+	ImGui::End();
+}
+
+void EditorUI::Shutdown()
+{
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+
+void EditorUI::UpdateWindows()
+{
+	ImGui::UpdatePlatformWindows();
+	ImGui::RenderPlatformWindowsDefault();
+}
+
+void EditorUI::Draw()
+{
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+static const float identityMatrix[16] =
+{ 1.f, 0.f, 0.f, 0.f,
+	0.f, 1.f, 0.f, 0.f,
+	0.f, 0.f, 1.f, 0.f,
+	0.f, 0.f, 0.f, 1.f };
+
 void reflectVec(rttr::variant& var, NString propName, uint32 size)
 {
 	auto value_type = var.get_type();
@@ -46,7 +278,7 @@ void reflectVec(rttr::variant& var, NString propName, uint32 size)
 				dataArray.push_back(wrapped_var.to_float());
 			}
 
-			if(ImGui::DragFloat3(propName.c_str(), &dataArray[0], 0.05, -FLT_MAX, FLT_MAX, "%.3f"))
+			if (ImGui::DragFloat3(propName.c_str(), &dataArray[0], 0.05, -FLT_MAX, FLT_MAX, "%.3f"))
 			{
 				for (int i = 0; i < size; i++)
 				{
@@ -135,8 +367,8 @@ void reflectArray(rttr::variant_sequential_view view, NString propName, rttr::va
 		if (node_clicked != -1)
 		{
 			if (ImGui::GetIO().KeyCtrl)
-				selection_mask ^= (1 << node_clicked);          
-			else 
+				selection_mask ^= (1 << node_clicked);
+			else
 				selection_mask = (1 << node_clicked);
 		}
 		//prop.set_value(obj, view);
@@ -352,7 +584,7 @@ bool reflectBasicType(const rttr::type& t, rttr::variant& var, NString propName,
 
 			float value = var.to_float();
 			float speed = maxValue * 0.005f;
-			if(ImGui::DragFloat(propName.c_str(), &value, speed, minValue, maxValue))
+			if (ImGui::DragFloat(propName.c_str(), &value, speed, minValue, maxValue))
 				var = value;
 		}
 		else if (t == rttr::type::get<double>())
@@ -409,257 +641,4 @@ void reflectUI(rttr::instance obj2)
 
 		prop.set_value(obj, var);
 	}
-}
-
-
-
-void EditorUI::Initialize(NString apiVersion, Window* window)
-{
-	ImGui::CreateContext();
-
-	ImGuiIO& io = ImGui::GetIO();
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-	ImGui_ImplGlfw_InitForOpenGL(window->GetWindowHandle(), true);
-	NString glVersionImgui;
-	glVersionImgui = "#version " + apiVersion;
-	ImGui_ImplOpenGL3_Init(glVersionImgui.c_str());
-	ImGui::StyleColorsDark();
-}
-
-void EditorUI::DrawSceneTree()
-{
-	ImGui::Begin("Scene", nullptr, ImGuiTabBarFlags_None);
-
-	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
-		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
-
-
-		static int selection_mask = (1 << 2);
-		int node_clicked = -1;
-		int i = 0;
-		for (int entCount = 0; entCount < SceneManager::currentScene.GetNumObjects(); entCount++)
-		{
-			// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
-			ImGuiTreeNodeFlags node_flags = base_flags;
-			const bool is_selected = (selection_mask & (1 << i)) != 0;
-			if (is_selected)
-				node_flags |= ImGuiTreeNodeFlags_Selected;
-
-			NString name = SceneManager::currentScene.sceneObjects[entCount]->objectName;
-			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, name.c_str(), i);
-			if (ImGui::IsItemClicked()) 
-			{ 
-				selectedEntity = i;
-				node_clicked = i;
-			}
-			if (node_open)
-			{
-				ImGui::TreePop();
-			}
-			i++;
-		}
-		if (node_clicked != -1)
-		{
-			if (ImGui::GetIO().KeyCtrl)
-				selection_mask ^= (1 << node_clicked);
-			else
-				selection_mask = (1 << node_clicked);
-		}
-
-	ImGui::End();
-}
-
-void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
-{
-
-	DrawSceneTree();
-	DrawInspector();
-
-	static ImGuiID dockspaceID = 0;
-	bool active = true;
-	if (ImGui::Begin("Master Window", &active))
-	{
-	ImGui::TextUnformatted("DockSpace below");
-	}
-	if (active)
-	{
-		// Declare Central dockspace
-		dockspaceID = ImGui::GetID("HUB_DockSpace");
-		ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
-	}
-	ImGui::End();
-
-
-	if (init)
-	{
-		SceneViewSize = ImVec2(GlobalSettings::GetWindowWidth() / 2, GlobalSettings::GetWindowHeight() / 2);
-		SceneViewPos = ImVec2(GlobalSettings::GetWindowWidth() / 2, GlobalSettings::GetWindowHeight() / 2);
-		ImGui::SetNextWindowSize(SceneViewSize);
-		ImGui::SetNextWindowPos(SceneViewPos);
-		init = false;
-	}
-	ImGui::Begin("Main View", nullptr, ImGuiTabBarFlags_None);
-	ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
-	ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
-	if (ImGui::BeginTabItem("Scene"))
-	{
-		ImVec2 newSize = ImGui::GetWindowSize();
-		if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
-		{
-			SceneViewSize = newSize;
-			//DEBUG_LOG_TEMP("RESIZE()");
-			//editorContext->ResizeRenderTargets(newSize.x, newSize.y);
-
-		}
-		ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
-		//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
-		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::EndTabItem();
-	}
-	//if (ImGui::BeginTabItem("Albedo"))
-	//{
-	//	if (GBuffer)
-	//	{
-	//		ImGui::Image((void*)GBuffer->colourTexture_0_ID, SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
-	//	}
-	//	ImGui::EndTabItem();
-	//}
-	//if (ImGui::BeginTabItem("Position"))
-	//{
-	//	if (GBuffer)
-	//	{
-	//		ImGui::Image((void*)GBuffer->vertexWorldPos_2_ID, SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
-	//	}
-	//	ImGui::EndTabItem();
-	//}
-	//if (ImGui::BeginTabItem("Normal"))
-	//{
-	//	if (GBuffer)
-	//	{
-	//		ImGui::Image((void*)GBuffer->normalTexture_1_ID, SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
-	//	}
-	//	ImGui::EndTabItem();
-	//}
-	ImGui::EndTabBar();
-	ImGui::End();
-	//ImGui::EndChild();
-
-
-
-
-
-	//ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Dockable Window"))
-	{
-		ImGui::TextUnformatted("Test");
-	}
-	ImGui::End();
-
-
-	
-}
-
-void EditorUI::DrawInspector()
-{
-	ImGui::Begin("Inspector");
-
-	if (selectedEntity != -1)
-	{
-		ECS::Entity* entity = SceneManager::currentScene.sceneObjects[selectedEntity]->entity;
-
-		ImGui::Text("TransformComponent");
-		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-		if (transformComp) { reflectUI(transformComp.get()); }
-
-		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
-		if (meshComp) 
-		{ 
-			ImGui::Text("StaticMeshComponent");
-			reflectUI(meshComp.get()); 
-		}
-
-		ECS::ComponentHandle<SkinnedMeshComponent> skinnedMeshComp = entity->get<SkinnedMeshComponent>();
-		if (skinnedMeshComp)
-		{
-			ImGui::Text("Skeletal Mesh Component");
-			reflectUI(skinnedMeshComp.get());
-		}
-
-		ECS::ComponentHandle<LightComponent> lightComp = entity->get<LightComponent>();
-		if (lightComp) 
-		{ 
-			ImGui::Text("LightComponent");
-			reflectUI(lightComp.get()); 
-		}
-		
-	}
-	//static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
-	//	| ImGuiTreeNodeFlags_OpenOnDoubleClick;
-
-	//static int selection_mask = (1 << 2);
-	//int node_clicked = -1;
-	//int i = 0;
-	//for (auto entity : SceneManager::currentScene.sceneObjects)
-	//{
-	//	// Disable the default open on single-click behavior and pass in Selected flag according to our selection state.
-	//	ImGuiTreeNodeFlags node_flags = base_flags;
-	//	const bool is_selected = (selection_mask & (1 << i)) != 0;
-	//	if (is_selected)
-	//		node_flags |= ImGuiTreeNodeFlags_Selected;
-
-	//	bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, entity->get<StaticMeshComponent>()->meshAssetFile.c_str(), i);
-	//	if (ImGui::IsItemClicked()) { node_clicked = i; }
-	//	if (node_open)
-	//	{
-	//		ImGui::Text("TransformComponent");
-	//		ECS::ComponentHandle<TransformComponent> transformComp = entity->get<TransformComponent>();
-	//		reflectUI(transformComp.get());
-	//		ImGui::Text("StaticMeshComponent");
-	//		ECS::ComponentHandle<StaticMeshComponent> meshComp = entity->get<StaticMeshComponent>();
-	//		reflectUI(meshComp.get());
-	//		ImGui::TreePop();
-	//	}
-	//	i++;
-	//}
-	//if (node_clicked != -1)
-	//{
-	//	// Update selection state. Process outside of tree loop to avoid visual inconsistencies during the clicking-frame.
-	//	if (ImGui::GetIO().KeyCtrl)
-	//		selection_mask ^= (1 << node_clicked);          // CTRL+click to toggle
-	//	else //if (!(selection_mask & (1 << node_clicked))) // Depending on selection behavior you want, this commented bit preserve selection when clicking on item that is part of the selection
-	//		selection_mask = (1 << node_clicked);           // Click to single-select
-	//}
-
-	ImGui::End();
-}
-
-void EditorUI::Shutdown()
-{
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-}
-
-void EditorUI::UpdateWindows()
-{
-	ImGui::UpdatePlatformWindows();
-	ImGui::RenderPlatformWindowsDefault();
-}
-
-void EditorUI::Draw()
-{
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-static const float identityMatrix[16] =
-{ 1.f, 0.f, 0.f, 0.f,
-	0.f, 1.f, 0.f, 0.f,
-	0.f, 0.f, 1.f, 0.f,
-	0.f, 0.f, 0.f, 1.f };
-
-void EditorUI::EditTransform(const float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition)
-{
 }

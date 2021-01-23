@@ -1,6 +1,7 @@
 #pragma once
 #include <Core/Physcis/iPhysicsWorld.h>
 #include <Core/Physcis/iConstraint.h>
+#include <Core/Physcis/BulletPhysics/BulletDebugRenderer.h>
 //#include <Core/Physcis/iRigidBody.h>
 #include "btBulletDynamicsCommon.h"
 #include <stdio.h>
@@ -14,6 +15,8 @@ namespace nPhysics {
 		~cBulletPhysicsWorld();
 
 		void SetGravity(const glm::vec3& gravity);
+		virtual void SetDebugDrawer(iDebugRenderer* rendererIn);
+		virtual void SetDebugDrawerMode(int mode);
 		bool AddBody(iRigidBody* body);
 		bool RemoveBody(iRigidBody* body);
 
@@ -42,6 +45,8 @@ namespace nPhysics {
 		btSequentialImpulseConstraintSolver* mSolver = new btSequentialImpulseConstraintSolver;
 
 		btDiscreteDynamicsWorld* mDynamicsWorld;
+
+		BulletDebugRenderer* mDebugDrawer;
 
 	};
 

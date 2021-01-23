@@ -2,6 +2,7 @@
 #include "nConvert.h"
 #include "cBulletRigidBody.h"
 #include "cBulletConstraints.h"
+#include "BulletDebugRenderer.h"
 #include "BulletCollision/CollisionDispatch/btInternalEdgeUtility.h"
 
 
@@ -43,6 +44,8 @@ nPhysics::cBulletPhysicsWorld::cBulletPhysicsWorld()
 	mDynamicsWorld->setGravity(btVector3(0, -10, 0));
 
 	gContactAddedCallback = callbackFunc;
+
+	mDebugDrawer = new BulletDebugRenderer(mDynamicsWorld);
 }
 
 nPhysics::cBulletPhysicsWorld::~cBulletPhysicsWorld()
@@ -82,6 +85,18 @@ nPhysics::cBulletPhysicsWorld::~cBulletPhysicsWorld()
 void nPhysics::cBulletPhysicsWorld::SetGravity(const glm::vec3& gravity)
 {
 	mDynamicsWorld->setGravity(nConvert::ToBullet(gravity));
+}
+
+void nPhysics::cBulletPhysicsWorld::SetDebugDrawer(iDebugRenderer* rendererIn)
+{
+	mDebugDrawer = static_cast<BulletDebugRenderer*>(rendererIn);
+	mDynamicsWorld->setDebugDrawer(mDebugDrawer);
+	
+}
+
+void nPhysics::cBulletPhysicsWorld::SetDebugDrawerMode(int mode)
+{
+	mDebugDrawer->setDebugMode(mode);
 }
 
 bool nPhysics::cBulletPhysicsWorld::AddBody(iRigidBody* body)
@@ -193,5 +208,11 @@ void nPhysics::cBulletPhysicsWorld::Update(float dt)
 {
 	//not working with 120hz monitor?
 	mDynamicsWorld->stepSimulation(dt, 10);
+
+	if (mDebugDrawer != nullptr)
+	{
+		mDynamicsWorld->debugDrawWorld();
+	}
+	
 	//mDynamicsWorld->stepSimulation(dt, 0);
 }

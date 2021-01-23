@@ -141,7 +141,7 @@ public:
         return newModel;
 	}
 
-	inline static IndexedModel CreateLine(vec3& color)
+	inline static IndexedModel CreateLine(vec3& color, vec3 start, vec3 end)
 	{
 		IndexedModel newModel;
 		newModel.AllocateElement(3); // Positions
@@ -152,13 +152,13 @@ public:
 		newModel.AllocateElement(16); // Transform matrix
 
 
-		newModel.AddElement3f(0, 0, 0, 0);
+		newModel.AddElement3f(0, start.x, start.y, start.z);
         newModel.AddElement2f(1, 0, 0);
         newModel.AddElement3f(2, 0, 0, 0);
 		newModel.AddElement3f(3, color.x, color.y, color.z);
 		newModel.AddIndices2i(0, 1);
 
-		newModel.AddElement3f(0, 1, 1, 1);
+		newModel.AddElement3f(0, end.x, end.y, end.z);
         newModel.AddElement2f(1, 0, 0);
         newModel.AddElement3f(2, 0, 0, 0);
 		newModel.AddElement3f(3, color.x, color.y, color.z);

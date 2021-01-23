@@ -7,6 +7,7 @@
 #include <Core/Components/LightComponent/LightComponent.h>
 #include <Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h>
 #include <Core/Components/Input/InputComponent.h>
+#include <Core/Components/Physics/RigidBodyComponent.h>
 #include <Core/Systems/RenderSystem.h>
 #include <Core/Systems/Input/InputSystem.h>
 #include <Core/Systems/Animator/AnimatorSystem.h>
@@ -18,6 +19,7 @@
 #include <Core/Application/SceneManager/SceneManager.h>
 #include <Core/Application/AssetManager/AssetManager.h>
 #include <Core/Application/Settings/GlobalSettings.h>
+#include <Core/Systems/Physics/PhysicsSystem.h>
 #include <Core/Time/NxTime.h>
 #include <rendering/Sampler.h>
 #include <rendering/RenderDevice.h>
@@ -101,12 +103,11 @@ int Application::Run()
 	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 	ECS::EntitySystem* animatorSystem = world->registerSystem(new ECS::AnimatorSystem());
 	ECS::EntitySystem*  inputSystem = world->registerSystem(new ECS::InputSystem(window));
+	physicsSystem = world->registerSystem(new ECS::PhysicsSystem());
 
-	DebugRenderer debugRenderer(*editorRenderContext);
-	for (int i = 0; i < 1; i++)
-	{
-		//debugRenderer.DrawDebugSphere(vec3(0.f), 10, 50, vec3(1, 0, 0));
-	}
+	DebugRenderer::SetContext(editorRenderContext);
+	DebugRenderer::SetShader();
+
 	
 	//debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
 	vec3 debugSpherePos(0.0f);
@@ -179,6 +180,12 @@ int Application::Run()
 			editorRenderContext->ToggleGrid();
 		}
 
+		if (ImGui::Button("Draw Collision"))
+		{
+			auto physicsSystemNx = (ECS::PhysicsSystem*)physicsSystem;
+			physicsSystemNx->ToggleDebugDraw();
+		}
+
 		if (ImGui::Button("PostFX"))
 		{
 			editorRenderContext->TogglePostFX();
@@ -225,7 +232,7 @@ int Application::Run()
 		for (int i = 0; i < 1; i++)
 		{
 			debugSpherePos.x += 0.1f * deltaTime;
-			//debugRenderer.DrawDebugSphere(debugSpherePos, 0, 10, vec3(0, 1, 0));
+	
 		}
 
 		// input
@@ -233,13 +240,13 @@ int Application::Run()
 		
 		for (glm::vec3 pos : lightPositions)
 		{
-			debugRenderer.DrawDebugSphere(pos, 0.0f, 1.f);
+			DebugRenderer::DrawDebugSphere(pos, 0.0f, 1.f);
 		}
 
 		// render
 		// ------
 		editorRenderContext->Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
-		debugRenderer.Update(deltaTime);
+		DebugRenderer::Update(deltaTime);
 		world->tick(deltaTime);
 		editorRenderContext->Flush();
 		
@@ -509,6 +516,9 @@ void Application::LoadDefaultScene()
 
 #pragma region loadMeshes
 	//model 1
+	ECS::PhysicsSystem* physSystem = (ECS::PhysicsSystem*)physicsSystem;
+
+
 	NxArray<IndexedModel> models;
 	NxArray<uint32> modelMaterialIndices;
 	NxArray<MaterialSpec> modelMaterials;
@@ -627,13 +637,6 @@ void Application::LoadDefaultScene()
 	material5->metallic = 0.99;
 	material5->roughness = 0.01;
 	material5->color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-	//material5->textures[TEXTURE_ALBEDO] = albedo;
-	//material5->textures[TEXTURE_NORMAL] = normal;
-	//material5->textures[TEXTURE_METALLIC] = metallic;
-	//material5->textures[TEXTURE_ROUGHNESS] = roughness;
-	//material5->textures[TEXTURE_AO] = ao;
-
-	//material3.diffuseTextures.push_back(&testtex);
 	mesh5->material = material5;
 	StaticMeshComponent renderableMesh5;
 	renderableMesh5.meshAssetFile = "Mesh5";
@@ -643,6 +646,19 @@ void Application::LoadDefaultScene()
 	transformComp5.transform.position = vec3(0, 20, -40);
 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
 	transformComp5.transform.scale = vec3(5);
+	RigidBodyComponent rb5;
+	nPhysics::iShape* CurShape5;
+	nPhysics::sRigidBodyDef def5;
+	def5.Position = transformComp5.transform.position.ToVec();
+	def5.AngularVelocity = vec3(2, 0, 2);
+	def5.Mass = 300.0f;
+	def5.GameObjectName = "test5";
+	CurShape5 = physSystem->GetFactory()->CreateSphereShape(5.2);
+	rb5.rigidBody = physSystem->GetFactory()->CreateRigidBody(def5, CurShape5);
+	physSystem->GetWorld()->AddBody(rb5.rigidBody);
+
+
+
 
 
 	StaticMeshComponent renderableMesh6;
@@ -655,6 +671,22 @@ void Application::LoadDefaultScene()
 	transformComp6.transform.position = vec3(-180.1f, -10.0f, -40.0f);
 	transformComp6.transform.rotation = vec3(-90.0f, 0.0f, 0.f);
 	transformComp6.transform.scale = vec3(0.5);
+	RigidBodyComponent rb6;
+
+	nPhysics::iShape* CurShape6;
+	nPhysics::sRigidBodyDef def6;
+	//def6.Orientation = transformComp6.transform.rotation.ToVec();
+	def6.Position = transformComp6.transform.position.ToVec();
+	def6.Mass = 0.0f;
+	def6.GameObjectName = "test6";
+	CurShape6 = physSystem->GetFactory()->CreatePlaneShape(vec3(0, 1, 0), 2);
+	//nPhysics::GL_Triangle* GLTriangle = new nPhysics::GL_Triangle[curModelInfo.pMeshData->numberOfTriangles];
+
+	rb6.rigidBody = physSystem->GetFactory()->CreateRigidBody(def6, CurShape6);
+	physSystem->GetWorld()->AddBody(rb6.rigidBody);
+
+
+
 
 	StaticMeshComponent renderableMesh7;
 	renderableMesh7.meshes = AssetManager::ImportModel(renderDevice, TEST_MODEL_FILE7);
@@ -664,7 +696,22 @@ void Application::LoadDefaultScene()
 	TransformComponent transformComp7;
 	transformComp7.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-	transformComp7.transform.scale = vec3(35.5);
+	transformComp7.transform.scale = vec3(40.0);
+	RigidBodyComponent rigidBComp;
+
+
+	nPhysics::iShape* CurShape;
+	nPhysics::sRigidBodyDef def;
+	def.Orientation = transformComp7.transform.rotation.ToVec();
+	def.Position = transformComp7.transform.position.ToVec();
+	def.Mass = 100.0f;
+	def.GameObjectName = "test";
+	//CurShape = physSystem->GetFactory()->CreateSphereShape(2.0f);
+	CurShape = physSystem->GetFactory()->CreateCylinderShape(vec3(1, 2, 1), 1);
+	//nPhysics::GL_Triangle* GLTriangle = new nPhysics::GL_Triangle[curModelInfo.pMeshData->numberOfTriangles];
+
+	rigidBComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(def, CurShape);
+	physSystem->GetWorld()->AddBody(rigidBComp.rigidBody);
 
 #pragma endregion
 
@@ -727,14 +774,17 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent5 = world->create();
 	ent5->assign<TransformComponent>(transformComp5);
 	ent5->assign<StaticMeshComponent>(renderableMesh5);
+	ent5->assign<RigidBodyComponent>(rb5);
 
 	ECS::Entity* ent6 = world->create();
 	ent6->assign<TransformComponent>(transformComp6);
 	ent6->assign<StaticMeshComponent>(renderableMesh6);
+	ent6->assign<RigidBodyComponent>(rb6);
 
 	ECS::Entity* ent7 = world->create();
 	ent7->assign<TransformComponent>(transformComp7);
 	ent7->assign<StaticMeshComponent>(renderableMesh7);
+	ent7->assign<RigidBodyComponent>(rigidBComp);
 
 	ECS::Entity* ent8 = world->create();
 	ent8->assign<TransformComponent>(transformCompSkinned);

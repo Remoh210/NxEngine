@@ -20,11 +20,6 @@ public:
 	static void UpdateWindows();
 	static void Draw();
 	
-	//static void NewFrame();
-	//static void DrawGizmo();
-	static void EditTransform(const float* cameraView, float* cameraProjection, 
-		float* matrix, bool editTransformDecomposition);
-	//static void ShutDown();
 
 private:
 	static ImVec2 SceneViewSize;

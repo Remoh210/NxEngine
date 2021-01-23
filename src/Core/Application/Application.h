@@ -83,4 +83,6 @@ private:
 	RenderTarget* editorRenderTarget;
 	EditorRenderContext* editorRenderContext;
 	RenderDevice* renderDevice;
+
+	ECS::EntitySystem* physicsSystem;
 };

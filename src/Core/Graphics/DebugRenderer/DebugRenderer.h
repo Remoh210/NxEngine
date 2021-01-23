@@ -10,21 +10,23 @@ class DebugRenderer
 {
 public:
 
-    DebugRenderer(EditorRenderContext& contextIn);
+	static void SetContext(EditorRenderContext* contextIn);
+
+	static void SetShader(/*TODO*/);
     
-	void DrawDebugSphere(vec3 position, float time = 0, float radius = 1, vec3 color = vec3(1.f, 0.f, 0.f),
+	static void DrawDebugSphere(vec3 position, float time = 0, float radius = 1, vec3 color = vec3(1.f, 0.f, 0.f),
 		uint32 sectorCount = 36, uint32 stackCount = 18);
 
-    void DrawDebugLine(vec3 start, vec3 end, float time, vec3 color);
+    static void DrawDebugLine(vec3 start, vec3 end, float time, vec3 color);
 
-    void DrawQuad();
+	static void DrawQuad();
 
-    void Update(float dt);
+	static void Update(float dt);
 
 
 private:
-    EditorRenderContext& editorContext;
-    NxArray<DebugShape*> ShapesToDraw;
-    Shader* shader;
-    DrawParams debugDrawParams;
+	static EditorRenderContext* editorContext;
+	static NxArray<DebugShape*> ShapesToDraw;
+	static Shader* shader;
+	static DrawParams debugDrawParams;
 };
