@@ -38,6 +38,10 @@ public:
 	{
 		mRenderDevice->SetShaderUniform3f(mProgramId, name, glm::value_ptr(value));
 	}
+	inline void SetUniform2f(const NString& name, vec2 value)
+	{
+		mRenderDevice->SetShaderUniform2f(mProgramId, name, glm::value_ptr(value));
+	}
 	inline void SetUniform4f(const NString& name, vec4 value)
 	{
 		mRenderDevice->SetShaderUniform4f(mProgramId, name, glm::value_ptr(value));

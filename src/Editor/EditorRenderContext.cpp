@@ -20,6 +20,11 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	bPostFX = false;
 	bDrawGrid = true;
 
+	impostorDrawParams.faceCulling = FACE_CULL_FRONT;
+	impostorDrawParams.shouldWriteDepth = true;
+	impostorDrawParams.depthFunc = DRAW_FUNC_LESS;
+	impostorDrawParams.sourceBlend = BLEND_FUNC_SRC_ALPHA;
+	impostorDrawParams.destBlend = BLEND_FUNC_ONE_MINUS_SRC_ALPHA;
 	screenQuadVAO = new VertexArray(mRenderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
 
 	MatrixUniformBuffer = new UniformBuffer(deviceIn, BufferUsage::USAGE_STATIC_DRAW);
@@ -40,6 +45,8 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 		PBRShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
 	}
+
+	ShaderManager::GetPBRShader("IMPOSTOR_SHADER")->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
 	cubemapSampler = new Sampler(mRenderDevice, FILTER_LINEAR);
 	prefilterSampler = new Sampler(mRenderDevice, FILTER_LINEAR_MIPMAP_LINEAR);
@@ -209,6 +216,7 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
     DrawDebugShapes(renderTarget);
 
 
+
 	SetLights(ShaderManager::GetMainShader());
 
 	//Draw meshes
@@ -255,6 +263,9 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 
 	DrawSkeletal(renderTarget);
 
+
+
+	DrawImpostors(renderTarget);
 	//HACK...
 	MatrixUniformBuffer->ResetOffset();
 
@@ -319,6 +330,23 @@ void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
 
 		it->second.clear();
 	}
+}
+
+void EditorRenderContext::DrawImpostors(RenderTarget* renderTarget)
+{
+	for (std::pair<MeshInfo*, Transform>& curItem : ImpostorBuffer)
+	{
+		Shader* shader = ShaderManager::GetPBRShader("IMPOSTOR_SHADER");
+
+		shader->SetSampler("diffuse", *curItem.first->material->textures[TEXTURE_ALBEDO], *sampler, 0);
+		shader->SetUniform3f("uImpostorPos", curItem.second.position.ToVec());
+		shader->SetUniform3f("uImpostorInfo", vec3(curItem.second.scale.ToVec().x, curItem.second.scale.ToVec().y, 1));
+
+		mRenderDevice->Draw(renderTarget->GetId(), shader->GetId(),
+			curItem.first->vertexArray->GetId(), impostorDrawParams, 1, curItem.first->vertexArray->GetNumIndices());
+	}
+
+	ImpostorBuffer.clear();
 }
 
 void EditorRenderContext::DrawEditorHelpers(RenderTarget* renderTarget)

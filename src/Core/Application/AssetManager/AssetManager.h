@@ -18,6 +18,7 @@ public:
 	static NxArray<MeshInfo*> ImportModel(RenderDevice* renderDevice, NString file);
 	static SkinnedMeshInfo* ImportModelSkeletal(RenderDevice* renderDevice, NString file);
 	static AnimationInfo* ImportAnimation(NString file, NString name);
+	static Texture* ImportTexture(RenderDevice* renderDevice, NString textureFileName, PixelFormat format);
 
 
 private:

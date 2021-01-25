@@ -88,6 +88,23 @@ AnimationInfo* AssetManager::ImportAnimation(NString file, NString name)
 	return AssetLoader::LoadMeshAnimation(name, file, false);
 }
 
+Texture* AssetManager::ImportTexture(RenderDevice* renderDevice, NString textureFileName, PixelFormat format)
+{
+	Texture* texture = MapFuncs::Find(importedTextures, textureFileName);
+	if (texture != nullptr)
+	{
+		return texture;
+	}
+
+	ArrayBitmap bitmap;
+	bitmap.Load(textureFileName);
+	texture = new Texture(renderDevice, bitmap, format, true, false);
+
+	importedTextures[textureFileName] = texture;
+
+	return texture;
+}
+
 Material * AssetManager::LoadMaterial(RenderDevice* renderDevice, MaterialSpec& matSpec)
 {
 	Material* curMaterial = new Material();

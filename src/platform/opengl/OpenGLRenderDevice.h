@@ -204,6 +204,9 @@ public:
 	void SetShaderUniform3f(uint32 shader, const NString& uniformName,
 		float* value);
 
+	void SetShaderUniform2f(uint32 shader, const NString& uniformName,
+		float* value);
+
 	void SetNxArrayUniform3fv(uint32 shader, const NString& uniformName, uint32 size, float* value);
 
 	void SetShaderUniform4f(uint32 shader, const NString& uniformName,

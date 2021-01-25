@@ -362,6 +362,11 @@ void Application::Initialize()
 	ShaderManager::SetMainShader(PBRshader);
 	ShaderManager::AddPBRShader("PBR_SHADER", PBRshader);
 
+	NString ImpostorShaderText;
+	loadTextFileWithIncludes(ImpostorShaderText, "res/shaders/ImpostorShader.glsl", "#include");
+	Shader* ImpostorShader = new Shader(renderDevice, ImpostorShaderText);
+	ShaderManager::AddPBRShader("IMPOSTOR_SHADER", ImpostorShader);
+
 
 	NString SkinnedshaderText;
 	loadTextFileWithIncludes(SkinnedshaderText, "res/shaders/PBR/main_skinned.glsl", "#include");
@@ -820,8 +825,15 @@ void Application::LoadDefaultScene()
 	vec3 dir2(0.0f, -0.1f, -0.06f);
 	float dirInten2 = 10.1f;
 	ECS::Entity* lightDir2 = world->create();
-	lightDir2->assign<TransformComponent>(Transform());
+	MeshInfo* lightDir2Mesh = new MeshInfo();
+	lightDir2Mesh->material = new Material();
+	lightDir2Mesh->material->textures[TEXTURE_ALBEDO] = AssetManager::ImportTexture(renderDevice, "res/textures/default/icons/dir_light.png", PixelFormat::FORMAT_RGBA);
+	lightDir2Mesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
+	ImpostorComponent lightDir2Impostor;
+	lightDir2Impostor.mesh = lightDir2Mesh;
+	lightDir2->assign<TransformComponent>(Transform(vec3(), vec3(), vec3(10.0f, 10.0f, 0.0f)));
 	lightDir2->assign<LightComponent>(dirColor2, dirInten2, vec3(0), dir2);
+	lightDir2->assign<ImpostorComponent>(lightDir2Impostor);
 	SceneManager::currentScene.AddObject("Dir light 2", lightDir2);
 
 	//Point;

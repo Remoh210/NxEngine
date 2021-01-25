@@ -37,6 +37,11 @@ public:
 		SkinnedMeshBuffer[SkinnedMesh].push_back(transformIn);// glm::inverseTranspose(transformIn))
 	}
 
+	inline void RenderImpostor(MeshInfo* meshIn, Transform& transformIn)
+	{
+		ImpostorBuffer.push_back(std::make_pair(meshIn, transformIn));
+	}
+
 	inline void RenderPrimitives(VertexArray* VertexArray, Shader* InShader, mat4 transform, DrawParams drawParamsIn)
 	{
 		NxArray<mat4> transforms;
@@ -68,6 +73,7 @@ public:
 	void InitEditorHelpers();
 	void DrawScene(RenderTarget* renderTarget);
 	void DrawSkeletal(RenderTarget* renderTarget);
+	void DrawImpostors(RenderTarget* renderTarget);
 	void DrawEditorHelpers(RenderTarget* renderTarget);
 	void DrawDebugShapes(RenderTarget* renderTarget);
 	inline void ResizeRenderTargets(float width, float height)
@@ -109,6 +115,7 @@ private:
 	NxMap<std::pair<NxArray<MeshInfo*>, Shader*>, NxArray<mat4>> meshRenderBuffer;
 	NxMap<SkinnedMeshInfo*, NxArray<mat4>> SkinnedMeshBuffer;
 	NxMap<DebugShape*, NxArray<mat4>> debugShapeBuffer;
+	NxArray<std::pair<MeshInfo*, Transform>> ImpostorBuffer;
 
 	NxArray<std::pair<ECS::ComponentHandle<LightComponent>, vec3>> lightBuffer; // pos color
 
@@ -134,6 +141,11 @@ private:
 	DrawParams editorGridDrawParams;
 	float editorGridSlices;
 	float editorGridScale;
+
+
+	//Grid VO
+	DrawParams impostorDrawParams;
+
 
 	//
 	VertexArray* cubeVA;
