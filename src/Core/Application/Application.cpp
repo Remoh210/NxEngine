@@ -237,11 +237,7 @@ int Application::Run()
 
 		// input
 		// -----
-		
-		for (glm::vec3 pos : lightPositions)
-		{
-			DebugRenderer::DrawDebugSphere(pos, 0.0f, 1.f);
-		}
+	
 
 		// render
 		// ------
@@ -811,6 +807,14 @@ void Application::LoadDefaultScene()
 	renderableMesh2.shader = ShaderManager::GetMainShader();
 	renderableMesh3.shader = ShaderManager::GetMainShader();
 
+
+	//********************** lights****************************************************
+
+	MeshInfo* PointLightImposter = new MeshInfo();
+	PointLightImposter->material = new Material();
+	PointLightImposter->material->textures[TEXTURE_ALBEDO] = AssetManager::ImportTexture(renderDevice, "res/textures/default/icons/point_light.png", PixelFormat::FORMAT_RGBA);
+	PointLightImposter->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
+
 	//Directional
 	vec3 dirColor(1.0f, 1.0f, 1.0f);
 	vec3 dir(0.0f, -0.5f, 1.0f);
@@ -831,7 +835,7 @@ void Application::LoadDefaultScene()
 	lightDir2Mesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
 	ImpostorComponent lightDir2Impostor;
 	lightDir2Impostor.mesh = lightDir2Mesh;
-	lightDir2->assign<TransformComponent>(Transform(vec3(), vec3(), vec3(10.0f, 10.0f, 0.0f)));
+	lightDir2->assign<TransformComponent>(Transform(vec3(), vec3(), vec3(2.0f, 2.0f, 0.0f)));
 	lightDir2->assign<LightComponent>(dirColor2, dirInten2, vec3(0), dir2);
 	lightDir2->assign<ImpostorComponent>(lightDir2Impostor);
 	SceneManager::currentScene.AddObject("Dir light 2", lightDir2);
@@ -843,31 +847,43 @@ void Application::LoadDefaultScene()
 	ECS::Entity* light1 = world->create();
 	Transform transform1;
 	transform1.position = vec3(-10.0f, 10.0f, 10.0f);
+	ImpostorComponent light1ImpostorComp;
+	light1ImpostorComp.mesh = PointLightImposter;
 	light1->assign<TransformComponent>(transform1);
 	light1->assign<LightComponent>(color, inten, vec3(0));
+	light1->assign<ImpostorComponent>(light1ImpostorComp);
 	
 	SceneManager::currentScene.AddObject("point light 1", light1);
 
 	ECS::Entity* light2 = world->create();
 	Transform transform2;
 	transform2.position = vec3(10.0f, 10.0f, 10.0f);
+	ImpostorComponent light2ImpostorComp;
+	light2ImpostorComp.mesh = PointLightImposter;
 	light2->assign<TransformComponent>(transform2);
 	light2->assign<LightComponent>(color, inten, vec3(0));
+	light2->assign<ImpostorComponent>(light2ImpostorComp);
 	SceneManager::currentScene.AddObject("point light 2", light2);
 
 
 	ECS::Entity* light3 = world->create();
 	Transform transform3;
 	transform3.position = vec3(-10.0f, -10.0f, 10.0f);
+	ImpostorComponent light3ImpostorComp;
+	light3ImpostorComp.mesh = PointLightImposter;
 	light3->assign<TransformComponent>(transform3);
 	light3->assign<LightComponent>(color, inten, vec3(0));
+	light3->assign<ImpostorComponent>(light3ImpostorComp);
 	SceneManager::currentScene.AddObject("point light 3", light3);
 
 	ECS::Entity* light4 = world->create();
 	Transform transform4;
 	transform4.position = vec3(10.0f, -10.0f, 10.0f);
+	ImpostorComponent light4ImpostorComp;
+	light4ImpostorComp.mesh = PointLightImposter;
 	light4->assign<TransformComponent>(transform4);
 	light4->assign<LightComponent>(color, inten, vec3(0));
+	light4->assign<ImpostorComponent>(light4ImpostorComp);
 	SceneManager::currentScene.AddObject("point light 4", light4);
 }
 

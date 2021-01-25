@@ -48,6 +48,7 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec
 
 }
 
+
 void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 color = vec3(1.f, 0.f, 0.f))
 {
     DebugShape* lineShape = new DebugShape();
