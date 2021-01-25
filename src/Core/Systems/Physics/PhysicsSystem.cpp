@@ -23,8 +23,6 @@ namespace ECS
 			transformComp->transform.position = rbComponent->rigidBody->GetPosition();
 			vec3 rot = rbComponent->rigidBody->GetEulerRotation();
 			transformComp->transform.rotation = vec3(glm::degrees(rot.x), glm::degrees(rot.y), glm::degrees(rot.z));
-			DEBUG_LOG_TEMP("rot x: %f, y: %f, z: %f", rbComponent->rigidBody->GetEulerRotation().x, 
-				rbComponent->rigidBody->GetEulerRotation().y, rbComponent->rigidBody->GetEulerRotation().z);
 		});
 	}
 
