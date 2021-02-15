@@ -54,6 +54,20 @@ namespace nPhysics {
 			return quatBT;
 		}
 
+		inline glm::vec3 BtQuatToEuler(const btQuaternion& quatIn, bool bDegrees = true)
+		{
+			float x, y, z;
+			quatIn.getEulerZYX(z, y, x);
+			glm::vec3 rotation;
+			if (bDegrees)
+				rotation = glm::vec3(glm::degrees(x), glm::degrees(y), glm::degrees(z));
+			else
+				rotation = glm::vec3(x, y, z);
+
+			return rotation;
+			
+		}
+
 
 	}
 

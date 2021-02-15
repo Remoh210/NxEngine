@@ -14,4 +14,11 @@ namespace nPhysics
 
 		DebugRenderer::DrawDebugLine(fromLoc, toLoc, 0.0f, col);
 	}
+
+	void BulletDebugRenderer::drawSphere(btScalar radius, const btTransform& transform, const btVector3& color)
+	{
+		vec3 pos = nConvert::ToSimple(transform.getOrigin());
+		DebugRenderer::DrawDebugSphereAsMesh(pos, radius, vec3(1.0f));
+	}
+
 }

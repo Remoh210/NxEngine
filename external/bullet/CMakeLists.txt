@@ -1,28 +1,10 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 2.4.3)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 cmake_policy(SET CMP0017 NEW)
 #this line has to appear before 'PROJECT' in order to be able to disable incremental linking
 SET(MSVC_INCREMENTAL_DEFAULT ON)
 
-
-
-# Add header files
-file(GLOB_RECURSE BULLET_HEADER_FILES 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.hpp)
-  
-# Add source files
-file(GLOB_RECURSE BULLET_SOURCE_FILES 
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.c
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-
-
-
-
-add_library(bullet ${BULLET_HEADER_FILES} ${BULLET_SOURCE_FILES})
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/src)
-
+PROJECT(BULLET_PHYSICS)
 FILE (STRINGS "VERSION" BULLET_VERSION)
 
 IF(COMMAND cmake_policy)
@@ -39,9 +21,11 @@ IF (NOT CMAKE_BUILD_TYPE)
 ENDIF (NOT CMAKE_BUILD_TYPE)
 
 SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_DEBUG")
+#MESSAGE("CMAKE_CXX_FLAGS_DEBUG="+${CMAKE_CXX_FLAGS_DEBUG})
 
 OPTION(USE_DOUBLE_PRECISION "Use double precision"	OFF)
 SET(CLAMP_VELOCITIES "0" CACHE STRING "Clamp rigid bodies' velocity to this value, if larger than zero. Useful to prevent floating point errors or in general runaway velocities in complex scenarios")
+OPTION(USE_GRAPHICAL_BENCHMARK "Use Graphical Benchmark" ON)
 OPTION(BUILD_SHARED_LIBS "Use shared libraries" OFF)
 OPTION(USE_SOFT_BODY_MULTI_BODY_DYNAMICS_WORLD "Use btSoftMultiBodyDynamicsWorld" ON)
 OPTION(USE_OPENVR "Use OpenVR for virtual reality" OFF)
@@ -85,13 +69,17 @@ OPTION(USE_MSVC_RELEASE_RUNTIME_ALWAYS "Use MSVC Release Runtime Library even in
 #SET(CMAKE_EXE_LINKER_FLAGS_INIT    "/STACK:10000000 /INCREMENTAL:NO")
 #SET(CMAKE_EXE_LINKER_FLAGS    "/STACK:10000000 /INCREMENTAL:NO")
 
+#MESSAGE("MSVC_INCREMENTAL_YES_FLAG"+${MSVC_INCREMENTAL_YES_FLAG})
+
 
 IF(MSVC)
 	IF (NOT USE_MSVC_INCREMENTAL_LINKING)
+		#MESSAGE("MSVC_INCREMENTAL_DEFAULT"+${MSVC_INCREMENTAL_DEFAULT})
 		SET( MSVC_INCREMENTAL_YES_FLAG "/INCREMENTAL:NO")
 
 		STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags "${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 		SET(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO ${replacementFlags}" )
+		MESSAGE("CMAKE_EXE_LINKER_FLAGS_DEBUG=${CMAKE_EXE_LINKER_FLAGS_DEBUG}")
 
 		STRING(REPLACE "INCREMENTAL:YES" "INCREMENTAL:NO" replacementFlags2 "${CMAKE_EXE_LINKER_FLAGS}")
 
@@ -134,11 +122,11 @@ IF(MSVC)
 		ENDFOREACH(flag_var)
 	ENDIF (USE_MSVC_RELEASE_RUNTIME_ALWAYS)
 
-	#IF (CMAKE_CL_64)
-	#  ADD_DEFINITIONS(-D_WIN64)
-	#ELSE()
+	IF (CMAKE_CL_64)
+	  ADD_DEFINITIONS(-D_WIN64)
+	ELSE()
 	  OPTION(USE_MSVC_SSE "Use MSVC /arch:sse option"	OFF)
-	  option(USE_MSVC_SSE2 "Compile your program with SSE2 instructions" OFF)
+	  option(USE_MSVC_SSE2 "Compile your program with SSE2 instructions" ON)
 
 	  IF (USE_MSVC_SSE)
 		  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE")
@@ -147,7 +135,7 @@ IF(MSVC)
 		  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /arch:SSE2")
 	  ENDIF()
 
-	#ENDIF()
+	ENDIF()
 
 	option(USE_MSVC_AVX "Compile your program with AVX instructions"  OFF)
 
@@ -232,6 +220,7 @@ ENDIF(INTERNAL_CREATE_MSVC_RELATIVE_PATH_PROJECTFILES)
 ENDIF (WIN32)
 
 
+
 OPTION(INTERNAL_UPDATE_SERIALIZATION_STRUCTURES "Internal update serialization structures" OFF)
 IF (INTERNAL_UPDATE_SERIALIZATION_STRUCTURES)
 ADD_DEFINITIONS( -DBT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES)
@@ -250,6 +239,9 @@ IF (NOT USE_SOFT_BODY_MULTI_BODY_DYNAMICS_WORLD)
 ADD_DEFINITIONS(-DSKIP_SOFT_BODY_MULTI_BODY_DYNAMICS_WORLD)
 ENDIF ()
 
+IF(USE_GRAPHICAL_BENCHMARK)
+ADD_DEFINITIONS( -DUSE_GRAPHICAL_BENCHMARK)
+ENDIF (USE_GRAPHICAL_BENCHMARK)
 
 IF(BULLET2_MULTITHREADING)
 	ADD_DEFINITIONS( -DBT_THREADSAFE=1 )
@@ -285,6 +277,17 @@ IF (BULLET2_USE_PPL_MULTITHREADING)
     ADD_DEFINITIONS("-DBT_USE_PPL=1")
 ENDIF (BULLET2_USE_PPL_MULTITHREADING)
 
+IF (WIN32)
+OPTION(USE_GLUT "Use Glut"	ON)
+ADD_DEFINITIONS( -D_CRT_SECURE_NO_WARNINGS )
+ADD_DEFINITIONS( -D_CRT_SECURE_NO_DEPRECATE )
+ADD_DEFINITIONS( -D_SCL_SECURE_NO_WARNINGS )
+ENDIF()
+
+IF (USE_GLUT AND MSVC)
+	string (REPLACE "/D_WINDOWS" "" CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
+	remove_definitions(-D_WINDOWS )
+ENDIF()
 
 
 IF(COMMAND cmake_policy)
@@ -292,13 +295,110 @@ IF(COMMAND cmake_policy)
 ENDIF(COMMAND cmake_policy)
 
 
-OPTION(BUILD_BULLET3 "Set when you want to build Bullet 3" ON)
-
-OPTION(BUILD_ENET "Set when you want to build apps with enet UDP networking support" ON)
-OPTION(BUILD_CLSOCKET "Set when you want to build apps with enet TCP networking support" ON)
+# This is the shortcut to finding GLU, GLUT and OpenGL if they are properly installed on your system
+# This should be the case.
 
 
-#SUBDIRS(src)
+#FIND_PACKAGE(GLU)
+
+
+IF (APPLE)
+  FIND_LIBRARY(COCOA_LIBRARY Cocoa)
+ENDIF()
+
+OPTION(BUILD_BULLET3 "Set when you want to build Bullet 3" OFF)
+
+# Optional Python configuration
+# Will not probe environment for Python configuration (which can abort the
+# build process) unless you explicitly turn on BUILD_PYBULLET.
+OPTION(BUILD_PYBULLET "Set when you want to build pybullet (Python bindings for Bullet)" OFF)
+IF(BUILD_PYBULLET)
+	SET(PYTHON_VERSION_PYBULLET "" CACHE STRING "Python version pybullet will use.")
+	SET(Python_ADDITIONAL_VERSIONS 3 3.6 3.5 3.4 3.3 3.2 3.1 3.0 2.7 2.7.12 2.7.10 2.7.3 )
+	SET_PROPERTY(CACHE PYTHON_VERSION_PYBULLET PROPERTY STRINGS ${Python_ADDITIONAL_VERSIONS})
+	SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/build3/cmake ${CMAKE_MODULE_PATH})
+	OPTION(EXACT_PYTHON_VERSION "Require Python and match PYTHON_VERSION_PYBULLET exactly, e.g. 2.7.12" OFF)
+	IF(EXACT_PYTHON_VERSION)
+	    set(EXACT_PYTHON_VERSION_FLAG EXACT REQUIRED)
+	ENDIF(EXACT_PYTHON_VERSION)
+	# first find the python interpreter
+	FIND_PACKAGE(PythonInterp ${PYTHON_VERSION_PYBULLET} ${EXACT_PYTHON_VERSION_FLAG})
+	# python library should exactly match that of the interpreter
+	# the following can result in fatal error if you don't have the right python configuration
+	FIND_PACKAGE(PythonLibs ${PYTHON_VERSION_STRING} EXACT)
+ENDIF(BUILD_PYBULLET)
+
+OPTION(BUILD_ENET "Set when you want to build apps with enet UDP networking support" OFF)
+OPTION(BUILD_CLSOCKET "Set when you want to build apps with enet TCP networking support" OFF)
+
+
+IF(BUILD_PYBULLET)
+	FIND_PACKAGE(PythonLibs)
+
+	OPTION(BUILD_PYBULLET_NUMPY "Set when you want to build pybullet with NumPy support" OFF)
+	OPTION(BUILD_PYBULLET_ENET "Set when you want to build pybullet with enet UDP networking support" OFF)
+	OPTION(BUILD_PYBULLET_CLSOCKET "Set when you want to build pybullet with enet TCP networking support" OFF)
+
+	OPTION(BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK "Set when you want to use the Python Framework on Mac" OFF)
+
+	IF(BUILD_PYBULLET_NUMPY)
+		#include(FindNumPy)
+		FIND_PACKAGE(NumPy)
+		if (PYTHON_NUMPY_FOUND)
+			message("NumPy found")
+			add_definitions(-DPYBULLET_USE_NUMPY)
+		else()
+			message("NumPy not found")
+		endif()
+	ENDIF()
+
+	IF(WIN32)
+		SET(BUILD_SHARED_LIBS OFF CACHE BOOL "Shared Libs" FORCE)
+	ELSE(WIN32)
+		SET(BUILD_SHARED_LIBS ON CACHE BOOL "Shared Libs" FORCE)
+	ENDIF(WIN32)
+
+	IF(APPLE)
+		OPTION(BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK "Set when you want to use the Python Framework on Mac" ON)
+		IF(NOT BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK)
+			add_definitions(-DB3_NO_PYTHON_FRAMEWORK)
+		ENDIF(NOT BUILD_PYBULLET_MAC_USE_PYTHON_FRAMEWORK)
+		OPTION(BUILD_PYBULLET_SHOW_PY_VERSION "Set when you want to show the PY_MAJOR_VERSION and PY_MAJOR_VERSION using #pragme message." OFF)
+		IF(BUILD_PYBULLET_SHOW_PY_VERSION)
+			add_definitions(-DB3_DUMP_PYTHON_VERSION)
+		ENDIF()
+
+	ENDIF(APPLE)
+
+ENDIF(BUILD_PYBULLET)
+
+IF(NOT WIN32 AND NOT APPLE)
+    OPTION(BUILD_EGL "Build OpenGL/EGL" ON)
+    IF(BUILD_EGL)
+        ADD_DEFINITIONS(-DBT_USE_EGL)
+    ENDIF(BUILD_EGL)
+ENDIF()
+
+IF(BUILD_BULLET3)
+	 IF(APPLE)
+		MESSAGE("Mac OSX Version is ${_CURRENT_OSX_VERSION}")
+		IF(_CURRENT_OSX_VERSION  VERSION_LESS 10.9)
+			MESSAGE("Mac OSX below 10.9 has no OpenGL 3 support so please disable the BUILD_OPENGL3_DEMOS option")
+			#unset(BUILD_OPENGL3_DEMOS CACHE)
+
+			OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build the OpenGL3+ demos" OFF)
+		ELSE()
+			OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build the OpenGL3+ demos" ON)
+		ENDIF()
+	ELSE()
+		OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build Bullet 3 OpenGL3+ demos" ON)
+	ENDIF()
+ELSE(BUILD_BULLET3)
+	unset(BUILD_OPENGL3_DEMOS CACHE)
+	OPTION(BUILD_OPENGL3_DEMOS "Set when you want to build Bullet 3 OpenGL3+ demos" OFF)
+ENDIF(BUILD_BULLET3)
+
+SUBDIRS(src)
 
 IF("${CMAKE_GENERATOR}" MATCHES "Unix Makefiles")
 	OPTION(INSTALL_LIBS "Set when you want to install libraries" ON)
@@ -335,7 +435,6 @@ IF(INSTALL_LIBS)
 	ENDIF(NOT MSVC)
 ENDIF()
 
-
 set (BULLET_CONFIG_CMAKE_PATH lib${LIB_SUFFIX}/cmake/bullet )
 list (APPEND BULLET_DEFINITIONS ${BULLET_DOUBLE_DEF})
 list (APPEND BULLET_LIBRARIES LinearMath)
@@ -357,3 +456,20 @@ IF (INSTALL_CMAKE_FILES)
 		DESTINATION ${BULLET_CONFIG_CMAKE_PATH}
 	)
 ENDIF (INSTALL_CMAKE_FILES)
+
+# Macro to preserve source files hierarchy in the IDE
+macro(GroupSources curdir)
+	file(GLOB children RELATIVE ${PROJECT_SOURCE_DIR}/${curdir} ${PROJECT_SOURCE_DIR}/${curdir}/*)
+	foreach(child ${children})
+		if(IS_DIRECTORY ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+			GroupSources(${curdir}/${child})
+		else()
+			string(REPLACE "/" "\\" groupname ${curdir})
+			string(REPLACE "src" "Sources" groupname ${groupname})
+			source_group(${groupname} FILES ${PROJECT_SOURCE_DIR}/${curdir}/${child})
+		endif()
+	endforeach()
+endmacro()
+
+# Run macro
+GroupSources(src)

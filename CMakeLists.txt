@@ -69,7 +69,17 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      imgui
                      stb_image
 					 rttr_core_lib
-					 bullet)
+					 
+					 LinearMath
+					 Bullet3Common
+					 BulletInverseDynamics
+					 BulletCollision
+					 BulletDynamics
+					 BulletSoftBody
+					 )
+					 
+					
+					 
 
 # Path to code
 configure_file(Config/root_directory.h.in Config/root_directory.h)

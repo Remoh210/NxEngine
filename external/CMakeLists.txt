@@ -62,6 +62,13 @@ set_target_properties(zlibstatic PROPERTIES FOLDER external/assimp)
 set_target_properties(zlib PROPERTIES FOLDER external/assimp)
 set_target_properties(uninstall PROPERTIES FOLDER external/assimp)
 set_target_properties(IrrXML PROPERTIES FOLDER external/assimp)
-set_target_properties(bullet PROPERTIES FOLDER external/bullet)
+
+#Bullet
+set_target_properties(LinearMath PROPERTIES FOLDER external/bullet)
+set_target_properties(BulletDynamics PROPERTIES FOLDER external/bullet)
+set_target_properties(Bullet3Common PROPERTIES FOLDER external/bullet)
+set_target_properties(BulletInverseDynamics PROPERTIES FOLDER external/bullet)
+set_target_properties(BulletSoftBody PROPERTIES FOLDER external/bullet)
+set_target_properties(BulletCollision PROPERTIES FOLDER external/bullet)
 
 

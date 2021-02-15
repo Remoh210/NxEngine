@@ -22,7 +22,7 @@ namespace ECS
 		{
 			transformComp->transform.position = rbComponent->rigidBody->GetPosition();
 			vec3 rot = rbComponent->rigidBody->GetEulerRotation();
-			transformComp->transform.rotation = vec3(glm::degrees(rot.x), glm::degrees(rot.y), glm::degrees(rot.z));
+			transformComp->transform.rotation = vec3(rot);
 		});
 	}
 

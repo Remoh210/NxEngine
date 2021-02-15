@@ -285,12 +285,7 @@ namespace nPhysics {
 	{
 		btTransform tranform;
 		tranform =	mBody->getWorldTransform();
-		float x, y, z;
-		tranform.getRotation().getEulerZYX(z, y, x);
-
-		
-		return glm::vec3(x, y, z);
-
+		return nConvert::BtQuatToEuler(tranform.getRotation());
 	}
 
 	glm::mat4 cBulletRigidBody::GetMatRotation()
