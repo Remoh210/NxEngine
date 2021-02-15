@@ -70,12 +70,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      stb_image
 					 rttr_core_lib
 					 
-					 LinearMath
-					 Bullet3Common
-					 BulletInverseDynamics
-					 BulletCollision
-					 BulletDynamics
 					 BulletSoftBody
+					 BulletDynamics
+					 BulletCollision
+					 LinearMath
+					 BulletInverseDynamics		 
 					 )
 					 
 					
