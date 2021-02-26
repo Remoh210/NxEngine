@@ -40,4 +40,17 @@ struct MapFuncs
 
 		return nullptr;
 	}
+
+	template <class Key, class Value>
+	static inline bool Contains(NxMap<Key, Value>& MapIn, Key KeyIn)
+	{
+		typename std::map<Key, Value>::iterator it;
+		it = MapIn.find(KeyIn);
+		if (it != MapIn.end())
+		{
+			return true;
+		}
+
+		return false;
+	}
 };

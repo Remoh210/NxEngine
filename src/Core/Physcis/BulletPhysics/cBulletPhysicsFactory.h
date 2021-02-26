@@ -21,6 +21,7 @@ namespace nPhysics
 		virtual iBoxShape* CreateBoxShape(const glm::vec3& halfExtents);
 
 		virtual iMeshCollider* CreateMeshCollider(const GL_Triangle * triangles, size_t numOfTriangles);
+		virtual iConvexHullCollider* CreateConvexHullCollider(float* vertecies, size_t numOfVertecies);
 
 		//Contraints
 		virtual iConstraint* CreatHingeConstraint(iRigidBody* rb, const glm::vec3& pivot, const glm::vec3& axis);

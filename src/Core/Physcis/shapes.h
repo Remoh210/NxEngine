@@ -84,4 +84,16 @@ namespace nPhysics
 		iMeshCollider(const iMeshCollider& other) : iShape(other) {}
 		iMeshCollider& operator=(const iMeshCollider& other) { return *this; }
 	};
+
+	class iConvexHullCollider : public iShape
+	{
+	public:
+		virtual ~iConvexHullCollider() {}
+
+
+	protected:
+		iConvexHullCollider() : iShape(SHAPE_TYPE_CONVEX_HULL) {}
+		iConvexHullCollider(const iConvexHullCollider& other) : iShape(other) {}
+		iConvexHullCollider& operator=(const iConvexHullCollider& other) { return *this; }
+	};
 }

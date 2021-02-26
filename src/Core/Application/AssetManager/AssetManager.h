@@ -5,8 +5,9 @@
 #include "Core/Graphics/Mesh/MeshInfo.h"
 #include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
 #include "Core/Graphics/Animation/AnimationInfo.h"
+#include "Core/Systems/Physics/PhysicsSystem.h"
+#include "Core/Physcis/iRigidBody.h"
 
-//Material specs
 #include "rendering/IndexedModel.h"
 #include "rendering/Material.h"
 
@@ -15,15 +16,32 @@ class AssetManager
 public:
     AssetManager() {};
 
-	static NxArray<MeshInfo*> ImportModel(RenderDevice* renderDevice, NString file);
-	static SkinnedMeshInfo* ImportModelSkeletal(RenderDevice* renderDevice, NString file);
+	inline static void SetRenderDevice(RenderDevice* renderDeviceIn)
+	{
+		renderDevice = renderDeviceIn;
+	}
+	inline static void SetPhysicsSystem(ECS::PhysicsSystem* physSystemIn)
+	{
+		physicsSystem = physSystemIn;
+	}
+
+	static NxArray<MeshInfo*> ImportModel(NString file);
+	static bool ImportModelGenerateCollider(NString file, NxArray<MeshInfo*>& meshArrayOut, nPhysics::eShapeType shapeType, nPhysics::iShape*& shapeOut);
+	static SkinnedMeshInfo* ImportModelSkeletal(NString file);
 	static AnimationInfo* ImportAnimation(NString file, NString name);
 	static Texture* ImportTexture(RenderDevice* renderDevice, NString textureFileName, PixelFormat format);
 
+	static nPhysics::iShape* GenerateCollisionShapeFromModels(NxArray<IndexedModel>& indexedModels);
+	static nPhysics::iShape* GenerateCollisionShapeFromModel(IndexedModel& indexedModel);
+
+	static nPhysics::iShape* GenerateCollisionConvexHullFromModels(NxArray<IndexedModel>& indexedModels);
+	static nPhysics::iShape* GenerateCollisionConvexHullFromModel(IndexedModel& indexedModel);
+
 
 private:
-
-	static Material* LoadMaterial(RenderDevice* renderDevic, MaterialSpec& matSpec);
+	static RenderDevice* renderDevice;
+	static ECS::PhysicsSystem* physicsSystem;
+	static Material* LoadMaterial(MaterialSpec& matSpec);
 
 	static NxMap<NString, NxArray<MeshInfo*>> importedModels;
 	static NxMap<NString, SkinnedMeshInfo*> importedSkinnedModels;

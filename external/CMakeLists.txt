@@ -70,5 +70,6 @@ set_target_properties(Bullet3Common PROPERTIES FOLDER external/bullet)
 set_target_properties(BulletInverseDynamics PROPERTIES FOLDER external/bullet)
 set_target_properties(BulletSoftBody PROPERTIES FOLDER external/bullet)
 set_target_properties(BulletCollision PROPERTIES FOLDER external/bullet)
+set_target_properties(ConvexDecomposition PROPERTIES FOLDER external/bullet)
 
 

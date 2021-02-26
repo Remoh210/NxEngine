@@ -126,4 +126,21 @@ namespace nPhysics
 		btCollisionShape* mBulletShape;
 	};
 
+	class cBulletConvexHullCollider : public iConvexHullCollider
+	{
+	public:
+		cBulletConvexHullCollider(const float* vertecies, size_t numOfVertecies);
+		virtual ~cBulletConvexHullCollider();
+		inline btCollisionShape* GetBulletShape()
+		{
+			return mBulletShape;
+		}
+
+	protected:
+		glm::vec3 mHalfExtents;
+		cBulletConvexHullCollider(const cBulletConvexHullCollider& other) : iConvexHullCollider(other) {}
+		cBulletConvexHullCollider& operator=(const cBulletConvexHullCollider& other) { return *this; }
+		btCollisionShape* mBulletShape;
+	};
+
 }

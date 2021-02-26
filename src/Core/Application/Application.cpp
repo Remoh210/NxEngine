@@ -105,6 +105,8 @@ int Application::Run()
 	ECS::EntitySystem*  inputSystem = world->registerSystem(new ECS::InputSystem(window));
 	physicsSystem = world->registerSystem(new ECS::PhysicsSystem());
 
+	AssetManager::SetPhysicsSystem((ECS::PhysicsSystem*)physicsSystem);
+
 	DebugRenderer::SetContext(editorRenderContext);
 	DebugRenderer::SetShader();
 
@@ -446,6 +448,8 @@ void Application::Initialize()
 	SceneManager::SetECS(world);
 	SceneManager::SetRenderDevice(renderDevice);
 	ShaderManager::SetRenderDevice(renderDevice);
+	AssetManager::SetRenderDevice(renderDevice);
+	
 	
 	
 
@@ -479,6 +483,7 @@ void Application::LoadDefaultScene()
 	//PBRSphere2.gltf = embedded textures
 	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb";
 	NString TEST_MODEL_FILE6 = "res/models/dust/fbx/dust.fbx";
+	//NString TEST_MODEL_FILE6 = "res/models/terrain.ply";
 	NString TEST_MODEL_FILE7 = "res/models/PBRTest.glb";
 	//Assimp PBR********************************************************
 	
@@ -567,6 +572,9 @@ void Application::LoadDefaultScene()
 	TransformComponent transformComp2;
 	transformComp2.transform.scale = vec3(7.0f);
 
+
+
+
 	NxArray<IndexedModel> PBRLoadedMeshes;
 	NxArray<uint32> PBRMaterialIndices;
 	NxArray<MaterialSpec> PBRLoadedMaterials;
@@ -602,14 +610,29 @@ void Application::LoadDefaultScene()
 	renderableMesh3.meshAssetFile = "Mesh3";
 	TransformComponent transformComp3;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
-	transformComp3.transform.position = vec3(15.1f, 0.0f, -40.0f);
-	transformComp3.transform.rotation = vec3(0.0, 0.0f, 0.f);
-	transformComp3.transform.scale = vec3(0.5);
+	transformComp3.transform.position = vec3(15.1f, 50.0f, -40.0f);
+	transformComp3.transform.rotation = vec3(0 , 0.0f, 0.f);
+	//transformComp3.transform.scale = vec3(0.9);
+	RigidBodyComponent rbPistol;
+	NxArray<MeshInfo*> meshsesToAdd;
+	
+	nPhysics::iShape* pistolShape;
+    AssetManager::ImportModelGenerateCollider(TEST_MODEL_FILE3, meshsesToAdd, nPhysics::SHAPE_TYPE_BOX, pistolShape);
+
+	nPhysics::sRigidBodyDef PistolRbdef;
+	PistolRbdef.Mass = 100.0f;
+	PistolRbdef.Position = transformComp3.transform.position.ToVec();
+	PistolRbdef.Scale = transformComp3.transform.scale.ToVec() * 2.0f;
+	//PistolRbdef.AngularVelocity = vec3(10.1f, 12.5f, -11.1f);
+	PistolRbdef.quatOrientation = quat(transformComp3.transform.rotation.ToVec());
+	nPhysics::iRigidBody* PistolRB = physSystem->GetFactory()->CreateRigidBody(PistolRbdef, pistolShape);
+	//PistolRB->SetEulerRotation(transformComp3.transform.rotation.ToVec());
+	physSystem->GetWorld()->AddBody(PistolRB);
+
 
 	MeshInfo* pbrTestMesh = new MeshInfo();
 	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material* material4 = new Material();
-
 
 	material4->textures[TEXTURE_ALBEDO] = albedo;
 	material4->textures[TEXTURE_NORMAL] = normal;
@@ -631,8 +654,12 @@ void Application::LoadDefaultScene()
 
 
 
+
+
+
 	MeshInfo* mesh5 = new MeshInfo();
-	mesh5->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	IndexedModel sphereIndexedModel = PrimitiveGenerator::CreateSphere(1.0f, 12, 12, vec3(0.0f));
+	mesh5->vertexArray = new VertexArray(renderDevice, sphereIndexedModel, BufferUsage::USAGE_DYNAMIC_DRAW);
 	Material* material5 = new Material();
 	//material5->color(1.0);
 	material5->metallic = 0.99;
@@ -652,8 +679,12 @@ void Application::LoadDefaultScene()
 	nPhysics::sRigidBodyDef def5;
 	def5.Position = transformComp5.transform.position.ToVec();
 	def5.AngularVelocity = vec3(2, 0, 2);
-	def5.Mass = 300.0f;
+	def5.Mass = 110.0f;
 	def5.GameObjectName = "test5";
+	//def5.Scale = vec3(6.1f);
+
+	
+
 	CurShape5 = physSystem->GetFactory()->CreateSphereShape(5.2);
 	rb5.rigidBody = physSystem->GetFactory()->CreateRigidBody(def5, CurShape5);
 	physSystem->GetWorld()->AddBody(rb5.rigidBody);
@@ -663,24 +694,27 @@ void Application::LoadDefaultScene()
 
 
 	StaticMeshComponent renderableMesh6;
-	renderableMesh6.meshes = AssetManager::ImportModel(renderDevice, TEST_MODEL_FILE6);
+	renderableMesh6.bIsVisible = true;
+	nPhysics::iShape* CurShape6;
+	AssetManager::ImportModelGenerateCollider(TEST_MODEL_FILE6, renderableMesh6.meshes, nPhysics::SHAPE_TYPE_MESH, CurShape6);
 	renderableMesh6.meshAssetFile = TEST_MODEL_FILE6;
 	renderableMesh6.shader = ShaderManager::GetMainShader();
 	renderableMesh6.numInst = 1;
 	TransformComponent transformComp6;
-	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
-	transformComp6.transform.position = vec3(-180.1f, -10.0f, -40.0f);
-	transformComp6.transform.rotation = vec3(-90.0f, 0.0f, 0.f);
-	transformComp6.transform.scale = vec3(0.5);
+	transformComp6.transform.position = vec3(-500.0f, 5.0f, -30.0f);
+	//transformComp6.transform.position = vec3(-180.1f, -20.0f, -40.0f);
+	transformComp6.transform.rotation = vec3(-90, 0, 0);
+	//transformComp6.transform.scale = vec3(0.9);
 	RigidBodyComponent rb6;
 
-	nPhysics::iShape* CurShape6;
+	rb6.bIsStatic = true;
 	nPhysics::sRigidBodyDef def6;
-	//def6.Orientation = transformComp6.transform.rotation.ToVec();
+	def6.Orientation = vec3(glm::radians(transformComp6.transform.rotation[0]), glm::radians(transformComp6.transform.rotation[1]), glm::radians(transformComp6.transform.rotation[2]));
 	def6.Position = transformComp6.transform.position.ToVec();
 	def6.Mass = 0.0f;
 	def6.GameObjectName = "test6";
-	CurShape6 = physSystem->GetFactory()->CreatePlaneShape(vec3(0, 1, 0), 2);
+	def6.Scale = transformComp6.transform.scale.ToVec();
+	//CurShape6 = physSystem->GetFactory()->CreatePlaneShape(vec3(0, 1, 0), 0);
 	//nPhysics::GL_Triangle* GLTriangle = new nPhysics::GL_Triangle[curModelInfo.pMeshData->numberOfTriangles];
 
 	rb6.rigidBody = physSystem->GetFactory()->CreateRigidBody(def6, CurShape6);
@@ -690,7 +724,12 @@ void Application::LoadDefaultScene()
 
 
 	StaticMeshComponent renderableMesh7;
-	renderableMesh7.meshes = AssetManager::ImportModel(renderDevice, TEST_MODEL_FILE7);
+
+	NxArray<MeshInfo*> meshsesToAdd7;
+	nPhysics::iRigidBody* rbToAdd7 = nullptr;
+	//AssetManager::ImportModelGenerateCollider(meshsesToAdd7, rbToAdd7, TEST_MODEL_FILE7);
+	renderableMesh7.meshes = meshsesToAdd7;
+
 	renderableMesh7.meshAssetFile = TEST_MODEL_FILE7;
 	renderableMesh7.shader = ShaderManager::GetMainShader();
 	renderableMesh7.numInst = 1;
@@ -698,27 +737,20 @@ void Application::LoadDefaultScene()
 	transformComp7.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
 	transformComp7.transform.scale = vec3(40.0);
-	RigidBodyComponent rigidBComp;
+	//RigidBodyComponent rigidBComp;
 
 
-	nPhysics::iShape* CurShape;
-	nPhysics::sRigidBodyDef def;
-	def.Orientation = transformComp7.transform.rotation.ToVec();
-	def.Position = transformComp7.transform.position.ToVec();
-	def.Mass = 100.0f;
-	def.GameObjectName = "test";
-	//CurShape = physSystem->GetFactory()->CreateSphereShape(2.0f);
-	CurShape = physSystem->GetFactory()->CreateCylinderShape(vec3(1, 2, 1), 1);
-	//nPhysics::GL_Triangle* GLTriangle = new nPhysics::GL_Triangle[curModelInfo.pMeshData->numberOfTriangles];
+	//rbToAdd->SetPosition(transformComp7.transform.position.ToVec());
+	//rbToAdd->SetMass(100);
+	//rbToAdd->SetEulerRotation(transformComp7.transform.rotation.ToVec());;
 
-	rigidBComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(def, CurShape);
-	physSystem->GetWorld()->AddBody(rigidBComp.rigidBody);
+	//rigidBComp.rigidBody = rbToAdd;
 
 #pragma endregion
 
 #pragma region Skinned Mesh
 	SkinnedMeshComponent skinnedMesh;
-	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal(renderDevice, "res/models/chan.fbx");
+	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal("res/models/chan.fbx");
 	skinnedMesh.skinnedMeshInfo->mesh->material->textures.clear();
 	//skinnedMesh.meshAssetFile = TEST_MODEL_FILE7;
 	//skinnedMesh.shader = ShaderManager::GetMainShader();
@@ -727,7 +759,7 @@ void Application::LoadDefaultScene()
 	InputComponent InputCompSkinned;
 	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-	transformCompSkinned.transform.scale = vec3(0.4);
+	transformCompSkinned.transform.scale = vec3(0.2);
 	AnimatorComponent animComp;
 	animComp.animations["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
 	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
@@ -765,6 +797,7 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
 	ent3->assign<StaticMeshComponent>(renderableMesh3);
+	ent3->assign<RigidBodyComponent>(PistolRB);
 
 
 	ECS::Entity* ent4 = world->create();
@@ -785,7 +818,7 @@ void Application::LoadDefaultScene()
 	ECS::Entity* ent7 = world->create();
 	ent7->assign<TransformComponent>(transformComp7);
 	ent7->assign<StaticMeshComponent>(renderableMesh7);
-	ent7->assign<RigidBodyComponent>(rigidBComp);
+	//ent7->assign<RigidBodyComponent>(rigidBComp);
 
 	ECS::Entity* ent8 = world->create();
 	ent8->assign<TransformComponent>(transformCompSkinned);

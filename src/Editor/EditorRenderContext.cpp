@@ -263,8 +263,6 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 
 	DrawSkeletal(renderTarget);
 
-
-
 	DrawImpostors(renderTarget);
 	//HACK...
 	MatrixUniformBuffer->ResetOffset();
@@ -480,6 +478,4 @@ void EditorRenderContext::SetTextures(Material* material, Shader* shader)
 			shader->SetUniform1f("uAo", material->ambientOcclusion);
 		}
 	}
-
-
 }

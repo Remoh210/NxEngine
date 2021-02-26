@@ -2,11 +2,15 @@
 #include "cBulletRigidBody.h"
 #include "bullet_shapes.h"
 #include "cBulletPhysicsWorld.h"
+#include "Extras/ConvexDecomposition/ConvexBuilder.h"
+#include "Extras/ConvexDecomposition/ConvexDecomposition.h"
 #include "Core/Physcis/BulletPhysics/nConvert.h"
 
 namespace nPhysics
 {
-	cBulletPhysicsFactory::~cBulletPhysicsFactory() {}
+	cBulletPhysicsFactory::~cBulletPhysicsFactory() 
+	{
+	}
 
 	iPhysicsWorld* cBulletPhysicsFactory::CreatePhysicsWorld()
 	{
@@ -46,6 +50,11 @@ namespace nPhysics
 	iMeshCollider * cBulletPhysicsFactory::CreateMeshCollider(const GL_Triangle* triangles, size_t numOfTriangles)
 	{
 		return new cBulletMeshCollider(triangles, numOfTriangles);
+	}
+
+	nPhysics::iConvexHullCollider* cBulletPhysicsFactory::CreateConvexHullCollider(float* vertecies, size_t numOfVertecies)
+	{
+		return new cBulletConvexHullCollider(vertecies, numOfVertecies);
 	}
 
 	iConstraint * cBulletPhysicsFactory::CreatHingeConstraint(iRigidBody * rb, const glm::vec3 & pivot, const glm::vec3 & axis)

@@ -50,6 +50,8 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/bullet/src)
 
+target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/bullet)
+
 
 #Stb_image
 add_library(stb_image STATIC ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.h ${CMAKE_SOURCE_DIR}/external/stb_image/stb_image.c)
@@ -74,7 +76,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 					 BulletDynamics
 					 BulletCollision
 					 LinearMath
-					 BulletInverseDynamics		 
+					 BulletInverseDynamics
+					 ConvexDecomposition					 
 					 )
 					 
 					

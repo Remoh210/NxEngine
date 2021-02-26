@@ -11,6 +11,7 @@ struct RigidBodyComponent
 	{
 	}
 
+	bool bIsStatic = false;
 	nPhysics::iRigidBody* rigidBody;
 	//bool bSimulatePhysics;
 };

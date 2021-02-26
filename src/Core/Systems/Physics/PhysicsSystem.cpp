@@ -20,9 +20,13 @@ namespace ECS
 
 		world->each<TransformComponent, RigidBodyComponent>([&](Entity *ent, ComponentHandle<TransformComponent> transformComp ,ComponentHandle<RigidBodyComponent> rbComponent) -> void
 		{
-			transformComp->transform.position = rbComponent->rigidBody->GetPosition();
-			vec3 rot = rbComponent->rigidBody->GetEulerRotation();
-			transformComp->transform.rotation = vec3(rot);
+			if (!rbComponent->bIsStatic)
+			{
+				transformComp->transform.position = rbComponent->rigidBody->GetPosition();
+				vec3 rot = rbComponent->rigidBody->GetEulerRotation();
+				transformComp->transform.rotation = rot;
+			}
+
 		});
 	}
 

@@ -57,6 +57,16 @@ uint32 IndexedModel::GetNumIndices() const
 	return indices.size();
 }
 
+std::vector<uint32> IndexedModel::GetIndices() const
+{
+	return indices;
+}
+
+std::vector<float> IndexedModel::GetElement(uint32 elementNumber) const
+{
+	return elements[elementNumber];
+}
+
 void IndexedModel::AllocateElement(uint32 elementSize)
 {
 	elementSizes.push_back(elementSize);

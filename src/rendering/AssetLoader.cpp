@@ -35,12 +35,11 @@ bool AssetLoader::LoadModel(const NString& fileName,
 	NxArray<MaterialSpec>& materials)
 {
 	NString absoluteFilePath = Nx::FileSystem::GetPath(fileName);
-	//Create static mesh 
 
 	// read file via ASSIMP
 	Assimp::Importer importer;
 	//Do not use aiProcess_FlipUVs since we flipping the texture with stbimage
-	const aiScene* scene = importer.ReadFile(absoluteFilePath, aiProcess_Triangulate| aiProcess_CalcTangentSpace);
+	const aiScene* scene = importer.ReadFile(absoluteFilePath, aiProcess_Triangulate| aiProcess_CalcTangentSpace | aiProcess_GenBoundingBoxes);
 	// check for errors
 	if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode) // if is Not Zero
 	{
@@ -118,7 +117,8 @@ const aiScene* AssetLoader::LoadModelSkeletal(const NString& fileName, NxArray<I
 		aiProcess_OptimizeGraph |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_GenNormals |
-		aiProcess_CalcTangentSpace;
+		aiProcess_CalcTangentSpace|
+		aiProcess_GenBoundingBoxes;
 	
 	importer.ReadFile(absoluteFilePath, Flags);
 	const aiScene* scene = importer.GetOrphanedScene();
@@ -155,7 +155,8 @@ AnimationInfo* AssetLoader::LoadMeshAnimation(const std::string &friendlyName,
 	//	std::map< std::string /*animationfile*/,
 	//		      const aiScene* > mapAnimationNameTo_pScene;		// Animations
 
-	unsigned int Flags = aiProcess_Triangulate | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph | aiProcess_JoinIdenticalVertices;
+	unsigned int Flags = aiProcess_Triangulate | aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph 
+						| aiProcess_JoinIdenticalVertices;
 
 	NString absoluteFilePath = Nx::FileSystem::GetPath(filename);
 	//Create static mesh 
@@ -222,9 +223,16 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 	newModel.AllocateElement(3); // Tangents
 
 	newModel.SetInstancedElementStartIndex(4); // Begin instanced data
-	
+
 	newModel.AllocateElement(16); // Transform matrix
 
+	for (int i = 0; i < 3; i++)
+	{
+		newModel.aabb.max[i] = mesh->mAABB.mMax[i];
+		newModel.aabb.min[i] = mesh->mAABB.mMin[i];
+	}
+
+	mesh->mAABB.mMax;
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (uint32 i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -240,6 +248,8 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 		newModel.AddElement2f(1, texCoord.x, texCoord.y);
 		newModel.AddElement3f(2, normal.x, normal.y, normal.z);
 		newModel.AddElement3f(3, tangent.x, tangent.y, tangent.z);
+
+		newModel.vertices.push_back(NxVertex(pos.x, pos.y, pos.z));
 	}
 	
 	for (uint32 i = 0; i < mesh->mNumFaces; i++)
@@ -248,6 +258,13 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 		assert(face.mNumIndices == 3);
 		newModel.AddIndices3i(face.mIndices[0], face.mIndices[1],
 			face.mIndices[2]);
+
+		NxTriangle curTri;
+		curTri.vertex_ID_0 = face.mIndices[0];
+		curTri.vertex_ID_1 = face.mIndices[1];
+		curTri.vertex_ID_2 = face.mIndices[2];
+
+		newModel.triangles.push_back(curTri);
 	}
 
 	models.push_back(newModel);
@@ -363,10 +380,7 @@ void AssetLoader::ProcessMeshSkeletal(aiMesh* mesh, const aiScene* scene, const 
 	LoadMRTextures(fileName, material, scene, spec);
 
 	//TODO: Put in func
-
-
 	materials.push_back(spec);
-
 }
 
 
@@ -396,10 +410,6 @@ void AssetLoader::LoadBones(const aiMesh* Mesh, SkeletalData& skelData, NxArray<
  		for (unsigned int WeightIndex = 0; WeightIndex != Mesh->mBones[boneIndex]->mNumWeights; WeightIndex++)
 		{
 			unsigned int VertexID = /*mMeshEntries[MeshIndex].BaseVertex +*/ Mesh->mBones[boneIndex]->mWeights[WeightIndex].mVertexId;
-			if (VertexID == 0)
-			{
-				std::cout << " wtg";
-			}
 			
 			float Weight = Mesh->mBones[boneIndex]->mWeights[WeightIndex].mWeight;
 			boneData[VertexID].AddBoneData(BoneIndex, Weight);

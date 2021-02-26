@@ -39,6 +39,11 @@ IF (BULLET2_MULTITHREADING)
     ENDIF (MSVC)
 ENDIF (BULLET2_MULTITHREADING)
 
+OPTION(BUILD_EXTRAS "Set when you want to build the extras" ON)
+IF(BUILD_EXTRAS)
+  SUBDIRS(Extras)
+ENDIF(BUILD_EXTRAS)
+
 
 IF(NOT WIN32)
 	SET(DL ${CMAKE_DL_LIBS})
@@ -207,8 +212,6 @@ OPTION(INTERNAL_ADD_POSTFIX_EXECUTABLE_NAMES "Add MSVC postfix for executable na
 SET(CMAKE_DEBUG_POSTFIX "_Debug" CACHE STRING "Adds a postfix for debug-built libraries.")
 SET(CMAKE_MINSIZEREL_POSTFIX "_MinsizeRel" CACHE STRING "Adds a postfix for MinsizeRelease-built libraries.")
 SET(CMAKE_RELWITHDEBINFO_POSTFIX "_RelWithDebugInfo" CACHE STRING "Adds a postfix for ReleaseWithDebug-built libraries.")
-
-
 
 
 

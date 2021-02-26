@@ -76,6 +76,7 @@ namespace nPhysics
 
 	cBulletCylinderShape::~cBulletCylinderShape()
 	{
+		delete mBulletShape;
 	}
 
 	float cBulletCylinderShape::GetCylinderRadius()
@@ -141,6 +142,7 @@ namespace nPhysics
 
 	cBulletCapsuleShape::~cBulletCapsuleShape()
 	{
+		delete mBulletShape;
 	}
 
 	float cBulletCapsuleShape::GetCapsuleRadius()
@@ -166,13 +168,14 @@ namespace nPhysics
 
 	cBulletBoxShape::~cBulletBoxShape()
 	{
+		delete mBulletShape;
 	}
 
 
 
 	cBulletMeshCollider::cBulletMeshCollider(const GL_Triangle * triangles, size_t numOfTriangles)
 	{
-		btTriangleMesh* triangleMesh = new btTriangleMesh(); 
+		btTriangleMesh* triangleMesh = new btTriangleMesh();
 		for (int i = 0; i < numOfTriangles; i++)
 		{
 			GL_Triangle curTri = triangles[i];
@@ -181,15 +184,31 @@ namespace nPhysics
 			btVector3 vertex3(curTri.vertex3[0], curTri.vertex3[1], curTri.vertex3[2]);
 
 			triangleMesh->addTriangle(vertex1, vertex2, vertex3);
-
-		}
-
-		this->mBulletShape =  new btBvhTriangleMeshShape(triangleMesh, true);
-		
+		}	
+		this->mBulletShape = new btBvhTriangleMeshShape(triangleMesh, true);
 	}
 
 	cBulletMeshCollider::~cBulletMeshCollider()
 	{
+		delete mBulletShape;
+	}
+
+	//Conveex Hull
+
+	cBulletConvexHullCollider::cBulletConvexHullCollider(const float* vertecies, size_t numOfVertecies)
+	{
+		btConvexHullShape* shapeToAdd = new btConvexHullShape();
+		for (int i = 0; i < numOfVertecies; i++)
+		{
+			shapeToAdd->addPoint(btVector3(i * 3, i * 3 + 1, i * 3 + 2));
+		}
+
+		this->mBulletShape = shapeToAdd;
+	}
+
+	cBulletConvexHullCollider::~cBulletConvexHullCollider()
+	{
+		delete mBulletShape;
 	}
 
 }

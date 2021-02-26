@@ -34,9 +34,6 @@ namespace nPhysics {
 				colShape->calculateLocalInertia(mass, localInertia);
 			}
 
-
-
-
 			btRigidBody::btRigidBodyConstructionInfo rbInfo(0, 0, colShape, localInertia);
 			rbInfo.m_restitution = 0.9;
 			rbInfo.m_friction = 10.0;
@@ -50,6 +47,7 @@ namespace nPhysics {
 		case nPhysics::SHAPE_TYPE_SPHERE:
 		{
 			btCollisionShape* colShape = dynamic_cast<cBulletSphereShape*>(shape)->GetBulletShape();
+			colShape->setLocalScaling(nConvert::ToBullet(def.Scale));
 			btTransform startTransform;
 			startTransform.setIdentity();
 			
@@ -88,6 +86,7 @@ namespace nPhysics {
 		case nPhysics::SHAPE_TYPE_CYLINDER:
 		{
 			btCollisionShape* colShape = dynamic_cast<cBulletCylinderShape*>(shape)->GetBulletShape();
+			colShape->setLocalScaling(nConvert::ToBullet(def.Scale));
 			btTransform startTransform;
 			startTransform.setIdentity();
 
@@ -124,8 +123,10 @@ namespace nPhysics {
 		case nPhysics::SHAPE_TYPE_BOX:
 		{
 			btCollisionShape* colShape = dynamic_cast<cBulletBoxShape*>(shape)->GetBulletShape();
+			colShape->setLocalScaling(nConvert::ToBullet(def.Scale));
 			btTransform startTransform;
 			startTransform.setIdentity();
+			
 
 			mMass = def.Mass;
 			btScalar mass(mMass);
@@ -136,6 +137,7 @@ namespace nPhysics {
 			{
 				colShape->calculateLocalInertia(mass, localInertia);
 			}
+
 			startTransform.setOrigin(nConvert::ToBullet(def.Position));
 			startTransform.setRotation(nConvert::ToBullet(def.quatOrientation));
 			mMotionState = new btDefaultMotionState(startTransform);
@@ -217,11 +219,15 @@ namespace nPhysics {
 			colShape->setLocalScaling(nConvert::ToBullet(def.Scale));
 			startTransform.setIdentity();
 
-			btScalar mass(0.0f);
+			mMass = def.Mass;
+			btScalar mass(mMass);
+
 			btVector3 localInertia(0, 0, 0);
 
 			startTransform.setOrigin(nConvert::ToBullet(def.Position));
-			startTransform.setRotation(nConvert::ToBullet(def.quatOrientation));
+			btQuaternion quatRot;
+			quatRot.setEuler(def.Orientation.y, def.Orientation.x, def.Orientation.z);
+			startTransform.setRotation(quatRot);
 
 
 			mMotionState = new btDefaultMotionState(startTransform);
@@ -233,7 +239,69 @@ namespace nPhysics {
 			mBody->setAngularVelocity(nConvert::ToBullet(def.AngularVelocity));
 			mBody->setSleepingThresholds(0.0f, 0.0f);
 
+			mBody->setCollisionFlags(mBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
+			if (def.isGhostShape)
+			{
+				mBody->setCollisionFlags(mBody->getCollisionFlags() | btCollisionObject::CF_NO_CONTACT_RESPONSE);
+			}
+			mBody->setUserPointer(this);
 
+			break;
+		}
+		case nPhysics::SHAPE_TYPE_CONVEX_HULL:
+		{
+			btCollisionShape* colShape = dynamic_cast<cBulletConvexHullCollider*>(shape)->GetBulletShape();
+			btTransform startTransform;
+			colShape->setLocalScaling(nConvert::ToBullet(def.Scale));
+			startTransform.setIdentity();
+
+			mMass = def.Mass;
+			btScalar mass(mMass);
+
+			bool isDynamic = (mass != 0.f);
+			btVector3 localInertia(0.0f, 0, 0);
+			if (isDynamic)
+			{
+				colShape->calculateLocalInertia(mass, localInertia);
+			}
+
+			startTransform.setOrigin(nConvert::ToBullet(def.Position));
+			startTransform.setRotation(nConvert::ToBullet(def.quatOrientation));
+
+			
+			if (!def.isPlayer)
+			{
+				mMotionState = new btDefaultMotionState(startTransform);
+				btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, mMotionState, colShape, localInertia);
+				rbInfo.m_restitution = 0.3;
+				rbInfo.m_friction = 10.2;
+				mBody = new btRigidBody(rbInfo);
+				mBody->setLinearVelocity(nConvert::ToBullet(def.Velocity));
+				mBody->setAngularVelocity(nConvert::ToBullet(def.AngularVelocity));
+				mBody->setSleepingThresholds(0.0f, 0.0f);
+				mBody = new btRigidBody(rbInfo);
+
+
+			}
+			else
+			{
+				mMotionState = new btDefaultMotionState(startTransform);
+				btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, mMotionState, colShape, localInertia);
+				rbInfo.m_restitution = 0.0;
+				rbInfo.m_friction = 0;
+				mBody = new btRigidBody(rbInfo);
+				mBody->setAngularFactor(btVector3(0.0f, 1.0f, 0.0f));
+				mBody->setSleepingThresholds(0.0f, 0.0f);
+				mBody = new btRigidBody(rbInfo);
+
+			}
+
+
+			mMotionState = new btDefaultMotionState(startTransform);
+			btRigidBody::btRigidBodyConstructionInfo rbInfo(mass, mMotionState, colShape, localInertia);
+			rbInfo.m_restitution = 0.9;
+			rbInfo.m_friction = 10.2;
+			
 
 			mBody->setCollisionFlags(mBody->getCollisionFlags() | btCollisionObject::CF_CUSTOM_MATERIAL_CALLBACK);
 			if (def.isGhostShape)
@@ -248,8 +316,6 @@ namespace nPhysics {
 		{
 			break;
 		}
-
-
 		}
 	}
 
