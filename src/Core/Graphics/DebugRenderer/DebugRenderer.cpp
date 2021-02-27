@@ -9,6 +9,7 @@
 EditorRenderContext* DebugRenderer::editorContext = nullptr;
 NxArray<DebugShape*> DebugRenderer::ShapesToDraw;
 Shader* DebugRenderer::shader = nullptr;
+Shader* DebugRenderer::DebugShader = nullptr;
 DebugShape* DebugRenderer::sphere = nullptr;
 DrawParams DebugRenderer::debugDrawParams;
 
@@ -17,7 +18,7 @@ void DebugRenderer::SetContext(EditorRenderContext* contextIn)
 	editorContext = contextIn;
 }
 
-void DebugRenderer::SetShader(/*TODO*/)
+void DebugRenderer::SetShader(RenderDevice* renderDevice)
 {
 	//Load and set shaders
 	NString LINE_SHADER_TEXT_FILE = "res/shaders/DebugShapeShader.glsl";
@@ -30,10 +31,40 @@ void DebugRenderer::SetShader(/*TODO*/)
 	debugDrawParams.depthFunc = DRAW_FUNC_LESS;
 
 
-	sphere= new DebugShape();
+	std::string debugShaderText =
+		"#if defined(VS_BUILD)\n"
+		"\n"
+		"out vec3 VertColor;\n"
+		"\n"
+		"layout (location = 0) in vec3 position;\n"
+		"layout (location = 1) in vec3 color;\n"
+		"layout (location = 2) in mat4 transformMat;\n"
+		"\n"
+		"void main()\n"
+		"{\n"
+		"    gl_Position = transformMat * vec4(position, 1.0) ;\n"
+		"\tVertColor = color;\n"
+		"}\n"
+		"\n"
+		"#elif defined(FS_BUILD)\n"
+		"in vec3 VertColor;\n"
+		"\n"
+		"layout (location = 0) out vec4 FinalColor;\n"
+		"void main()\n"
+		"{\n"
+		"    FinalColor = vec4(VertColor.rgb, 1);\n"
+		"\n"
+		"}\n"
+		"#endif";
+
+	DebugShader = new Shader(renderDevice, debugShaderText);
+
+
+
+	sphere = new DebugShape();
 	IndexedModel model = PrimitiveGenerator::CreateSphere(1, 18, 18, vec3(1.f));
 	VertexArray* VA = new VertexArray(editorContext->GetRenderDevice(), model, BufferUsage::USAGE_STATIC_DRAW);
-	VA->SetShader(shader);
+	VA->SetShader(DebugShader);
 	sphere->vertexArray = VA;
 	sphere->drawParams = debugDrawParams;
 	sphere->lifetime = 0.0f;
@@ -65,6 +96,7 @@ void DebugRenderer::DrawDebugSphereAsMesh(vec3 position, float radius, vec3 colo
 	sphere->transform.position = position;
 	sphere->transform.rotation = rotation;
 	sphere->transform.scale = vec3(radius);
+	sphere->bDrawAsArrays = false;
 	editorContext->RenderDebugShapes(sphere, sphere->transform.ToMatrix());
 }
 
@@ -84,6 +116,24 @@ void DebugRenderer::DrawDebugLine(vec3 start, vec3 end, float time = 0, vec3 col
     lineShape->transform.position = vec3(0.0f);
     lineShape->transform.scale = vec3(1.0f);
     ShapesToDraw.push_back(lineShape);
+}
+
+void DebugRenderer::DrawModelAsArrays(IndexedModel& modelIn)
+{
+	DebugShape* Shape = new DebugShape();
+
+	VertexArray* VA = new VertexArray(editorContext->GetRenderDevice(), modelIn, BufferUsage::USAGE_STATIC_DRAW);
+
+	VA->SetShader(DebugShader);
+
+	Shape->vertexArray = VA;
+	Shape->bDrawAsArrays = true;
+	Shape->drawParams = debugDrawParams;
+	Shape->lifetime = 0;
+	Shape->transform.position = vec3(0.0f);
+	Shape->transform.scale = vec3(1.0f);
+	ShapesToDraw.push_back(Shape);
+
 }
 
 void DebugRenderer::DrawQuad()

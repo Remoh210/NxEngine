@@ -12,8 +12,10 @@ public:
 			BufferUsage usage) :
 		device(deviceIn),
 		id(model.CreateVertexArray(deviceIn, usage)),
-		numIndices(model.GetNumIndices())
+		numIndices(model.GetNumIndices()),
+		numVertices(model.GetElement(0).size())
 		{}
+
 
 	inline VertexArray(RenderDevice& deviceIn, uint32 idIn,
 		BufferUsage usage, uint32 numVertecies) :
@@ -44,12 +46,14 @@ public:
 
 	inline uint32 GetId() { return id; };
 	inline uint32 GetNumIndices() { return numIndices; };
+	inline uint32 GetNumVertices() { return numVertices; };
 
 private:
     Shader* shader;
 	RenderDevice* device;
 	uint32 id;
 	uint32 numIndices;
+	uint32 numVertices;
 
 	//NULL_COPY_AND_ASSIGN(VertexArray);
 };

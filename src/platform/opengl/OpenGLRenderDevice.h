@@ -148,8 +148,8 @@ public:
 		const DrawParams& drawParams,
 		uint32 numInstances, uint32 numElements);
 
-	//Draw NxArrays
-	void DrawNxArrays(uint32 fbo, uint32 shader, uint32 vao,
+	//Draw Arrays
+	void DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 		const DrawParams& drawParams,
 		uint32 numVertecies);
 

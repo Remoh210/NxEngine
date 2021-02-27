@@ -94,6 +94,11 @@ void nPhysics::cBulletPhysicsWorld::SetDebugDrawer(iDebugRenderer* rendererIn)
 	
 }
 
+nPhysics::iDebugRenderer* nPhysics::cBulletPhysicsWorld::GetDebugDrawer()
+{
+	return mDebugDrawer;
+}
+
 void nPhysics::cBulletPhysicsWorld::SetDebugDrawerMode(int mode)
 {
 	mDebugDrawer->setDebugMode(mode);

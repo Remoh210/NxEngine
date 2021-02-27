@@ -12,7 +12,8 @@ public:
 
 	static void SetContext(EditorRenderContext* contextIn);
 
-	static void SetShader(/*TODO*/);
+	//Rename to Init?
+	static void SetShader(RenderDevice* renderDevice);
     
 	static void DrawDebugSphere(vec3 position, float time = 0, float radius = 1, vec3 color = vec3(1.f, 0.f, 0.f),
 		uint32 sectorCount = 36, uint32 stackCount = 18);
@@ -21,9 +22,16 @@ public:
 
     static void DrawDebugLine(vec3 start, vec3 end, float time, vec3 color);
 
+	static void DrawModelAsArrays(IndexedModel& modelIn);
+
 	static void DrawQuad();
 
 	static void Update(float dt);
+
+	static Shader* GetShader()
+	{
+		return DebugShader;
+	};
 
 
 private:
@@ -33,4 +41,7 @@ private:
 	static DrawParams debugDrawParams;;
 
 	static DebugShape* sphere;
+
+
+	static Shader* DebugShader;
 };

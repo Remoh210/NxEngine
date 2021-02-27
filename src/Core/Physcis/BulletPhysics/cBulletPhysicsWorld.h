@@ -16,6 +16,7 @@ namespace nPhysics {
 
 		void SetGravity(const glm::vec3& gravity);
 		virtual void SetDebugDrawer(iDebugRenderer* rendererIn);
+		virtual iDebugRenderer* GetDebugDrawer();
 		virtual void SetDebugDrawerMode(int mode);
 		bool AddBody(iRigidBody* body);
 		bool RemoveBody(iRigidBody* body);

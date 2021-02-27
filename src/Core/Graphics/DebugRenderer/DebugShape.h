@@ -15,6 +15,7 @@ struct DebugShape
 	Transform transform;
 	DrawParams drawParams;
 	bool bShouldDelete = false;
+	bool bDrawAsArrays = false;
 
 	DebugShape()
 	{

@@ -28,7 +28,6 @@ namespace ECS
 		{
 			debugDrawMode = !debugDrawMode;
 			physicsWorld->SetDebugDrawerMode(static_cast<int>(debugDrawMode));
-			
 		}
 
 	private:

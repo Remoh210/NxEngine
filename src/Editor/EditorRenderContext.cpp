@@ -5,6 +5,7 @@
 #include "Core/FileSystem/FileSystem.h"
 #include "Core/Graphics/ShaderManager/ShaderManager.h"
 #include "Core/Graphics/Cubemap/CubemapManager.h"
+#include "Core/Graphics/DebugRenderer/DebugRenderer.h"
 
 #define MAX_NUM_LIGHTS 30
 
@@ -44,6 +45,11 @@ EditorRenderContext::EditorRenderContext(RenderDevice* deviceIn, RenderTarget* t
 	{
 		PBRShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 		DEBUG_LOG_TEMP("NO PBR SHADER"); return;
+	}
+
+	if (DebugRenderer::GetShader())
+	{
+		DebugRenderer::GetShader()->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 	}
 
 	ShaderManager::GetPBRShader("IMPOSTOR_SHADER")->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
@@ -248,7 +254,7 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 			VertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
 			if (VertexArray->GetNumIndices() == 0)
 			{
-				mRenderDevice->DrawNxArrays(renderTarget->GetId(), modelShader->GetId(), VertexArray->GetId(),
+				mRenderDevice->DrawArrays(renderTarget->GetId(), modelShader->GetId(), VertexArray->GetId(),
 					drawParams, 300);
 			}
 			else
@@ -384,10 +390,21 @@ void EditorRenderContext::DrawDebugShapes(RenderTarget* renderTarget)
 		{
 			modelShader.SetSampler("diffuse", *texture, *sampler, 0);
 		}
-		VertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
+		
+		
+		if (shapeToDraw->bDrawAsArrays)
+		{
+			VertexArray->UpdateBuffer(2, transforms, numTransforms * sizeof(mat4));
+			mRenderDevice->DrawArrays(renderTarget->GetId(), modelShader.GetId(), VertexArray->GetId(),
+				shapeDrawParams, VertexArray->GetNumVertices());
+		}
+		else
+		{
+			VertexArray->UpdateBuffer(4, transforms, numTransforms * sizeof(mat4));
+			mRenderDevice->Draw(renderTarget->GetId(), modelShader.GetId(), VertexArray->GetId(),
+				shapeDrawParams, numTransforms, VertexArray->GetNumIndices());
+		}
 
-		mRenderDevice->Draw(renderTarget->GetId(), modelShader.GetId(), VertexArray->GetId(), 
-			shapeDrawParams, numTransforms, VertexArray->GetNumIndices());
 	}
 	debugShapeBuffer.clear();
 }

@@ -120,7 +120,7 @@ void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
 	}
 }
 
-void OpenGLRenderDevice::DrawNxArrays(uint32 fbo, uint32 shader, uint32 vao,
+void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 	const DrawParams& drawParams,
 	uint32 numVertecies)
 {
@@ -136,7 +136,7 @@ void OpenGLRenderDevice::DrawNxArrays(uint32 fbo, uint32 shader, uint32 vao,
 	SetShader(shader);
 	SetVAO(vao);
 
-	glDrawArrays(GL_LINES, 0, numVertecies);
+	glDrawArrays(PRIMITIVE_LINES, 0, numVertecies);
 }
 
 void OpenGLRenderDevice::GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,

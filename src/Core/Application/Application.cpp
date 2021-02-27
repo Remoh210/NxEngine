@@ -108,7 +108,7 @@ int Application::Run()
 	AssetManager::SetPhysicsSystem((ECS::PhysicsSystem*)physicsSystem);
 
 	DebugRenderer::SetContext(editorRenderContext);
-	DebugRenderer::SetShader();
+	DebugRenderer::SetShader(renderDevice);
 
 	
 	//debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
