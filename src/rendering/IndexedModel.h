@@ -65,8 +65,8 @@ public:
 	void AddIndices4i(uint32 i0, uint32 i1, uint32 i2, uint32 i3);
 
 	uint32 GetNumIndices() const;
-	NxArray<uint32> IndexedModel::GetIndices() const;
-	NxArray<float> IndexedModel::GetElement(uint32 elementNumber) const;
+	NxArray<uint32> GetIndices() const;
+	NxArray<float> GetElement(uint32 elementNumber) const;
 
 	struct AABB
 	{
