@@ -109,6 +109,8 @@ void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
 	SetShader(shader);
 	SetVAO(vao);
 
+	glLineWidth(drawParams.lineThickness);
+
 	if(numInstances == 1) 
 	{
 		glDrawElements(drawParams.primitiveType, (GLsizei)numElements, GL_UNSIGNED_INT, 0);
@@ -136,7 +138,8 @@ void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 	SetShader(shader);
 	SetVAO(vao);
 
-	glDrawArrays(PRIMITIVE_LINES, 0, numVertecies);
+	glLineWidth(drawParams.lineThickness);
+	glDrawArrays(drawParams.primitiveType, 0, numVertecies);
 }
 
 void OpenGLRenderDevice::GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
@@ -359,7 +362,6 @@ void OpenGLRenderDevice::SetViewport(uint32 fbo)
 	glViewport(0, 0, fboMap[fbo].width, fboMap[fbo].height);
 	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, fboMap[fbo].width, fboMap[fbo].height);
 	viewportFBO = fbo;
-
 }
 
 void OpenGLRenderDevice::UpdateFBOSize(uint32 fbo, uint32 width, uint32 height)
@@ -431,7 +433,6 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
 	GLint GLDataFormat = GetOpenGLFormat(dataFormat);
 	GLint GLInternalFormat = GetOpenGLInternalFormat(internalFormat, bCompress);
 
-
 	glBindTexture(GL_TEXTURE_2D, textureID);
 	if (bFloatType)
 	{
@@ -441,8 +442,7 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
 	else
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, GLInternalFormat, width, height, 0, GLDataFormat, GL_UNSIGNED_BYTE, data);
-	}
-		
+	}	
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -460,16 +460,13 @@ uint32 OpenGLRenderDevice::CreateTexture2D(uint32 width, uint32 height, enum Pix
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
 		//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0);
 	}
-
-    
+ 
     //else
     //{
     //   DEBUG_LOG(LOG_TYPE_RENDERER, LOG_ERROR, "Missing data");
     //}
 
     return textureID;
-    
-
 }
 
 uint32 OpenGLRenderDevice::CreateTextureCube(uint32 width, uint32 height, PixelFormat dataFormat, const void* data, PixelFormat internalFormat, bool bGenerateMipmaps, bool bCompress)

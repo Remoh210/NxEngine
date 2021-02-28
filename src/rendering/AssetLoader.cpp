@@ -232,7 +232,16 @@ void AssetLoader::ProcessMesh(aiMesh* mesh, const aiScene* scene, const NString&
 		newModel.aabb.min[i] = mesh->mAABB.mMin[i];
 	}
 
-	mesh->mAABB.mMax;
+	const NString& fileExtension = GetFileExtension(fileName);
+
+	if (fileExtension == ".glb" || fileExtension == ".gltf" || fileExtension == ".fbx")
+	{
+		//double factor(0.0);
+		//scene->mMetaData->Get("UnitScaleFactor", factor);
+		//DEBUG_LOG_TEMP("Factor: $f", factor);
+	}
+
+
 	const aiVector3D aiZeroVector(0.0f, 0.0f, 0.0f);
 	for (uint32 i = 0; i < mesh->mNumVertices; i++)
 	{

@@ -114,6 +114,7 @@ enum StencilOp
 struct DrawParams
 {
 	PrimitiveType primitiveType = PRIMITIVE_TRIANGLES;
+	float lineThickness = 1.0;
 	FaceCulling faceCulling = FACE_CULL_NONE;
 	DrawFunc depthFunc = DRAW_FUNC_ALWAYS;
 	bool shouldWriteDepth = true;

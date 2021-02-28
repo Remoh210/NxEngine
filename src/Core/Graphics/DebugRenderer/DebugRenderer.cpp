@@ -10,7 +10,6 @@ EditorRenderContext* DebugRenderer::editorContext = nullptr;
 NxArray<DebugShape*> DebugRenderer::ShapesToDraw;
 Shader* DebugRenderer::shader = nullptr;
 Shader* DebugRenderer::DebugShader = nullptr;
-DebugShape* DebugRenderer::sphere = nullptr;
 DrawParams DebugRenderer::debugDrawParams;
 
 void DebugRenderer::SetContext(EditorRenderContext* contextIn)
@@ -29,7 +28,7 @@ void DebugRenderer::SetShader(RenderDevice* renderDevice)
 	debugDrawParams.primitiveType = PRIMITIVE_LINES;
 	debugDrawParams.shouldWriteDepth = true;
 	debugDrawParams.depthFunc = DRAW_FUNC_LESS;
-
+	debugDrawParams.lineThickness = 1.0f;
 
 	std::string debugShaderText =
 		"#if defined(VS_BUILD)\n"
@@ -58,18 +57,6 @@ void DebugRenderer::SetShader(RenderDevice* renderDevice)
 		"#endif";
 
 	DebugShader = new Shader(renderDevice, debugShaderText);
-
-
-
-	sphere = new DebugShape();
-	IndexedModel model = PrimitiveGenerator::CreateSphere(1, 18, 18, vec3(1.f));
-	VertexArray* VA = new VertexArray(editorContext->GetRenderDevice(), model, BufferUsage::USAGE_STATIC_DRAW);
-	VA->SetShader(DebugShader);
-	sphere->vertexArray = VA;
-	sphere->drawParams = debugDrawParams;
-	sphere->lifetime = 0.0f;
-	sphere->transform.position = vec3(0.0f);
-	sphere->transform.scale = vec3(1.0f);
 }
 
 void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec3 color,
@@ -88,16 +75,6 @@ void DebugRenderer::DrawDebugSphere(vec3 position, float time, float radius, vec
     SphereShape->transform.position = position;
     SphereShape->transform.scale = vec3(radius);
     ShapesToDraw.push_back(SphereShape);
-
-}
-
-void DebugRenderer::DrawDebugSphereAsMesh(vec3 position, float radius, vec3 color, vec3 rotation)
-{
-	sphere->transform.position = position;
-	sphere->transform.rotation = rotation;
-	sphere->transform.scale = vec3(radius);
-	sphere->bDrawAsArrays = false;
-	editorContext->RenderDebugShapes(sphere, sphere->transform.ToMatrix());
 }
 
 
@@ -133,7 +110,6 @@ void DebugRenderer::DrawModelAsArrays(IndexedModel& modelIn)
 	Shape->transform.position = vec3(0.0f);
 	Shape->transform.scale = vec3(1.0f);
 	ShapesToDraw.push_back(Shape);
-
 }
 
 void DebugRenderer::DrawQuad()
@@ -179,6 +155,4 @@ void DebugRenderer::Update(float dt)
 			}
 		}
     }
-
-
 }

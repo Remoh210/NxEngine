@@ -36,6 +36,7 @@ public:
 
 	static nPhysics::iShape* GenerateCollisionConvexHullFromModels(NxArray<IndexedModel>& indexedModels);
 	static nPhysics::iShape* GenerateCollisionConvexHullFromModel(IndexedModel& indexedModel);
+	//static nPhysics
 
 
 private:

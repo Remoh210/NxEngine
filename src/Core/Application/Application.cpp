@@ -622,7 +622,7 @@ void Application::LoadDefaultScene()
 	nPhysics::sRigidBodyDef PistolRbdef;
 	PistolRbdef.Mass = 100.0f;
 	PistolRbdef.Position = transformComp3.transform.position.ToVec();
-	PistolRbdef.Scale = transformComp3.transform.scale.ToVec() * 2.0f;
+	PistolRbdef.Scale = transformComp3.transform.scale.ToVec();
 	//PistolRbdef.AngularVelocity = vec3(10.1f, 12.5f, -11.1f);
 	PistolRbdef.quatOrientation = quat(transformComp3.transform.rotation.ToVec());
 	nPhysics::iRigidBody* PistolRB = physSystem->GetFactory()->CreateRigidBody(PistolRbdef, pistolShape);

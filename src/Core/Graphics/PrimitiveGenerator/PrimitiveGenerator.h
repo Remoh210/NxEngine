@@ -24,27 +24,20 @@ public:
 		newModel.AllocateElement(3); // Tangents
 		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 		newModel.AllocateElement(16); // Transform matrix
-        
-		glm::vec3 extents(0.0f);
 
-        //NxArray<vec3> vertices;
         for(uint32 j=0; j<=slices; ++j)
         {
           for(uint32 i=0; i<=slices; ++i)
           {
             float x = (float)i/(float)slices;
-			if (x > extents.x) { extents.x = x; }
             float y = 0;
             float z = (float)j/(float)slices;
-			if (z > extents.z) { extents.z = z; }
             newModel.AddElement3f(0, x, y, z);
             newModel.AddElement2f(1, 0, 0);
             newModel.AddElement3f(2, color.x, color.y, color.z);
             newModel.AddElement3f(3, 0, 0, 0);
           }
         }
-        
-		DEBUG_LOG_TEMP("Extents: x: %f, y: %f, z: %f", extents.x, extents.y, extents.z);
 
         for(uint32 j=0; j<slices; ++j)
         {
@@ -56,7 +49,6 @@ public:
               
             newModel.AddIndices4i(row1+i, row1+i+1, row1+i+1,row2+i+1);
             newModel.AddIndices4i(row2+i+1, row2+i, row2+i, row1+i);
-            
           }
         }
 
@@ -218,8 +210,6 @@ public:
 
 	inline static IndexedModel CreateCube(vec3 color = vec3(1, 0, 0));
 
-	
-
 	inline uint32 GetId()
 	{
 		return id;
@@ -241,11 +231,7 @@ private:
 
 IndexedModel PrimitiveGenerator::CreateCube(vec3 color /*= vec3(1, 0, 0)*/)
 {
-
-
-
 	IndexedModel newModel;
-
 
 	newModel.AllocateElement(3); // Positions
 	newModel.AllocateElement(2); // TexCoords
@@ -253,7 +239,6 @@ IndexedModel PrimitiveGenerator::CreateCube(vec3 color /*= vec3(1, 0, 0)*/)
 	newModel.AllocateElement(3); // Color
 	newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 	newModel.AllocateElement(16); // Transform matrix
-
 
 	//Vector3f(-1, -1, -1),
 	//	Vector3f(1, -1, -1),

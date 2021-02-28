@@ -18,8 +18,6 @@ public:
 	static void DrawDebugSphere(vec3 position, float time = 0, float radius = 1, vec3 color = vec3(1.f, 0.f, 0.f),
 		uint32 sectorCount = 36, uint32 stackCount = 18);
 
-	static void DrawDebugSphereAsMesh(vec3 position, float radius, vec3 color, vec3 rotation = vec3(0.f));
-
     static void DrawDebugLine(vec3 start, vec3 end, float time, vec3 color);
 
 	static void DrawModelAsArrays(IndexedModel& modelIn);
@@ -38,10 +36,8 @@ private:
 	static EditorRenderContext* editorContext;
 	static NxArray<DebugShape*> ShapesToDraw;
 	static Shader* shader;
+	//Used by bullet debuh (draw apprays)
+	static Shader* DebugShader;
 	static DrawParams debugDrawParams;;
 
-	static DebugShape* sphere;
-
-
-	static Shader* DebugShader;
 };

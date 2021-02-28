@@ -17,6 +17,7 @@ namespace nPhysics
 		virtual void clearLines();
 
 		virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color);
+		virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor);
 
 		virtual void flushLines();
 
@@ -27,13 +28,6 @@ namespace nPhysics
 		virtual void setDebugMode(int debugMode) { mDebugMode = debugMode; }
 		virtual int getDebugMode() const { return mDebugMode; }
 
-		//Optimization
-		//void drawSphere(btScalar radius, const btTransform& transform, const btVector3& color);
-
-		virtual ~BulletDebugRenderer()
-		{
-			delete debugShader;
-		}
 	private:
 
 		struct DebugMesh
@@ -43,15 +37,8 @@ namespace nPhysics
 
 		};
 		DebugMesh meshToDraw;
+
 		int mDebugMode;
-		
-		std::string debugShaderText;
 
-		bool bFirstLine = false;
-
-		Shader* debugShader;
-
-		std::vector<vec3> verticesToDraw;
-		std::vector<vec3> colorsToDraw;
 	};
 }

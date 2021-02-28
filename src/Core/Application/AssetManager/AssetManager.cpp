@@ -92,7 +92,7 @@ bool AssetManager::ImportModelGenerateCollider(NString file, NxArray<MeshInfo*>&
 
 	if (shapeType == nPhysics::SHAPE_TYPE_BOX)
 	{
-		shapeOut = physicsSystem->GetFactory()->CreateBoxShape(vec3(models[0].aabb.max[0]/2, models[0].aabb.max[1]/2, models[0].aabb.max[2]/2));
+		shapeOut = physicsSystem->GetFactory()->CreateBoxShape(vec3(models[0].aabb.max[0], models[0].aabb.max[1], models[0].aabb.max[2]));
 	}
 
 	meshArrayOut = loadedMeshes;
