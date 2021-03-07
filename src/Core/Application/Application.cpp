@@ -780,6 +780,7 @@ void Application::LoadDefaultScene()
 	animComp.InitialState = idleState;
 
 	AnimationState ShotState; 
+	ShotState.activeAnimation.bHasExitTime = true;
 	ShotState.activeAnimation.name = "shoot";
 	animComp.animationStates["shoot"] = ShotState;
 

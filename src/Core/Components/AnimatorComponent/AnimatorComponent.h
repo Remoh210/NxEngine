@@ -5,8 +5,6 @@
 #include "Common/dataStructs/Map.h"
 #include "Common/dataStructs/String.h"
 
-
-
 struct AnimatorComponent
 {
 	NxMap<NString, AnimationInfo*> animations;
@@ -15,8 +13,5 @@ struct AnimatorComponent
 	AnimationState InitialState;
 	AnimationState currentState;
 
-    //States
 	NxMap<NString, AnimationState> animationStates;
-	//AnimatiorState currentState;
-	//
 };

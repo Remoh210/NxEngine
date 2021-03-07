@@ -33,9 +33,7 @@ namespace ECS {
 			animatorComp->currentState.activeAnimation.frameStepTime = deltaTime;
 			animatorComp->currentState.activeAnimation.IncrementTime();
 
-
 			std::vector< glm::mat4x4 > vecOffsets;
-
 			BoneTransform(skinnedMesh->skinnedMeshInfo, curAnim, animatorComp->currentState, skinnedMesh->skinnedMeshInfo->vecFinalTransformation, skinnedMesh->skinnedMeshInfo->vecObjectBoneTransformation, vecOffsets);
 
 			if (animatorComp->currentState.transitionMap.size() > 0)
@@ -72,8 +70,7 @@ namespace ECS {
 				}
 			}
 
-			animatorComp->currentState.PrevAnimation = oldState.activeAnimation;
-		
+			animatorComp->currentState.prevAnimation = oldState.activeAnimation;	
 		});
 	}
 
@@ -189,7 +186,6 @@ namespace ECS {
 		// This is scaling the animation from 0 to 1
 		return animInfo->pAIScene->mAnimations[0]->mDuration / (float)animInfo->pAIScene->mAnimations[0]->mTicksPerSecond;
 	}
-
 
 	const aiNodeAnim* AnimatorSystem::FindNodeAnimationChannel(const aiAnimation* pAnimation, aiString boneName)
 	{
