@@ -24,7 +24,8 @@ namespace nPhysics {
 		virtual bool RayCast(glm::vec3& from, glm::vec3& to) = 0;
 		virtual iRigidBody* RayCastGetObject(glm::vec3& from, glm::vec3& to) = 0;
 
-		virtual void Update(float dt) = 0;
+		virtual void Simulate(float dt) = 0;
+		virtual void DrawDebug() = 0;
 
 	protected:
 		iPhysicsWorld() {}

@@ -209,15 +209,15 @@ nPhysics::iRigidBody* nPhysics::cBulletPhysicsWorld::RayCastGetObject(glm::vec3 
 	//return resObject.hasHit();
 }
 
-void nPhysics::cBulletPhysicsWorld::Update(float dt)
+void nPhysics::cBulletPhysicsWorld::Simulate(float dt)
 {
-	//not working with 120hz monitor?
-	mDynamicsWorld->stepSimulation(dt, 10);
+	mDynamicsWorld->stepSimulation(dt);
+}
 
+void nPhysics::cBulletPhysicsWorld::DrawDebug()
+{
 	if (mDebugDrawer != nullptr)
 	{
 		mDynamicsWorld->debugDrawWorld();
 	}
-	
-	//mDynamicsWorld->stepSimulation(dt, 0);
 }

@@ -27,7 +27,8 @@ namespace nPhysics {
 		virtual std::pair<std::string, std::string> GetLastColPair();
 		virtual bool RayCast(glm::vec3& from, glm::vec3& to);
 		virtual iRigidBody* RayCastGetObject(glm::vec3& from, glm::vec3& to);
-		void Update(float dt);
+		void Simulate(float dt);
+		void DrawDebug();
 
 	protected:
 		cBulletPhysicsWorld(const cBulletPhysicsWorld& other) {}

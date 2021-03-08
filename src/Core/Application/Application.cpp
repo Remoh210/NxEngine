@@ -762,16 +762,17 @@ void Application::LoadDefaultScene()
 	//skinnedMesh.numInst = 1;
 	TransformComponent transformCompSkinned;
 	InputComponent InputCompSkinned;
-	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
+	transformCompSkinned.transform.position = vec3(90.1f, 30.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-	transformCompSkinned.transform.scale = vec3(0.2);
+	transformCompSkinned.transform.scale = vec3(0.55);
 	RigidBodyComponent charRbComp;
+	charRbComp.offset = vec3f(0.0f, -48.0f, 0.0f);
 	nPhysics::iShape* CurShape8;
 	nPhysics::sRigidBodyDef def8;
 	def8.Position = transformCompSkinned.transform.position.ToVec();
-	def8.Mass = 110.0f;
+	def8.Mass = 1600.0f;
 	def8.isPlayer = true;
-	CurShape8 = physSystem->GetFactory()->CreateCapsuleShape(10.0f, 4.f, 1);
+	CurShape8 = physSystem->GetFactory()->CreateCapsuleShape(110.0f, 20.f, 1.0f);
 	charRbComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(def8, CurShape8);
 	physSystem->GetWorld()->AddBody(charRbComp.rigidBody);
 	AnimatorComponent animComp;
@@ -779,7 +780,9 @@ void Application::LoadDefaultScene()
 	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
 	animComp.animations["walk_left"] = AssetManager::ImportAnimation("res/models/animations/walk_left.fbx", "walk_left");
 	animComp.animations["walk_right"] = AssetManager::ImportAnimation("res/models/animations/walk_right.fbx", "walk_right");
+	animComp.animations["walk_forward"] = AssetManager::ImportAnimation("res/models/animations/walk_forward.fbx", "walk_forward");
 	AnimationState idleState;
+	idleState.transitionMap["walk_forward"] = AnimationState::AnimTransition(InputKey::KEY_W);
 	idleState.transitionMap["walk_left"] = AnimationState::AnimTransition(InputKey::KEY_A);
 	idleState.transitionMap["walk_right"] = AnimationState::AnimTransition(InputKey::KEY_D);
 	idleState.transitionMap["shoot"] = AnimationState::AnimTransition(InputKey::KEY_SPACE);
@@ -807,6 +810,10 @@ void Application::LoadDefaultScene()
 	AnimationState WalkRightState;
 	WalkRightState.activeAnimation.name = "walk_right";
 	animComp.animationStates["walk_right"] = WalkRightState;
+
+	AnimationState WalkForwardState;
+	WalkForwardState.activeAnimation.name = "walk_forward";
+	animComp.animationStates["walk_forward"] = WalkForwardState;
 
 #pragma endregion
 

@@ -21,7 +21,7 @@ vec3 Transform::GetForwardVector()
 
 	vec4 forwModel = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
 
-	vec3 rotInRadians(glm::radians(rotation.ToVec().x), glm::radians(rotation.ToVec().x), glm::radians(rotation.ToVec().x));
+	vec3 rotInRadians(glm::radians(rotation.ToVec().x), glm::radians(rotation.ToVec().y), glm::radians(rotation.ToVec().z));
 	quat qOrientation(rotInRadians);
 
 	mat4 matOrientation = glm::mat4(qOrientation);
@@ -31,6 +31,8 @@ vec3 Transform::GetForwardVector()
 	// optional normalize
 	vecForwardDirection_WorldSpace = glm::normalize(vecForwardDirection_WorldSpace);
 	glm::vec3 veccForw(vecForwardDirection_WorldSpace.x, vecForwardDirection_WorldSpace.y, vecForwardDirection_WorldSpace.z);
+
+	DEBUG_LOG_TEMP("veccForw: X: %f, Y: %f, Z: %f", veccForw.x, veccForw.y, veccForw.z);
 	return veccForw;
 }
 
