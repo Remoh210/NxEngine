@@ -16,6 +16,24 @@ mat4 Transform::ToMatrix()
 }
 
 
+vec3 Transform::GetForwardVector()
+{
+
+	vec4 forwModel = glm::vec4(0.0f, 0.0f, 1.0f, 1.0f);
+
+	vec3 rotInRadians(glm::radians(rotation.ToVec().x), glm::radians(rotation.ToVec().x), glm::radians(rotation.ToVec().x));
+	quat qOrientation(rotInRadians);
+
+	mat4 matOrientation = glm::mat4(qOrientation);
+
+	vec4 vecForwardDirection_WorldSpace = matOrientation * forwModel;
+
+	// optional normalize
+	vecForwardDirection_WorldSpace = glm::normalize(vecForwardDirection_WorldSpace);
+	glm::vec3 veccForw(vecForwardDirection_WorldSpace.x, vecForwardDirection_WorldSpace.y, vecForwardDirection_WorldSpace.z);
+	return veccForw;
+}
+
 RTTR_REGISTRATION
 {
 		rttr::registration::class_<Transform>("TransformComponent")

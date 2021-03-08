@@ -15,5 +15,7 @@ struct MeshInfo
 		vertexArray->~VertexArray();
 	}
 
+	DrawParams drawParams;
+
 	RTTR_ENABLE();
 };

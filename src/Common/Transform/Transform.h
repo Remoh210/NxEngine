@@ -23,6 +23,8 @@ struct Transform
 
 	mat4 ToMatrix();
 
+	vec3 GetForwardVector();
+
 
 	vec3f position;
 	vec3f rotation;

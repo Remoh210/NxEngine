@@ -7,18 +7,12 @@
 
 namespace ECS
 {
-
-
 	class AnimatorSystem : public EntitySystem
 	{
 	public:
-		AnimatorSystem()
-		{
-
-		}
+		AnimatorSystem() {}
 
 		virtual void tick(class World *world, float deltaTime);
-
 
 		void BoneTransform(
 			SkinnedMeshInfo* skinnedMesh,
@@ -50,8 +44,5 @@ namespace ECS
 	private:
 		//TODO: Move to common place since it also is used in AssetLoader
 		inline glm::mat4 AIMatrixToGLMMatrix(const aiMatrix4x4 &mat);
-
 	};
-
-
 }

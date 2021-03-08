@@ -422,11 +422,9 @@ namespace nPhysics {
 
 	void cBulletRigidBody::SetMatRotation(glm::mat4 rotation)
 	{
-		//btMotionState* state = this->mBody->getMotionState();
-		//btTransform startTransform;
-		//state->getWorldTransform(startTransform);
-		//startTransform.getRotation().m;
-		//this->mBody->setMotionState()
+		btTransform transform = mBody->getCenterOfMassTransform();
+		transform.setRotation(nConvert::ToBullet(rotation));
+		mBody->setCenterOfMassTransform(transform);
 	}
 
 	void cBulletRigidBody::SetMass(float mass)

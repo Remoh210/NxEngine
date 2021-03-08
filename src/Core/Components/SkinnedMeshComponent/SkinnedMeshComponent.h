@@ -2,6 +2,9 @@
 
 #include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
 
+//DrawParams
+#include "rendering/RenderDevice.h"
+
 #include "rttr/registration"
 
 struct SkinnedMeshComponent
@@ -16,6 +19,6 @@ struct SkinnedMeshComponent
 	}
 
 	SkinnedMeshInfo* skinnedMeshInfo;
-
+	
 	RTTR_ENABLE();
 };

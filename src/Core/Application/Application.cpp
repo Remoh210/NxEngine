@@ -8,9 +8,11 @@
 #include <Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h>
 #include <Core/Components/Input/InputComponent.h>
 #include <Core/Components/Physics/RigidBodyComponent.h>
+#include <Core/Components/Character/CharacterComponent.h>
 #include <Core/Systems/RenderSystem.h>
 #include <Core/Systems/Input/InputSystem.h>
 #include <Core/Systems/Animator/AnimatorSystem.h>
+#include <Core/Systems/Character/CharacterSystem.h>
 #include <Core/FileSystem/FileSystem.h>
 #include <Core/Graphics/DebugRenderer/DebugRenderer.h>
 #include <Core/Graphics/Cubemap/CubemapManager.h>
@@ -52,6 +54,8 @@ double Application::gScrollOffset = 0;
 double Application::gXoffset = 0;
 double Application::gYoffset = 0;
 Camera* Application::MainCamera = nullptr;
+Window* Application::window = nullptr;
+bool Application::bPlayingInEditor = false;
 
 
 //void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -102,7 +106,8 @@ int Application::Run()
 
 	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 	ECS::EntitySystem* animatorSystem = world->registerSystem(new ECS::AnimatorSystem());
-	ECS::EntitySystem*  inputSystem = world->registerSystem(new ECS::InputSystem(window));
+	ECS::EntitySystem* inputSystem = world->registerSystem(new ECS::InputSystem(window));
+	ECS::EntitySystem* characterSystem = world->registerSystem(new ECS::CharacterSystem(MainCamera));
 	physicsSystem = world->registerSystem(new ECS::PhysicsSystem());
 
 	AssetManager::SetPhysicsSystem((ECS::PhysicsSystem*)physicsSystem);
@@ -172,9 +177,10 @@ int Application::Run()
 		}
 		ImGui::Text("Camera Speed: %.1f)", MainCamera->MovementSpeed);
 
-		if (ImGui::Button("Show demo"))
+		NString PIE_ButtonText = bPlayingInEditor ? "Stop PIE" : "Play In Editor";
+		if(ImGui::Button(PIE_ButtonText.c_str()))
 		{
-			show_demo_window = true;
+			TogglePIE();
 		}
 
 		if (ImGui::Button("Draw Grid"))
@@ -191,6 +197,11 @@ int Application::Run()
 		if (ImGui::Button("PostFX"))
 		{
 			editorRenderContext->TogglePostFX();
+		}
+
+		if (ImGui::Button("Show demo"))
+		{
+			show_demo_window = true;
 		}
 
 	
@@ -323,27 +334,21 @@ void Application::Initialize()
 	(
 		[this](int xpos, int ypos)
 	{
-		if (firstMouse)
+
+		if (!Application::GetIsPIE())
 		{
-			lastX = xpos;
-			lastY = ypos;
-			firstMouse = false;
+			Application::GetMainCamera()->ProcessMouseMovement(xpos, ypos);
 		}
-
-		float xoffset = xpos - lastX;
-		float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
-
-		lastX = xpos;
-		lastY = ypos;
-
-		Application::GetMainCamera()->ProcessMouseMovement(xoffset, yoffset);
 	}
 	);
 	window->SetMouseScrollCallback
 	(
 		[this](float yoffset)
 	{
-		Application::GetMainCamera()->ProcessMouseScroll(yoffset);
+		if (!Application::GetIsPIE())
+		{
+			Application::GetMainCamera()->ProcessMouseScroll(yoffset);
+		}
 	}
 	);
 
@@ -690,9 +695,6 @@ void Application::LoadDefaultScene()
 	physSystem->GetWorld()->AddBody(rb5.rigidBody);
 
 
-
-
-
 	StaticMeshComponent renderableMesh6;
 	renderableMesh6.bIsVisible = true;
 	nPhysics::iShape* CurShape6;
@@ -719,7 +721,6 @@ void Application::LoadDefaultScene()
 
 	rb6.rigidBody = physSystem->GetFactory()->CreateRigidBody(def6, CurShape6);
 	physSystem->GetWorld()->AddBody(rb6.rigidBody);
-
 
 
 
@@ -751,7 +752,11 @@ void Application::LoadDefaultScene()
 #pragma region Skinned Mesh
 	SkinnedMeshComponent skinnedMesh;
 	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal("res/models/chan.fbx");
-	skinnedMesh.skinnedMeshInfo->mesh->material->textures.clear();
+	//skinnedMesh.skinnedMeshInfo->mesh->material->textures.clear();
+	skinnedMesh.skinnedMeshInfo->mesh->drawParams.faceCulling = FACE_CULL_BACK;
+	skinnedMesh.skinnedMeshInfo->mesh->drawParams.depthFunc = DRAW_FUNC_LESS;
+	skinnedMesh.skinnedMeshInfo->mesh->drawParams.shouldWriteDepth = true;
+
 	//skinnedMesh.meshAssetFile = TEST_MODEL_FILE7;
 	//skinnedMesh.shader = ShaderManager::GetMainShader();
 	//skinnedMesh.numInst = 1;
@@ -760,6 +765,15 @@ void Application::LoadDefaultScene()
 	transformCompSkinned.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
 	transformCompSkinned.transform.scale = vec3(0.2);
+	RigidBodyComponent charRbComp;
+	nPhysics::iShape* CurShape8;
+	nPhysics::sRigidBodyDef def8;
+	def8.Position = transformCompSkinned.transform.position.ToVec();
+	def8.Mass = 110.0f;
+	def8.isPlayer = true;
+	CurShape8 = physSystem->GetFactory()->CreateCapsuleShape(10.0f, 4.f, 1);
+	charRbComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(def8, CurShape8);
+	physSystem->GetWorld()->AddBody(charRbComp.rigidBody);
 	AnimatorComponent animComp;
 	animComp.animations["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
 	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
@@ -774,6 +788,8 @@ void Application::LoadDefaultScene()
 	animComp.animationStates["idle"] = idleState;
 	//idleState.nextAnimation.name = "shoot";
 	//idleState.transitionKey = InputKey::KEY_SPACE;
+	CharacterComponent characterComponent;
+	characterComponent.movementSpeed = 10.0f;
 
 
 	animComp.currentState = idleState;
@@ -826,6 +842,8 @@ void Application::LoadDefaultScene()
 	ent8->assign<InputComponent>(InputCompSkinned);
 	ent8->assign<SkinnedMeshComponent>(skinnedMesh);
 	ent8->assign<AnimatorComponent>(animComp);
+	ent8->assign<CharacterComponent>(characterComponent);
+	ent8->assign<RigidBodyComponent>(charRbComp);
 
 	//SceneManager::currentScene.sceneObjects.push_back(ent);
 	//SceneManager::currentScene.sceneObjects.push_back(ent2);
@@ -925,6 +943,7 @@ void Application::LoadDefaultScene()
 // ---------------------------------------------------------------------------------------------------------
 void Application::processInput(GLFWwindow *window)
 {
+	//if (GetIsPIE()) { return; }
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, true);
 
@@ -1016,6 +1035,21 @@ void Application::GUI_ShowMenuBar()
 
 
 
+
+void Application::TogglePIE()
+{
+	if (bPlayingInEditor)
+	{
+		bPlayingInEditor = false;
+		glfwSetInputMode(window->GetWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	}
+	else
+	{
+		bPlayingInEditor = true;
+		glfwSetInputMode(window->GetWindowHandle(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	}
+
+}
 
 void Application::ShowContentWindow()
 {
@@ -1231,6 +1265,8 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 	//LOAD MODELS
 	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
 	{
+		if (Application::GetIsPIE()) { return; }
+
 		app->GetMainCamera()->ToggleControls();
 		cursor = !cursor;
 		glfwSetInputMode(window, GLFW_CURSOR, cursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);

@@ -110,27 +110,29 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 		ImGui::SetNextWindowPos(SceneViewPos);
 		
 	}
-	ImGui::Begin("Main View", nullptr, ImGuiTabBarFlags_None);
-	ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
-	ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
-	if (ImGui::BeginTabItem("Scene"))
-	{
-		ImVec2 newSize = ImGui::GetWindowSize();
-		if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
-		{
-			SceneViewSize = newSize;
-			//DEBUG_LOG_TEMP("RESIZE()");
-			//editorContext->ResizeRenderTargets(newSize.x, newSize.y);
 
-		}
-		ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
-		//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
-		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::EndTabItem();
-	}
+	//
+	//ImGui::Begin("Main View", nullptr, ImGuiTabBarFlags_None);
+	//ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
+	//ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
+	//if (ImGui::BeginTabItem("Scene"))
+	//{
+	//	ImVec2 newSize = ImGui::GetWindowSize();
+	//	if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
+	//	{
+	//		SceneViewSize = newSize;
+	//		//DEBUG_LOG_TEMP("RESIZE()");
+	//		//editorContext->ResizeRenderTargets(newSize.x, newSize.y);
 
-	ImGui::EndTabBar();
-	ImGui::End();
+	//	}
+	//	ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
+	//	//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
+	//	ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
+	//	ImGui::EndTabItem();
+	//}
+
+	//ImGui::EndTabBar();
+	//ImGui::End();
 
 
 

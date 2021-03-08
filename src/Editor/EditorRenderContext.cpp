@@ -330,7 +330,7 @@ void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
 		//VertexArray->UpdateBuffer(7, transformsInvT, numTransforms * sizeof(mat4));
 
 		mRenderDevice->Draw(renderTarget->GetId(), skinnedShader->GetId(), VertexArray->GetId(),
-			drawParams, 1, VertexArray->GetNumIndices());
+			mesh->drawParams, 1, VertexArray->GetNumIndices());
 
 		it->second.clear();
 	}

@@ -4,6 +4,7 @@
 #include "Common/Common.h"
 #include "Common/dataStructs/NxArray.h"
 #include "rttr/registration"
+#include <cmath>
 
 class vec3f
 {

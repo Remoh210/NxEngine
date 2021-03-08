@@ -96,31 +96,7 @@ public:
     }
 
     // Processes input received from a mouse input system. Expects the offset value in both the x and y direction.
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true)
-    {
-		if (!bControlled)
-		{
-			return;
-		}
-
-        xoffset *= MouseSensitivity;
-        yoffset *= MouseSensitivity;
-
-        Yaw   += xoffset;
-        Pitch += yoffset;
-
-        // Make sure that when pitch is out of bounds, screen doesn't get flipped
-        if (constrainPitch)
-        {
-            if (Pitch > 89.0f)
-                Pitch = 89.0f;
-            if (Pitch < -89.0f)
-                Pitch = -89.0f;
-        }
-
-        // Update Front, Right and Up Vectors using the updated Euler angles
-        updateCameraVectors();
-    }
+	void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
 
     // Processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     void ProcessMouseScroll(float yoffset)

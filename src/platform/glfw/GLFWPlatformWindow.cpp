@@ -8,6 +8,12 @@ std::function<void (int, int)> GLFWPlatformWindow::MouseCallbackFunc = [](int, i
 std::function<void (int, int)> GLFWPlatformWindow::FrameBufferResizeCallbackBackFunc = [](int, int){};
 std::function<void(float yoffset)> GLFWPlatformWindow::MouseScrollCallbackFunc = [](float) {};
 
+float GLFWPlatformWindow::lastX = 0;
+float GLFWPlatformWindow::lastY = 0;
+float GLFWPlatformWindow::horizontalInputAxis = 0;
+float GLFWPlatformWindow::verticalInputAxis   = 0;
+bool  GLFWPlatformWindow::bFirstMouse = true;
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	int verMaj = GlobalSettings::GetAPIVersionMajor();
@@ -20,7 +26,20 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void GLFWPlatformWindow::GLFWMouseCallback(GLFWwindow* window, double xpos, double ypos)
 {
-	GLFWPlatformWindow::MouseCallbackFunc(xpos, ypos);
+	if (bFirstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		bFirstMouse = false;
+	}
+
+	horizontalInputAxis = xpos - lastX;
+	verticalInputAxis = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	GLFWPlatformWindow::MouseCallbackFunc(horizontalInputAxis, verticalInputAxis);
 }
 
 void GLFWPlatformWindow::GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -83,6 +102,8 @@ GLFWPlatformWindow::GLFWPlatformWindow(uint32 width, uint32 height, const char* 
 	glfwWindowHint(GLFW_GREEN_BITS, 32);
 	glfwWindowHint(GLFW_BLUE_BITS, 32);
 	glfwWindowHint(GLFW_REFRESH_RATE, 60);
+
+	bFirstMouse = false;
 }
 
 void GLFWPlatformWindow::Resize(int width, int height)

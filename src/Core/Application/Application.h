@@ -31,6 +31,7 @@ public:
 	}
 
 	static Camera* GetMainCamera();
+	static inline bool GetIsPIE() { return bPlayingInEditor; };
 
 	void ResizeWindow(uint32 width, uint32 height);
 	void processInput(GLFWwindow *window);
@@ -57,12 +58,16 @@ private:
 
 	void GUI_ShowMenuBar();
 
+	static void TogglePIE();
+
 	NxMap<string, string> MapModelPaths;
 
 	bool isAppRunning;
 	static uint32 numInstances;
 	static Camera* MainCamera;
-	Window* window;
+	static Window* window;
+	static bool bPlayingInEditor;
+	
 
 
 	uint32 windowWidth;
@@ -83,6 +88,7 @@ private:
 	RenderTarget* editorRenderTarget;
 	EditorRenderContext* editorRenderContext;
 	RenderDevice* renderDevice;
+	
 
 	ECS::EntitySystem* physicsSystem;
 };

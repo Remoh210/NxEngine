@@ -4,16 +4,19 @@
 #include "Core/Components/Input/InputComponent.h"
 
 
-namespace ECS {
-
-
+namespace ECS 
+{
 	void AnimatorSystem::tick(class World *world, float deltaTime)
 	{
-		world->each<TransformComponent, 
+		world->each
+			<
+			TransformComponent, 
 			SkinnedMeshComponent, 
 			AnimatorComponent,
-		    InputComponent>
-			([&](Entity *ent, 
+		    InputComponent
+			>
+			([&](
+			Entity *ent, 
 			ComponentHandle<TransformComponent> transform,
 			ComponentHandle<SkinnedMeshComponent> skinnedMesh, 
 			ComponentHandle<AnimatorComponent> animatorComp,
@@ -393,4 +396,4 @@ namespace ECS {
 			mat.a3, mat.b3, mat.c3, mat.d3,
 			mat.a4, mat.b4, mat.c4, mat.d4);
 	}
-}
+}// namespace ECS
