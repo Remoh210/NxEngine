@@ -44,7 +44,4 @@ namespace ECS
 	{
 		physicsWorld->~iPhysicsWorld();
 	}
-
-
-
 }

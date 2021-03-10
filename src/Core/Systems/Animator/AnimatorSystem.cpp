@@ -1,7 +1,6 @@
 #include "AnimatorSystem.h"
 #include "Common/CommonTypes.h"
-#include "Common/Input/Input.h"
-#include "Core/Components/Input/InputComponent.h"
+#include "Core/Input/InputManager.h"
 
 
 namespace ECS 
@@ -12,15 +11,14 @@ namespace ECS
 			<
 			TransformComponent, 
 			SkinnedMeshComponent, 
-			AnimatorComponent,
-		    InputComponent
+			AnimatorComponent
+		 
 			>
 			([&](
 			Entity *ent, 
 			ComponentHandle<TransformComponent> transform,
 			ComponentHandle<SkinnedMeshComponent> skinnedMesh, 
-			ComponentHandle<AnimatorComponent> animatorComp,
-			ComponentHandle<InputComponent> InputComp) -> void
+			ComponentHandle<AnimatorComponent> animatorComp) -> void
 		{
 			AnimationInfo* curAnim = animatorComp->animations[animatorComp->currentState.activeAnimation.name];
 			animatorComp->currentState.activeAnimation.totalTime = GetDurationInSec(curAnim);
@@ -43,7 +41,7 @@ namespace ECS
 			{
 				for (auto it : animatorComp->currentState.transitionMap)
 				{
-					if (it.second.ShouldTansit(InputComp->GetKeyPressed()))
+					if ((InputManager::GetKeyPressed(it.second.conditionKey)))
 					{
 						animatorComp->currentState = animatorComp->animationStates[it.first];
 						return;
@@ -53,7 +51,7 @@ namespace ECS
 			
 			bool bHasExitTime = animatorComp->currentState.activeAnimation.bHasExitTime;
 			bool bHasExited = animatorComp->currentState.activeAnimation.bExited;
-			if (InputComp->GetKeyPressed() == InputKey::KEY_NONE)
+			if (InputManager::GetKeyPressed(InputKey::KEY_NONE))
 			{
 				if (bHasExitTime && !bHasExited) { return; }
 

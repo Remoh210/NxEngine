@@ -4,6 +4,7 @@
 #include <GLFW/glfw3.h>
 #include <Core/Camera/Camera.h>
 #include "Common/Common.h"
+#include "Common/Input/InputTypes.h"
 
 #include <functional>
 
@@ -20,14 +21,23 @@ public:
     void Resize(int width, int height);
     void ChangeTitle(const char* title);
 
+	void UpdateInput();
     void Present();
     inline bool ShouldClose() { return glfwWindowShouldClose(window); };
     inline WindowHandle GetWindowHandle() { return window; };
     inline uint32 GetHeight() { return mHeight; }
     inline uint32 GetWidth() { return mWidth; }
 
-	static float GetHorizontalInputAxis() { return horizontalInputAxis; };
-	static float GetVerticalInputAxis()   { return verticalInputAxis; };
+	static float GetHorizontalInputAxis() 
+	{ 
+		return horizontalInputAxis; 
+	};
+	static float GetVerticalInputAxis()   
+	{ 
+		return verticalInputAxis; 
+	};
+
+	static bool GetKeyPressed(InputKey keyIn) { return keyIn == keyPressed; };
 
 	//inline void SetMSAA(uint32 numSamples) { glfwWindowHint(GLFW_SAMPLES, numSamples); }
 
@@ -61,4 +71,7 @@ private:
 
 	static float horizontalInputAxis;
 	static float verticalInputAxis;
+	static InputKey keyPressed;
+	
+	void ProcessKeyInput();
 };

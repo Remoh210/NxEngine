@@ -13,6 +13,23 @@ float GLFWPlatformWindow::lastY = 0;
 float GLFWPlatformWindow::horizontalInputAxis = 0;
 float GLFWPlatformWindow::verticalInputAxis   = 0;
 bool  GLFWPlatformWindow::bFirstMouse = true;
+InputKey GLFWPlatformWindow::keyPressed = InputKey::KEY_NONE;
+
+void GLFWPlatformWindow::ProcessKeyInput()
+{
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		keyPressed = InputKey::KEY_A;
+	else if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		keyPressed = InputKey::KEY_W;
+	else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		keyPressed = InputKey::KEY_S;
+	else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		keyPressed = InputKey::KEY_D;
+	else if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		keyPressed = InputKey::KEY_SPACE;
+	else
+		keyPressed = InputKey::KEY_NONE;
+}
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
@@ -33,13 +50,27 @@ void GLFWPlatformWindow::GLFWMouseCallback(GLFWwindow* window, double xpos, doub
 		bFirstMouse = false;
 	}
 
-	horizontalInputAxis = xpos - lastX;
-	verticalInputAxis = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
 
 	lastX = xpos;
 	lastY = ypos;
 
-	GLFWPlatformWindow::MouseCallbackFunc(horizontalInputAxis, verticalInputAxis);
+	//normalized
+	//horizontalInputAxis = xpos - lastX;
+	//verticalInputAxis = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	int winHeight;
+	int winWidth;
+	glfwGetWindowSize(window, &winWidth, &winHeight);
+
+	float normalizedY = 2.0 * yoffset / winHeight;
+	float normalizedX = 2.0 * xoffset / winWidth;
+
+	horizontalInputAxis = normalizedX;
+	verticalInputAxis = normalizedY;
+
+	GLFWPlatformWindow::MouseCallbackFunc(xoffset, yoffset);
 }
 
 void GLFWPlatformWindow::GLFWFrameBufferResizeCallback(GLFWwindow* window, int width, int height)
@@ -111,8 +142,19 @@ void GLFWPlatformWindow::Resize(int width, int height)
     
 }
 
+void GLFWPlatformWindow::UpdateInput()
+{
+	horizontalInputAxis = 0.0f;
+	verticalInputAxis = 0.0f;
+
+	glfwPollEvents();
+	ProcessKeyInput();
+}
+
 void GLFWPlatformWindow::Present()
 {
+
+
     glfwSwapBuffers(window);
 }
 

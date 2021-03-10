@@ -32,7 +32,6 @@ vec3 Transform::GetForwardVector()
 	vecForwardDirection_WorldSpace = glm::normalize(vecForwardDirection_WorldSpace);
 	glm::vec3 veccForw(vecForwardDirection_WorldSpace.x, vecForwardDirection_WorldSpace.y, vecForwardDirection_WorldSpace.z);
 
-	DEBUG_LOG_TEMP("veccForw: X: %f, Y: %f, Z: %f", veccForw.x, veccForw.y, veccForw.z);
 	return veccForw;
 }
 

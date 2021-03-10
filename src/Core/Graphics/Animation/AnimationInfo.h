@@ -1,5 +1,5 @@
 #pragma once
-#include "Common/Input/Input.h"
+#include "Core/Input/InputManager.h"
 
 
 class AnimationState

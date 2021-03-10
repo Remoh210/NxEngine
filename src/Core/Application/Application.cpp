@@ -6,11 +6,9 @@
 #include <Core/Components/TransformComponent/TransformComponent.h>
 #include <Core/Components/LightComponent/LightComponent.h>
 #include <Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h>
-#include <Core/Components/Input/InputComponent.h>
 #include <Core/Components/Physics/RigidBodyComponent.h>
 #include <Core/Components/Character/CharacterComponent.h>
 #include <Core/Systems/RenderSystem.h>
-#include <Core/Systems/Input/InputSystem.h>
 #include <Core/Systems/Animator/AnimatorSystem.h>
 #include <Core/Systems/Character/CharacterSystem.h>
 #include <Core/FileSystem/FileSystem.h>
@@ -20,6 +18,7 @@
 #include <Core/Graphics/Animation/AnimationInfo.h>
 #include <Core/Application/SceneManager/SceneManager.h>
 #include <Core/Application/AssetManager/AssetManager.h>
+#include <Core/Input/InputManager.h>
 #include <Core/Application/Settings/GlobalSettings.h>
 #include <Core/Systems/Physics/PhysicsSystem.h>
 #include <Core/Time/NxTime.h>
@@ -106,12 +105,11 @@ int Application::Run()
 
 	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 	ECS::EntitySystem* animatorSystem = world->registerSystem(new ECS::AnimatorSystem());
-	ECS::EntitySystem* inputSystem = world->registerSystem(new ECS::InputSystem(window));
 	ECS::EntitySystem* characterSystem = world->registerSystem(new ECS::CharacterSystem(MainCamera));
 	physicsSystem = world->registerSystem(new ECS::PhysicsSystem());
 
 	AssetManager::SetPhysicsSystem((ECS::PhysicsSystem*)physicsSystem);
-
+	InputManager::Initialize(window);
 	DebugRenderer::SetContext(editorRenderContext);
 	DebugRenderer::SetShader(renderDevice);
 
@@ -266,7 +264,7 @@ int Application::Run()
 		EditorUI::Draw();
 	    //InputManager::Update()
 		
-		glfwPollEvents();
+		window->UpdateInput();
 		window->Present();
 		processInput(glfwGetCurrentContext());
 		GLFWwindow* backup_current_context = glfwGetCurrentContext();
@@ -334,11 +332,7 @@ void Application::Initialize()
 	(
 		[this](int xpos, int ypos)
 	{
-
-		if (!Application::GetIsPIE())
-		{
-			Application::GetMainCamera()->ProcessMouseMovement(xpos, ypos);
-		}
+		Application::GetMainCamera()->ProcessMouseMovement(xpos, ypos);
 	}
 	);
 	window->SetMouseScrollCallback
@@ -761,7 +755,6 @@ void Application::LoadDefaultScene()
 	//skinnedMesh.shader = ShaderManager::GetMainShader();
 	//skinnedMesh.numInst = 1;
 	TransformComponent transformCompSkinned;
-	InputComponent InputCompSkinned;
 	transformCompSkinned.transform.position = vec3(90.1f, 30.0f, -40.0f);
 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
 	transformCompSkinned.transform.scale = vec3(0.55);
@@ -846,7 +839,6 @@ void Application::LoadDefaultScene()
 
 	ECS::Entity* ent8 = world->create();
 	ent8->assign<TransformComponent>(transformCompSkinned);
-	ent8->assign<InputComponent>(InputCompSkinned);
 	ent8->assign<SkinnedMeshComponent>(skinnedMesh);
 	ent8->assign<AnimatorComponent>(animComp);
 	ent8->assign<CharacterComponent>(characterComponent);

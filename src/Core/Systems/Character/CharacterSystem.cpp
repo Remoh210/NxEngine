@@ -3,7 +3,7 @@
 #include "Core/Components/TransformComponent/TransformComponent.h"
 #include "Core/Components/Physics/RigidBodyComponent.h"
 #include "Core/Components/Character/CharacterComponent.h"
-#include "Core/Components/Input/InputComponent.h"
+#include "Core/Input/InputManager.h"
 
 #include "Core/Application/Application.h"
 
@@ -14,13 +14,11 @@ namespace ECS
 		world->each<
 			TransformComponent,
 			RigidBodyComponent,
-			InputComponent,
 			CharacterComponent>
 			([&](
 				Entity *ent,
 				ComponentHandle<TransformComponent> trantransformComp,
 				ComponentHandle<RigidBodyComponent> rigidbodyComp,
-				ComponentHandle<InputComponent> inputComp,
 				ComponentHandle<CharacterComponent> characterComp) -> void
 		{
 			if (!Application::GetIsPIE())
@@ -31,11 +29,11 @@ namespace ECS
 			vec3 oldVelVec = rigidbodyComp->rigidBody->GetVelocity();
 			vec3 velVec = vec3(0.0f);
 			//Move Forward
-			if (inputComp->GetKeyPressed(InputKey::KEY_W))
+			if (InputManager::GetKeyPressed(InputKey::KEY_W))
 			{
 				velVec = trantransformComp->transform.GetForwardVector() * characterComp->movementSpeed * 80.f;
 			}
-			else if (inputComp->GetKeyPressed(InputKey::KEY_S))
+			else if (InputManager::GetKeyPressed(InputKey::KEY_S))
 			{
 				velVec = -trantransformComp->transform.GetForwardVector() * characterComp->movementSpeed * 80.f;
 				
@@ -45,11 +43,6 @@ namespace ECS
 
 			vec3 position = trantransformComp->transform.position.ToVec();
 			vec3 camRelativePos = characterComp->cameraRelativePosition.ToVec();
-
-
-			//camera->Position = position +  vec3(2.0f, 34.f, 15.0f)/*characterComp->cameraRelativePosition.ToVec()*/;
-
-			camera->ProcessMouseMovement(inputComp->GetAxis("Horizontal"), inputComp->GetAxis("Vertical"));
 
 
 			//camera.updateCameraVectors();
