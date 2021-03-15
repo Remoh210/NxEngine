@@ -6,7 +6,7 @@
 #include "rendering/Window.h"
 
 
-static class InputManager
+class InputManager
 {
 public:
 	static void Initialize(Window* windowIn);
