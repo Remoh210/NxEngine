@@ -131,10 +131,11 @@ void EditorRenderContext::SetLights(Shader* shader)
 		lightPositions.push_back(light.second);
 	}
 
-	shader->SetUniform1iv("lightTypes[0]", lightTypes);
-	shader->SetUniform3fv("lightColors[0]", lightColors);
-	shader->SetUniform3fv("lightPositions[0]", lightPositions);
-	shader->SetUniform3fv("lightDirections[0]", lightDirections);
+	bool bModernApi = GlobalSettings::GetAPIVersionConc() > 30;
+	shader->SetUniform1iv(bModernApi ? "lightTypes[0]"      : "lightTypes" , lightTypes);
+	shader->SetUniform3fv(bModernApi ? "lightColors[0]"     : "lightColors", lightColors);
+	shader->SetUniform3fv(bModernApi ? "lightPositions[0]"  : "lightColors", lightPositions);
+	shader->SetUniform3fv(bModernApi ? "lightDirections[0]" : "lightColors", lightDirections);
 
 	//PBRShader->SetUniform1f("uAmbient", ambient);
 	shader->SetSampler3D("irradianceMap", *IrradMap, *cubemapSampler, 11);
@@ -309,7 +310,9 @@ void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
 		if (it->first->vecFinalTransformation.size() > 0)
 		{
 			skinnedShader->SetUniform1i("numBonesUsed", it->first->vecFinalTransformation.size());
-			skinnedShader->SetUniformMat4v("bones[0]", it->first->vecFinalTransformation);
+
+			NString boneArrayUniName = GlobalSettings::GetAPIVersionConc() > 30 ? "bones[0]" : "bones";
+			skinnedShader->SetUniformMat4v(boneArrayUniName, it->first->vecFinalTransformation);
 		}
 		else
 		{

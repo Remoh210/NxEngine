@@ -33,5 +33,11 @@ bool GlobalSettings::LoadSettings(NString configFile)
 	APIVersionMajor = doc["API"]["Version Major"].GetInt();
 	APIVersionMinor = doc["API"]["Version Minor"].GetInt();
 
+	// Convert both the integers to string 
+	NString s1 = std::to_string(APIVersionMajor);
+	NString s2 = std::to_string(APIVersionMinor);
+	NString s_conc = s1 + s2;
+	APIVersionConc = std::stoi(s_conc);
+
 	return true;
 }
