@@ -15,7 +15,7 @@ public:
 	static int GetAPIVersionMinor() { return APIVersionMinor; };
 
 	//Concatenated
-	static int GetAPIVersionConc() { return APIVersionConc; };
+	inline static int GetAPIVersionConc() { return APIVersionConc; };
 
 private:
 	

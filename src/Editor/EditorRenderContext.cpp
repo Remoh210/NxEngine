@@ -131,7 +131,7 @@ void EditorRenderContext::SetLights(Shader* shader)
 		lightPositions.push_back(light.second);
 	}
 
-	bool bModernApi = GlobalSettings::GetAPIVersionConc() > 30;
+	bool bModernApi = GlobalSettings::GetAPIVersionConc() > 33;
 	shader->SetUniform1iv(bModernApi ? "lightTypes[0]"      : "lightTypes" , lightTypes);
 	shader->SetUniform3fv(bModernApi ? "lightColors[0]"     : "lightColors", lightColors);
 	shader->SetUniform3fv(bModernApi ? "lightPositions[0]"  : "lightColors", lightPositions);
@@ -311,7 +311,7 @@ void EditorRenderContext::DrawSkeletal(RenderTarget* renderTarget)
 		{
 			skinnedShader->SetUniform1i("numBonesUsed", it->first->vecFinalTransformation.size());
 
-			NString boneArrayUniName = GlobalSettings::GetAPIVersionConc() > 30 ? "bones[0]" : "bones";
+			NString boneArrayUniName = GlobalSettings::GetAPIVersionConc() > 33 ? "bones[0]" : "bones";
 			skinnedShader->SetUniformMat4v(boneArrayUniName, it->first->vecFinalTransformation);
 		}
 		else

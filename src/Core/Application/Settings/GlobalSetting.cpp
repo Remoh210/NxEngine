@@ -12,8 +12,9 @@
 int GlobalSettings::windowWidth     = 1600;
 int GlobalSettings::windowHeight    = 1000;
 
-int GlobalSettings::APIVersionMajor = 3;
-int GlobalSettings::APIVersionMinor = 3;
+int GlobalSettings::APIVersionMajor = -1;
+int GlobalSettings::APIVersionMinor = -1;
+int GlobalSettings::APIVersionConc  = -1;
 
 bool GlobalSettings::LoadSettings(NString configFile)
 {
