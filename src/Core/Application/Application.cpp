@@ -219,22 +219,9 @@ int Application::Run()
 
 		ImGui::End();
 
-
-		//// Scene Tree
-		//{
-		//	ShowSceneObjectList(ecs);
-		//}
-		//ImGui::SameLine();
-		//Inspector
 		{
 			ShowInspector();
 		}
-		//ImGui::NewLine();
-		////Content Window
-		//{
-		//	ShowContentWindow(ecs);
-		//}
-
 
 		//// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
 		if (show_demo_window)
@@ -262,7 +249,6 @@ int Application::Run()
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		EditorUI::DrawEditorView(editorRenderContext);
 		EditorUI::Draw();
-	    //InputManager::Update()
 		
 		window->UpdateInput();
 		window->Present();
@@ -281,7 +267,6 @@ int Application::Run()
 	//glfwDestroyWindow(window);
 	glfwTerminate();
 
-	
 
 	return 0;
 }
@@ -307,7 +292,7 @@ Application::Application(float Width, float Height)
 	windowHeight = Height;
 	if (!MainCamera)
 	{
-		MainCamera = new Camera(glm::vec3(0.0f, 10.0f, 16.0f));
+		MainCamera = new Camera(glm::vec3(0.0f, 15.0f, 43.0f));
 		MainCamera->bControlled = false;
 		MainCamera->MovementSpeed = 50.0f;
 	}
@@ -413,11 +398,7 @@ void Application::Initialize()
 	//Init Shaders**********************************************************
 
 	editorSampler = new Sampler(renderDevice, SamplerFilter::FILTER_LINEAR_MIPMAP_LINEAR, FILTER_LINEAR_MIPMAP_LINEAR);
-	//DrawParams drawParams;
-	//drawParams.primitiveType = PRIMITIVE_TRIANGLES;
-	//drawParams.faceCulling = FACE_CULL_BACK;
-	//drawParams.shouldWriteDepth = true;
-	//drawParams.depthFunc = DRAW_FUNC_LESS;
+
 
 	DrawParams drawParams;
 	drawParams.primitiveType = PRIMITIVE_TRIANGLES ;
@@ -450,8 +431,6 @@ void Application::Initialize()
 	AssetManager::SetRenderDevice(renderDevice);
 	
 	
-	
-
 
 	//ECS
 	world = ECS::World::createWorld();
@@ -609,9 +588,10 @@ void Application::LoadDefaultScene()
 	renderableMesh3.meshAssetFile = "Mesh3";
 	TransformComponent transformComp3;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
-	transformComp3.transform.position = vec3(15.1f, 50.0f, -40.0f);
+	transformComp3.transform.position = vec3(-30.1f, 20.0f, -40.0f);
 	transformComp3.transform.rotation = vec3(0 , 0.0f, 0.f);
-	//transformComp3.transform.scale = vec3(0.9);
+	transformComp3.rotSpeed = 15.0f;
+	transformComp3.transform.scale = vec3(0.9);
 	RigidBodyComponent rbPistol;
 	NxArray<MeshInfo*> meshsesToAdd;
 	
@@ -646,13 +626,9 @@ void Application::LoadDefaultScene()
 	renderableMesh4.shader = ShaderManager::GetMainShader();
 	renderableMesh4.meshes.push_back(pbrTestMesh);
 	TransformComponent transformComp4;
-	transformComp4.transform.position = vec3(0, 0, -40);
-	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp4.transform.position = vec3(20, 20, -40);
 	transformComp4.transform.scale = vec3(5);
-
-
-
-
+	transformComp4.rotSpeed = 20.2f;
 
 
 
@@ -722,8 +698,9 @@ void Application::LoadDefaultScene()
 
 	NxArray<MeshInfo*> meshsesToAdd7;
 	nPhysics::iRigidBody* rbToAdd7 = nullptr;
-	//AssetManager::ImportModelGenerateCollider(meshsesToAdd7, rbToAdd7, TEST_MODEL_FILE7);
-	renderableMesh7.meshes = meshsesToAdd7;
+	//nPhysics::iShape* CurShape6; 
+	
+	renderableMesh7.meshes = AssetManager::ImportModel(TEST_MODEL_FILE7);
 
 	renderableMesh7.meshAssetFile = TEST_MODEL_FILE7;
 	renderableMesh7.shader = ShaderManager::GetMainShader();
@@ -731,7 +708,8 @@ void Application::LoadDefaultScene()
 	TransformComponent transformComp7;
 	transformComp7.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-	transformComp7.transform.scale = vec3(40.0);
+	transformComp7.transform.scale = vec3(50.0);
+	transformComp7.rotSpeed = 10.0f;
 	//RigidBodyComponent rigidBComp;
 
 
@@ -1091,9 +1069,6 @@ void Application::ShowContentWindow()
 }
 
 
-//bool showInspector = false;
-//EntityHandle selectedEntity;
-
 void Application::ShowSceneObjectList()
 {
 	//ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 5.0f);
@@ -1239,16 +1214,6 @@ void Application::scroll_callback(GLFWwindow* window, double xoffset, double yof
 }
 
 
-//// glfw: whenever the window size changed (by OS or user resize) this callback function executes
-//// ---------------------------------------------------------------------------------------------
-//void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-//{
-//	// make sure the viewport matches the new window dimensions; note that width and 
-//	// height will be significantly larger than specified on retina displays.
-//	glViewport(0, 0, width, height);
-//}
-
-
 void resize_callback(GLFWwindow * window, int width, int height)
 {
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
@@ -1261,7 +1226,6 @@ void key_callback(GLFWwindow * window, int key, int scancode, int action, int mo
 {
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
 	app->processInput(window);
-	//LOAD MODELS
 	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
 	{
 		if (Application::GetIsPIE()) { return; }
@@ -1311,4 +1275,3 @@ bool Application::loadTextFileWithIncludes(NString& output, const NString& fileN
 	output = ss.str();
 	return true;
 }
-

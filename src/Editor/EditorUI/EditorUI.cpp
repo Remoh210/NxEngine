@@ -138,11 +138,11 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 
 
 	//ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Dockable Window"))
-	{
-		ImGui::TextUnformatted("Test");
-	}
-	ImGui::End();
+	//if (ImGui::Begin("Dockable Window"))
+	//{
+	//	ImGui::TextUnformatted("Test");
+	//}
+	//ImGui::End();
 
 	//HACK
 	if (init)
@@ -343,7 +343,6 @@ void reflectArray(rttr::variant_sequential_view view, NString propName, rttr::va
 
 				if (item.is_sequential_container())
 				{
-					//////////////
 					auto view = item.create_sequential_view();
 					reflectArray(view, propName, min, max);
 				}
