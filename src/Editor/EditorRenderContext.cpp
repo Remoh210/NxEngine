@@ -87,11 +87,11 @@ void EditorRenderContext::Flush()
 		screenShader->SetSampler("Texture", *sceneRenderTarget->GetTexture(), *screenTextureSampler, 0);
 		finalTexture = sceneRenderTarget->GetTexture();
 	}
-
 	
-
-	mRenderDevice->Draw(mRenderTarget->GetId(), screenShader->GetId(), 
-		screenQuadVAO->GetId(), screenQuadDrawParams, 1, screenQuadVAO->GetNumIndices());
+	mRenderDevice->Clear(mRenderTarget->GetId(), true, true, true, clearColor, 0);
+	//mRenderDevice->SwitchFBO(mRenderTarget->GetId(), screenQuadDrawParams);
+	//mRenderDevice->Draw(mRenderTarget->GetId(), screenShader->GetId(), 
+	//	screenQuadVAO->GetId(), screenQuadDrawParams, 1, screenQuadVAO->GetNumIndices());
 }
 
 void EditorRenderContext::RenderSkybox(RenderTarget* renderTarget)

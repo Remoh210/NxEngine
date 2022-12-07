@@ -48,7 +48,6 @@ public:
 		transforms.push_back(transform);
 		VertexArray->UpdateBuffer(4, &transforms[0], transforms.size() * sizeof(mat4));
 		Draw(*InShader, *VertexArray, drawParamsIn, 1);
-
 	}
 
 	void RenderSkybox(RenderTarget* renderTarget);
@@ -58,7 +57,6 @@ public:
 	void GenerateBRDF();
 
 	void GeneratePBRMapsFromTexture(NString HDRtexture);
-
 
 	inline void RenderLight(ECS::ComponentHandle<LightComponent> lightComp, vec3 positionIn)
 	{
@@ -133,20 +131,17 @@ private:
 	Texture* chromaTexture;
 	RenderTarget* chromaRenderTarget;
 	Texture* finalTexture;
-
-
+	
 	//Grid VO
 	Transform editorGridTransform;
 	VertexArray* editorGridVA;
 	DrawParams editorGridDrawParams;
 	float editorGridSlices;
 	float editorGridScale;
-
-
+	
 	//Grid VO
 	DrawParams impostorDrawParams;
-
-
+	
 	//
 	VertexArray* cubeVA;
 	Cubemap* SkyboxTex;

@@ -246,6 +246,9 @@ public:
 	uint32 GetVersion();
 	NString GetShaderVersion();
 
+	//Set a new FBO without rendering anything to it 
+	void SwitchFBO(uint32 fbo, const DrawParams& drawParams);
+	
 	static GLint GetOpenGLFormat(PixelFormat format);
 	static GLint GetOpenGLInternalFormat(PixelFormat format, bool bCompress);
 private:

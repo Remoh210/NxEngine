@@ -1,6 +1,7 @@
 #include "EditorUI.h"
 
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "Common/CommonTypes.h"
 #include "Core/Application/SceneManager/SceneManager.h"
 #include "Core/Application/Settings/GlobalSettings.h"
@@ -8,6 +9,8 @@
 #include "Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h"
 
 bool EditorUI::init = true;
+bool EditorUI::bMasterWindowActive = true;
+
 ImVec2 EditorUI::SceneViewSize;
 ImVec2 EditorUI::SceneViewPos;
 int32 EditorUI::selectedEntity = -1;
@@ -35,12 +38,18 @@ void EditorUI::Initialize(NString apiVersion, Window* window)
 	NString glVersionImgui;
 	glVersionImgui = "#version " + apiVersion;
 	ImGui_ImplOpenGL3_Init(glVersionImgui.c_str());
+	
 	ImGui::StyleColorsDark();
+
+	ImGuiStyle* style = &ImGui::GetStyle();
+
+	style->FrameRounding = 0.0f;
+	style->WindowRounding = 0.0;
 }
 
 void EditorUI::DrawSceneTree()
 {
-	ImGui::Begin("Scene", nullptr, ImGuiTabBarFlags_None);
+	ImGui::Begin("SceneTree", nullptr, ImGuiTabBarFlags_None);
 
 	static ImGuiTreeNodeFlags base_flags = ImGuiTreeNodeFlags_OpenOnArrow
 		| ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -81,82 +90,178 @@ void EditorUI::DrawSceneTree()
 	ImGui::End();
 }
 
-void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
+void EditorUI::DrawMenuBar()
 {
-
-	DrawSceneTree();
-	DrawInspector();
-
-	static ImGuiID dockspaceID = 0;
-	bool active = true;
-	if (ImGui::Begin("Master Window", &active))
+	ImGui::BeginMenuBar();
+	if (ImGui::BeginMenu("Menu"))
 	{
-	ImGui::TextUnformatted("DockSpace below");
+		if (ImGui::MenuItem("New")) 
+		{
+			//Create and load new scene
+		}
+		if (ImGui::MenuItem("Open", "Ctrl+O"))
+		{
+				
+		}
+		// if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
+		// {  
+		// 	SceneManager::SaveScene("TestSceneRTT", *GetMainCamera());
+		// }
+		// if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
+		// {
+		//
+		// 	SceneManager::LoadScene("TestScene.json", *GetMainCamera());
+		// }
+		if (ImGui::MenuItem("Save As.."))
+		{
+			ImGui::Separator();
+			//if (ImGui::BeginMenu("Options"))
+			//{
+			//	static bool enabled = true;
+			//	ImGui::MenuItem("Enabled", "", &enabled);
+			//	ImGui::BeginChild("child", ImVec2(0, 60), true);
+			//	for (int i = 0; i < 10; i++)
+			//		ImGui::Text("Scrolling Text %d", i);
+			//	ImGui::EndChild();
+			//	static float f = 0.5f;
+			//	static int n = 0;
+			//	static bool b = true;
+			//	ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+			//	ImGui::InputFloat("Input", &f, 0.1f);
+			//	ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+			//	ImGui::Checkbox("Check", &b);
+			//	ImGui::EndMenu();
+			//}
+		}
+		ImGui::EndMenu();
 	}
-	if (active)
+	ImGui::EndMenuBar();
+}
+
+void EditorUI::ResetDocking()
+{
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGuiID dockspace_id =  ImGui::GetID("MasterWindowDockId");
+	static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+	
+	ImGui::DockBuilderRemoveNode(dockspace_id); // clear any previous layout
+	ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
+	ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+	
+	//ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.2f, nullptr, &dockspace_id);
+	//ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
+	ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
+	ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.15f, nullptr, &dockspace_id);
+	
+	//Left
+	ImGui::DockBuilderDockWindow("SceneTree", dock_id_left);
+	ImGui::DockBuilderDockWindow("TestWindow", dock_id_left);
+	
+	//Centre
+	ImGui::DockBuilderDockWindow("SceneView", dockspace_id);
+
+	//Right
+	ImGui::DockBuilderDockWindow("Inspector", dock_id_right);
+	
+	ImGui::DockBuilderFinish(dockspace_id);
+	
+
+	//TODO: Would be nice to set active tabs properly instead of changing their order in the main draw func
+	// if(ImGui::DockBuilderGetNode(dock_id_left) &&ImGui::DockBuilderGetNode(dock_id_left)->TabBar)
+	// {
+	// 		ImGui::DockBuilderGetNode(dock_id_left);
+	// 		ImGui::DockBuilderGetNode(dock_id_left)->TabBar->NextSelectedTabId = ImGui::GetID("TestWindow");
+	// }
+	//
+}
+
+void EditorUI::DrawSceneView(EditorRenderContext* editorContext)
+{
+	ImGuiWindowFlags scene_window_flags = 0;
+	scene_window_flags |= ImGuiWindowFlags_NoTitleBar;
+	scene_window_flags |= ImGuiWindowFlags_NoDecoration;
+	scene_window_flags |= ImGuiWindowFlags_NoScrollbar;
+	
+	ImGui::Begin("SceneView", nullptr, scene_window_flags);
+	ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
+	ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
+	if (ImGui::BeginTabItem("Scene"))
 	{
-		// Declare Central dockspace
-		dockspaceID = ImGui::GetID("HUB_DockSpace");
-		ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None);
+		ImVec2 newSize = ImGui::GetWindowSize();
+		if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
+		{
+			SceneViewSize = newSize;
+			//DEBUG_LOG_TEMP("RESIZE()");
+			editorContext->ResizeRenderTargets(newSize.x, newSize.y);
+	
+		}
+		ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
+		//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
+		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::EndTabItem();
+	}
+	ImGui::EndTabBar();
+	ImGui::End();
+}
+
+void EditorUI::DrawMainDockWidnow()
+{
+	const ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGuiWindowFlags window_flags = 0;
+	window_flags |= ImGuiWindowFlags_MenuBar;
+	window_flags |= ImGuiWindowFlags_NoTitleBar;
+	window_flags |= ImGuiWindowFlags_NoDecoration;
+	window_flags |= ImGuiWindowFlags_NoScrollbar;
+	window_flags |= ImGuiWindowFlags_NoMove;
+	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
+	const ImGuiID dockspaceID = ImGui::GetID("MasterWindowDockId");
+	SceneViewPos = ImVec2(0, 0);
+	//ImGui::SetNextWindowPos(ImVec2(0, 0));
+	ImGui::SetNextWindowSize(viewport->Size);
+	ImGui::SetNextWindowPos(viewport->Pos);
+	if (ImGui::Begin("MasterWindow", &bMasterWindowActive, window_flags))
+	{
+		ImGuiDockNodeFlags master_dock_flags = 0;
+		ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), master_dock_flags);
+		ImGui::TextUnformatted("DockSpace below");
+		
+		DrawMenuBar();
 	}
 	ImGui::End();
+}
 
-
+void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
+{
 	if (init)
 	{
-		SceneViewSize = ImVec2(GlobalSettings::GetWindowWidth() / 2, GlobalSettings::GetWindowHeight() / 2);
-		SceneViewPos = ImVec2(GlobalSettings::GetWindowWidth() / 2, GlobalSettings::GetWindowHeight() / 2);
-		ImGui::SetNextWindowSize(SceneViewSize);
-		ImGui::SetNextWindowPos(SceneViewPos);
-		
+		ResetDocking();
 	}
-
-	//
-	//ImGui::Begin("Main View", nullptr, ImGuiTabBarFlags_None);
-	//ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
-	//ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
-	//if (ImGui::BeginTabItem("Scene"))
-	//{
-	//	ImVec2 newSize = ImGui::GetWindowSize();
-	//	if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
-	//	{
-	//		SceneViewSize = newSize;
-	//		//DEBUG_LOG_TEMP("RESIZE()");
-	//		//editorContext->ResizeRenderTargets(newSize.x, newSize.y);
-
-	//	}
-	//	ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
-	//	//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
-	//	ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
-	//	ImGui::EndTabItem();
-	//}
-
-	//ImGui::EndTabBar();
-	//ImGui::End();
-
-
-
-
-	//ImGui::SetNextWindowDockID(dockspaceID, ImGuiCond_FirstUseEver);
-	//if (ImGui::Begin("Dockable Window"))
-	//{
-	//	ImGui::TextUnformatted("Test");
-	//}
-	//ImGui::End();
-
-	//HACK
+	
+	DrawMainDockWidnow();
+	DrawInspector();
+	DrawSceneView(editorContext);
+	if (ImGui::Begin("TestWindow"))
+	{
+		ImGui::Text("TEST TEST");
+	}
+	ImGui::End();
+	DrawSceneTree();
+	
+	
 	if (init)
 	{
 		init = false;
 	}
 }
 
+
+
 void EditorUI::DrawInspector()
 {
 	if (init)
 	{
 		ImVec2 size = ImVec2(GlobalSettings::GetWindowWidth() / 4, GlobalSettings::GetWindowHeight() / 2);
-		ImGui::SetNextWindowSize(size);
+		//ImGui::SetNextWindowSize(size);
 	}
 
 	ImGui::Begin("Inspector");
@@ -248,6 +353,11 @@ void EditorUI::Draw()
 {
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+}
+
+void EditorUI::OnWindowResized(float x, float y)
+{
+	SceneViewSize = ImVec2(x, y);
 }
 
 static const float identityMatrix[16] =

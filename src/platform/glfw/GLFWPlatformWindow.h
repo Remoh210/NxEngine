@@ -19,7 +19,7 @@ public:
     GLFWPlatformWindow(uint32 width, uint32 height, const char* title);
     ~GLFWPlatformWindow() {};
     void Resize(int width, int height);
-    void ChangeTitle(const char* title);
+    //void ChangeTitle(const char* title);
 
 	void UpdateInput();
     void Present();
@@ -43,10 +43,7 @@ public:
 
 	inline void SetMouseCallback(std::function<void (int, int)> callbackFunc) { MouseCallbackFunc  = callbackFunc; }
     inline void SetFrameBufferResizeCallback(std::function<void (int, int)> callbackFunc) { FrameBufferResizeCallbackBackFunc  = callbackFunc; }
-	inline void SetMouseScrollCallback(std::function<void (float)> callbackFunc) 
-	{
-		MouseScrollCallbackFunc = callbackFunc;
-	}
+	inline void SetMouseScrollCallback(std::function<void (float)> callbackFunc) { MouseScrollCallbackFunc = callbackFunc; }
 
 	static Camera* mainCamera;
 

@@ -936,6 +936,19 @@ NString OpenGLRenderDevice::GetShaderVersion()
 	return shaderVersion;
 }
 
+void OpenGLRenderDevice::SwitchFBO(uint32 fbo, const DrawParams& drawParams)
+{
+	SetFBO(fbo);
+	SetViewport(fbo);
+	// SetBlending(drawParams.sourceBlend, drawParams.destBlend);
+	// SetScissorTest(drawParams.useScissorTest,
+	// 		drawParams.scissorStartX, drawParams.scissorStartY,
+	// 		drawParams.scissorWidth, drawParams.scissorHeight);
+	// SetFaceCulling(drawParams.faceCulling);
+	// SetDepthTest(drawParams.shouldWriteDepth, drawParams.depthFunc);
+	//SetShader(shader);
+	//SetVAO(vao);
+}
 
 
 GLint OpenGLRenderDevice::GetOpenGLInternalFormat(enum PixelFormat format, bool bCompress)

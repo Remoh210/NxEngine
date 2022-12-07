@@ -20,6 +20,7 @@ class Application
 public:
 	static Application* Create(float Width, float Height);
 
+	void DrawDebugWindow();
 	int Run();
 
 	~Application();

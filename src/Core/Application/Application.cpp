@@ -56,6 +56,19 @@ Camera* Application::MainCamera = nullptr;
 Window* Application::window = nullptr;
 bool Application::bPlayingInEditor = false;
 
+bool show_demo_window = false;
+
+bool bInit = true;
+
+//UI
+uint32 fps = 0;
+double currentFrame = glfwGetTime();
+double lastFrame = 0;
+double fpsTimeCounter = 0.0;
+double msPerFrame = 0;
+double msPerFrameToShow = 0;
+uint32 fpsToShow = 0;
+
 
 //void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void resize_callback(GLFWwindow * window, int width, int height);
@@ -76,6 +89,89 @@ Application* Application::Create(float Width, float Height)
 float roughness = 0.1f;
 float metallic = 0.9;
 
+void Application::DrawDebugWindow()
+{
+	
+	if(bInit)
+	{
+		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
+		ImGui::SetNextWindowSize(ImVec2(100, 300));
+	}
+	
+	ImGuiWindowFlags window_flags;
+	ImGui::Begin("DebugWindow");
+
+	currentFrame = glfwGetTime();
+	deltaTime = currentFrame - lastFrame;
+	lastFrame = currentFrame;
+	fpsTimeCounter += deltaTime;
+	fps++;
+	ImGui::Text("%f ms (%d fps)", msPerFrameToShow, fpsToShow);
+	if (fpsTimeCounter >= 1.0) {
+		fpsToShow = fps;
+		double msPerFrame = 1000.0 / (double)fps;
+		msPerFrameToShow = msPerFrame;
+		fpsTimeCounter = 0;
+		fps = 0;
+	}
+	ImGui::Text("Camera Speed: %.1f)", MainCamera->MovementSpeed);
+		
+	NString PIE_ButtonText = bPlayingInEditor ? "Stop PIE" : "Play In Editor";
+	if(ImGui::Button(PIE_ButtonText.c_str()))
+	{
+		TogglePIE();
+	}
+		
+	if (ImGui::Button("Draw Grid"))
+	{
+		editorRenderContext->ToggleGrid();
+	}
+		
+	if (ImGui::Button("Draw Collision"))
+	{
+		auto physicsSystemNx = (ECS::PhysicsSystem*)physicsSystem;
+		physicsSystemNx->ToggleDebugDraw();
+	}
+		
+	if (ImGui::Button("PostFX"))
+	{
+		editorRenderContext->TogglePostFX();
+	}
+		
+	if (ImGui::Button("Show demo"))
+	{
+		show_demo_window = true;
+	}
+		
+		
+	ImGui::Text("Environments:");
+	if (ImGui::Button("Sky"))
+	{
+		editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/sky.jpg");
+	}
+	if (ImGui::Button("Road"))
+	{
+		editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/road.hdr");
+	}
+	if (ImGui::Button("Room"))
+	{
+		editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/newport_loft.hdr");
+	}
+
+	ImGui::End();
+
+	//// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
+	if (show_demo_window)
+	{
+		ImGui::ShowDemoWindow(&show_demo_window);
+	}
+
+	if(bInit)
+	{
+		bInit = false;
+	}
+}
+
 int Application::Run()
 {
 	Initialize();
@@ -83,20 +179,8 @@ int Application::Run()
 
 	ImGui::CreateContext();
 
-	bool show_demo_window = false;
-	bool show_another_window = true;
+	
 	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-	bool p_open = true;
-
-	//UI
-
-	uint32 fps = 0;
-	double currentFrame = glfwGetTime();
-	double lastFrame = 0;
-	double fpsTimeCounter = 0.0;
-	double msPerFrame = 0;
-	double msPerFrameToShow = 0;
-	uint32 fpsToShow = 0;
 
 
     //TODO: Fix this
@@ -115,140 +199,30 @@ int Application::Run()
 
 	
 	//debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
-	vec3 debugSpherePos(0.0f);
-
-
+	
 	LoadDefaultScene();
-
-	NxArray<glm::vec3> lightPositions;
-	lightPositions.push_back(glm::vec3(-10.0f, 10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(10.0f, 10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(-10.0f, -10.0f, 10.0f));
-	lightPositions.push_back(glm::vec3(10.0f, -10.0f, 10.0f));
-
-	vec3f vectest1(1.0f);
-	vectest1.ToVec().x += 23;
-	DEBUG_LOG_TEMP("testing vec3f: %f", vectest1.ToVec().x);
-
+	
+	
 	while (!window->ShouldClose())
 	{
 		// Start the Dear ImGui frame
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		ImVec2 VecScreen(windowWidth/5, windowHeight/5);
-		ImVec2 VecPosRel = ImGui::GetMainViewport()->Pos;
-		ImVec2 VecPos(150, 150);
-		//ImGui::SetNextWindowSize(VecScreen);
-		ImGui::SetNextWindowPos(VecPosRel);
-		ImGuiWindowFlags window_flags = 0;
-		//window_flags |= ImGuiWindowFlags_NoTitleBar;
-		//if (no_scrollbar)       window_flags |= ImGuiWindowFlags_NoScrollbar;
-		window_flags |= ImGuiWindowFlags_MenuBar;
-		window_flags |= ImGuiWindowFlags_NoDocking;
-		window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-		//window_flags |= ImGuiWindowFlags_NoMove;
-		//window_flags |= ImGuiWindowFlags_NoResize;
-		//window_flags |= ImGuiWindowFlags_NoCollapse;
-		//if (no_nav)             window_flags |= ImGuiWindowFlags_NoNav;
-		//if (no_background)      window_flags |= ImGuiWindowFlags_NoBackground;
-		//if (no_bring_to_front)  window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
-		//if (no_close)           p_open = NULL; // Don't pass our bool* to Begin
-
-
-		ImGui::Begin("Main Window", &p_open, window_flags);
-		GUI_ShowMenuBar();
-
-		currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-		fpsTimeCounter += deltaTime;
-		fps++;
-		ImGui::Text("%f ms (%d fps)", msPerFrameToShow, fpsToShow);
-		if (fpsTimeCounter >= 1.0) {
-			fpsToShow = fps;
-			double msPerFrame = 1000.0 / (double)fps;
-			msPerFrameToShow = msPerFrame;
-			fpsTimeCounter = 0;
-			fps = 0;
-		}
-		ImGui::Text("Camera Speed: %.1f)", MainCamera->MovementSpeed);
-
-		NString PIE_ButtonText = bPlayingInEditor ? "Stop PIE" : "Play In Editor";
-		if(ImGui::Button(PIE_ButtonText.c_str()))
-		{
-			TogglePIE();
-		}
-
-		if (ImGui::Button("Draw Grid"))
-		{
-			editorRenderContext->ToggleGrid();
-		}
-
-		if (ImGui::Button("Draw Collision"))
-		{
-			auto physicsSystemNx = (ECS::PhysicsSystem*)physicsSystem;
-			physicsSystemNx->ToggleDebugDraw();
-		}
-
-		if (ImGui::Button("PostFX"))
-		{
-			editorRenderContext->TogglePostFX();
-		}
-
-		if (ImGui::Button("Show demo"))
-		{
-			show_demo_window = true;
-		}
-
-	
-		ImGui::Text("Environments:");
-		if (ImGui::Button("Sky"))
-		{
-			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/sky.jpg");
-		}
-		if (ImGui::Button("Road"))
-		{
-			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/road.hdr");
-		}
-		if (ImGui::Button("Room"))
-		{
-			editorRenderContext->GeneratePBRMapsFromTexture("res/textures/HDR/newport_loft.hdr");
-		}
-
-		ImGui::End();
-
-		{
-			ShowInspector();
-		}
-
-		//// 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
-
-		for (int i = 0; i < 1; i++)
-		{
-			debugSpherePos.x += 0.1f * deltaTime;
-	
-		}
-
-		// input
-		// -----
-	
-
+		
 		// render
 		// ------
-		editorRenderContext->Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
+		//editorRenderContext->Clear(glm::vec4(0.34, 0.3, 0.5, 0), true);
 		DebugRenderer::Update(deltaTime);
 		world->tick(deltaTime);
 		editorRenderContext->Flush();
 		
 		NxTime::Update(deltaTime);
-
-		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
+		
 		EditorUI::DrawEditorView(editorRenderContext);
+		DrawDebugWindow();
 		EditorUI::Draw();
+		
 		
 		window->UpdateInput();
 		window->Present();
@@ -266,8 +240,7 @@ int Application::Run()
 
 	//glfwDestroyWindow(window);
 	glfwTerminate();
-
-
+	
 	return 0;
 }
 
@@ -421,6 +394,7 @@ void Application::Initialize()
 		[this](float x, float y)
 	{
 		editorRenderContext->ResizeViewPort(x, y);
+		EditorUI::OnWindowResized(x, y);
 	}
 	);
 
@@ -787,8 +761,7 @@ void Application::LoadDefaultScene()
 	animComp.animationStates["walk_forward"] = WalkForwardState;
 
 #pragma endregion
-
-
+	
 	ECS::Entity* ent3 = world->create();
 	ent3->assign<TransformComponent>(transformComp3);
 	ent3->assign<StaticMeshComponent>(renderableMesh3);
@@ -956,7 +929,7 @@ void Application::processInput(GLFWwindow *window)
 
 void Application::ResizeWindow(uint32 width, uint32 height)
 {
-	GUI_ShowMenuBar();
+	//GUI_ShowMenuBar();
 	windowHeight = height;
 	windowWidth = width;
 }
@@ -984,33 +957,32 @@ void Application::GUI_ShowMenuBar()
 			SceneManager::LoadScene("TestScene.json", *GetMainCamera());
 	
 		}
-		if (ImGui::MenuItem("Save As..")) {}
-		ImGui::Separator();
-		//if (ImGui::BeginMenu("Options"))
-		//{
-		//	static bool enabled = true;
-		//	ImGui::MenuItem("Enabled", "", &enabled);
-		//	ImGui::BeginChild("child", ImVec2(0, 60), true);
-		//	for (int i = 0; i < 10; i++)
-		//		ImGui::Text("Scrolling Text %d", i);
-		//	ImGui::EndChild();
-		//	static float f = 0.5f;
-		//	static int n = 0;
-		//	static bool b = true;
-		//	ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-		//	ImGui::InputFloat("Input", &f, 0.1f);
-		//	ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-		//	ImGui::Checkbox("Check", &b);
-		//	ImGui::EndMenu();
-		//}
+		if (ImGui::MenuItem("Save As.."))
+		{
+			ImGui::Separator();
+			//if (ImGui::BeginMenu("Options"))
+			//{
+			//	static bool enabled = true;
+			//	ImGui::MenuItem("Enabled", "", &enabled);
+			//	ImGui::BeginChild("child", ImVec2(0, 60), true);
+			//	for (int i = 0; i < 10; i++)
+			//		ImGui::Text("Scrolling Text %d", i);
+			//	ImGui::EndChild();
+			//	static float f = 0.5f;
+			//	static int n = 0;
+			//	static bool b = true;
+			//	ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+			//	ImGui::InputFloat("Input", &f, 0.1f);
+			//	ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+			//	ImGui::Checkbox("Check", &b);
+			//	ImGui::EndMenu();
+			//}
+		}
+		
 		ImGui::EndMenu();
 	}
 	ImGui::EndMenuBar();
 }
-
-
-
-
 
 
 void Application::TogglePIE()
