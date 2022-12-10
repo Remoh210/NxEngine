@@ -3,10 +3,7 @@
 #include "Common/dataStructs/String.h"
 #include "rendering/Window.h"
 #include "Editor/EditorRenderContext.h"
-
-#include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
+#include "Core/Engine/Console/NxConsole.h"
 
 class EditorUI
 {
@@ -17,6 +14,7 @@ public:
 	static void DrawMenuBar();
 	static void ResetDocking();
 	static void DrawSceneView(EditorRenderContext* editorContext);
+	static void DrawLogWindow();
 	static void DrawMainDockWidnow();
 	static void DrawEditorView(EditorRenderContext* editorContext);
 	static void DrawInspector();
@@ -28,8 +26,8 @@ public:
 
 private:
 	//Renema To Master Window
-	static ImVec2 SceneViewSize;
-	static ImVec2 SceneViewPos;
+	static vec2 SceneViewSize;
+	static vec2 SceneViewPos;
 	static int32 selectedEntity;
 	static bool init;
 	static bool bMasterWindowActive;

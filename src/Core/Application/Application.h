@@ -3,12 +3,9 @@
 #include <rendering/Window.h>
 #include <Common/dataStructs/String.h>
 #include <imgui.h>
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
 #include <Core/Camera/Camera.h>
 #include "rendering/RenderDevice.h"
 #include "rendering/RenderTarget.h"
-#include "rendering/Window.h"
 #include "Editor/EditorRenderContext.h"
 #include "rendering/Sampler.h"
 #include <Core/ECS/ECS.h>

@@ -1,19 +1,28 @@
 #include "EditorUI.h"
 
-#include "imgui.h"
-#include "imgui_internal.h"
+#include <imgui.h>
+#include <imgui_internal.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include "Common/CommonTypes.h"
+#include "Common/dataStructs/String.h"
+#include "Common/Common.h"
 #include "Core/Application/SceneManager/SceneManager.h"
 #include "Core/Application/Settings/GlobalSettings.h"
 #include "Core/Components/TransformComponent/TransformComponent.h"
 #include "Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h"
 
+
+
 bool EditorUI::init = true;
 bool EditorUI::bMasterWindowActive = true;
 
-ImVec2 EditorUI::SceneViewSize;
-ImVec2 EditorUI::SceneViewPos;
+
+vec2 EditorUI::SceneViewSize;
+vec2 EditorUI::SceneViewPos;
 int32 EditorUI::selectedEntity = -1;
+
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -149,7 +158,7 @@ void EditorUI::ResetDocking()
 	ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 	
 	//ImGuiID dock_id_top = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.2f, nullptr, &dockspace_id);
-	//ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
+	ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
 	ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
 	ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.15f, nullptr, &dockspace_id);
 	
@@ -162,6 +171,9 @@ void EditorUI::ResetDocking()
 
 	//Right
 	ImGui::DockBuilderDockWindow("Inspector", dock_id_right);
+
+	//Down
+	ImGui::DockBuilderDockWindow("Log", dock_id_down);
 	
 	ImGui::DockBuilderFinish(dockspace_id);
 	
@@ -187,21 +199,51 @@ void EditorUI::DrawSceneView(EditorRenderContext* editorContext)
 	ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
 	if (ImGui::BeginTabItem("Scene"))
 	{
-		ImVec2 newSize = ImGui::GetWindowSize();
-		if (SceneViewSize.x != newSize.x || SceneViewSize.y != newSize.y)
+		const ImVec2 WindowSize = ImGui::GetWindowSize();
+		if (SceneViewSize.x != WindowSize.x || SceneViewSize.y != WindowSize.y)
 		{
-			SceneViewSize = newSize;
+			SceneViewSize.x = WindowSize.x;
+			SceneViewSize.y = WindowSize.y;
+			
 			//DEBUG_LOG_TEMP("RESIZE()");
-			editorContext->ResizeRenderTargets(newSize.x, newSize.y);
+			editorContext->ResizeRenderTargets(WindowSize.x, WindowSize.y);
 	
 		}
 		ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
 		//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
-		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), SceneViewSize, ImVec2(0, 1), ImVec2(1, 0));
+		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), WindowSize, ImVec2(0, 1), ImVec2(1, 0));
 		ImGui::EndTabItem();
 	}
 	ImGui::EndTabBar();
 	ImGui::End();
+}
+
+// Demonstrate creating a simple log window with basic filtering.
+void EditorUI::DrawLogWindow()
+{
+	// For the demo: add a debug button _BEFORE_ the normal log window contents
+	// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
+	// Most of the contents of the window will be added by the log.Draw() call.
+	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Log");
+	if (ImGui::SmallButton("[Debug] Add 5 entries"))
+	{
+		static int counter = 0;
+		const char* categories[3] = { "info", "warn", "error" };
+		const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
+		for (int n = 0; n < 5; n++)
+		{
+			const char* category = categories[counter % IM_ARRAYSIZE(categories)];
+			const char* word = words[counter % IM_ARRAYSIZE(words)];
+			appLog.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
+				ImGui::GetFrameCount(), category, ImGui::GetTime(), word);
+			counter++;
+		}
+	}
+	ImGui::End();
+
+	// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
+	appLog.Draw("Log");
 }
 
 void EditorUI::DrawMainDockWidnow()
@@ -215,7 +257,7 @@ void EditorUI::DrawMainDockWidnow()
 	window_flags |= ImGuiWindowFlags_NoMove;
 	window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus;
 	const ImGuiID dockspaceID = ImGui::GetID("MasterWindowDockId");
-	SceneViewPos = ImVec2(0, 0);
+	SceneViewPos = vec2(0, 0);
 	//ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(viewport->Size);
 	ImGui::SetNextWindowPos(viewport->Pos);
@@ -223,7 +265,6 @@ void EditorUI::DrawMainDockWidnow()
 	{
 		ImGuiDockNodeFlags master_dock_flags = 0;
 		ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), master_dock_flags);
-		ImGui::TextUnformatted("DockSpace below");
 		
 		DrawMenuBar();
 	}
@@ -240,6 +281,7 @@ void EditorUI::DrawEditorView(EditorRenderContext* editorContext)
 	DrawMainDockWidnow();
 	DrawInspector();
 	DrawSceneView(editorContext);
+	DrawLogWindow();
 	if (ImGui::Begin("TestWindow"))
 	{
 		ImGui::Text("TEST TEST");
@@ -357,7 +399,7 @@ void EditorUI::Draw()
 
 void EditorUI::OnWindowResized(float x, float y)
 {
-	SceneViewSize = ImVec2(x, y);
+	SceneViewSize = vec2(x, y);
 }
 
 static const float identityMatrix[16] =

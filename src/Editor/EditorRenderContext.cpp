@@ -79,12 +79,12 @@ void EditorRenderContext::Flush()
 	if (bPostFX)
 	{
 		chromaFX->Apply(sceneRenderTarget, chromaRenderTarget);
-		screenShader->SetSampler("Texture", *chromaRenderTarget->GetTexture(), *screenTextureSampler, 0);
+		//screenShader->SetSampler("Texture", *chromaRenderTarget->GetTexture(), *screenTextureSampler, 0);
 		finalTexture = chromaRenderTarget->GetTexture();
 	}
 	else
 	{
-		screenShader->SetSampler("Texture", *sceneRenderTarget->GetTexture(), *screenTextureSampler, 0);
+		//screenShader->SetSampler("Texture", *sceneRenderTarget->GetTexture(), *screenTextureSampler, 0);
 		finalTexture = sceneRenderTarget->GetTexture();
 	}
 	

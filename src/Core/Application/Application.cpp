@@ -3,6 +3,9 @@
 #include <Core/Camera/Camera.h>
 #include <Common/CommonTypes.h>
 
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
 #include <Core/Components/TransformComponent/TransformComponent.h>
 #include <Core/Components/LightComponent/LightComponent.h>
 #include <Core/Components/SkinnedMeshComponent/SkinnedMeshComponent.h>
