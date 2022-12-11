@@ -95,11 +95,11 @@ float metallic = 0.9;
 void Application::DrawDebugWindow()
 {
 	
-	if(bInit)
-	{
-		ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
-		ImGui::SetNextWindowSize(ImVec2(100, 300));
-	}
+	// if(bInit)
+	// {
+	// 	ImGui::SetNextWindowPos(ImGui::GetMainViewport()->Pos);
+	// 	ImGui::SetNextWindowSize(ImVec2(100, 300));
+	// }
 	
 	ImGuiWindowFlags window_flags;
 	ImGui::Begin("DebugWindow");
@@ -403,6 +403,7 @@ void Application::Initialize()
 
 
 	SceneManager::SetECS(world);
+	SceneManager::SetCamera(GetMainCamera());
 	SceneManager::SetRenderDevice(renderDevice);
 	ShaderManager::SetRenderDevice(renderDevice);
 	AssetManager::SetRenderDevice(renderDevice);
@@ -936,57 +937,6 @@ void Application::ResizeWindow(uint32 width, uint32 height)
 	windowHeight = height;
 	windowWidth = width;
 }
-
-void Application::GUI_ShowMenuBar()
-{
-	// Menu Bar
-	ImGui::BeginMenuBar();
-	if (ImGui::BeginMenu("Menu"))
-	{
-		
-		if (ImGui::MenuItem("New")) 
-		{
-			//Create and load new scene
-		}
-		// Buttons return true when clicked (most widgets return true when edited/activated)
-		if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-		if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
-		{  
-			SceneManager::SaveScene("TestSceneRTT", *GetMainCamera());
-		}
-		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
-		{
-
-			SceneManager::LoadScene("TestScene.json", *GetMainCamera());
-	
-		}
-		if (ImGui::MenuItem("Save As.."))
-		{
-			ImGui::Separator();
-			//if (ImGui::BeginMenu("Options"))
-			//{
-			//	static bool enabled = true;
-			//	ImGui::MenuItem("Enabled", "", &enabled);
-			//	ImGui::BeginChild("child", ImVec2(0, 60), true);
-			//	for (int i = 0; i < 10; i++)
-			//		ImGui::Text("Scrolling Text %d", i);
-			//	ImGui::EndChild();
-			//	static float f = 0.5f;
-			//	static int n = 0;
-			//	static bool b = true;
-			//	ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
-			//	ImGui::InputFloat("Input", &f, 0.1f);
-			//	ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
-			//	ImGui::Checkbox("Check", &b);
-			//	ImGui::EndMenu();
-			//}
-		}
-		
-		ImGui::EndMenu();
-	}
-	ImGui::EndMenuBar();
-}
-
 
 void Application::TogglePIE()
 {

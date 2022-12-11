@@ -74,11 +74,13 @@ public:
 	void DrawImpostors(RenderTarget* renderTarget);
 	void DrawEditorHelpers(RenderTarget* renderTarget);
 	void DrawDebugShapes(RenderTarget* renderTarget);
-	inline void ResizeRenderTargets(float width, float height)
+	void ResizeRenderTargets(float width, float height)
 	{
 		if (width == 0 || height == 0)
+		{
 			return;
-
+		}
+		
 		sceneRenderTarget->Resize(width, height);
 		chromaRenderTarget->Resize(width, height);
 		perspective = glm::perspective(glm::radians(45.0f), (float)width / height, 0.1f, 10000.0f);

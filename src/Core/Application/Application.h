@@ -54,8 +54,6 @@ private:
 	void ShowInspector();
 	void ShowEditor();
 
-	void GUI_ShowMenuBar();
-
 	static void TogglePIE();
 
 	NxMap<string, string> MapModelPaths;

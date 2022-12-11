@@ -94,7 +94,7 @@ void NxAppLog::AddLog(const char* fmt, ...)
 
 void NxAppLog::Draw(const char* title, bool* p_open)
 {
-            if (!ImGui::Begin(title))
+    if (!ImGui::Begin(title))
         {
             ImGui::End();
             return;

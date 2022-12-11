@@ -18,7 +18,7 @@ public:
         {
             mRenderDevice->ReleaseRenderTarget(id);
         } 
-    };
+    }
 
     inline RenderTarget(RenderDevice& deviceIn, Texture& texture, 
             uint32 width, uint32 height, 
@@ -51,7 +51,7 @@ public:
 		mRenderDevice->ReleaseRenderTarget(id);
 
 		id = mRenderDevice->CreateRenderTarget(texture->GetId(), width, height, FramebufferAttachment::ATTACHMENT_COLOR, 0, 0);
-	};
+	}
 
 private:
     RenderDevice* mRenderDevice;

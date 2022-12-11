@@ -15,6 +15,8 @@ namespace Nx
 
 		static std::string const& GetRoot();
 
+		//static bool DoesFileExists(std::string FileRelativePath);
+
 	private:
 		static Builder GetPathBuilder();
 

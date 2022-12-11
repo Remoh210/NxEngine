@@ -8,6 +8,7 @@
 #include "Common/CommonTypes.h"
 #include "Common/dataStructs/String.h"
 #include "Common/Common.h"
+#include "Core/FileSystem/FileSystem.h"
 #include "Core/Application/SceneManager/SceneManager.h"
 #include "Core/Application/Settings/GlobalSettings.h"
 #include "Core/Components/TransformComponent/TransformComponent.h"
@@ -112,15 +113,15 @@ void EditorUI::DrawMenuBar()
 		{
 				
 		}
-		// if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
-		// {  
-		// 	SceneManager::SaveScene("TestSceneRTT", *GetMainCamera());
-		// }
-		// if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
-		// {
-		//
-		// 	SceneManager::LoadScene("TestScene.json", *GetMainCamera());
-		// }
+		if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
+		{  
+			SceneManager::SaveScene("TestSceneRTT");
+		}
+		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
+		{
+		
+			//SceneManager::LoadScene("TestScene.json");
+		}
 		if (ImGui::MenuItem("Save As.."))
 		{
 			ImGui::Separator();
@@ -141,6 +142,11 @@ void EditorUI::DrawMenuBar()
 			//	ImGui::Checkbox("Check", &b);
 			//	ImGui::EndMenu();
 			//}
+		}
+
+		if (ImGui::MenuItem("Reset layout", "Ctrl+R")) 
+		{  
+			//ResetDocking();
 		}
 		ImGui::EndMenu();
 	}
@@ -173,6 +179,7 @@ void EditorUI::ResetDocking()
 	ImGui::DockBuilderDockWindow("Inspector", dock_id_right);
 
 	//Down
+	ImGui::DockBuilderDockWindow("DebugWindow", dock_id_down);
 	ImGui::DockBuilderDockWindow("Log", dock_id_down);
 	
 	ImGui::DockBuilderFinish(dockspace_id);
@@ -190,16 +197,17 @@ void EditorUI::ResetDocking()
 void EditorUI::DrawSceneView(EditorRenderContext* editorContext)
 {
 	ImGuiWindowFlags scene_window_flags = 0;
-	scene_window_flags |= ImGuiWindowFlags_NoTitleBar;
-	scene_window_flags |= ImGuiWindowFlags_NoDecoration;
-	scene_window_flags |= ImGuiWindowFlags_NoScrollbar;
+	//scene_window_flags |= ImGuiWindowFlags_NoTitleBar;
+	//scene_window_flags |= ImGuiWindowFlags_NoDecoration;
+	//scene_window_flags |= ImGuiWindowFlags_NoScrollbar;
+	//scene_window_flags |= ImGuiWindowFlags_NoDocking;
 	
-	ImGui::Begin("SceneView", nullptr, scene_window_flags);
-	ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
-	ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
-	if (ImGui::BeginTabItem("Scene"))
+	ImGui::Begin("SceneView", NULL, scene_window_flags);
+	//ImGuiTabBarFlags tab_bar_flags2 = ImGuiTabBarFlags_None;
+	//ImGui::BeginTabBar("MyTabBar2", tab_bar_flags2);
+	//if (ImGui::BeginTabItem("Scene"))
 	{
-		const ImVec2 WindowSize = ImGui::GetWindowSize();
+		const ImVec2 WindowSize = ImGui::GetContentRegionAvail();
 		if (SceneViewSize.x != WindowSize.x || SceneViewSize.y != WindowSize.y)
 		{
 			SceneViewSize.x = WindowSize.x;
@@ -209,40 +217,18 @@ void EditorUI::DrawSceneView(EditorRenderContext* editorContext)
 			editorContext->ResizeRenderTargets(WindowSize.x, WindowSize.y);
 	
 		}
-		ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
+		//ImGui::Text("Size: %f : %f", SceneViewSize.x, SceneViewSize.y);
 		//editorContext->ResizeViewPort(SceneViewSize.x, SceneViewSize.y);
 		ImGui::Image((void*)editorContext->GetScreenTexture()->GetId(), WindowSize, ImVec2(0, 1), ImVec2(1, 0));
-		ImGui::EndTabItem();
+	//	ImGui::EndTabItem();
 	}
-	ImGui::EndTabBar();
+	//ImGui::EndTabBar();
 	ImGui::End();
 }
 
 // Demonstrate creating a simple log window with basic filtering.
 void EditorUI::DrawLogWindow()
 {
-	// For the demo: add a debug button _BEFORE_ the normal log window contents
-	// We take advantage of a rarely used feature: multiple calls to Begin()/End() are appending to the _same_ window.
-	// Most of the contents of the window will be added by the log.Draw() call.
-	ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Log");
-	if (ImGui::SmallButton("[Debug] Add 5 entries"))
-	{
-		static int counter = 0;
-		const char* categories[3] = { "info", "warn", "error" };
-		const char* words[] = { "Bumfuzzled", "Cattywampus", "Snickersnee", "Abibliophobia", "Absquatulate", "Nincompoop", "Pauciloquent" };
-		for (int n = 0; n < 5; n++)
-		{
-			const char* category = categories[counter % IM_ARRAYSIZE(categories)];
-			const char* word = words[counter % IM_ARRAYSIZE(words)];
-			appLog.AddLog("[%05d] [%s] Hello, current time is %.1f, here's a word: '%s'\n",
-				ImGui::GetFrameCount(), category, ImGui::GetTime(), word);
-			counter++;
-		}
-	}
-	ImGui::End();
-
-	// Actually call in the regular Log helper (which will Begin() into the same window as we just did)
 	appLog.Draw("Log");
 }
 

@@ -39,8 +39,8 @@ public:
 
 	//SceneManager();
 	static Scene currentScene;
-	static bool SaveScene(NString filename, class Camera& camera);
-	static bool LoadScene(NString filename, class Camera& camera);
+	static bool SaveScene(NString filename);
+	static bool LoadScene(NString filename);
 	//inline static sScene GetCurrentScene() { return currentScene; };
 	static void ClearScene();
 
@@ -54,9 +54,15 @@ public:
 		renderDevice = renderDeviceIn;
 	}
 
+	inline static void SetCamera(Camera* inEditorCamera)
+	{
+		editorCamera = inEditorCamera;
+	}
+
 private:
 	static ECS::World* world;
 	static RenderDevice* renderDevice;
+	static Camera* editorCamera;
 
 	static NxMap<NString, Shader*> shaders;
 };
