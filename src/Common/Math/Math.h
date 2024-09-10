@@ -98,9 +98,6 @@ private:
 
 
 
-
-
-
 class vec4f
 {
 public:
@@ -135,7 +132,7 @@ public:
 	// Operators
 	float operator [] (int index) { return data[index]; }
 
-	inline vec3f operator-() const { return vec3f(-data); };
+	inline vec4f operator-() const { return vec4f(-data); };
 
 	inline vec4f operator + (float valueIn) const { return vec4f(data + valueIn); }
 	inline vec4f operator - (float valueIn) const { return vec4f(data - valueIn); }
@@ -183,7 +180,7 @@ public:
 		data = glm::make_vec4(&NxArrayIn[0]);
 	}
 
-	RTTR_ENABLE();
+	RTTR_ENABLE()
 #pragma endregion
 
 private:

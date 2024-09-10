@@ -45,7 +45,9 @@ private:
 
 	void ShutDown();
 
-	void LoadDefaultScene();
+	// void LoadDefaultScene();
+
+	void CreateDefaultScene();
 
 	void DisplayEntyties();
 

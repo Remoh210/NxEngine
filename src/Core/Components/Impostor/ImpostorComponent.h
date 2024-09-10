@@ -1,15 +1,11 @@
 #pragma once
 #include "Common/Transform/Transform.h"
 #include "Core/Graphics/Texture/Texture.h"
+#include "Core/Engine/Component/BaseComponent.h"
 #include "Core/Graphics/Mesh/MeshInfo.h"
 
-struct ImpostorComponent 
+struct ImpostorComponent : public BaseComponent
 {
-	ImpostorComponent()
-	{
-
-	}
-
 	MeshInfo* mesh;
 	VertexArray* vertexArray;
 };

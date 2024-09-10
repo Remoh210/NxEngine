@@ -1,20 +1,24 @@
 #pragma once
+#include "Core/Engine/Component/BaseComponent.h"
 #include "Core/Physcis/iRigidBody.h"
 #include "Common/Math/Math.h"
 
-struct RigidBodyComponent
+struct RigidBodyComponent : public BaseComponent
 {
-	RigidBodyComponent(nPhysics::iRigidBody* rigidBodyIn, vec3f offsetIn)
-		:rigidBody(rigidBodyIn)
+	RigidBodyComponent(ECS::Entity* entity, nPhysics::iRigidBody* rigidBodyIn, vec3f offsetIn)
+		:BaseComponent(entity)
+		,rigidBody(rigidBodyIn)
 		,offset(offsetIn)
 	{
 	}
-	RigidBodyComponent(nPhysics::iRigidBody* rigidBodyIn)
-		:rigidBody(rigidBodyIn)
+	RigidBodyComponent(ECS::Entity* entity, nPhysics::iRigidBody* rigidBodyIn)
+		:BaseComponent(entity)
+		,rigidBody(rigidBodyIn)
 	{
 		offset = vec3f(0.f);
 	}
-	RigidBodyComponent()
+	RigidBodyComponent(ECS::Entity* entity)
+		:BaseComponent(entity)
 	{
 		rigidBody = nullptr;
 		offset = vec3f(0.f);

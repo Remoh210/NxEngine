@@ -1,0 +1,10 @@
+{
+    "Scene": "test",
+    "GameObjects": [
+        {
+            "Class": "GameObject",
+            "Name": "Red sphere",
+            "Components": []
+        }
+    ]
+}

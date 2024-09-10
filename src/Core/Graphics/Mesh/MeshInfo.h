@@ -17,5 +17,5 @@ struct MeshInfo
 
 	DrawParams drawParams;
 
-	RTTR_ENABLE();
+	RTTR_ENABLE()
 };

@@ -1,0 +1,3309 @@
+{
+    "Scene": "",
+    "GameObjects": [
+        {
+            "Class": "GameObject",
+            "Name": "Red sphere",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                20.0,
+                                -40.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                5.0,
+                                5.0,
+                                5.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "StaticMeshComponent",
+                    "Is Visible": true,
+                    "Meshes": [
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [],
+                                "Metallic": 0.9900000095367432,
+                                "Roughness": 0.009999999776482582,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        1.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "Rust",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                20.0,
+                                20.0,
+                                -40.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                146.89749145507813,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                5.0,
+                                5.0,
+                                5.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 20.200000762939454
+                },
+                {
+                    "Class": "StaticMeshComponent",
+                    "Is Visible": true,
+                    "Meshes": [
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 10
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_ao",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 14
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_metallic",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 12
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_normal",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 11
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_roughness",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 13
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "Pistol",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                -30.100000381469728,
+                                20.0,
+                                -40.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                109.08224487304688,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.8999999761581421,
+                                0.8999999761581421,
+                                0.8999999761581421
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 15.0
+                },
+                {
+                    "Class": "StaticMeshComponent",
+                    "Is Visible": true,
+                    "Meshes": [
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 21
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_metallic_roughness_ao",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 20
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_normal",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 19
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "Dust Map",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                -500.0,
+                                5.0,
+                                -30.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                -90.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "StaticMeshComponent",
+                    "Is Visible": true,
+                    "Meshes": [
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 27
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 28
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 29
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 30
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 31
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 32
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 33
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 34
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 35
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 36
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 37
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 38
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 39
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 40
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 41
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 42
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 43
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 44
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 45
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 46
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 47
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 48
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 49
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 50
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 51
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 52
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 53
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 54
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 55
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 56
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 57
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 58
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 59
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 60
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 61
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 62
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 63
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 64
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 65
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 66
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 67
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 68
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 69
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 70
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 71
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 72
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 73
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 74
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 75
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 76
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 77
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 78
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 79
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 80
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 81
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 82
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 83
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 84
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 85
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 86
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 87
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 88
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 89
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 90
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 91
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 92
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 93
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 94
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 95
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 96
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 97
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 98
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 99
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 100
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 101
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 102
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 103
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "Bottle",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                -20.100000381469728,
+                                10.0,
+                                -40.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                72.72151184082031,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                50.0,
+                                50.0,
+                                50.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 10.0
+                },
+                {
+                    "Class": "StaticMeshComponent",
+                    "Is Visible": true,
+                    "Meshes": [
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 108
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_metallic_roughness_ao",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 107
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_normal",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 106
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 108
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_metallic_roughness_ao",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 107
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_normal",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 106
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 113
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_metallic_roughness_ao",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 112
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_normal",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 111
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 113
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_metallic_roughness_ao",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 112
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_normal",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 111
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "SkinnedMesh",
+            "Components": [
+                {
+                    "Class": "BaseComponent"
+                },
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                90.0999984741211,
+                                30.0,
+                                -40.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.550000011920929,
+                                0.550000011920929,
+                                0.550000011920929
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "SkinnedMeshComponent",
+                    "Skinned Mesh": {
+                        "Class": "StaticMeshComponent",
+                        "Mesh": {
+                            "Class": "MeshInfo",
+                            "Material": {
+                                "Class": "Material",
+                                "Textures": [
+                                    {
+                                        "key": "texture_albedo",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 114
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_metallic",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 115
+                                        }
+                                    },
+                                    {
+                                        "key": "texture_normal",
+                                        "value": {
+                                            "Class": "Texture",
+                                            "Texture ID": 116
+                                        }
+                                    }
+                                ],
+                                "Metallic": 0.949999988079071,
+                                "Roughness": 0.949999988079071,
+                                "Ambient Occlusion": 1.0,
+                                "Color & Alpla": {
+                                    "Class": "vec4f",
+                                    "Data": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ]
+                                }
+                            }
+                        },
+                        "Skeletal Data": {
+                            "Class": "SkeletalData",
+                            "Bones": [
+                                {
+                                    "key": "Head",
+                                    "value": 5
+                                },
+                                {
+                                    "key": "HeadTop_End",
+                                    "value": 6
+                                },
+                                {
+                                    "key": "Hips",
+                                    "value": 0
+                                },
+                                {
+                                    "key": "LeftArm",
+                                    "value": 8
+                                },
+                                {
+                                    "key": "LeftFoot",
+                                    "value": 57
+                                },
+                                {
+                                    "key": "LeftForeArm",
+                                    "value": 9
+                                },
+                                {
+                                    "key": "LeftHand",
+                                    "value": 10
+                                },
+                                {
+                                    "key": "LeftHandIndex1",
+                                    "value": 15
+                                },
+                                {
+                                    "key": "LeftHandIndex2",
+                                    "value": 16
+                                },
+                                {
+                                    "key": "LeftHandIndex3",
+                                    "value": 17
+                                },
+                                {
+                                    "key": "LeftHandIndex4",
+                                    "value": 18
+                                },
+                                {
+                                    "key": "LeftHandMiddle1",
+                                    "value": 19
+                                },
+                                {
+                                    "key": "LeftHandMiddle2",
+                                    "value": 20
+                                },
+                                {
+                                    "key": "LeftHandMiddle3",
+                                    "value": 21
+                                },
+                                {
+                                    "key": "LeftHandMiddle4",
+                                    "value": 22
+                                },
+                                {
+                                    "key": "LeftHandPinky1",
+                                    "value": 27
+                                },
+                                {
+                                    "key": "LeftHandPinky2",
+                                    "value": 28
+                                },
+                                {
+                                    "key": "LeftHandPinky3",
+                                    "value": 29
+                                },
+                                {
+                                    "key": "LeftHandPinky4",
+                                    "value": 30
+                                },
+                                {
+                                    "key": "LeftHandRing1",
+                                    "value": 23
+                                },
+                                {
+                                    "key": "LeftHandRing2",
+                                    "value": 24
+                                },
+                                {
+                                    "key": "LeftHandRing3",
+                                    "value": 25
+                                },
+                                {
+                                    "key": "LeftHandRing4",
+                                    "value": 26
+                                },
+                                {
+                                    "key": "LeftHandThumb1",
+                                    "value": 11
+                                },
+                                {
+                                    "key": "LeftHandThumb2",
+                                    "value": 12
+                                },
+                                {
+                                    "key": "LeftHandThumb3",
+                                    "value": 13
+                                },
+                                {
+                                    "key": "LeftHandThumb4",
+                                    "value": 14
+                                },
+                                {
+                                    "key": "LeftLeg",
+                                    "value": 56
+                                },
+                                {
+                                    "key": "LeftShoulder",
+                                    "value": 7
+                                },
+                                {
+                                    "key": "LeftToeBase",
+                                    "value": 58
+                                },
+                                {
+                                    "key": "LeftToe_End",
+                                    "value": 59
+                                },
+                                {
+                                    "key": "LeftUpLeg",
+                                    "value": 55
+                                },
+                                {
+                                    "key": "Neck",
+                                    "value": 4
+                                },
+                                {
+                                    "key": "RightArm",
+                                    "value": 32
+                                },
+                                {
+                                    "key": "RightFoot",
+                                    "value": 62
+                                },
+                                {
+                                    "key": "RightForeArm",
+                                    "value": 33
+                                },
+                                {
+                                    "key": "RightHand",
+                                    "value": 34
+                                },
+                                {
+                                    "key": "RightHandIndex1",
+                                    "value": 35
+                                },
+                                {
+                                    "key": "RightHandIndex2",
+                                    "value": 36
+                                },
+                                {
+                                    "key": "RightHandIndex3",
+                                    "value": 37
+                                },
+                                {
+                                    "key": "RightHandIndex4",
+                                    "value": 38
+                                },
+                                {
+                                    "key": "RightHandMiddle1",
+                                    "value": 43
+                                },
+                                {
+                                    "key": "RightHandMiddle2",
+                                    "value": 44
+                                },
+                                {
+                                    "key": "RightHandMiddle3",
+                                    "value": 45
+                                },
+                                {
+                                    "key": "RightHandMiddle4",
+                                    "value": 46
+                                },
+                                {
+                                    "key": "RightHandPinky1",
+                                    "value": 51
+                                },
+                                {
+                                    "key": "RightHandPinky2",
+                                    "value": 52
+                                },
+                                {
+                                    "key": "RightHandPinky3",
+                                    "value": 53
+                                },
+                                {
+                                    "key": "RightHandPinky4",
+                                    "value": 54
+                                },
+                                {
+                                    "key": "RightHandRing1",
+                                    "value": 47
+                                },
+                                {
+                                    "key": "RightHandRing2",
+                                    "value": 48
+                                },
+                                {
+                                    "key": "RightHandRing3",
+                                    "value": 49
+                                },
+                                {
+                                    "key": "RightHandRing4",
+                                    "value": 50
+                                },
+                                {
+                                    "key": "RightHandThumb1",
+                                    "value": 39
+                                },
+                                {
+                                    "key": "RightHandThumb2",
+                                    "value": 40
+                                },
+                                {
+                                    "key": "RightHandThumb3",
+                                    "value": 41
+                                },
+                                {
+                                    "key": "RightHandThumb4",
+                                    "value": 42
+                                },
+                                {
+                                    "key": "RightLeg",
+                                    "value": 61
+                                },
+                                {
+                                    "key": "RightShoulder",
+                                    "value": 31
+                                },
+                                {
+                                    "key": "RightToeBase",
+                                    "value": 63
+                                },
+                                {
+                                    "key": "RightToe_End",
+                                    "value": 64
+                                },
+                                {
+                                    "key": "RightUpLeg",
+                                    "value": 60
+                                },
+                                {
+                                    "key": "Spine",
+                                    "value": 1
+                                },
+                                {
+                                    "key": "Spine1",
+                                    "value": 2
+                                },
+                                {
+                                    "key": "Spine2",
+                                    "value": 3
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "Class": "CharacterComponent",
+                    "MovementSpeed": 10.0
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "Dir light 1",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "LightComponent",
+                    "LightType": "Directional",
+                    "Intensity": 1.100000023841858,
+                    "Direction": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            -0.5,
+                            1.0
+                        ]
+                    },
+                    "Relative Position": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "Dir light 2",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                2.0,
+                                2.0,
+                                0.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "LightComponent",
+                    "LightType": "Directional",
+                    "Intensity": 10.100000381469727,
+                    "Direction": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            -0.10000000149011612,
+                            -0.05999999865889549
+                        ]
+                    },
+                    "Relative Position": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "point light 1",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                -10.0,
+                                10.0,
+                                10.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "LightComponent",
+                    "LightType": "Point",
+                    "Intensity": 1200.0,
+                    "Direction": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Relative Position": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "point light 2",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                10.0,
+                                10.0,
+                                10.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "LightComponent",
+                    "LightType": "Point",
+                    "Intensity": 1200.0,
+                    "Direction": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Relative Position": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "point light 3",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                -10.0,
+                                -10.0,
+                                10.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "LightComponent",
+                    "LightType": "Point",
+                    "Intensity": 1200.0,
+                    "Direction": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Relative Position": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        },
+        {
+            "Class": "GameObject",
+            "Name": "point light 4",
+            "Components": [
+                {
+                    "Class": "TransformComponent",
+                    "transform": {
+                        "Class": "Transform",
+                        "position": {
+                            "Class": "vec3f",
+                            "Data": [
+                                10.0,
+                                -10.0,
+                                10.0
+                            ]
+                        },
+                        "rotation": {
+                            "Class": "vec3f",
+                            "Data": [
+                                0.0,
+                                0.0,
+                                0.0
+                            ]
+                        },
+                        "scale": {
+                            "Class": "vec3f",
+                            "Data": [
+                                1.0,
+                                1.0,
+                                1.0
+                            ]
+                        }
+                    },
+                    "Rotation Speed": 0.0
+                },
+                {
+                    "Class": "LightComponent",
+                    "LightType": "Point",
+                    "Intensity": 1200.0,
+                    "Direction": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    },
+                    "Relative Position": {
+                        "Class": "vec3f",
+                        "Data": [
+                            0.0,
+                            0.0,
+                            0.0
+                        ]
+                    }
+                },
+                {
+                    "Class": "BaseComponent"
+                }
+            ]
+        }
+    ]
+}

@@ -41,7 +41,7 @@ typedef uintptr_t uintptr;
 	appLog.AddLog("\n") 
 
 //#define DEBUG_LOG_TEMP(message, ...) DEBUG_LOG("TEMP", "TEMP", message, ##__VA_ARGS__)
-#define DEBUG_LOG_TEMP(message, ...) DEBUG_PRINT(message, ##__VA_ARGS__)
+#define DEBUG_LOG_TEMP(message, ...) DEBUG_LOG("TEMP", "TEMP", message, ##__VA_ARGS__) ; DEBUG_PRINT(message, ##__VA_ARGS__)
 #define DEBUG_LOG_TEMP2(message) DEBUG_LOG_CONSOLE("TEMP", "TEMP", "%s", message)
 #define DEBUG_PRINT(message, ...) \
 	appLog.AddLog(message, ##__VA_ARGS__); \

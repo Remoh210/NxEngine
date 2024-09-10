@@ -22,3 +22,8 @@ RTTR_REGISTRATION
 		rttr::value("Spot", LightType::Spot)
 	);
 }
+
+void LightComponent::Initialize()
+{
+	m_entity->assign<LightComponent>(this);
+}

@@ -37,7 +37,11 @@ vec3 Transform::GetForwardVector()
 
 RTTR_REGISTRATION
 {
-		rttr::registration::class_<Transform>("TransformComponent")
+		rttr::registration::class_<Transform>("Transform")
+		.constructor<>()
+		(
+			rttr::policy::ctor::as_object
+		)
 		.property("position", &Transform::position)
 		.property("rotation", &Transform::rotation)
 		.property("scale",    &Transform::scale)

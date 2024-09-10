@@ -486,6 +486,12 @@ namespace ECS
 		*/
 		template<typename T>
 		ComponentHandle<T> get();
+		
+		/**
+		* Get all components from this entity.
+		*/
+		template<typename T>
+		std::vector<ComponentHandle<T>> getAllComponents();
 
 		/**
 		* Call a function with components from this entity as arguments. This will return true if this entity has
@@ -1108,6 +1114,18 @@ namespace ECS
 		}
 	
 		return ComponentHandle<T>();
+	}
+
+	template <typename T>
+	std::vector<ComponentHandle<T>> Entity::getAllComponents()
+	{
+		std::vector<ComponentHandle<T>> return_components;
+		for(auto pair : components)
+		{
+			ComponentHandle<T> compHandle = ComponentHandle<T>(&reinterpret_cast<Internal::ComponentContainer<T>*>(pair.second)->data);
+			return_components.push_back(compHandle);
+		}
+		return return_components;
 	}
 
 	namespace Internal

@@ -11,12 +11,12 @@ endif()
 
 # Add header files
 file(GLOB_RECURSE HEADER_FILES 
-	${CMAKE_SOURCE_DIR}/src/*.h
+  ${CMAKE_SOURCE_DIR}/src/*.h
   ${CMAKE_SOURCE_DIR}/src/*.hpp)
   
 # Add source files
 file(GLOB_RECURSE SOURCE_FILES 
-	${CMAKE_SOURCE_DIR}/src/*.c
+  ${CMAKE_SOURCE_DIR}/src/*.c
   ${CMAKE_SOURCE_DIR}/src/*.cpp
   ${CMAKE_SOURCE_DIR}/src/*.fs
   ${CMAKE_SOURCE_DIR}/src/*.gs
@@ -27,7 +27,7 @@ file(GLOB_RECURSE SOURCE_FILES
 add_executable(${PROJECT_NAME} ${HEADER_FILES} ${SOURCE_FILES})
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src)
 
-# Load dependencies from github
+# Load dependencies
 add_subdirectory(external)
 
 # once it's loaded, get glad
@@ -41,16 +41,12 @@ include_directories(glm PRIVATE external/glm)
 
 #Includes
 target_include_directories(${PROJECT_NAME} PRIVATE external/soil/inc)
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/imgui)
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/rttr)
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/Include)
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/bullet/src)
-
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/external/bullet)
+target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_SOURCE_DIR}/external/cereal/include)
 
 
 #Stb_image
@@ -71,6 +67,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
                      imgui
                      stb_image
 					 rttr_core_lib
+					 cereal
 					 
 					 BulletSoftBody
 					 BulletDynamics

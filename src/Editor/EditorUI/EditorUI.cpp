@@ -76,7 +76,7 @@ void EditorUI::DrawSceneTree()
 			if (is_selected)
 				node_flags |= ImGuiTreeNodeFlags_Selected;
 
-			NString name = SceneManager::currentScene.sceneObjects[entCount]->objectName;
+			NString name = SceneManager::currentScene.sceneObjects[entCount]->name;
 			bool node_open = ImGui::TreeNodeEx((void*)(intptr_t)i, node_flags, name.c_str(), i);
 			if (ImGui::IsItemClicked()) 
 			{ 
@@ -119,8 +119,7 @@ void EditorUI::DrawMenuBar()
 		}
 		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 		{
-		
-			//SceneManager::LoadScene("TestScene.json");
+			SceneManager::LoadScene("TestSceneRTT");
 		}
 		if (ImGui::MenuItem("Save As.."))
 		{

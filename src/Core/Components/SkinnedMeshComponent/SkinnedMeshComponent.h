@@ -1,24 +1,27 @@
 #pragma once
 
+#include "Core/Engine/Component/BaseComponent.h"
 #include "Core/Graphics/SkinnedMesh/SkinnedMeshInfo.h"
 
 //DrawParams
 #include "rendering/RenderDevice.h"
 
-#include "rttr/registration"
+#include <rttr/registration>
 
-struct SkinnedMeshComponent
+struct SkinnedMeshComponent : public BaseComponent
 {
-	SkinnedMeshComponent()
+	SkinnedMeshComponent(ECS::Entity* entity)
+		:BaseComponent(entity)
 	{	
 	}
 
-	SkinnedMeshComponent(SkinnedMeshInfo* infoIn)
-		:skinnedMeshInfo(infoIn)
+	SkinnedMeshComponent(ECS::Entity* entity, SkinnedMeshInfo* infoIn)
+		:BaseComponent(entity)
+		,skinnedMeshInfo(infoIn)
 	{
 	}
 
 	SkinnedMeshInfo* skinnedMeshInfo;
 	
-	RTTR_ENABLE();
+	RTTR_ENABLE()
 };

@@ -7,3 +7,8 @@ RTTR_REGISTRATION
 		.property("Meshes", &StaticMeshComponent::meshes)
 	;
 }
+
+void StaticMeshComponent::Initialize()
+{
+	m_entity->assign<StaticMeshComponent>(*this);
+}
