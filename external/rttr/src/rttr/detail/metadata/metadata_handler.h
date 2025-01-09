@@ -61,12 +61,12 @@ class metadata_handler
             return variant();
         }
 
+    private:
         std::array<metadata, Metadata_Count> m_metadata_list;
 };
 
 /*!
- * We use the C++ id
-    private:iom of empty base class optimization.
+ * We use the C++ idiom of empty base class optimization.
  * So a wrapper with no metadata, will increase its sizeof(T).
  */
 template<>

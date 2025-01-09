@@ -203,7 +203,9 @@ int Application::Run()
 	
 	//debugRenderer.DrawDebugLine(vec3(0.f), vec3(0.0f, 30.0f, 0.0f), 5, vec3(0, 1, 0));
 	
-	CreateDefaultScene();
+	//CreateDefaultScene();
+
+	LoadDefaultScene();
 	
 	
 	while (!window->ShouldClose())
@@ -551,476 +553,475 @@ void Application::CreateDefaultScene()
 	
 }
 
-// void Application::LoadDefaultScene()
-// {
-// 	NString monkeyMesh = "res/models/monkey3.obj";
-// 	NString rockMesh = "res/models/rock/rock.obj";
-//
-// 	NString TEST_TEXTURE_FILE = "res/textures/stmpnk.jpg";
-//
-// 	NString TEST_MODEL_FILE = monkeyMesh;
-// 	NString TEST_MODEL_FILE2 = rockMesh;
-//
-//
-// 	//Assimp PBR********************************************************
-// 	//PBRSphere.glb = binary and embedded textures
-// 	//PBRSphere2.gltf = embedded textures
-// 	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb";
-// 	NString TEST_MODEL_FILE6 = "res/models/dust/fbx/dust.fbx";
-// 	//NString TEST_MODEL_FILE6 = "res/models/terrain.ply";
-// 	NString TEST_MODEL_FILE7 = "res/models/PBRTest.glb";
-// 	//Assimp PBR********************************************************
-// 	
-//
-//
-// 	NString TEST_TEXTURE_FILE2 = "res/models/rock/rock.png";
-//
-// 	//Manual texure loading 
-// 	NString TexureType = "rusted_iron";
-// 	NString TexurePathBase = "res/textures/pbr";
-// 	NString file_albedoTex = TexurePathBase + "/" + TexureType + "/" + "albedo.png";
-// 	NString file_normalTex = TexurePathBase + "/" + TexureType + "/" + "normal.png";
-// 	NString file_metallicTex = TexurePathBase + "/" + TexureType + "/" + "metallic.png";
-// 	NString file_roughnessTex = TexurePathBase + "/" + TexureType + "/" + "roughness.png";
-// 	NString file_aoTex = TexurePathBase + "/" + TexureType + "/" + "ao.png";
-//
-// 	ArrayBitmap albedoBitMap;
-// 	albedoBitMap.Load(file_albedoTex);
-// 	Texture* albedo = new Texture(renderDevice, albedoBitMap, PixelFormat::FORMAT_RGBA, true, false);
-//
-// 	ArrayBitmap normalBitMap;
-// 	normalBitMap.Load(file_normalTex);
-// 	Texture* normal = new Texture(renderDevice, normalBitMap, PixelFormat::FORMAT_RGBA, true, false);
-//
-// 	ArrayBitmap metallicBitMap;
-// 	metallicBitMap.Load(file_metallicTex);
-// 	Texture* metallic = new Texture(renderDevice, metallicBitMap, PixelFormat::FORMAT_RGBA, true, false);
-//
-// 	ArrayBitmap roughnessBitMap;
-// 	roughnessBitMap.Load(file_roughnessTex);
-// 	Texture* roughness = new Texture(renderDevice, roughnessBitMap, PixelFormat::FORMAT_RGBA, true, false);
-//
-// 	ArrayBitmap aoBitMap;
-// 	aoBitMap.Load(file_aoTex);
-// 	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, true, false);
-//
-// #pragma region loadMeshes
-// 	//model 1
-// 	ECS::PhysicsSystem* physSystem = (ECS::PhysicsSystem*)physicsSystem;
-//
-//
-// 	NxArray<IndexedModel> models;
-// 	NxArray<uint32> modelMaterialIndices;
-// 	NxArray<MaterialSpec> modelMaterials;
-// 	AssetLoader::LoadModel(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
-// 	//VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
-// 	VertexArray* vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
-//
-// 	ArrayBitmap testBitmap;
-// 	testBitmap.Load(TEST_TEXTURE_FILE);
-// 	Texture* testtex = new Texture(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
-//
-//
-// 	MeshInfo* meshInfo1 = new MeshInfo();
-// 	meshInfo1->vertexArray = vertexArray;
-// 	Material* material1 = new Material();
-// 	material1->textures[TEXTURE_ALBEDO] = testtex;
-// 	meshInfo1->material = material1;
-// 	ECS::Entity* ent3 = world->create();
-// 	StaticMeshComponent renderableMesh;
-// 	renderableMesh.meshAssetFile = monkeyMesh;
-// 	renderableMesh.shader = ShaderManager::GetMainShader();
-// 	renderableMesh.meshes.push_back(meshInfo1);
-// 	TransformComponent transformComp;
-// 	transformComp.transform.position = vec3(0.9f, 222.15f, -40.0f);
-// 	transformComp.transform.scale = vec3(7.0f);
-//
-// 	//model2 
-// 	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
-// 	VertexArray* vertexArray2 = new VertexArray(renderDevice, models[1], USAGE_STATIC_DRAW);
-// 	//VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
-//
-// 	ArrayBitmap testBitmap2;
-// 	testBitmap2.Load(modelMaterials[1].textureNames[TEXTURE_ALBEDO]);
-// 	Texture* testtex2 = new Texture (renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
-//
-// 	MeshInfo* meshInfo2 = new MeshInfo;
-// 	meshInfo2->vertexArray = vertexArray2;
-// 	Material* material2 = new Material();
-// 	material2->textures[TEXTURE_ALBEDO] = testtex2;
-// 	//meshInfo2->material = material2;
-// 	StaticMeshComponent renderableMesh2;
-// 	renderableMesh2.meshAssetFile = rockMesh;
-// 	renderableMesh2.shader = ShaderManager::GetMainShader();
-// 	renderableMesh2.meshes.push_back(meshInfo2);
-// 	renderableMesh2.numInst = 100;
-// 	TransformComponent transformComp2;
-// 	transformComp2.transform.scale = vec3(7.0f);
-//
-//
-//
-//
-// 	NxArray<IndexedModel> PBRLoadedMeshes;
-// 	NxArray<uint32> PBRMaterialIndices;
-// 	NxArray<MaterialSpec> PBRLoadedMaterials;
-// 	AssetLoader::LoadModel(TEST_MODEL_FILE3, PBRLoadedMeshes, PBRMaterialIndices, PBRLoadedMaterials);
-//
-// 	StaticMeshComponent renderableMesh3;
-// 	
-// 	for(int i = 0; i < PBRLoadedMeshes.size(); i++)
-// 	{
-// 		MeshInfo* curMesh = new MeshInfo();
-// 		curMesh->vertexArray = new VertexArray(renderDevice, PBRLoadedMeshes[i], USAGE_STATIC_DRAW);
-// 		renderableMesh3.meshes.push_back(curMesh);
-//
-// 		Material* material3 = new Material();
-// 		for (int j = 0; j < PBRLoadedMaterials.size(); j++)
-// 		{
-// 			for (auto textureTypeToFile : PBRLoadedMaterials[i].textureNames)
-// 			{
-// 				ArrayBitmap bm;
-// 				bm.Load(textureTypeToFile.second);
-// 				Texture* tex = new Texture(renderDevice, bm, PixelFormat::FORMAT_RGBA, false, false);
-// 				material3->textures[textureTypeToFile.first] = tex;
-// 			}
-// 			for (auto textureTypeToTex : PBRLoadedMaterials[i].textures)
-// 			{
-// 				material3->textures[textureTypeToTex.first] = textureTypeToTex.second;
-// 			}
-// 		}
-// 		curMesh->material = material3;
-// 	}
-//
-// 	renderableMesh3.shader = ShaderManager::GetMainShader();
-// 	renderableMesh3.meshAssetFile = "Mesh3";
-// 	TransformComponent transformComp3;
-// 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
-// 	transformComp3.transform.position = vec3(-30.1f, 20.0f, -40.0f);
-// 	transformComp3.transform.rotation = vec3(0 , 0.0f, 0.f);
-// 	transformComp3.rotSpeed = 15.0f;
-// 	transformComp3.transform.scale = vec3(0.9);
-// 	RigidBodyComponent rbPistol;
-// 	NxArray<MeshInfo*> meshsesToAdd;
-// 	
-// 	nPhysics::iShape* pistolShape;
-//     AssetManager::ImportModelGenerateCollider(TEST_MODEL_FILE3, meshsesToAdd, nPhysics::SHAPE_TYPE_BOX, pistolShape);
-//
-// 	nPhysics::sRigidBodyDef PistolRbdef;
-// 	PistolRbdef.Mass = 100.0f;
-// 	PistolRbdef.Position = transformComp3.transform.position.ToVec();
-// 	PistolRbdef.Scale = transformComp3.transform.scale.ToVec();
-// 	//PistolRbdef.AngularVelocity = vec3(10.1f, 12.5f, -11.1f);
-// 	PistolRbdef.quatOrientation = quat(transformComp3.transform.rotation.ToVec());
-// 	nPhysics::iRigidBody* PistolRB = physSystem->GetFactory()->CreateRigidBody(PistolRbdef, pistolShape);
-// 	//PistolRB->SetEulerRotation(transformComp3.transform.rotation.ToVec());
-// 	physSystem->GetWorld()->AddBody(PistolRB);
-//
-//
-// 	MeshInfo* pbrTestMesh = new MeshInfo();
-// 	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
-// 	Material* material4 = new Material();
-//
-// 	material4->textures[TEXTURE_ALBEDO] = albedo;
-// 	material4->textures[TEXTURE_NORMAL] = normal;
-// 	material4->textures[TEXTURE_METALLIC] = metallic;
-// 	material4->textures[TEXTURE_ROUGHNESS] = roughness;
-// 	material4->textures[TEXTURE_AO] = ao;
-//
-// 	//material3.diffuseTextures.push_back(&testtex);
-// 	pbrTestMesh->material = material4;
-// 	StaticMeshComponent renderableMesh4;
-// 	renderableMesh4.meshAssetFile = "Mesh4";
-// 	renderableMesh4.shader = ShaderManager::GetMainShader();
-// 	renderableMesh4.meshes.push_back(pbrTestMesh);
-// 	TransformComponent transformComp4;
-// 	transformComp4.transform.position = vec3(20, 20, -40);
-// 	transformComp4.transform.scale = vec3(5);
-// 	transformComp4.rotSpeed = 20.2f;
-//
-//
-//
-// 	MeshInfo* mesh5 = new MeshInfo();
-// 	IndexedModel sphereIndexedModel = PrimitiveGenerator::CreateSphere(1.0f, 12, 12, vec3(0.0f));
-// 	mesh5->vertexArray = new VertexArray(renderDevice, sphereIndexedModel, BufferUsage::USAGE_DYNAMIC_DRAW);
-// 	Material* material5 = new Material();
-// 	//material5->color(1.0);
-// 	material5->metallic = 0.99;
-// 	material5->roughness = 0.01;
-// 	material5->color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
-// 	mesh5->material = material5;
-// 	StaticMeshComponent renderableMesh5;
-// 	renderableMesh5.meshAssetFile = "Mesh5";
-// 	renderableMesh5.shader = ShaderManager::GetMainShader();
-// 	renderableMesh5.meshes.push_back(mesh5);
-// 	TransformComponent transformComp5;
-// 	transformComp5.transform.position = vec3(0, 20, -40);
-// 	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
-// 	transformComp5.transform.scale = vec3(5);
-// 	RigidBodyComponent rb5;
-// 	nPhysics::iShape* CurShape5;
-// 	nPhysics::sRigidBodyDef def5;
-// 	def5.Position = transformComp5.transform.position.ToVec();
-// 	def5.AngularVelocity = vec3(2, 0, 2);
-// 	def5.Mass = 110.0f;
-// 	def5.GameObjectName = "test5";
-// 	//def5.Scale = vec3(6.1f);
-//
-// 	
-//
-// 	CurShape5 = physSystem->GetFactory()->CreateSphereShape(5.2);
-// 	rb5.rigidBody = physSystem->GetFactory()->CreateRigidBody(def5, CurShape5);
-// 	physSystem->GetWorld()->AddBody(rb5.rigidBody);
-//
-//
-// 	StaticMeshComponent renderableMesh6;
-// 	renderableMesh6.bIsVisible = true;
-// 	nPhysics::iShape* CurShape6;
-// 	AssetManager::ImportModelGenerateCollider(TEST_MODEL_FILE6, renderableMesh6.meshes, nPhysics::SHAPE_TYPE_MESH, CurShape6);
-// 	renderableMesh6.meshAssetFile = TEST_MODEL_FILE6;
-// 	renderableMesh6.shader = ShaderManager::GetMainShader();
-// 	renderableMesh6.numInst = 1;
-// 	TransformComponent transformComp6;
-// 	transformComp6.transform.position = vec3(-500.0f, 5.0f, -30.0f);
-// 	//transformComp6.transform.position = vec3(-180.1f, -20.0f, -40.0f);
-// 	transformComp6.transform.rotation = vec3(-90, 0, 0);
-// 	//transformComp6.transform.scale = vec3(0.9);
-// 	RigidBodyComponent rb6;
-//
-// 	rb6.bIsStatic = true;
-// 	nPhysics::sRigidBodyDef def6;
-// 	def6.Orientation = vec3(glm::radians(transformComp6.transform.rotation[0]), glm::radians(transformComp6.transform.rotation[1]), glm::radians(transformComp6.transform.rotation[2]));
-// 	def6.Position = transformComp6.transform.position.ToVec();
-// 	def6.Mass = 0.0f;
-// 	def6.GameObjectName = "test6";
-// 	def6.Scale = transformComp6.transform.scale.ToVec();
-// 	//CurShape6 = physSystem->GetFactory()->CreatePlaneShape(vec3(0, 1, 0), 0);
-// 	//nPhysics::GL_Triangle* GLTriangle = new nPhysics::GL_Triangle[curModelInfo.pMeshData->numberOfTriangles];
-//
-// 	rb6.rigidBody = physSystem->GetFactory()->CreateRigidBody(def6, CurShape6);
-// 	physSystem->GetWorld()->AddBody(rb6.rigidBody);
-//
-//
-//
-// 	StaticMeshComponent renderableMesh7;
-//
-// 	NxArray<MeshInfo*> meshsesToAdd7;
-// 	nPhysics::iRigidBody* rbToAdd7 = nullptr;
-// 	//nPhysics::iShape* CurShape6; 
-// 	
-// 	renderableMesh7.meshes = AssetManager::ImportModel(TEST_MODEL_FILE7);
-//
-// 	renderableMesh7.meshAssetFile = TEST_MODEL_FILE7;
-// 	renderableMesh7.shader = ShaderManager::GetMainShader();
-// 	renderableMesh7.numInst = 1;
-// 	TransformComponent transformComp7;
-// 	transformComp7.transform.position = vec3(-20.1f, 10.0f, -40.0f);
-// 	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-// 	transformComp7.transform.scale = vec3(50.0);
-// 	transformComp7.rotSpeed = 10.0f;
-// 	//RigidBodyComponent rigidBComp;
-//
-//
-// 	//rbToAdd->SetPosition(transformComp7.transform.position.ToVec());
-// 	//rbToAdd->SetMass(100);
-// 	//rbToAdd->SetEulerRotation(transformComp7.transform.rotation.ToVec());;
-//
-// 	//rigidBComp.rigidBody = rbToAdd;
-//
-// #pragma endregion
-//
-// #pragma region Skinned Mesh
-// 	SkinnedMeshComponent skinnedMesh;
-// 	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal("res/models/chan.fbx");
-// 	//skinnedMesh.skinnedMeshInfo->mesh->material->textures.clear();
-// 	skinnedMesh.skinnedMeshInfo->mesh->drawParams.faceCulling = FACE_CULL_BACK;
-// 	skinnedMesh.skinnedMeshInfo->mesh->drawParams.depthFunc = DRAW_FUNC_LESS;
-// 	skinnedMesh.skinnedMeshInfo->mesh->drawParams.shouldWriteDepth = true;
-//
-// 	//skinnedMesh.meshAssetFile = TEST_MODEL_FILE7;
-// 	//skinnedMesh.shader = ShaderManager::GetMainShader();
-// 	//skinnedMesh.numInst = 1;
-// 	TransformComponent transformCompSkinned;
-// 	transformCompSkinned.transform.position = vec3(90.1f, 30.0f, -40.0f);
-// 	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
-// 	transformCompSkinned.transform.scale = vec3(0.55);
-// 	RigidBodyComponent charRbComp;
-// 	charRbComp.offset = vec3f(0.0f, -48.0f, 0.0f);
-// 	nPhysics::iShape* CurShape8;
-// 	nPhysics::sRigidBodyDef def8;
-// 	def8.Position = transformCompSkinned.transform.position.ToVec();
-// 	def8.Mass = 1600.0f;
-// 	def8.isPlayer = true;
-// 	CurShape8 = physSystem->GetFactory()->CreateCapsuleShape(110.0f, 20.f, 1.0f);
-// 	charRbComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(def8, CurShape8);
-// 	physSystem->GetWorld()->AddBody(charRbComp.rigidBody);
-// 	AnimatorComponent animComp;
-// 	animComp.animations["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
-// 	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
-// 	animComp.animations["walk_left"] = AssetManager::ImportAnimation("res/models/animations/walk_left.fbx", "walk_left");
-// 	animComp.animations["walk_right"] = AssetManager::ImportAnimation("res/models/animations/walk_right.fbx", "walk_right");
-// 	animComp.animations["walk_forward"] = AssetManager::ImportAnimation("res/models/animations/walk_forward.fbx", "walk_forward");
-// 	AnimationState idleState;
-// 	idleState.transitionMap["walk_forward"] = AnimationState::AnimTransition(InputKey::KEY_W);
-// 	idleState.transitionMap["walk_left"] = AnimationState::AnimTransition(InputKey::KEY_A);
-// 	idleState.transitionMap["walk_right"] = AnimationState::AnimTransition(InputKey::KEY_D);
-// 	idleState.transitionMap["shoot"] = AnimationState::AnimTransition(InputKey::KEY_SPACE);
-// 	idleState.activeAnimation.name = "idle";
-// 	idleState.activeAnimation.bHasExitTime = true;
-// 	animComp.animationStates["idle"] = idleState;
-// 	//idleState.nextAnimation.name = "shoot";
-// 	//idleState.transitionKey = InputKey::KEY_SPACE;
-// 	CharacterComponent characterComponent;
-// 	characterComponent.movementSpeed = 10.0f;
-//
-//
-// 	animComp.currentState = idleState;
-// 	animComp.InitialState = idleState;
-//
-// 	AnimationState ShotState; 
-// 	ShotState.activeAnimation.bHasExitTime = true;
-// 	ShotState.activeAnimation.name = "shoot";
-// 	animComp.animationStates["shoot"] = ShotState;
-//
-// 	AnimationState WalkLeftState;
-// 	WalkLeftState.activeAnimation.name = "walk_left";
-// 	animComp.animationStates["walk_left"] = WalkLeftState;
-//
-// 	AnimationState WalkRightState;
-// 	WalkRightState.activeAnimation.name = "walk_right";
-// 	animComp.animationStates["walk_right"] = WalkRightState;
-//
-// 	AnimationState WalkForwardState;
-// 	WalkForwardState.activeAnimation.name = "walk_forward";
-// 	animComp.animationStates["walk_forward"] = WalkForwardState;
-//
-// #pragma endregion
-// 	
-// 	ECS::Entity* ent3 = world->create();
-// 	ent3->assign<TransformComponent>(transformComp3);
-// 	ent3->assign<StaticMeshComponent>(renderableMesh3);
-// 	ent3->assign<RigidBodyComponent>(PistolRB);
-//
-//
-// 	ECS::Entity* ent4 = world->create();
-// 	ent4->assign<TransformComponent>(transformComp4);
-// 	ent4->assign<StaticMeshComponent>(renderableMesh4);
-//
-//
-// 	ECS::Entity* ent5 = world->create();
-// 	ent5->assign<TransformComponent>(transformComp5);
-// 	ent5->assign<StaticMeshComponent>(renderableMesh5);
-// 	ent5->assign<RigidBodyComponent>(rb5);
-//
-// 	ECS::Entity* ent6 = world->create();
-// 	ent6->assign<TransformComponent>(transformComp6);
-// 	ent6->assign<StaticMeshComponent>(renderableMesh6);
-// 	ent6->assign<RigidBodyComponent>(rb6);
-//
-// 	ECS::Entity* ent7 = world->create();
-// 	ent7->assign<TransformComponent>(transformComp7);
-// 	ent7->assign<StaticMeshComponent>(renderableMesh7);
-// 	//ent7->assign<RigidBodyComponent>(rigidBComp);
-//
-// 	ECS::Entity* ent8 = world->create();
-// 	ent8->assign<TransformComponent>(transformCompSkinned);
-// 	ent8->assign<SkinnedMeshComponent>(skinnedMesh);
-// 	ent8->assign<AnimatorComponent>(animComp);
-// 	ent8->assign<CharacterComponent>(characterComponent);
-// 	ent8->assign<RigidBodyComponent>(charRbComp);
-//
-// 	//SceneManager::currentScene.sceneObjects.push_back(ent);
-// 	//SceneManager::currentScene.sceneObjects.push_back(ent2);
-// 	//SceneManager::currentScene.sceneObjects.push_back(ent3);
-// 	SceneManager::currentScene.MakeNewObject("Red sphere", ent5);
-// 	SceneManager::currentScene.MakeNewObject("Rust", ent4);
-// 	SceneManager::currentScene.MakeNewObject("Pistol", ent3);
-// 	SceneManager::currentScene.MakeNewObject("Dust Map", ent6);
-// 	SceneManager::currentScene.MakeNewObject("Bottle", ent7);
-// 	SceneManager::currentScene.MakeNewObject("SkinnedMesh", ent8);
-//
-// 	renderableMesh.shader = ShaderManager::GetMainShader();
-// 	renderableMesh2.shader = ShaderManager::GetMainShader();
-// 	renderableMesh3.shader = ShaderManager::GetMainShader();
-//
-//
-// 	//********************** lights****************************************************
-//
-// 	MeshInfo* PointLightImposter = new MeshInfo();
-// 	PointLightImposter->material = new Material();
-// 	PointLightImposter->material->textures[TEXTURE_ALBEDO] = AssetManager::ImportTexture(renderDevice, "res/textures/default/icons/point_light.png", PixelFormat::FORMAT_RGBA);
-// 	PointLightImposter->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
-//
-// 	//Directional
-// 	vec3 dirColor(1.0f, 1.0f, 1.0f);
-// 	vec3 dir(0.0f, -0.5f, 1.0f);
-// 	float dirInten = 1.1f;
-// 	ECS::Entity* lightDir = world->create();
-// 	lightDir->assign<TransformComponent>(Transform());
-// 	lightDir->assign<LightComponent>(dirColor, dirInten, vec3(0), dir);
-// 	SceneManager::currentScene.MakeNewObject("Dir light 1", lightDir);
-//
-// 	//Directional
-// 	vec3 dirColor2(1.0f, 1.0f, 1.0f);
-// 	vec3 dir2(0.0f, -0.1f, -0.06f);
-// 	float dirInten2 = 10.1f;
-// 	ECS::Entity* lightDir2 = world->create();
-// 	MeshInfo* lightDir2Mesh = new MeshInfo();
-// 	lightDir2Mesh->material = new Material();
-// 	lightDir2Mesh->material->textures[TEXTURE_ALBEDO] = AssetManager::ImportTexture(renderDevice, "res/textures/default/icons/dir_light.png", PixelFormat::FORMAT_RGBA);
-// 	lightDir2Mesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
-// 	ImpostorComponent lightDir2Impostor;
-// 	lightDir2Impostor.mesh = lightDir2Mesh;
-// 	lightDir2->assign<TransformComponent>(Transform(vec3(), vec3(), vec3(2.0f, 2.0f, 0.0f)));
-// 	lightDir2->assign<LightComponent>(dirColor2, dirInten2, vec3(0), dir2);
-// 	lightDir2->assign<ImpostorComponent>(lightDir2Impostor);
-// 	SceneManager::currentScene.MakeNewObject("Dir light 2", lightDir2);
-//
-// 	//Point;
-// 	vec3 color(1.0f, 1.0f, 1.0f);
-// 	float inten = 1200;
-//
-// 	ECS::Entity* light1 = world->create();
-// 	Transform transform1;
-// 	transform1.position = vec3(-10.0f, 10.0f, 10.0f);
-// 	ImpostorComponent light1ImpostorComp;
-// 	light1ImpostorComp.mesh = PointLightImposter;
-// 	light1->assign<TransformComponent>(transform1);
-// 	light1->assign<LightComponent>(color, inten, vec3(0));
-// 	light1->assign<ImpostorComponent>(light1ImpostorComp);
-// 	
-// 	SceneManager::currentScene.MakeNewObject("point light 1", light1);
-//
-// 	ECS::Entity* light2 = world->create();
-// 	Transform transform2;
-// 	transform2.position = vec3(10.0f, 10.0f, 10.0f);
-// 	ImpostorComponent light2ImpostorComp;
-// 	light2ImpostorComp.mesh = PointLightImposter;
-// 	light2->assign<TransformComponent>(transform2);
-// 	light2->assign<LightComponent>(color, inten, vec3(0));
-// 	light2->assign<ImpostorComponent>(light2ImpostorComp);
-// 	SceneManager::currentScene.MakeNewObject("point light 2", light2);
-//
-//
-// 	ECS::Entity* light3 = world->create();
-// 	Transform transform3;
-// 	transform3.position = vec3(-10.0f, -10.0f, 10.0f);
-// 	ImpostorComponent light3ImpostorComp;
-// 	light3ImpostorComp.mesh = PointLightImposter;
-// 	light3->assign<TransformComponent>(transform3);
-// 	light3->assign<LightComponent>(color, inten, vec3(0));
-// 	light3->assign<ImpostorComponent>(light3ImpostorComp);
-// 	SceneManager::currentScene.MakeNewObject("point light 3", light3);
-//
-// 	ECS::Entity* light4 = world->create();
-// 	Transform transform4;
-// 	transform4.position = vec3(10.0f, -10.0f, 10.0f);
-// 	ImpostorComponent light4ImpostorComp;
-// 	light4ImpostorComp.mesh = PointLightImposter;
-// 	light4->assign<TransformComponent>(transform4);
-// 	light4->assign<LightComponent>(color, inten, vec3(0));
-// 	light4->assign<ImpostorComponent>(light4ImpostorComp);
-// 	SceneManager::currentScene.MakeNewObject("point light 4", light4);
-// }
+void Application::LoadDefaultScene()
+{
+	NString monkeyMesh = "res/models/monkey3.obj";
+	NString rockMesh = "res/models/rock/rock.obj";
+
+	NString TEST_TEXTURE_FILE = "res/textures/stmpnk.jpg";
+
+	NString TEST_MODEL_FILE = monkeyMesh;
+	NString TEST_MODEL_FILE2 = rockMesh;
+
+
+	//Assimp PBR********************************************************
+	//PBRSphere.glb = binary and embedded textures
+	//PBRSphere2.gltf = embedded textures
+	NString TEST_MODEL_FILE3 = "res/models/pistol_test.glb";
+	NString TEST_MODEL_FILE6 = "res/models/dust/fbx/dust.fbx";
+	//NString TEST_MODEL_FILE6 = "res/models/terrain.ply";
+	NString TEST_MODEL_FILE7 = "res/models/PBRTest.glb";
+	//Assimp PBR********************************************************
+	
+
+
+	NString TEST_TEXTURE_FILE2 = "res/models/rock/rock.png";
+
+	//Manual texure loading 
+	NString TexureType = "rusted_iron";
+	NString TexurePathBase = "res/textures/pbr";
+	NString file_albedoTex = TexurePathBase + "/" + TexureType + "/" + "albedo.png";
+	NString file_normalTex = TexurePathBase + "/" + TexureType + "/" + "normal.png";
+	NString file_metallicTex = TexurePathBase + "/" + TexureType + "/" + "metallic.png";
+	NString file_roughnessTex = TexurePathBase + "/" + TexureType + "/" + "roughness.png";
+	NString file_aoTex = TexurePathBase + "/" + TexureType + "/" + "ao.png";
+
+	ArrayBitmap albedoBitMap;
+	albedoBitMap.Load(file_albedoTex);
+	Texture* albedo = new Texture(renderDevice, albedoBitMap, PixelFormat::FORMAT_RGBA, true, false);
+
+	ArrayBitmap normalBitMap;
+	normalBitMap.Load(file_normalTex);
+	Texture* normal = new Texture(renderDevice, normalBitMap, PixelFormat::FORMAT_RGBA, true, false);
+
+	ArrayBitmap metallicBitMap;
+	metallicBitMap.Load(file_metallicTex);
+	Texture* metallic = new Texture(renderDevice, metallicBitMap, PixelFormat::FORMAT_RGBA, true, false);
+
+	ArrayBitmap roughnessBitMap;
+	roughnessBitMap.Load(file_roughnessTex);
+	Texture* roughness = new Texture(renderDevice, roughnessBitMap, PixelFormat::FORMAT_RGBA, true, false);
+
+	ArrayBitmap aoBitMap;
+	aoBitMap.Load(file_aoTex);
+	Texture* ao = new Texture(renderDevice, aoBitMap, PixelFormat::FORMAT_RGBA, true, false);
+
+#pragma region loadMeshes
+	//model 1
+	ECS::PhysicsSystem* physSystem = (ECS::PhysicsSystem*)physicsSystem;
+
+
+	NxArray<IndexedModel> models;
+	NxArray<uint32> modelMaterialIndices;
+	NxArray<MaterialSpec> modelMaterials;
+	AssetLoader::LoadModel(TEST_MODEL_FILE, models, modelMaterialIndices, modelMaterials);
+	//VertexArray vertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
+	VertexArray* vertexArray = new VertexArray(renderDevice, models[0], USAGE_STATIC_DRAW);
+
+	ArrayBitmap testBitmap;
+	testBitmap.Load(TEST_TEXTURE_FILE);
+	Texture* testtex = new Texture(renderDevice, testBitmap, PixelFormat::FORMAT_RGBA, false, false);
+
+
+	MeshInfo* meshInfo1 = new MeshInfo();
+	meshInfo1->vertexArray = vertexArray;
+	Material* material1 = new Material();
+	material1->textures[TEXTURE_ALBEDO] = testtex;
+	meshInfo1->material = material1;
+	StaticMeshComponent renderableMesh;
+	renderableMesh.meshAssetFile = monkeyMesh;
+	renderableMesh.shader = ShaderManager::GetMainShader();
+	renderableMesh.meshes.push_back(meshInfo1);
+	TransformComponent transformComp;
+	transformComp.transform.position = vec3(0.9f, 222.15f, -40.0f);
+	transformComp.transform.scale = vec3(7.0f);
+
+	//model2 
+	AssetLoader::LoadModel(TEST_MODEL_FILE2, models, modelMaterialIndices, modelMaterials);
+	VertexArray* vertexArray2 = new VertexArray(renderDevice, models[1], USAGE_STATIC_DRAW);
+	//VertexArray vertexArray2(renderDevice, models[1], USAGE_STATIC_DRAW);
+
+	ArrayBitmap testBitmap2;
+	testBitmap2.Load(modelMaterials[1].textureNames[TEXTURE_ALBEDO]);
+	Texture* testtex2 = new Texture (renderDevice, testBitmap2, PixelFormat::FORMAT_RGBA, false, false);
+
+	MeshInfo* meshInfo2 = new MeshInfo;
+	meshInfo2->vertexArray = vertexArray2;
+	Material* material2 = new Material();
+	material2->textures[TEXTURE_ALBEDO] = testtex2;
+	//meshInfo2->material = material2;
+	StaticMeshComponent renderableMesh2;
+	renderableMesh2.meshAssetFile = rockMesh;
+	renderableMesh2.shader = ShaderManager::GetMainShader();
+	renderableMesh2.meshes.push_back(meshInfo2);
+	renderableMesh2.numInst = 100;
+	TransformComponent transformComp2;
+	transformComp2.transform.scale = vec3(7.0f);
+
+
+
+
+	NxArray<IndexedModel> PBRLoadedMeshes;
+	NxArray<uint32> PBRMaterialIndices;
+	NxArray<MaterialSpec> PBRLoadedMaterials;
+	AssetLoader::LoadModel(TEST_MODEL_FILE3, PBRLoadedMeshes, PBRMaterialIndices, PBRLoadedMaterials);
+
+	StaticMeshComponent renderableMesh3;
+	
+	for(int i = 0; i < PBRLoadedMeshes.size(); i++)
+	{
+		MeshInfo* curMesh = new MeshInfo();
+		curMesh->vertexArray = new VertexArray(renderDevice, PBRLoadedMeshes[i], USAGE_STATIC_DRAW);
+		renderableMesh3.meshes.push_back(curMesh);
+
+		Material* material3 = new Material();
+		for (int j = 0; j < PBRLoadedMaterials.size(); j++)
+		{
+			for (auto textureTypeToFile : PBRLoadedMaterials[i].textureNames)
+			{
+				ArrayBitmap bm;
+				bm.Load(textureTypeToFile.second);
+				Texture* tex = new Texture(renderDevice, bm, PixelFormat::FORMAT_RGBA, false, false);
+				material3->textures[textureTypeToFile.first] = tex;
+			}
+			for (auto textureTypeToTex : PBRLoadedMaterials[i].textures)
+			{
+				material3->textures[textureTypeToTex.first] = textureTypeToTex.second;
+			}
+		}
+		curMesh->material = material3;
+	}
+
+	renderableMesh3.shader = ShaderManager::GetMainShader();
+	renderableMesh3.meshAssetFile = "Mesh3";
+	TransformComponent transformComp3;
+	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
+	transformComp3.transform.position = vec3(-30.1f, 20.0f, -40.0f);
+	transformComp3.transform.rotation = vec3(0 , 0.0f, 0.f);
+	transformComp3.rotSpeed = 15.0f;
+	transformComp3.transform.scale = vec3(0.9);
+	RigidBodyComponent rbPistol;
+	NxArray<MeshInfo*> meshsesToAdd;
+	
+	nPhysics::iShape* pistolShape;
+    AssetManager::ImportModelGenerateCollider(TEST_MODEL_FILE3, meshsesToAdd, nPhysics::SHAPE_TYPE_BOX, pistolShape);
+
+	nPhysics::sRigidBodyDef PistolRbdef;
+	PistolRbdef.Mass = 100.0f;
+	PistolRbdef.Position = transformComp3.transform.position.ToVec();
+	PistolRbdef.Scale = transformComp3.transform.scale.ToVec();
+	//PistolRbdef.AngularVelocity = vec3(10.1f, 12.5f, -11.1f);
+	PistolRbdef.quatOrientation = quat(transformComp3.transform.rotation.ToVec());
+	nPhysics::iRigidBody* PistolRB = physSystem->GetFactory()->CreateRigidBody(PistolRbdef, pistolShape);
+	//PistolRB->SetEulerRotation(transformComp3.transform.rotation.ToVec());
+	physSystem->GetWorld()->AddBody(PistolRB);
+
+
+	MeshInfo* pbrTestMesh = new MeshInfo();
+	pbrTestMesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateSphere(1.0f, 36, 36, vec3(0.0f)), BufferUsage::USAGE_DYNAMIC_DRAW);
+	Material* material4 = new Material();
+
+	material4->textures[TEXTURE_ALBEDO] = albedo;
+	material4->textures[TEXTURE_NORMAL] = normal;
+	material4->textures[TEXTURE_METALLIC] = metallic;
+	material4->textures[TEXTURE_ROUGHNESS] = roughness;
+	material4->textures[TEXTURE_AO] = ao;
+
+	//material3.diffuseTextures.push_back(&testtex);
+	pbrTestMesh->material = material4;
+	StaticMeshComponent renderableMesh4;
+	renderableMesh4.meshAssetFile = "Mesh4";
+	renderableMesh4.shader = ShaderManager::GetMainShader();
+	renderableMesh4.meshes.push_back(pbrTestMesh);
+	TransformComponent transformComp4;
+	transformComp4.transform.position = vec3(20, 20, -40);
+	transformComp4.transform.scale = vec3(5);
+	transformComp4.rotSpeed = 20.2f;
+
+
+
+	MeshInfo* mesh5 = new MeshInfo();
+	IndexedModel sphereIndexedModel = PrimitiveGenerator::CreateSphere(1.0f, 12, 12, vec3(0.0f));
+	mesh5->vertexArray = new VertexArray(renderDevice, sphereIndexedModel, BufferUsage::USAGE_DYNAMIC_DRAW);
+	Material* material5 = new Material();
+	//material5->color(1.0);
+	material5->metallic = 0.99;
+	material5->roughness = 0.01;
+	material5->color = vec4(1.0f, 0.0f, 0.0f, 1.0f);
+	mesh5->material = material5;
+	StaticMeshComponent renderableMesh5;
+	renderableMesh5.meshAssetFile = "Mesh5";
+	renderableMesh5.shader = ShaderManager::GetMainShader();
+	renderableMesh5.meshes.push_back(mesh5);
+	TransformComponent transformComp5;
+	transformComp5.transform.position = vec3(0, 20, -40);
+	//transformComp.transform.rotation = vec3(5.9f, -0.15f, -50.0f);
+	transformComp5.transform.scale = vec3(5);
+	RigidBodyComponent rb5;
+	nPhysics::iShape* CurShape5;
+	nPhysics::sRigidBodyDef def5;
+	def5.Position = transformComp5.transform.position.ToVec();
+	def5.AngularVelocity = vec3(2, 0, 2);
+	def5.Mass = 110.0f;
+	def5.GameObjectName = "test5";
+	//def5.Scale = vec3(6.1f);
+
+	
+
+	CurShape5 = physSystem->GetFactory()->CreateSphereShape(5.2);
+	rb5.rigidBody = physSystem->GetFactory()->CreateRigidBody(def5, CurShape5);
+	physSystem->GetWorld()->AddBody(rb5.rigidBody);
+
+
+	StaticMeshComponent renderableMesh6;
+	renderableMesh6.bIsVisible = true;
+	nPhysics::iShape* CurShape6;
+	AssetManager::ImportModelGenerateCollider(TEST_MODEL_FILE6, renderableMesh6.meshes, nPhysics::SHAPE_TYPE_MESH, CurShape6);
+	renderableMesh6.meshAssetFile = TEST_MODEL_FILE6;
+	renderableMesh6.shader = ShaderManager::GetMainShader();
+	renderableMesh6.numInst = 1;
+	TransformComponent transformComp6;
+	transformComp6.transform.position = vec3(-500.0f, 5.0f, -30.0f);
+	//transformComp6.transform.position = vec3(-180.1f, -20.0f, -40.0f);
+	transformComp6.transform.rotation = vec3(-90, 0, 0);
+	//transformComp6.transform.scale = vec3(0.9);
+	RigidBodyComponent rb6;
+
+	rb6.bIsStatic = true;
+	nPhysics::sRigidBodyDef def6;
+	def6.Orientation = vec3(glm::radians(transformComp6.transform.rotation[0]), glm::radians(transformComp6.transform.rotation[1]), glm::radians(transformComp6.transform.rotation[2]));
+	def6.Position = transformComp6.transform.position.ToVec();
+	def6.Mass = 0.0f;
+	def6.GameObjectName = "test6";
+	def6.Scale = transformComp6.transform.scale.ToVec();
+	//CurShape6 = physSystem->GetFactory()->CreatePlaneShape(vec3(0, 1, 0), 0);
+	//nPhysics::GL_Triangle* GLTriangle = new nPhysics::GL_Triangle[curModelInfo.pMeshData->numberOfTriangles];
+
+	rb6.rigidBody = physSystem->GetFactory()->CreateRigidBody(def6, CurShape6);
+	physSystem->GetWorld()->AddBody(rb6.rigidBody);
+
+
+
+	StaticMeshComponent renderableMesh7;
+
+	NxArray<MeshInfo*> meshsesToAdd7;
+	nPhysics::iRigidBody* rbToAdd7 = nullptr;
+	//nPhysics::iShape* CurShape6; 
+	
+	renderableMesh7.meshes = AssetManager::ImportModel(TEST_MODEL_FILE7);
+
+	renderableMesh7.meshAssetFile = TEST_MODEL_FILE7;
+	renderableMesh7.shader = ShaderManager::GetMainShader();
+	renderableMesh7.numInst = 1;
+	TransformComponent transformComp7;
+	transformComp7.transform.position = vec3(-20.1f, 10.0f, -40.0f);
+	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);
+	transformComp7.transform.scale = vec3(50.0);
+	transformComp7.rotSpeed = 10.0f;
+	//RigidBodyComponent rigidBComp;
+
+
+	//rbToAdd->SetPosition(transformComp7.transform.position.ToVec());
+	//rbToAdd->SetMass(100);
+	//rbToAdd->SetEulerRotation(transformComp7.transform.rotation.ToVec());;
+
+	//rigidBComp.rigidBody = rbToAdd;
+
+#pragma endregion
+
+#pragma region Skinned Mesh
+	SkinnedMeshComponent skinnedMesh;
+	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal("res/models/chan.fbx");
+	//skinnedMesh.skinnedMeshInfo->mesh->material->textures.clear();
+	skinnedMesh.skinnedMeshInfo->mesh->drawParams.faceCulling = FACE_CULL_BACK;
+	skinnedMesh.skinnedMeshInfo->mesh->drawParams.depthFunc = DRAW_FUNC_LESS;
+	skinnedMesh.skinnedMeshInfo->mesh->drawParams.shouldWriteDepth = true;
+
+	//skinnedMesh.meshAssetFile = TEST_MODEL_FILE7;
+	//skinnedMesh.shader = ShaderManager::GetMainShader();
+	//skinnedMesh.numInst = 1;
+	TransformComponent transformCompSkinned;
+	transformCompSkinned.transform.position = vec3(90.1f, 30.0f, -40.0f);
+	transformCompSkinned.transform.rotation = vec3(0.0f, 0.0f, 0.f);
+	transformCompSkinned.transform.scale = vec3(0.55);
+	RigidBodyComponent charRbComp;
+	charRbComp.offset = vec3f(0.0f, -48.0f, 0.0f);
+	nPhysics::iShape* CurShape8;
+	nPhysics::sRigidBodyDef def8;
+	def8.Position = transformCompSkinned.transform.position.ToVec();
+	def8.Mass = 1600.0f;
+	def8.isPlayer = true;
+	CurShape8 = physSystem->GetFactory()->CreateCapsuleShape(110.0f, 20.f, 1.0f);
+	charRbComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(def8, CurShape8);
+	physSystem->GetWorld()->AddBody(charRbComp.rigidBody);
+	AnimatorComponent animComp;
+	animComp.animations["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
+	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
+	animComp.animations["walk_left"] = AssetManager::ImportAnimation("res/models/animations/walk_left.fbx", "walk_left");
+	animComp.animations["walk_right"] = AssetManager::ImportAnimation("res/models/animations/walk_right.fbx", "walk_right");
+	animComp.animations["walk_forward"] = AssetManager::ImportAnimation("res/models/animations/walk_forward.fbx", "walk_forward");
+	AnimationState idleState;
+	idleState.transitionMap["walk_forward"] = AnimationState::AnimTransition(InputKey::KEY_W);
+	idleState.transitionMap["walk_left"] = AnimationState::AnimTransition(InputKey::KEY_A);
+	idleState.transitionMap["walk_right"] = AnimationState::AnimTransition(InputKey::KEY_D);
+	idleState.transitionMap["shoot"] = AnimationState::AnimTransition(InputKey::KEY_SPACE);
+	idleState.activeAnimation.name = "idle";
+	idleState.activeAnimation.bHasExitTime = true;
+	animComp.animationStates["idle"] = idleState;
+	//idleState.nextAnimation.name = "shoot";
+	//idleState.transitionKey = InputKey::KEY_SPACE;
+	CharacterComponent characterComponent;
+	characterComponent.movementSpeed = 10.0f;
+
+
+	animComp.currentState = idleState;
+	animComp.InitialState = idleState;
+
+	AnimationState ShotState; 
+	ShotState.activeAnimation.bHasExitTime = true;
+	ShotState.activeAnimation.name = "shoot";
+	animComp.animationStates["shoot"] = ShotState;
+
+	AnimationState WalkLeftState;
+	WalkLeftState.activeAnimation.name = "walk_left";
+	animComp.animationStates["walk_left"] = WalkLeftState;
+
+	AnimationState WalkRightState;
+	WalkRightState.activeAnimation.name = "walk_right";
+	animComp.animationStates["walk_right"] = WalkRightState;
+
+	AnimationState WalkForwardState;
+	WalkForwardState.activeAnimation.name = "walk_forward";
+	animComp.animationStates["walk_forward"] = WalkForwardState;
+
+#pragma endregion
+	
+	ECS::Entity* ent3 = world->create();
+	ent3->assign<TransformComponent>(transformComp3);
+	ent3->assign<StaticMeshComponent>(renderableMesh3);
+	ent3->assign<RigidBodyComponent>(ent3, PistolRB);
+
+
+	ECS::Entity* ent4 = world->create();
+	ent4->assign<TransformComponent>(transformComp4);
+	ent4->assign<StaticMeshComponent>(renderableMesh4);
+
+
+	ECS::Entity* ent5 = world->create();
+	ent5->assign<TransformComponent>(transformComp5);
+	ent5->assign<StaticMeshComponent>(renderableMesh5);
+	ent5->assign<RigidBodyComponent>(rb5);
+
+	ECS::Entity* ent6 = world->create();
+	ent6->assign<TransformComponent>(transformComp6);
+	ent6->assign<StaticMeshComponent>(renderableMesh6);
+	ent6->assign<RigidBodyComponent>(rb6);
+
+	ECS::Entity* ent7 = world->create();
+	ent7->assign<TransformComponent>(transformComp7);
+	ent7->assign<StaticMeshComponent>(renderableMesh7);
+	//ent7->assign<RigidBodyComponent>(rigidBComp);
+
+	ECS::Entity* ent8 = world->create();
+	ent8->assign<TransformComponent>(transformCompSkinned);
+	ent8->assign<SkinnedMeshComponent>(skinnedMesh);
+	ent8->assign<AnimatorComponent>(animComp);
+	ent8->assign<CharacterComponent>(characterComponent);
+	ent8->assign<RigidBodyComponent>(charRbComp);
+
+	//SceneManager::currentScene.sceneObjects.push_back(ent);
+	//SceneManager::currentScene.sceneObjects.push_back(ent2);
+	//SceneManager::currentScene.sceneObjects.push_back(ent3);
+	SceneManager::currentScene.MakeNewObject("Red sphere", ent5);
+	SceneManager::currentScene.MakeNewObject("Rust", ent4);
+	SceneManager::currentScene.MakeNewObject("Pistol", ent3);
+	SceneManager::currentScene.MakeNewObject("Dust Map", ent6);
+	SceneManager::currentScene.MakeNewObject("Bottle", ent7);
+	SceneManager::currentScene.MakeNewObject("SkinnedMesh", ent8);
+
+	renderableMesh.shader = ShaderManager::GetMainShader();
+	renderableMesh2.shader = ShaderManager::GetMainShader();
+	renderableMesh3.shader = ShaderManager::GetMainShader();
+
+
+	//********************** lights****************************************************
+
+	MeshInfo* PointLightImposter = new MeshInfo();
+	PointLightImposter->material = new Material();
+	PointLightImposter->material->textures[TEXTURE_ALBEDO] = AssetManager::ImportTexture(renderDevice, "res/textures/default/icons/point_light.png", PixelFormat::FORMAT_RGBA);
+	PointLightImposter->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
+
+	//Directional
+	vec3 dirColor(1.0f, 1.0f, 1.0f);
+	vec3 dir(0.0f, -0.5f, 1.0f);
+	float dirInten = 1.1f;
+	ECS::Entity* lightDir = world->create();
+	lightDir->assign<TransformComponent>(lightDir, Transform());
+	lightDir->assign<LightComponent>(lightDir, dirColor, dirInten, vec3(0), dir);
+	SceneManager::currentScene.MakeNewObject("Dir light 1", lightDir);
+
+	//Directional
+	vec3 dirColor2(1.0f, 1.0f, 1.0f);
+	vec3 dir2(0.0f, -0.1f, -0.06f);
+	float dirInten2 = 10.1f;
+	ECS::Entity* lightDir2 = world->create();
+	MeshInfo* lightDir2Mesh = new MeshInfo();
+	lightDir2Mesh->material = new Material();
+	lightDir2Mesh->material->textures[TEXTURE_ALBEDO] = AssetManager::ImportTexture(renderDevice, "res/textures/default/icons/dir_light.png", PixelFormat::FORMAT_RGBA);
+	lightDir2Mesh->vertexArray = new VertexArray(renderDevice, PrimitiveGenerator::CreateQuad(), BufferUsage::USAGE_STATIC_DRAW);
+	ImpostorComponent lightDir2Impostor;
+	lightDir2Impostor.mesh = lightDir2Mesh;
+	lightDir2->assign<TransformComponent>(lightDir2, Transform(vec3(), vec3(), vec3(2.0f, 2.0f, 0.0f)));
+	lightDir2->assign<LightComponent>(lightDir2, dirColor2, dirInten2, vec3(0), dir2);
+	lightDir2->assign<ImpostorComponent>(lightDir2Impostor);
+	SceneManager::currentScene.MakeNewObject("Dir light 2", lightDir2);
+
+	//Point;
+	vec3 color(1.0f, 1.0f, 1.0f);
+	float inten = 1200;
+
+	ECS::Entity* light1 = world->create();
+	Transform transform1;
+	transform1.position = vec3(-10.0f, 10.0f, 10.0f);
+	ImpostorComponent light1ImpostorComp;
+	light1ImpostorComp.mesh = PointLightImposter;
+	light1->assign<TransformComponent>(light1, transform1);
+	light1->assign<LightComponent>(light1, color, inten, vec3(0));
+	light1->assign<ImpostorComponent>(light1ImpostorComp);
+	
+	SceneManager::currentScene.MakeNewObject("point light 1", light1);
+
+	ECS::Entity* light2 = world->create();
+	Transform transform2;
+	transform2.position = vec3(10.0f, 10.0f, 10.0f);
+	ImpostorComponent light2ImpostorComp;
+	light2ImpostorComp.mesh = PointLightImposter;
+	light2->assign<TransformComponent>(light2, transform2);
+	light2->assign<LightComponent>(light2, color, inten, vec3(0));
+	light2->assign<ImpostorComponent>(light2ImpostorComp);
+	SceneManager::currentScene.MakeNewObject("point light 2", light2);
+
+
+	ECS::Entity* light3 = world->create();
+	Transform transform3;
+	transform3.position = vec3(-10.0f, -10.0f, 10.0f);
+	ImpostorComponent light3ImpostorComp;
+	light3ImpostorComp.mesh = PointLightImposter;
+	light3->assign<TransformComponent>(light3, transform3);
+	light3->assign<LightComponent>(light3, color, inten, vec3(0));
+	light3->assign<ImpostorComponent>(light3ImpostorComp);
+	SceneManager::currentScene.MakeNewObject("point light 3", light3);
+
+	ECS::Entity* light4 = world->create();
+	Transform transform4;
+	transform4.position = vec3(10.0f, -10.0f, 10.0f);
+	ImpostorComponent light4ImpostorComp;
+	light4ImpostorComp.mesh = PointLightImposter;
+	light4->assign<TransformComponent>(light4, transform4);
+	light4->assign<LightComponent>(light4, color, inten, vec3(0));
+	light4->assign<ImpostorComponent>(light4ImpostorComp);
+	SceneManager::currentScene.MakeNewObject("point light 4", light4);
+}
 
 // process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 // ---------------------------------------------------------------------------------------------------------

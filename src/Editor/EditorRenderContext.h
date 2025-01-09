@@ -27,6 +27,7 @@ class EditorRenderContext : public RenderContext
 public:
 	EditorRenderContext(RenderDevice* deviceIn, RenderTarget* targetIn, DrawParams drawParamsIn,
 	        Sampler* samplerIn, const mat4 perspectiveIn, Camera* CameraIn);
+	
 	inline void RenderMesh(NxArray<MeshInfo*> meshes, Shader* shader,  const mat4& transformIn)
 	{
 		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(transformIn);

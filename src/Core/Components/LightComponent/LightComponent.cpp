@@ -25,5 +25,5 @@ RTTR_REGISTRATION
 
 void LightComponent::Initialize()
 {
-	m_entity->assign<LightComponent>(this);
+	//m_entity->assign<LightComponent>(this);
 }

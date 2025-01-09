@@ -5,6 +5,11 @@
 
 struct RigidBodyComponent : public BaseComponent
 {
+	RigidBodyComponent()
+	{
+		
+	}
+	
 	RigidBodyComponent(ECS::Entity* entity, nPhysics::iRigidBody* rigidBodyIn, vec3f offsetIn)
 		:BaseComponent(entity)
 		,rigidBody(rigidBodyIn)

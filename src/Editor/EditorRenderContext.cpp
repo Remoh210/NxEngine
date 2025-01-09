@@ -116,13 +116,20 @@ void EditorRenderContext::SetLights(Shader* shader)
 
 	int numLights = lightBuffer.size();
 
-	if (!shader)
+	if (numLights <= 0)
 	{
-		DEBUG_LOG_TEMP("NO SHADER"); return;
+		return;
 	}
 
-	shader->SetUniform1i("uNumLights", numLights < MAX_NUM_LIGHTS ? numLights : MAX_NUM_LIGHTS);
+	if (!shader)
+	{
+		DEBUG_LOG_CONSOLE(LOG_TYPE_RENDERER, LOG_ERROR, "SetLights: No shader"); return;
+	}
 
+	
+
+	shader->SetUniform1i("uNumLights", numLights < MAX_NUM_LIGHTS ? numLights : MAX_NUM_LIGHTS);
+	
 	for (std::pair<ECS::ComponentHandle<LightComponent>, vec3> light : lightBuffer)
 	{
 		lightTypes.push_back(static_cast<int>(light.first->lightType));

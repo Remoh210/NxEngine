@@ -6,6 +6,11 @@
 
 struct BaseComponent
 {
+    BaseComponent()
+    {
+        
+    }
+    
     BaseComponent(ECS::Entity* entity)
         :m_entity(entity)
     {

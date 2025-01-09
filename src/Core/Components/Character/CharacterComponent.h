@@ -6,6 +6,11 @@
 
 struct CharacterComponent : public BaseComponent
 {
+	CharacterComponent()
+	{
+		
+	}
+	
 	CharacterComponent(ECS::Entity* entity)
 		:BaseComponent(entity)
 	{

@@ -24,13 +24,18 @@
 *   SOFTWARE.                                                                       *
 *                                                                                   *
 *************************************************************************************/
-
 #ifndef RTTR_VARIANT_DATA_CONVERTER_H_
 #define RTTR_VARIANT_DATA_CONVERTER_H_
+
+// Hack windows.h has min max macros, so we undef here to prevent compiler errors
+#undef max
+#undef min
 
 #include "rttr/detail/conversion/std_conversion_functions.h"
 #include "rttr/detail/conversion/number_conversion.h"
 #include "rttr/detail/enumeration/enumeration_helper.h"
+
+
 
 namespace rttr
 {
@@ -1034,9 +1039,8 @@ struct RTTR_API convert_from<float>
 {
     static RTTR_INLINE bool to(const float& from, bool& to)
     {
-        to = !(from <= std::numeric_limits<float>::min() &&
-               from >= -1 * std::numeric_limits<float>::min());
-
+        const float threshold = std::numeric_limits<float>::epsilon(); // Small threshold for near-zero comparison
+        to = !(from <= threshold && from >= -threshold);
         return true;
     }
 

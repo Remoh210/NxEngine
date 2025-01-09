@@ -7,6 +7,11 @@
 
 struct TransformComponent : public BaseComponent
 {
+	TransformComponent()
+	{
+
+	}
+	
 	TransformComponent(ECS::Entity* entity)
 		:BaseComponent(entity)
 	{

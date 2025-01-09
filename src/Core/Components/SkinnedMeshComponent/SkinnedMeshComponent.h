@@ -10,6 +10,10 @@
 
 struct SkinnedMeshComponent : public BaseComponent
 {
+	SkinnedMeshComponent()
+	{	
+	}
+	
 	SkinnedMeshComponent(ECS::Entity* entity)
 		:BaseComponent(entity)
 	{	

@@ -9,6 +9,11 @@
 
 struct StaticMeshComponent : public BaseComponent 
 {
+	StaticMeshComponent()
+	{
+		Initialize();
+	}
+	
 	StaticMeshComponent(ECS::Entity* entity)
 	:BaseComponent(entity)
 	{

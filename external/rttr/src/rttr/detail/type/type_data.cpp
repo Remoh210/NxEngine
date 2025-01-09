@@ -35,6 +35,15 @@ namespace detail
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
+static class_data& get_invalid_type_class_data() RTTR_NOEXCEPT
+{
+    static std::unique_ptr<class_data> info = ::rttr::detail::make_unique<class_data>(nullptr, std::vector<type>());
+    return (*info.get());
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
 static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
 {
     static type_data instance{ nullptr, nullptr,
@@ -46,11 +55,9 @@ static type_data& get_invalid_type_data_impl() RTTR_NOEXCEPT
                                nullptr,
                                nullptr,
                                get_create_wrapper_func<void>(),
-                               nullptr,
+                               &get_invalid_type_class_data,
                                false,
-                               type_trait_value{0},
-                               class_data(nullptr, std::vector<type>())
-                              };
+                               type_trait_value{0}};
 
     instance.raw_type_data  = &instance;
     instance.wrapped_type   = &instance;

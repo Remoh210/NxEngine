@@ -18,5 +18,5 @@ RTTR_REGISTRATION
 
 void TransformComponent::Initialize()
 {
-	m_entity->assign<TransformComponent>(this);
+	//m_entity->assign<TransformComponent>(this);
 }

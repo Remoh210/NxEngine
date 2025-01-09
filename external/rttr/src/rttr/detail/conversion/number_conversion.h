@@ -28,6 +28,10 @@
 #ifndef RTTR_NUMBER_CONVERSION_H_
 #define RTTR_NUMBER_CONVERSION_H_
 
+// Hack windows.h has min max macros, so we undef here to prevent compiler errors
+#undef max
+#undef min
+
 #include "rttr/detail/base/core_prerequisites.h"
 #include <limits>
 

@@ -10,5 +10,4 @@ RTTR_REGISTRATION
 
 void StaticMeshComponent::Initialize()
 {
-	m_entity->assign<StaticMeshComponent>(*this);
 }
