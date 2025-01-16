@@ -81,7 +81,7 @@ public:
 	///the default implementation for setDefaultColors has no effect. A derived class can implement it and store the colors.
 	virtual void setDefaultColors(const DefaultColors& /*colors*/) {}
 
-	virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& color) = 0;
+	virtual void  drawLine(const btVector3& from, const btVector3& to, const btVector3& color) = 0;
 
 	virtual void drawLine(const btVector3& from, const btVector3& to, const btVector3& fromColor, const btVector3& toColor)
 	{

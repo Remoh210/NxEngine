@@ -5,6 +5,7 @@
 mat4 Transform::ToMatrix()
 {
 	mat4 trans = mat4(1.0f);
+	
 	trans = glm::translate(trans, position.ToVec());
 	trans = glm::rotate(trans, glm::radians(rotation.ToVec().z), glm::vec3(0.0f, 0.0f, 1.0f));
 	trans = glm::rotate(trans, glm::radians(rotation.ToVec().y), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -27,8 +28,7 @@ vec3 Transform::GetForwardVector()
 	mat4 matOrientation = glm::mat4(qOrientation);
 
 	vec4 vecForwardDirection_WorldSpace = matOrientation * forwModel;
-
-	// optional normalize
+	
 	vecForwardDirection_WorldSpace = glm::normalize(vecForwardDirection_WorldSpace);
 	glm::vec3 veccForw(vecForwardDirection_WorldSpace.x, vecForwardDirection_WorldSpace.y, vecForwardDirection_WorldSpace.z);
 

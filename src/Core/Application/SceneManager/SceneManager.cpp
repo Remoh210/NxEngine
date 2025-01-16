@@ -167,7 +167,7 @@ bool SceneManager::LoadScene(NString filename)
 	const NString fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
 	
 	
-	//Scene scene = Nx::parse_scene(world, fileToLoadFullPath);
+	Scene scene = Nx::parse_scene(world, fileToLoadFullPath);
 	
 
 	return true;

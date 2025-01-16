@@ -29,14 +29,14 @@ public:
                      continue;
                  }
 	   
-                 components.push_back(std::make_shared<BaseComponent>(component.get()));
+                 components.push_back((BaseComponent*)&component.get());
              }
          }
      }
     
      
     ECS::Entity* entity;
-    NxArray<std::shared_ptr<BaseComponent>> components;
+    NxArray<BaseComponent*> components;
     NString name;
     
     RTTR_ENABLE()

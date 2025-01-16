@@ -28,7 +28,7 @@ struct StaticMeshComponent : public BaseComponent
 	int numInst = 1;
 	bool bIsVisible = true;
 
-	RTTR_ENABLE()
+	RTTR_ENABLE(BaseComponent)
 	
 private:
 	void Initialize();

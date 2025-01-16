@@ -35,7 +35,7 @@ namespace nPhysics
 
 	void BulletDebugRenderer::flushLines()
 	{
-		if (meshToDraw.model.GetElement(0).size() > 0)
+		if (false == meshToDraw.model.GetElement(0).empty())
 		{
 			DebugRenderer::DrawModelAsArrays(meshToDraw.model);
 		}

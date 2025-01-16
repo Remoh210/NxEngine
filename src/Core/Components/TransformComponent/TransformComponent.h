@@ -24,12 +24,12 @@ struct TransformComponent : public BaseComponent
 	{
 		Initialize();
 	}
-
+	
 	Transform transform;
 
 	float rotSpeed = 0.0f;
 	
-	RTTR_ENABLE()
+	RTTR_ENABLE(BaseComponent)
 	
 private:
 	void Initialize();

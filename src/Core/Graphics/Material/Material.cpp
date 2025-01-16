@@ -3,6 +3,10 @@
 RTTR_REGISTRATION
 {
 		rttr::registration::class_<Material>("Material")
+		.constructor<>()
+		(
+			rttr::policy::ctor::as_raw_ptr
+		)
 		.property("Textures", &Material::textures)
 		.property("Metallic", &Material::metallic)
 				  (

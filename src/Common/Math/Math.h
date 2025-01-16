@@ -10,6 +10,12 @@ class vec3f
 {
 public:
 #pragma region constructors
+	
+	inline vec3f()
+	{
+		data = glm::vec3(0);
+	}
+	
 	inline vec3f(float x, float y, float z)
 	{
 		data = glm::vec3(x, y, z);
@@ -23,11 +29,6 @@ public:
 	inline vec3f(glm::vec3 value)
 	{
 		data = value;
-	}
-
-	inline vec3f()
-	{
-		data = glm::vec3();
 	}
 
 	inline glm::vec3& ToVec()
@@ -62,38 +63,69 @@ public:
 	inline vec3f operator *= (const vec3f& other) { data *= other.data; return *this; }
 	inline vec3f operator /= (const vec3f& other) { data /= other.data; return *this; }
 
-	void operator = (glm::vec3 vecIn) { data = vecIn; }
-	void operator = (vec3f vecIn) { data = vecIn.ToVec(); }
+	void operator = (glm::vec3& vecIn)
+	{
+		data = vecIn;
+	}
+
+	void operator = (const glm::vec3& vecIn)
+	{
+		data = vecIn;
+	}
+	
+	void operator = (vec3f& vecIn)
+	{
+		test25var = vecIn.test25var;
+		InternalData = vecIn.InternalData;
+		
+		data.x = vecIn.data.x;
+		data.y = vecIn.data.y;
+		data.z = vecIn.data.z;
+		
+	}
+
+	void operator = (const vec3f& vecIn)
+	{
+
+		test25var = vecIn.test25var;
+		InternalData = vecIn.InternalData;
+		
+		data.x = vecIn.data.x;
+		data.y = vecIn.data.y;
+		data.z = vecIn.data.z;
+	}
 #pragma endregion
 
 #pragma region reflection
-	//This function is used for reflection
-	inline std::vector<float> Get()
+	inline std::vector<float>& GetInternal()
 	{
-		std::vector<float> NxArrayOut;
-		float* value = glm::value_ptr(data);
-		NxArrayOut.assign(value, value + 3);
-		return NxArrayOut;
+		InternalData = {data.x, data.y, data.z };
+		return InternalData;
 	}
-
-	//This function is used for reflection
-	inline void Set(std::vector<float> NxArrayIn)
-	{
-		int size = NxArrayIn.size();
-		if (size < 3)
-		{
-			DEBUG_LOG("vec3", "Error", "Can't create vec3 from NxArray of size = %d", size);
-			return;
-		}
-		data = glm::make_vec3(&NxArrayIn[0]);
-	}
-
-	RTTR_ENABLE();
-#pragma endregion
-
-private:
-	glm::vec3 data;
 	
+	inline void SetInternal(std::vector<float>& VectorIn)
+	{
+		if (VectorIn.size() >= 3)
+		{
+			InternalData = VectorIn;
+			data = glm::vec3(InternalData[0], InternalData[1], InternalData[2]);
+		}
+		else
+		{
+			DEBUG_LOG_TEMP("Can't set internal data vector");
+		}
+	}
+#pragma endregion
+	
+	glm::vec3 data;
+
+	float test25var = 0;
+
+	// Used only for serialization
+private:
+	std::vector<float> InternalData;
+	
+	RTTR_ENABLE()
 };
 
 
@@ -160,30 +192,29 @@ public:
 
 #pragma region reflection
 	//This function is used for reflection
-	inline std::vector<float> Get()
-	{
-		std::vector<float> NxArrayOut;
-		float* value = glm::value_ptr(data);
-		NxArrayOut.assign(value, value + 4);
-		return NxArrayOut;
-	}
+	// inline std::vector<float>& Get()
+	// {
+	// 	std::vector<float> NxArrayOut;
+	// 	float* value = glm::value_ptr(data);
+	// 	NxArrayOut.assign(value, value + 4);
+	// 	return NxArrayOut;
+	// }
+	//
+	// //This function is used for reflection
+	// inline void Set(std::vector<float>& NxArrayIn)
+	// {
+	// 	int size = NxArrayIn.size();
+	// 	if (size < 4)
+	// 	{
+	// 		DEBUG_LOG("vec3", "Error", "Can't create vec3 from NxArray of size = %d", size);
+	// 		return;
+	// 	}
+	// 	data = glm::make_vec4(&NxArrayIn[0]);
+	// }
 
-	//This function is used for reflection
-	inline void Set(std::vector<float> NxArrayIn)
-	{
-		int size = NxArrayIn.size();
-		if (size < 4)
-		{
-			DEBUG_LOG("vec3", "Error", "Can't create vec3 from NxArray of size = %d", size);
-			return;
-		}
-		data = glm::make_vec4(&NxArrayIn[0]);
-	}
-
-	RTTR_ENABLE()
 #pragma endregion
-
-private:
+	
 	glm::vec4 data;
 
+	RTTR_ENABLE()
 };

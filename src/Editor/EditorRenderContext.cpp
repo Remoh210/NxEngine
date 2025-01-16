@@ -263,7 +263,7 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 			if (VertexArray->GetNumIndices() == 0)
 			{
 				mRenderDevice->DrawArrays(renderTarget->GetId(), modelShader->GetId(), VertexArray->GetId(),
-					drawParams, 300);
+					drawParams, VertexArray->GetNumVertices());
 			}
 			else
 			{

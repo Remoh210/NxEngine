@@ -8,7 +8,7 @@ struct BaseComponent
 {
     BaseComponent()
     {
-        
+        m_entity = nullptr;
     }
     
     BaseComponent(ECS::Entity* entity)

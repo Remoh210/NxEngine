@@ -7,7 +7,7 @@ RTTR_REGISTRATION
     rttr::registration::class_<BaseComponent>("BaseComponent")
         .constructor<>()
         (
-            rttr::policy::ctor::as_object// should create an instance of the class as raw_ptr<>
+            rttr::policy::ctor::as_raw_ptr
         )   
     ;
 }

@@ -9,17 +9,26 @@
                     "Class": "TransformComponent",
                     "transform": {
                         "Class": "Transform",
+						"Test25Property" : 25.0,
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+							"testProperty": 25.0,
+							"InternalData": [
                                 0.0,
                                 20.0,
                                 -40.0
-                            ]
+                            ],
+                            "x": 0,
+							"y": 20.0,
+							"z": -40.0
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+							"test25var": 25.0,
+							"x": 0,
+							"y": 20.0,
+							"z": -40.0,
+                            "testVector": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -27,14 +36,14 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "data_vector": [
                                 5.0,
                                 5.0,
                                 5.0
                             ]
                         }
                     },
-                    "Rotation Speed": 0.0
+                    "Rotation Speed": 25.0
                 },
                 {
                     "Class": "StaticMeshComponent",

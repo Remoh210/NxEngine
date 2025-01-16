@@ -33,7 +33,7 @@ public:
 		meshRenderBuffer[std::make_pair(meshes, shader)].push_back(transformIn);
 	}
 
-	inline void RenderSkinnedMesh(SkinnedMeshInfo* SkinnedMesh, mat4 transformIn)
+	inline void RenderSkinnedMesh(SkinnedMeshInfo* SkinnedMesh, mat4& transformIn)
 	{
 		SkinnedMeshBuffer[SkinnedMesh].push_back(transformIn);// glm::inverseTranspose(transformIn))
 	}
