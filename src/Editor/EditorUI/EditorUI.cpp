@@ -115,7 +115,7 @@ void EditorUI::DrawMenuBar()
 		}
 		if (ImGui::MenuItem("Save Scene", "Ctrl+S")) 
 		{  
-			SceneManager::SaveScene("TestSceneRTT");
+			SceneManager::SaveScene("TestSceneRTT_NEW");
 		}
 		if (ImGui::MenuItem("Load Scene", "Ctrl+L"))
 		{

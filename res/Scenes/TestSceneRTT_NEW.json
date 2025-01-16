@@ -9,26 +9,17 @@
                     "Class": "TransformComponent",
                     "transform": {
                         "Class": "Transform",
-						"Test25Property" : 25.0,
                         "position": {
                             "Class": "vec3f",
-							"testProperty": 25.0,
-							"InternalData": [
+                            "InternalData": [
                                 0.0,
                                 20.0,
                                 -40.0
-                            ],
-                            "x": 0,
-							"y": 20.0,
-							"z": -40.0
+                            ]
                         },
                         "rotation": {
                             "Class": "vec3f",
-							"test25var": 25.0,
-							"x": 0,
-							"y": 20.0,
-							"z": -40.0,
-                            "testVector": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -36,14 +27,14 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "data_vector": [
+                            "InternalData": [
                                 5.0,
                                 5.0,
                                 5.0
                             ]
                         }
                     },
-                    "Rotation Speed": 25.0
+                    "Rotation Speed": 0.0
                 },
                 {
                     "Class": "StaticMeshComponent",
@@ -81,7 +72,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         1.0,
                                         0.0,
                                         0.0,
@@ -107,7 +98,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 20.0,
                                 20.0,
                                 -40.0
@@ -115,15 +106,15 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
-                                146.89749145507813,
+                                132.72381591796876,
                                 0.0
                             ]
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 5.0,
                                 5.0,
                                 5.0
@@ -182,7 +173,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -205,7 +196,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 -30.100000381469728,
                                 20.0,
                                 -40.0
@@ -213,15 +204,15 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
-                                109.08224487304688,
+                                98.55721282958985,
                                 0.0
                             ]
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.8999999761581421,
                                 0.8999999761581421,
                                 0.8999999761581421
@@ -266,7 +257,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -292,7 +283,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 -500.0,
                                 5.0,
                                 -30.0
@@ -300,7 +291,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 -90.0,
                                 0.0,
                                 0.0
@@ -308,7 +299,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
@@ -339,7 +330,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -366,7 +357,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -393,7 +384,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -420,7 +411,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -447,7 +438,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -474,7 +465,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -501,7 +492,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -528,7 +519,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -555,7 +546,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -582,7 +573,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -609,7 +600,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -636,7 +627,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -663,7 +654,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -690,7 +681,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -717,7 +708,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -744,7 +735,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -771,7 +762,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -798,7 +789,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -825,7 +816,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -852,7 +843,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -879,7 +870,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -906,7 +897,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -933,7 +924,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -960,7 +951,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -987,7 +978,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1014,7 +1005,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1041,7 +1032,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1068,7 +1059,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1095,7 +1086,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1122,7 +1113,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1149,7 +1140,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1176,7 +1167,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1203,7 +1194,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1230,7 +1221,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1257,7 +1248,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1284,7 +1275,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1311,7 +1302,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1338,7 +1329,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1365,7 +1356,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1392,7 +1383,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1419,7 +1410,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1446,7 +1437,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1473,7 +1464,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1500,7 +1491,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1527,7 +1518,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1554,7 +1545,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1581,7 +1572,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1608,7 +1599,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1635,7 +1626,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1662,7 +1653,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1689,7 +1680,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1716,7 +1707,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1743,7 +1734,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1770,7 +1761,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1797,7 +1788,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1824,7 +1815,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1851,7 +1842,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1878,7 +1869,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1905,7 +1896,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1932,7 +1923,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1959,7 +1950,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -1986,7 +1977,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2013,7 +2004,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2040,7 +2031,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2067,7 +2058,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2094,7 +2085,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2121,7 +2112,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2148,7 +2139,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2175,7 +2166,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2202,7 +2193,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2229,7 +2220,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2256,7 +2247,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2283,7 +2274,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2310,7 +2301,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2337,7 +2328,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2364,7 +2355,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2391,7 +2382,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2417,7 +2408,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 -20.100000381469728,
                                 10.0,
                                 -40.0
@@ -2425,15 +2416,15 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
-                                72.72151184082031,
+                                65.704833984375,
                                 0.0
                             ]
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 50.0,
                                 50.0,
                                 50.0
@@ -2478,7 +2469,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2519,7 +2510,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2560,7 +2551,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2601,7 +2592,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2627,7 +2618,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 90.0999984741211,
                                 30.0,
                                 -40.0
@@ -2635,7 +2626,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -2643,7 +2634,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.550000011920929,
                                 0.550000011920929,
                                 0.550000011920929
@@ -2688,7 +2679,7 @@
                                 "Ambient Occlusion": 1.0,
                                 "Color & Alpla": {
                                     "Class": "vec4f",
-                                    "Data": [
+                                    "InternalData": [
                                         0.0,
                                         0.0,
                                         0.0,
@@ -2696,271 +2687,6 @@
                                     ]
                                 }
                             }
-                        },
-                        "Skeletal Data": {
-                            "Class": "SkeletalData",
-                            "Bones": [
-                                {
-                                    "key": "Head",
-                                    "value": 5
-                                },
-                                {
-                                    "key": "HeadTop_End",
-                                    "value": 6
-                                },
-                                {
-                                    "key": "Hips",
-                                    "value": 0
-                                },
-                                {
-                                    "key": "LeftArm",
-                                    "value": 8
-                                },
-                                {
-                                    "key": "LeftFoot",
-                                    "value": 57
-                                },
-                                {
-                                    "key": "LeftForeArm",
-                                    "value": 9
-                                },
-                                {
-                                    "key": "LeftHand",
-                                    "value": 10
-                                },
-                                {
-                                    "key": "LeftHandIndex1",
-                                    "value": 15
-                                },
-                                {
-                                    "key": "LeftHandIndex2",
-                                    "value": 16
-                                },
-                                {
-                                    "key": "LeftHandIndex3",
-                                    "value": 17
-                                },
-                                {
-                                    "key": "LeftHandIndex4",
-                                    "value": 18
-                                },
-                                {
-                                    "key": "LeftHandMiddle1",
-                                    "value": 19
-                                },
-                                {
-                                    "key": "LeftHandMiddle2",
-                                    "value": 20
-                                },
-                                {
-                                    "key": "LeftHandMiddle3",
-                                    "value": 21
-                                },
-                                {
-                                    "key": "LeftHandMiddle4",
-                                    "value": 22
-                                },
-                                {
-                                    "key": "LeftHandPinky1",
-                                    "value": 27
-                                },
-                                {
-                                    "key": "LeftHandPinky2",
-                                    "value": 28
-                                },
-                                {
-                                    "key": "LeftHandPinky3",
-                                    "value": 29
-                                },
-                                {
-                                    "key": "LeftHandPinky4",
-                                    "value": 30
-                                },
-                                {
-                                    "key": "LeftHandRing1",
-                                    "value": 23
-                                },
-                                {
-                                    "key": "LeftHandRing2",
-                                    "value": 24
-                                },
-                                {
-                                    "key": "LeftHandRing3",
-                                    "value": 25
-                                },
-                                {
-                                    "key": "LeftHandRing4",
-                                    "value": 26
-                                },
-                                {
-                                    "key": "LeftHandThumb1",
-                                    "value": 11
-                                },
-                                {
-                                    "key": "LeftHandThumb2",
-                                    "value": 12
-                                },
-                                {
-                                    "key": "LeftHandThumb3",
-                                    "value": 13
-                                },
-                                {
-                                    "key": "LeftHandThumb4",
-                                    "value": 14
-                                },
-                                {
-                                    "key": "LeftLeg",
-                                    "value": 56
-                                },
-                                {
-                                    "key": "LeftShoulder",
-                                    "value": 7
-                                },
-                                {
-                                    "key": "LeftToeBase",
-                                    "value": 58
-                                },
-                                {
-                                    "key": "LeftToe_End",
-                                    "value": 59
-                                },
-                                {
-                                    "key": "LeftUpLeg",
-                                    "value": 55
-                                },
-                                {
-                                    "key": "Neck",
-                                    "value": 4
-                                },
-                                {
-                                    "key": "RightArm",
-                                    "value": 32
-                                },
-                                {
-                                    "key": "RightFoot",
-                                    "value": 62
-                                },
-                                {
-                                    "key": "RightForeArm",
-                                    "value": 33
-                                },
-                                {
-                                    "key": "RightHand",
-                                    "value": 34
-                                },
-                                {
-                                    "key": "RightHandIndex1",
-                                    "value": 35
-                                },
-                                {
-                                    "key": "RightHandIndex2",
-                                    "value": 36
-                                },
-                                {
-                                    "key": "RightHandIndex3",
-                                    "value": 37
-                                },
-                                {
-                                    "key": "RightHandIndex4",
-                                    "value": 38
-                                },
-                                {
-                                    "key": "RightHandMiddle1",
-                                    "value": 43
-                                },
-                                {
-                                    "key": "RightHandMiddle2",
-                                    "value": 44
-                                },
-                                {
-                                    "key": "RightHandMiddle3",
-                                    "value": 45
-                                },
-                                {
-                                    "key": "RightHandMiddle4",
-                                    "value": 46
-                                },
-                                {
-                                    "key": "RightHandPinky1",
-                                    "value": 51
-                                },
-                                {
-                                    "key": "RightHandPinky2",
-                                    "value": 52
-                                },
-                                {
-                                    "key": "RightHandPinky3",
-                                    "value": 53
-                                },
-                                {
-                                    "key": "RightHandPinky4",
-                                    "value": 54
-                                },
-                                {
-                                    "key": "RightHandRing1",
-                                    "value": 47
-                                },
-                                {
-                                    "key": "RightHandRing2",
-                                    "value": 48
-                                },
-                                {
-                                    "key": "RightHandRing3",
-                                    "value": 49
-                                },
-                                {
-                                    "key": "RightHandRing4",
-                                    "value": 50
-                                },
-                                {
-                                    "key": "RightHandThumb1",
-                                    "value": 39
-                                },
-                                {
-                                    "key": "RightHandThumb2",
-                                    "value": 40
-                                },
-                                {
-                                    "key": "RightHandThumb3",
-                                    "value": 41
-                                },
-                                {
-                                    "key": "RightHandThumb4",
-                                    "value": 42
-                                },
-                                {
-                                    "key": "RightLeg",
-                                    "value": 61
-                                },
-                                {
-                                    "key": "RightShoulder",
-                                    "value": 31
-                                },
-                                {
-                                    "key": "RightToeBase",
-                                    "value": 63
-                                },
-                                {
-                                    "key": "RightToe_End",
-                                    "value": 64
-                                },
-                                {
-                                    "key": "RightUpLeg",
-                                    "value": 60
-                                },
-                                {
-                                    "key": "Spine",
-                                    "value": 1
-                                },
-                                {
-                                    "key": "Spine1",
-                                    "value": 2
-                                },
-                                {
-                                    "key": "Spine2",
-                                    "value": 3
-                                }
-                            ]
                         }
                     }
                 },
@@ -2983,7 +2709,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -2991,7 +2717,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -2999,7 +2725,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
@@ -3014,7 +2740,7 @@
                     "Intensity": 1.100000023841858,
                     "Direction": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             -0.5,
                             1.0
@@ -3022,7 +2748,7 @@
                     },
                     "Relative Position": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3041,7 +2767,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -3049,7 +2775,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -3057,7 +2783,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 2.0,
                                 2.0,
                                 0.0
@@ -3072,7 +2798,7 @@
                     "Intensity": 10.100000381469727,
                     "Direction": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             -0.10000000149011612,
                             -0.05999999865889549
@@ -3080,7 +2806,7 @@
                     },
                     "Relative Position": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3102,7 +2828,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 -10.0,
                                 10.0,
                                 10.0
@@ -3110,7 +2836,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -3118,7 +2844,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
@@ -3133,7 +2859,7 @@
                     "Intensity": 1200.0,
                     "Direction": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3141,7 +2867,7 @@
                     },
                     "Relative Position": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3163,7 +2889,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 10.0,
                                 10.0,
                                 10.0
@@ -3171,7 +2897,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -3179,7 +2905,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
@@ -3194,7 +2920,7 @@
                     "Intensity": 1200.0,
                     "Direction": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3202,7 +2928,7 @@
                     },
                     "Relative Position": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3224,7 +2950,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 -10.0,
                                 -10.0,
                                 10.0
@@ -3232,7 +2958,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -3240,7 +2966,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
@@ -3255,7 +2981,7 @@
                     "Intensity": 1200.0,
                     "Direction": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3263,7 +2989,7 @@
                     },
                     "Relative Position": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3285,7 +3011,7 @@
                         "Class": "Transform",
                         "position": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 10.0,
                                 -10.0,
                                 10.0
@@ -3293,7 +3019,7 @@
                         },
                         "rotation": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 0.0,
                                 0.0,
                                 0.0
@@ -3301,7 +3027,7 @@
                         },
                         "scale": {
                             "Class": "vec3f",
-                            "Data": [
+                            "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
@@ -3316,7 +3042,7 @@
                     "Intensity": 1200.0,
                     "Direction": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0
@@ -3324,7 +3050,7 @@
                     },
                     "Relative Position": {
                         "Class": "vec3f",
-                        "Data": [
+                        "InternalData": [
                             0.0,
                             0.0,
                             0.0

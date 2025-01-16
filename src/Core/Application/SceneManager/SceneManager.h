@@ -26,8 +26,8 @@ struct Scene
 	NString sceneName;
 	void MakeNewObject(NString name, ECS::Entity* entity)
 	{
-		gameObjects.push_back(std::make_shared<GameObject>(name, entity));
-		//sceneObjects.push_back(new GameObject(name, entity));
+		//gameObjects.push_back(std::make_shared<GameObject>(name, entity));
+		sceneObjects.push_back(new GameObject(name, entity));
 	}
 
 	void AddObject(GameObject* GameObject)
@@ -44,11 +44,11 @@ struct Scene
 	
 	void Clear();
 
-	template <class Archive>
-	void serialize(Archive & ar)
-	{
-		ar(CEREAL_NVP(gameObjects));
-	}
+	// template <class Archive>
+	// void serialize(Archive & ar)
+	// {
+	// 	ar(CEREAL_NVP(gameObjects));
+	// }
 	
 	NxArray<GameObject*> sceneObjects;
 	NxArray<std::shared_ptr<GameObject>> gameObjects;

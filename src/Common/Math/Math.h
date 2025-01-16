@@ -35,6 +35,7 @@ public:
 	{
 		return data;
 	}
+
 #pragma endregion
 
 #pragma region operators
@@ -75,7 +76,6 @@ public:
 	
 	void operator = (vec3f& vecIn)
 	{
-		test25var = vecIn.test25var;
 		InternalData = vecIn.InternalData;
 		
 		data.x = vecIn.data.x;
@@ -86,8 +86,6 @@ public:
 
 	void operator = (const vec3f& vecIn)
 	{
-
-		test25var = vecIn.test25var;
 		InternalData = vecIn.InternalData;
 		
 		data.x = vecIn.data.x;
@@ -99,7 +97,7 @@ public:
 #pragma region reflection
 	inline std::vector<float>& GetInternal()
 	{
-		InternalData = {data.x, data.y, data.z };
+		InternalData = {data[0], data[1], data[2] };
 		return InternalData;
 	}
 	
@@ -116,13 +114,11 @@ public:
 		}
 	}
 #pragma endregion
+
 	
-	glm::vec3 data;
-
-	float test25var = 0;
-
-	// Used only for serialization
 private:
+	glm::vec3 data;
+	// Used only for serialization
 	std::vector<float> InternalData;
 	
 	RTTR_ENABLE()
@@ -187,34 +183,54 @@ public:
 	inline vec4f operator /= (const vec4f& other) { data /= other.data; return *this; }
 
 	void operator = (glm::vec4 vecIn) { data = vecIn; }
-	void operator = (vec4f vecIn) { data = vecIn.ToVec(); }
+	
+	void operator = (vec4f& vecIn)
+	{
+		InternalData = vecIn.InternalData;
+		
+		data.x = vecIn.data.x;
+		data.y = vecIn.data.y;
+		data.z = vecIn.data.z;
+		data.w = vecIn.data.w;
+	}
+
+	void operator = (const vec4f& vecIn)
+	{
+		InternalData = vecIn.InternalData;
+		
+		data.x = vecIn.data.x;
+		data.y = vecIn.data.y;
+		data.z = vecIn.data.z;
+		data.w = vecIn.data.w;
+	}
 #pragma endregion
 
 #pragma region reflection
-	//This function is used for reflection
-	// inline std::vector<float>& Get()
-	// {
-	// 	std::vector<float> NxArrayOut;
-	// 	float* value = glm::value_ptr(data);
-	// 	NxArrayOut.assign(value, value + 4);
-	// 	return NxArrayOut;
-	// }
-	//
-	// //This function is used for reflection
-	// inline void Set(std::vector<float>& NxArrayIn)
-	// {
-	// 	int size = NxArrayIn.size();
-	// 	if (size < 4)
-	// 	{
-	// 		DEBUG_LOG("vec3", "Error", "Can't create vec3 from NxArray of size = %d", size);
-	// 		return;
-	// 	}
-	// 	data = glm::make_vec4(&NxArrayIn[0]);
-	// }
-
+	inline std::vector<float>& GetInternal()
+	{
+		InternalData = { data[0], data[1], data[2], data[3] };
+		return InternalData;
+	}
+	
+	inline void SetInternal(std::vector<float>& VectorIn)
+	{
+		if (VectorIn.size() >= 4)
+		{
+			InternalData = VectorIn;
+			data = glm::vec4(InternalData[0], InternalData[1], InternalData[2], InternalData[3]);
+		}
+		else
+		{
+			DEBUG_LOG_TEMP("Can't set internal data vector");
+		}
+	}
 #pragma endregion
 	
+private:
+	
 	glm::vec4 data;
-
+	// Used only for serialization
+	std::vector<float> InternalData;
+	
 	RTTR_ENABLE()
 };

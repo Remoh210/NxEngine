@@ -32,7 +32,7 @@ struct SkeletalData
 	NxArray<BoneInfo> mBoneInfo;
 	unsigned int mNumBones = 0;	//mNums;
 
-	RTTR_ENABLE();
+	RTTR_ENABLE()
 };
 
 struct SkinnedMeshInfo
@@ -47,5 +47,5 @@ struct SkinnedMeshInfo
 
 	const aiScene* AiScene;	// mesh we update and draw
 
-	RTTR_ENABLE();
+	RTTR_ENABLE()
 };

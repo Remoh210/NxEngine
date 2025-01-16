@@ -80,64 +80,63 @@ void Scene::Clear()
 void SceneManager::ClearScene()
 {
 	//Remove entitties from ECS
-	// if (!world)
-	// {
-	// 	return;
-	// }
-	//
-	// DEBUG_LOG_TEMP("Num SceneObj: %d", currentScene.sceneObjects.size());
-	//
-	// for (int i = 0; i < currentScene.GetNumObjects(); i++)
-	// {
-	// 	DEBUG_LOG_TEMP("About to delete: %s", currentScene.sceneObjects[i]->name.c_str());
-	// 	world->destroy(currentScene.sceneObjects[i]->entity);
-	// }
+	 if (!world)
+	 {
+	 	return;
+	 }
+	
+	 DEBUG_LOG_TEMP("Num SceneObj: %d", currentScene.sceneObjects.size());
+	
+	 for (int i = 0; i < currentScene.GetNumObjects(); i++)
+	 {
+	 	DEBUG_LOG_TEMP("About to delete: %s", currentScene.sceneObjects[i]->name.c_str());
+	 	world->destroy(currentScene.sceneObjects[i]->entity);
+	 }
 
-	//currentScene.Clear();
+	currentScene.Clear();
 
 }
 
 
 bool SceneManager::SaveScene(NString filename)
 {
-	// if(!world)
-	// {
-	// 	return false;
-	// }
-	//
-	// const NString fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
-	//
+	if(!world)
+	{
+		return false;
+	}
+	
+	const NString fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
+	
 	// std::ofstream os(fileToLoadFullPath);
 	// {
 	// 	cereal::JSONOutputArchive archiveOut(os);
 	// 	archiveOut(currentScene);
 	// }
 	// os.close();
-	//
-	// std::ofstream outputFile;
-	// outputFile.open(fileToLoadFullPath.c_str());
-	//
-	// outputFile << Nx::scene_to_json(currentScene);
-	//
-	// outputFile.close();
-
-
+	
+	std::ofstream outputFile;
+	outputFile.open(fileToLoadFullPath.c_str());
+	
+	outputFile << Nx::scene_to_json(currentScene);
+	
+	outputFile.close();
+	
 	
 	// for (GameObject* gameObject : currentScene.sceneObjects)
 	// {
 	// 	NString GameObjectAsJson = Nx::to_json(gameObject);
 	// 	outputFile << GameObjectAsJson;
 	// 	DEBUG_LOG_TEMP("testJSON: %s", GameObjectAsJson.c_str());
-	// }
-{
-	//	ECS::ComponentHandle<TransformComponent> transformComp = sceneObject->entity->get<TransformComponent>();
-	
+	//
+	// 	
+	// 	ECS::ComponentHandle<TransformComponent> transformComp = gameObject->entity->get<TransformComponent>();
+	//
 	// 	if(!transformComp)
 	// 	{
 	// 		continue;
 	// 	}
 	// 	
-	// 	NxArray<ECS::ComponentHandle<BaseComponent>> components = sceneObject->entity->getAllComponents<BaseComponent>();
+	// 	NxArray<ECS::ComponentHandle<BaseComponent>> components = gameObject->entity->getAllComponents<BaseComponent>();
 	// 	for (ECS::ComponentHandle<BaseComponent>& component : components)
 	// 	{
 	// 		if(!component)
@@ -150,10 +149,7 @@ bool SceneManager::SaveScene(NString filename)
 	// 		DEBUG_LOG_TEMP("testJSON: %s", ComponentAsJsonStr.c_str());
 	// 	}
 	// }
-}
-	
 
-	
 	return true;
 }
 

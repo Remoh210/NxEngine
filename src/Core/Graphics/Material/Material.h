@@ -30,5 +30,5 @@ struct Material
 	float roughness;
 	float ambientOcclusion;
 
-	RTTR_ENABLE();
+	RTTR_ENABLE()
 };
