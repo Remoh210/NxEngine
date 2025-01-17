@@ -23,7 +23,14 @@ RTTR_REGISTRATION
 	);
 }
 
-void LightComponent::Initialize()
+void LightComponent::Initialize(ECS::Entity* entityIn)
 {
-	//m_entity->assign<LightComponent>(this);
+	BaseComponent::Initialize(entityIn);
+	
+	if(!entity)
+	{
+		return;
+	}
+
+	entity->assign<LightComponent>(*this);
 }

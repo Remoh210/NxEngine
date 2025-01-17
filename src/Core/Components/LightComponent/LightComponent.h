@@ -24,7 +24,6 @@ struct LightComponent : public BaseComponent
 		direction = vec3(0.0f, -1.0f, 0.0f);
 		//Default is point light
 		lightType = LightType::Point;
-    	Initialize();
     }
 
 	// Point light constructor
@@ -36,7 +35,6 @@ struct LightComponent : public BaseComponent
     {
 		lightType = LightType::Point;
 		direction = vec3(0.0f);
-    	Initialize();
     }
 
 	// Directional light constructor
@@ -48,7 +46,6 @@ struct LightComponent : public BaseComponent
 		, direction(directionIn)
 	{
 		lightType = LightType::Directional;
-    	Initialize();
 	}
 
 	LightType lightType;
@@ -56,9 +53,8 @@ struct LightComponent : public BaseComponent
     vec3f color;
     vec3f relativePosition;
  	vec3f direction; //For directional light
+	
+	virtual void Initialize(ECS::Entity* entityIn) override;
 
-	RTTR_ENABLE()
-
-private:
-	void Initialize();
+	RTTR_ENABLE(BaseComponent)
 };

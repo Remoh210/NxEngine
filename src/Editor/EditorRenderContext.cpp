@@ -241,6 +241,12 @@ void EditorRenderContext::DrawScene(RenderTarget* renderTarget)
 		size_t numTransforms = it->second.size();
 		//Shader* modelShader = it->first.second;
 		Shader * modelShader = it->first.second;
+
+		if(!modelShader)
+		{
+			//DEBUG_LOG_TEMP("DrawScene: shader is null");
+			continue;
+		}
 		//modelShader->SetUniformBuffer("Matrices", *MatrixUniformBuffer);
 
 		//might be unnecessary

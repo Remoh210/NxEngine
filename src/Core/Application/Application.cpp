@@ -403,17 +403,14 @@ void Application::Initialize()
 	}
 	);
 
-
+	//ECS
+	world = ECS::World::createWorld();
+	
 	SceneManager::SetECS(world);
 	SceneManager::SetCamera(GetMainCamera());
 	SceneManager::SetRenderDevice(renderDevice);
 	ShaderManager::SetRenderDevice(renderDevice);
 	AssetManager::SetRenderDevice(renderDevice);
-	
-	
-
-	//ECS
-	world = ECS::World::createWorld();
 }
 
 void Application::ShutDown()
@@ -465,7 +462,7 @@ void Application::CreateDefaultScene()
 	AssetLoader::LoadModel(TEST_MODEL_PISTOL, PBRLoadedMeshes, PBRMaterialIndices, PBRLoadedMaterials);
 
 	ECS::Entity* pistolEntity = world->create();
-	StaticMeshComponent pistolMeshComp(pistolEntity);
+	StaticMeshComponent pistolMeshComp;
 	
 	for(int i = 0; i < PBRLoadedMeshes.size(); i++)
 	{
@@ -492,9 +489,9 @@ void Application::CreateDefaultScene()
 	}
 
 	pistolMeshComp.shader = ShaderManager::GetMainShader();
-	pistolMeshComp.meshAssetFile = "Mesh3";
+	pistolMeshComp.meshAssetFile = TEST_MODEL_PISTOL;
 	
-	TransformComponent pistolTransformComp(pistolEntity);
+	TransformComponent pistolTransformComp;
 	pistolTransformComp.transform.position = vec3(-30.1f, 20.0f, -40.0f);
 	pistolTransformComp.transform.rotation = vec3(0 , 0.0f, 0.f);
 	pistolTransformComp.rotSpeed = 15.0f;
@@ -504,14 +501,14 @@ void Application::CreateDefaultScene()
 
 	//load map
 	ECS::Entity* dustMapEntity = world->create();
-	StaticMeshComponent dustMapMeshComp(dustMapEntity);
+	StaticMeshComponent dustMapMeshComp;
 	dustMapMeshComp.bIsVisible = true;
 	nPhysics::iShape* CurShape6;
 	AssetManager::ImportModelGenerateCollider(TEST_MODEL_DUST_MAP, dustMapMeshComp.meshes, nPhysics::SHAPE_TYPE_MESH, CurShape6);
 	dustMapMeshComp.meshAssetFile = TEST_MODEL_DUST_MAP;
 	dustMapMeshComp.shader = ShaderManager::GetMainShader();
 	dustMapMeshComp.numInst = 1;
-	TransformComponent dustTransformComp(dustMapEntity);
+	TransformComponent dustTransformComp;
 	dustTransformComp.transform.position = vec3(-500.0f, 5.0f, -30.0f);
 	dustTransformComp.transform.rotation = vec3(-90, 0, 0);
 
@@ -693,7 +690,8 @@ void Application::LoadDefaultScene()
 	}
 
 	renderableMesh3.shader = ShaderManager::GetMainShader();
-	renderableMesh3.meshAssetFile = "Mesh3";
+	renderableMesh3.meshAssetFile = TEST_MODEL_FILE3;
+	renderableMesh3.bIsImported = true;
 	TransformComponent transformComp3;
 	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp3.transform.position = vec3(-30.1f, 20.0f, -40.0f);
@@ -774,6 +772,7 @@ void Application::LoadDefaultScene()
 
 
 	StaticMeshComponent renderableMesh6;
+	renderableMesh6.bIsImported = true;
 	renderableMesh6.bIsVisible = true;
 	nPhysics::iShape* CurShape6;
 	AssetManager::ImportModelGenerateCollider(TEST_MODEL_FILE6, renderableMesh6.meshes, nPhysics::SHAPE_TYPE_MESH, CurShape6);
@@ -813,6 +812,7 @@ void Application::LoadDefaultScene()
 	renderableMesh7.meshAssetFile = TEST_MODEL_FILE7;
 	renderableMesh7.shader = ShaderManager::GetMainShader();
 	renderableMesh7.numInst = 1;
+	renderableMesh7.bIsImported = true;
 	TransformComponent transformComp7;
 	transformComp7.transform.position = vec3(-20.1f, 10.0f, -40.0f);
 	transformComp7.transform.rotation = vec3(0.0f, 0.0f, 0.f);

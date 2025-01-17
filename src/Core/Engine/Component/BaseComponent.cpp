@@ -11,3 +11,11 @@ RTTR_REGISTRATION
         )   
     ;
 }
+
+void BaseComponent::Initialize(ECS::Entity* entityIn)
+{
+    if(entityIn)
+    {
+        entity = entityIn;
+    }
+}

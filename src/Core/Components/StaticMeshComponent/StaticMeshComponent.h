@@ -9,27 +9,15 @@
 
 struct StaticMeshComponent : public BaseComponent 
 {
-	StaticMeshComponent()
-	{
-		Initialize();
-	}
-	
-	StaticMeshComponent(ECS::Entity* entity)
-	:BaseComponent(entity)
-	{
-		Initialize();
-	}
+	virtual void Initialize(ECS::Entity* entityIn) override;
 	
 	NString meshAssetFile; 
 	NxArray<MeshInfo*> meshes;
 	
-	//TODO: Remove
-	Shader* shader;
+	Shader* shader = nullptr;
 	int numInst = 1;
 	bool bIsVisible = true;
+	bool bIsImported = false;
 
 	RTTR_ENABLE(BaseComponent)
-	
-private:
-	void Initialize();
 };

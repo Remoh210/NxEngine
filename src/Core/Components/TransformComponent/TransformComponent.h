@@ -12,25 +12,17 @@ struct TransformComponent : public BaseComponent
 
 	}
 	
-	TransformComponent(ECS::Entity* entity)
-		:BaseComponent(entity)
-	{
-		Initialize();
-	}
-	
 	TransformComponent(ECS::Entity* entity, const Transform& transformormIn)
 		:BaseComponent(entity),
 		transform(transformormIn)
 	{
-		Initialize();
+
 	}
 	
 	Transform transform;
-
 	float rotSpeed = 0.0f;
 	
+	virtual void Initialize(ECS::Entity* entityIn) override;
+
 	RTTR_ENABLE(BaseComponent)
-	
-private:
-	void Initialize();
 };

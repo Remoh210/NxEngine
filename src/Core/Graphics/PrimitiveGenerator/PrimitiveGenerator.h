@@ -64,8 +64,7 @@ public:
 		newModel.AllocateElement(3); // Color
 		newModel.SetInstancedElementStartIndex(4); // Begin instanced data
 		newModel.AllocateElement(16); // Transform matrix
-
-		//songho.ca/opengl/gl_sphere.html
+		
 		float x, y, z, xy;                              // vertex position
 		float nx, ny, nz, lengthInv = 1.0f / radius;    // vertex normal
 		float s, t;                                     // vertex texCoord

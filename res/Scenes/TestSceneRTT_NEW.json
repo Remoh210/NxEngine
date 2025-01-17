@@ -39,6 +39,9 @@
                 {
                     "Class": "StaticMeshComponent",
                     "Is Visible": true,
+                    "Num Instances": 1,
+                    "Is Imported": false,
+                    "Mesh Asset File": "Mesh5",
                     "Meshes": [
                         {
                             "Class": "MeshInfo",
@@ -86,7 +89,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                1296.2930908203126,
+                                152.27679443359376,
                                 0.0
                             ]
                         },
@@ -104,6 +107,9 @@
                 {
                     "Class": "StaticMeshComponent",
                     "Is Visible": true,
+                    "Num Instances": 1,
+                    "Is Imported": false,
+                    "Mesh Asset File": "Mesh4",
                     "Meshes": [
                         {
                             "Class": "MeshInfo",
@@ -114,35 +120,40 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 10
+                                            "Texture ID": 10,
+                                            "Texture FileName": "res/textures/pbr/rusted_iron/albedo.png"
                                         }
                                     },
                                     {
                                         "key": "texture_ao",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 14
+                                            "Texture ID": 14,
+                                            "Texture FileName": "res/textures/pbr/rusted_iron/ao.png"
                                         }
                                     },
                                     {
                                         "key": "texture_metallic",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 12
+                                            "Texture ID": 12,
+                                            "Texture FileName": "res/textures/pbr/rusted_iron/metallic.png"
                                         }
                                     },
                                     {
                                         "key": "texture_normal",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 11
+                                            "Texture ID": 11,
+                                            "Texture FileName": "res/textures/pbr/rusted_iron/normal.png"
                                         }
                                     },
                                     {
                                         "key": "texture_roughness",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 13
+                                            "Texture ID": 13,
+                                            "Texture FileName": "res/textures/pbr/rusted_iron/roughness.png"
                                         }
                                     }
                                 ],
@@ -184,7 +195,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                962.5938720703125,
+                                113.07689666748047,
                                 0.0
                             ]
                         },
@@ -202,6 +213,9 @@
                 {
                     "Class": "StaticMeshComponent",
                     "Is Visible": true,
+                    "Num Instances": 1,
+                    "Is Imported": true,
+                    "Mesh Asset File": "res/models/pistol_test.glb",
                     "Meshes": [
                         {
                             "Class": "MeshInfo",
@@ -212,21 +226,24 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 21
+                                            "Texture ID": 21,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_metallic_roughness_ao",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 20
+                                            "Texture ID": 20,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_normal",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 19
+                                            "Texture ID": 19,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -289,6 +306,9 @@
                 {
                     "Class": "StaticMeshComponent",
                     "Is Visible": true,
+                    "Num Instances": 1,
+                    "Is Imported": true,
+                    "Mesh Asset File": "res/models/dust/fbx/dust.fbx",
                     "Meshes": [
                         {
                             "Class": "MeshInfo",
@@ -299,7 +319,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 27
+                                            "Texture ID": 27,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -326,7 +347,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 28
+                                            "Texture ID": 28,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -353,7 +375,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 29
+                                            "Texture ID": 29,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -380,7 +403,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 30
+                                            "Texture ID": 30,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -407,7 +431,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 31
+                                            "Texture ID": 31,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -434,7 +459,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 32
+                                            "Texture ID": 32,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -461,7 +487,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 33
+                                            "Texture ID": 33,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -488,7 +515,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 34
+                                            "Texture ID": 34,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -515,7 +543,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 35
+                                            "Texture ID": 35,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -542,7 +571,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 36
+                                            "Texture ID": 36,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -569,7 +599,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 37
+                                            "Texture ID": 37,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -596,7 +627,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 38
+                                            "Texture ID": 38,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -623,7 +655,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 39
+                                            "Texture ID": 39,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -650,7 +683,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 40
+                                            "Texture ID": 40,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -677,7 +711,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 41
+                                            "Texture ID": 41,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -704,7 +739,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 42
+                                            "Texture ID": 42,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -731,7 +767,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 43
+                                            "Texture ID": 43,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -758,7 +795,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 44
+                                            "Texture ID": 44,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -785,7 +823,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 45
+                                            "Texture ID": 45,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -812,7 +851,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 46
+                                            "Texture ID": 46,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -839,7 +879,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 47
+                                            "Texture ID": 47,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -866,7 +907,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 48
+                                            "Texture ID": 48,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -893,7 +935,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 49
+                                            "Texture ID": 49,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -920,7 +963,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 50
+                                            "Texture ID": 50,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -947,7 +991,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 51
+                                            "Texture ID": 51,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -974,7 +1019,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 52
+                                            "Texture ID": 52,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1001,7 +1047,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 53
+                                            "Texture ID": 53,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1028,7 +1075,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 54
+                                            "Texture ID": 54,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1055,7 +1103,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 55
+                                            "Texture ID": 55,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1082,7 +1131,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 56
+                                            "Texture ID": 56,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1109,7 +1159,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 57
+                                            "Texture ID": 57,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1136,7 +1187,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 58
+                                            "Texture ID": 58,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1163,7 +1215,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 59
+                                            "Texture ID": 59,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1190,7 +1243,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 60
+                                            "Texture ID": 60,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1217,7 +1271,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 61
+                                            "Texture ID": 61,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1244,7 +1299,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 62
+                                            "Texture ID": 62,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1271,7 +1327,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 63
+                                            "Texture ID": 63,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1298,7 +1355,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 64
+                                            "Texture ID": 64,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1325,7 +1383,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 65
+                                            "Texture ID": 65,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1352,7 +1411,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 66
+                                            "Texture ID": 66,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1379,7 +1439,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 67
+                                            "Texture ID": 67,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1406,7 +1467,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 68
+                                            "Texture ID": 68,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1433,7 +1495,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 69
+                                            "Texture ID": 69,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1460,7 +1523,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 70
+                                            "Texture ID": 70,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1487,7 +1551,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 71
+                                            "Texture ID": 71,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1514,7 +1579,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 72
+                                            "Texture ID": 72,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1541,7 +1607,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 73
+                                            "Texture ID": 73,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1568,7 +1635,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 74
+                                            "Texture ID": 74,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1595,7 +1663,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 75
+                                            "Texture ID": 75,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1622,7 +1691,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 76
+                                            "Texture ID": 76,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1649,7 +1719,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 77
+                                            "Texture ID": 77,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1676,7 +1747,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 78
+                                            "Texture ID": 78,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1703,7 +1775,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 79
+                                            "Texture ID": 79,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1730,7 +1803,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 80
+                                            "Texture ID": 80,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1757,7 +1831,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 81
+                                            "Texture ID": 81,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1784,7 +1859,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 82
+                                            "Texture ID": 82,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1811,7 +1887,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 83
+                                            "Texture ID": 83,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1838,7 +1915,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 84
+                                            "Texture ID": 84,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1865,7 +1943,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 85
+                                            "Texture ID": 85,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1892,7 +1971,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 86
+                                            "Texture ID": 86,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1919,7 +1999,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 87
+                                            "Texture ID": 87,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1946,7 +2027,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 88
+                                            "Texture ID": 88,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -1973,7 +2055,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 89
+                                            "Texture ID": 89,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2000,7 +2083,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 90
+                                            "Texture ID": 90,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2027,7 +2111,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 91
+                                            "Texture ID": 91,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2054,7 +2139,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 92
+                                            "Texture ID": 92,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2081,7 +2167,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 93
+                                            "Texture ID": 93,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2108,7 +2195,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 94
+                                            "Texture ID": 94,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2135,7 +2223,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 95
+                                            "Texture ID": 95,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2162,7 +2251,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 96
+                                            "Texture ID": 96,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2189,7 +2279,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 97
+                                            "Texture ID": 97,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2216,7 +2307,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 98
+                                            "Texture ID": 98,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2243,7 +2335,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 99
+                                            "Texture ID": 99,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2270,7 +2363,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 100
+                                            "Texture ID": 100,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2297,7 +2391,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 101
+                                            "Texture ID": 101,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2324,7 +2419,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 102
+                                            "Texture ID": 102,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2351,7 +2447,8 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 103
+                                            "Texture ID": 103,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2396,7 +2493,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                641.72900390625,
+                                75.3845443725586,
                                 0.0
                             ]
                         },
@@ -2414,6 +2511,9 @@
                 {
                     "Class": "StaticMeshComponent",
                     "Is Visible": true,
+                    "Num Instances": 1,
+                    "Is Imported": true,
+                    "Mesh Asset File": "res/models/PBRTest.glb",
                     "Meshes": [
                         {
                             "Class": "MeshInfo",
@@ -2424,21 +2524,24 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 108
+                                            "Texture ID": 108,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_metallic_roughness_ao",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 107
+                                            "Texture ID": 107,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_normal",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 106
+                                            "Texture ID": 106,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2465,21 +2568,24 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 108
+                                            "Texture ID": 108,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_metallic_roughness_ao",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 107
+                                            "Texture ID": 107,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_normal",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 106
+                                            "Texture ID": 106,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2506,21 +2612,24 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 113
+                                            "Texture ID": 113,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_metallic_roughness_ao",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 112
+                                            "Texture ID": 112,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_normal",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 111
+                                            "Texture ID": 111,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2547,21 +2656,24 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 113
+                                            "Texture ID": 113,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_metallic_roughness_ao",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 112
+                                            "Texture ID": 112,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_normal",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 111
+                                            "Texture ID": 111,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],
@@ -2634,21 +2746,24 @@
                                         "key": "texture_albedo",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 114
+                                            "Texture ID": 114,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_metallic",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 115
+                                            "Texture ID": 115,
+                                            "Texture FileName": ""
                                         }
                                     },
                                     {
                                         "key": "texture_normal",
                                         "value": {
                                             "Class": "Texture",
-                                            "Texture ID": 116
+                                            "Texture ID": 116,
+                                            "Texture FileName": ""
                                         }
                                     }
                                 ],

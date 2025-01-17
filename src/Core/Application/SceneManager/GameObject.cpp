@@ -16,3 +16,21 @@ RTTR_REGISTRATION
         .property("Components", &GameObject::components)
     ;
 }
+
+void GameObject::Initialize(ECS::World* worldIn, const NString& name)
+{
+    if(!worldIn)
+    {
+        DEBUG_LOG_TEMP("Unable to init game object, world is invalid");
+    }
+    world = worldIn;
+    entity = world->create();
+    
+    for(BaseComponent* component : components)
+    {
+        if(component)
+        {
+            component->Initialize(entity);
+        }
+    }
+}

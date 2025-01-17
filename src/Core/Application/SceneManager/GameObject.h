@@ -34,8 +34,11 @@ public:
          }
      }
     
-     
-    ECS::Entity* entity;
+
+    void Initialize(ECS::World* world, const NString& name = "");
+    
+    ECS::Entity* entity = nullptr;
+    ECS::World* world = nullptr;
     NxArray<BaseComponent*> components;
     NString name;
     

@@ -87,7 +87,7 @@ namespace
 		}
 		else if (t.is_enumeration())
 		{
-			var = static_cast<int8_t>(json_value.GetInt());
+			var = t.get_enumeration().name_to_value(json_value.GetString());
 		}
 		else if (t == type::get<std::string>())
 		{
@@ -130,23 +130,14 @@ namespace
 		}
 		else if (t.is_enumeration())
 		{
-			bool ok = false;
+			bool ok;
 			auto result = var.to_string(&ok);
 			if (ok)
 			{
 				writer.String(var.to_string().c_str());
+				return true;
 			}
-			else
-			{
-				ok = false;
-				auto value = var.to_uint64(&ok);
-				if (ok)
-					writer.Uint64(value);
-				else
-					writer.Null();
-			}
-		
-			return true;
+			
 		}
 		else if (t == type::get<std::string>())
 		{
@@ -467,13 +458,12 @@ namespace
 
 					const auto& property_json_value = ret->value;
 					rttr::variant new_property_var = prop.get_value(variant);
-					rttr::type property_type = prop.get_type();
+					const rttr::type property_type = prop.get_type();
 					from_json_recursively(new_property_var, property_type, property_json_value);
 					
 					if (!prop.set_value(variant, new_property_var))
 					{
 						DEBUG_LOG_TEMP("Unable to set property");
-						return;
 					}
 				}
 
@@ -552,73 +542,50 @@ namespace Nx
 		
 		rapidjson::IStreamWrapper ISW(inputFile);
 		doc.ParseStream(ISW);
-		
+
 		DEBUG_LOG_TEMP("SceneManager::LoadScene");
 		const rapidjson::Value& GameObjects = doc["GameObjects"].GetArray();
+		for (size_t i = 0; i < GameObjects.Size(); i++)
+		{
+			const Value& jsonObjectValue = GameObjects[i];
+			//variant var = GameObjectType.create();
+			variant var;
+			from_json_recursively(var, jsonObjectValue);
+			GameObject* NewGameObject = var.get_value<GameObject*>();
+			//NString ObjectName = jsonObjectValue.HasMember("Name") ? jsonObjectValue["Name"].GetString();
+			NewGameObject->Initialize(World);
+			outScene.AddObject(NewGameObject);
+		}
 		
+		GameObject* NewGameObject = outScene.sceneObjects[outScene.sceneObjects.size() - 1];
 		const Value& jsonObjectValue = GameObjects[0];
-		NString ClassName = jsonObjectValue["Class"].GetString();
-		type GameObjectType = type::get_by_name(ClassName);
-		//variant var = GameObjectType.create();
-		variant var;
 		
-		from_json_recursively(var, jsonObjectValue);
+		// DEBUG_LOG_TEMP("SceneManager::LoadScene");
+		// const rapidjson::Value& GameObjects = doc["GameObjects"].GetArray();
+		
+		// const Value& jsonObjectValue = GameObjects[0];
+		// //variant var = GameObjectType.create();
+		// variant var;
+		//
+		// from_json_recursively(var, jsonObjectValue);
 
 
 		//Testing
-		GameObject* obj = var.get_value<GameObject*>();
-		obj->name = "TESTING";
-		
-		rttr::variant var_obj = obj;
-		variant ComponentsProp = var_obj.get_type().get_property_value("Components", var_obj);
-		variant_sequential_view view = ComponentsProp.create_sequential_view();
-		
-		for(auto const& it : view)
-		{
-			BaseComponent* BS = it.get_value<BaseComponent*>();
-			DEBUG_LOG_TEMP("var type: %s", it.get_type().get_name().to_string().c_str());
-
-			TransformComponent* TC = it.get_value<TransformComponent*>();
-			DEBUG_LOG_TEMP("var type: %s", it.get_type().get_name().to_string().c_str());
-		}
-		
-		
-		// for (size_t i = 0; i < GameObjects.Size(); i++)
+		// GameObject* obj = var.get_value<GameObject*>();
+		//
+		// obj->Initialize(World, "TESTING");
+		//
+		// rttr::variant var_obj = obj;
+		// variant ComponentsProp = var_obj.get_type().get_property_value("Components", var_obj);
+		// variant_sequential_view view = ComponentsProp.create_sequential_view();
+		//
+		// for(auto const& it : view)
 		// {
-		// 	NString ClassName = GameObjects[i]["Class"].GetString();
-		// 	
-		// 	type NewGameObjectType = type::get_by_name(ClassName);
-		// 	variant var = NewGameObjectType.create({std::string("test")});
-		// 	const Value& NewjsonObjectValue = GameObjects[i];
-		// 	
-		// 	from_json_recursively(var, var.get_type(), jsonObjectValue);
+		// 	BaseComponent* BS = it.get_value<BaseComponent*>();
+		// 	DEBUG_LOG_TEMP("var type: %s", it.get_type().get_name().to_string().c_str());
 		//
-		// 	variant ComponentsProp = var.get_type().get_property_value("Components", var);
-		// 	variant_sequential_view view = ComponentsProp.create_sequential_view();
-		//
-		// 	for(auto const& it : view)
-		// 	{
-		// 		//DEBUG_LOG_TEMP("var type: %s", it.get_type().get_name().to_string().c_str());
-		// 	}
-		// 	//NString ObjName = NameVar.create_sequential_view();
-		// 	
-		// 	GameObject* NewGameObject = &var.get_value<GameObject>();
-		//
-		// 	//variant VarTest = var.get_value<GameObject>();
-		// 	rttr::instance objInstanceTest = var.get_value<GameObject>();
-		// 	auto prop_list = objInstanceTest.get_wrapped_instance().get_type().get_properties();
-		//
-		// 	for(auto& it : objInstanceTest.get_type().get_properties())
-		// 	{
-		// 		//DEBUG_LOG_TEMP("var type: %s", it.get_name().to_string().c_str());
-		// 	}
-		//
-		// 	outScene.AddObject(NewGameObject);
-		// 	
-		// 	//DEBUG_LOG_TEMP("var type: %s", var.get_type().get_name().to_string().c_str());
-		// 	//DEBUG_LOG_TEMP("var name: %s", ObjName.c_str());
-		// 	//std::cout << var.get_type().get_name() << "\n";
-		// 	//string_view tst = var.get_type().get_name();
+		// 	TransformComponent* TC = it.get_value<TransformComponent*>();
+		// 	DEBUG_LOG_TEMP("var type: %s", it.get_type().get_name().to_string().c_str());
 		// }
 
 		return outScene;

@@ -8,19 +8,22 @@ struct BaseComponent
 {
     BaseComponent()
     {
-        m_entity = nullptr;
+        
     }
     
     BaseComponent(ECS::Entity* entity)
-        :m_entity(entity)
+        :entity(entity)
     {
         
     }
     
-    virtual ~BaseComponent() = default;
-
+    virtual void Initialize(ECS::Entity* entityIn);
     
-    ECS::Entity* m_entity;
+    virtual ~BaseComponent() = default;
+    
+    ECS::Entity* entity = nullptr;
+
+    //TODO Copy constructor?
     
     RTTR_ENABLE()
 };

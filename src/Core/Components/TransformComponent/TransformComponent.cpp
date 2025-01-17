@@ -16,7 +16,9 @@ RTTR_REGISTRATION
 	;
 }
 
-void TransformComponent::Initialize()
+void TransformComponent::Initialize(ECS::Entity* entityIn)
 {
-	//m_entity->assign<TransformComponent>(this);
+	BaseComponent::Initialize(entityIn);
+
+	entityIn->assign<TransformComponent>(*this);
 }
