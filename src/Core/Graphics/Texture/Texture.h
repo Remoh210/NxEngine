@@ -17,6 +17,11 @@ class Texture
 {
 
 public:
+	inline Texture()
+	{
+		
+	}
+	
     inline Texture(RenderDevice* deviceIn, ArrayBitmap& texData, PixelFormat interalPixelFormat,
             bool bGenerateMipMaps = true, bool bCompress = true, bool bFloatType = false)
             :device(deviceIn),
@@ -46,15 +51,16 @@ public:
 	}
 
 
-    inline uint32 GetId() { return id; };
-	inline void SetId(uint32 id) { };
-    inline NString GetFileName() {return fileName; };
+    inline uint32& GetId() { return id; };
+	inline void SetId(uint32& idIn) { id = idIn; };
+    inline NString& GetFileName() {return fileName; };
+	inline void SetFileName(NString& nameIn) {fileName = nameIn; };
     inline uint32 GetWidth() { return width; };
     inline uint32 GetHeight() { return height; };
     inline bool IsCompressed() { return bIsCompressed; };
     inline bool HasMipmaps() { return bHasMipmaps; };
 
-    ~Texture() 
+    virtual ~Texture() 
     {
         device->ReleaseTexture2D(id);
     };

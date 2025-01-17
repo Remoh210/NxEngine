@@ -44,29 +44,7 @@
                             "Class": "MeshInfo",
                             "Material": {
                                 "Class": "Material",
-                                "Textures": [
-                                    {
-                                        "key": "texture_albedo",
-                                        "value": {
-                                            "Class": "Texture",
-                                            "Texture ID": 21
-                                        }
-                                    },
-                                    {
-                                        "key": "texture_metallic_roughness_ao",
-                                        "value": {
-                                            "Class": "Texture",
-                                            "Texture ID": 20
-                                        }
-                                    },
-                                    {
-                                        "key": "texture_normal",
-                                        "value": {
-                                            "Class": "Texture",
-                                            "Texture ID": 19
-                                        }
-                                    }
-                                ],
+                                "Textures": [],
                                 "Metallic": 0.9900000095367432,
                                 "Roughness": 0.009999999776482582,
                                 "Ambient Occlusion": 1.0,
@@ -108,7 +86,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                132.72381591796876,
+                                1296.2930908203126,
                                 0.0
                             ]
                         },
@@ -206,7 +184,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                98.55721282958985,
+                                962.5938720703125,
                                 0.0
                             ]
                         },
@@ -2418,7 +2396,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                65.704833984375,
+                                641.72900390625,
                                 0.0
                             ]
                         },

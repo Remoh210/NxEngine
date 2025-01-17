@@ -25,15 +25,77 @@ using namespace rapidjson;
 using namespace rttr;
 
 
+
+
+
 namespace
 {
-	/////////////////////////////////////////////////////////////////////////////////////////
-
+	// Write
+	
 	void to_json_recursively(const instance& obj, PrettyWriter<StringBuffer>& writer);
 
-	/////////////////////////////////////////////////////////////////////////////////////////
+	void write_array(const variant_sequential_view& view, PrettyWriter<StringBuffer>& writer);
+
+	void write_associative_container(const variant_associative_view& view, PrettyWriter<StringBuffer>& writer);
 
 	bool write_variant(const variant& var, PrettyWriter<StringBuffer>& writer);
+
+	bool write_atomic_types_to_json(const type& t, const variant& var, PrettyWriter<StringBuffer>& writer);
+
+	// Read
+
+	void from_json_recursively(rttr::variant& variant, const Value& json_object);
+
+	void from_json_recursively(rttr::variant& variant, const rttr::type& variant_type, const Value& json_object);
+
+	void extract_array_recursively(variant_sequential_view& view, const Value& json_array_value);
+
+	void extract_associative_view_recursively(variant_associative_view& view, const Value& json_array_value);
+
+	void extract_atomic_types(variant& var, const Value& json_value);
+
+	void extract_atomic_types_from_type(variant& var, const rttr::type t, const Value& json_value);
+
+	void extract_atomic_types_from_type(variant& var, const rttr::type t, const Value& json_value)
+	{
+		if (t.is_arithmetic())
+		{
+			if (t == type::get<bool>())
+				var = json_value.GetBool();
+			else if (t == type::get<char>())
+				var = static_cast<char>(json_value.GetBool());
+			else if (t == type::get<int8_t>())
+				var = static_cast<int8_t>(json_value.GetInt());
+			else if (t == type::get<int16_t>())
+				var = static_cast<int16_t>(json_value.GetInt());
+			else if (t == type::get<int32_t>())
+				var = static_cast<int32_t>(json_value.GetInt());
+			else if (t == type::get<int64_t>())
+				var = static_cast<int64_t>(json_value.GetInt64());
+			else if (t == type::get<uint8_t>())
+				var = static_cast<uint8_t>(json_value.GetUint());
+			else if (t == type::get<uint16_t>())
+				var = static_cast<uint16_t>(json_value.GetUint());
+			else if (t == type::get<uint32_t>())
+				var = static_cast<uint32_t>(json_value.GetUint());
+			else if (t == type::get<uint64_t>())
+				var = static_cast<uint64_t>(json_value.GetUint64());
+			else if (t == type::get<float>())
+				var = static_cast<float>(json_value.GetFloat());
+			else if (t == type::get<double>())
+				var = static_cast<float>(json_value.GetDouble());
+		}
+		else if (t.is_enumeration())
+		{
+			var = static_cast<int8_t>(json_value.GetInt());
+		}
+		else if (t == type::get<std::string>())
+		{
+			var = std::string((json_value.GetString()));
+		}
+	}
+
+	//Implementations
 
 	bool write_atomic_types_to_json(const type& t, const variant& var, PrettyWriter<StringBuffer>& writer)
 	{
@@ -95,9 +157,7 @@ namespace
 		return false;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////
-
-	static void write_array(const variant_sequential_view& view, PrettyWriter<StringBuffer>& writer)
+	void write_array(const variant_sequential_view& view, PrettyWriter<StringBuffer>& writer)
 	{
 		writer.StartArray();
 		for (const auto& item : view)
@@ -123,10 +183,7 @@ namespace
 		writer.EndArray();
 	}
 
-
-	/////////////////////////////////////////////////////////////////////////////////////////
-
-	static void write_associative_container(const variant_associative_view& view, PrettyWriter<StringBuffer>& writer)
+	void write_associative_container(const variant_associative_view& view, PrettyWriter<StringBuffer>& writer)
 	{
 		static const string_view key_name("key");
 		static const string_view value_name("value");
@@ -160,15 +217,14 @@ namespace
 		writer.EndArray();
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////
-
 	bool write_variant(const variant& var, PrettyWriter<StringBuffer>& writer)
 	{
-		auto value_type = var.get_type();
-		auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
-		bool is_wrapper = wrapped_type != value_type;
+		rttr::type value_type = var.get_type();
+		bool is_wrapper = value_type.is_wrapper();
+		value_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
+	
 		
-		if (write_atomic_types_to_json(is_wrapper ? wrapped_type : value_type,
+		if (write_atomic_types_to_json(value_type,
 			is_wrapper ? var.extract_wrapped_value() : var, writer))
 		{
 		}
@@ -182,7 +238,7 @@ namespace
 		}
 		else //Object
 		{
-			auto child_props = is_wrapper ? wrapped_type.get_properties() : value_type.get_properties();
+			auto child_props =value_type.get_properties();
 			if (!child_props.empty())
 			{
 				to_json_recursively(var, writer);
@@ -204,8 +260,6 @@ namespace
 		return true;
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////
-
 	void to_json_recursively(const instance& obj2, PrettyWriter<StringBuffer>& writer)
 	{
 		writer.StartObject();
@@ -224,22 +278,20 @@ namespace
 		
 			variant prop_value = prop.get_value(obj);
 			if (!prop_value)
-				continue; // cannot serialize, because we cannot retrieve the value
-		
+			{
+				DEBUG_LOG_TEMP("Property value is not valid");
+				continue; 
+			}
+			
 			const auto name = prop.get_name();
 			writer.String(name.data(), static_cast<rapidjson::SizeType>(name.length()), false);
 			if (!write_variant(prop_value, writer))
 			{
-				std::cerr << "cannot serialize property: " << name << std::endl;
+				DEBUG_LOG_TEMP("Cannot serialize property: %s", name.to_string().c_str());
 			}
 		}
 		
 		writer.EndObject();
-	}
-	
-	void extract_basic_types(variant& var, const Value& json_value)
-	{
-		//Get the class
 	}
 
 	void extract_atomic_types(variant& var, const Value& json_value)
@@ -272,7 +324,7 @@ namespace
 				else if (json_value.IsDouble())
 					var = static_cast<float>(json_value.GetDouble());
 				else if (json_value.IsUint())
-					var = json_value.GetUint();
+					var = static_cast<uint32>(json_value.GetUint());
 				else if (json_value.IsInt64())
 					var = json_value.GetInt64();
 				else if (json_value.IsUint64())
@@ -284,158 +336,40 @@ namespace
 		case kArrayType: return;
 		}
 	}
-	
-	static void extract_array_recursively(variant_sequential_view& view, const Value& json_array_value);
 
-	void from_json_recursively(rttr::variant& variant, const rttr::type& variant_type, const Value& json_object);
-	
-
-	bool extract_variant(variant& var, const Value& json_object)
+	void extract_array_recursively(variant_sequential_view& view, const Value& json_array_value)
 	{
-		// auto value_type = var.get_type();
-		// auto wrapped_type = value_type.is_wrapper() ? value_type.get_wrapped_type() : value_type;
-		// bool is_wrapper = wrapped_type != value_type;
-		//
-		// // if (write_atomic_types_to_json(is_wrapper ? wrapped_type : value_type,
-		// // 	is_wrapper ? var.extract_wrapped_value() : var, writer))
-		// // {
-		// // 	extract_basic_types(is_wrapper ? wrapped_type : value_type,
-		// // 	is_wrapper ? var.extract_wrapped_value() : var);
-		// // }
-		//
-		// if (var.is_sequential_container())
-		// {
-		// 	extract_array_recursively(var.create_sequential_view(), json_object);
-		// }
-		// else if (var.is_associative_container())
-		// {
-		// 	//write_associative_container(var.create_associative_view(), writer);
-		// }
-		// else
-		// {
-		// 	extract_basic_types(var, json_object);
-		// }
-		//
-		return true;
-	}
-	
-	static bool extract_array(const variant& var, Value& json_object)
-	{
-		return true;
-	}
-
-	variant extract_value(Value::ConstMemberIterator& itr, const type& t)
-	{
-		auto& json_value = itr->value;
-		variant extracted_value;
-		
-		extract_basic_types(extracted_value, json_value);
-		const bool could_convert = extracted_value.convert(t);
-		if (!could_convert)
-		{
-			if (json_value.IsObject())
-			{
-				constructor ctor = t.get_constructor();
-				for (auto& item : t.get_constructors())
-				{
-					if (item.get_instantiated_type() == t)
-						ctor = item;
-				}
-				extracted_value = ctor.invoke();
-				from_json_recursively(extracted_value, t, json_value);
-			}
-		}
-	
-		return extracted_value;
-	}
-
-	static void extract_array_recursively(variant_sequential_view& view, const Value& json_array_value)
-	{
-
 		if (!view.is_valid())
 		{
+			DEBUG_LOG_TEMP("Variant sequential view is invalid");
 			return;
-			std::cerr << "The sequential view is invalid.\n";
 		}
 		
-		int32 Size = json_array_value.Size();
-		int32 ViewSize = view.get_size();
-		if (false == view.set_size(Size))
+		const size_t size = json_array_value.Size();
+		if (false == view.set_size(size))
 		{
+			DEBUG_LOG_TEMP("Couldn't set sequential view size");
 			return;
 		}
-		int32 ViewSizeAfter = view.get_size();
-		const type array_value_type = view.get_rank_type(1);
 		
 		for (SizeType i = 0; i < json_array_value.Size(); ++i)
 		{
-			// Get the variant of the element at index i
-			rttr::variant element_var = view.get_value(i);
-		
-			// Get the type of the element
-			rttr::type element_type = element_var.get_type();
-			
-			
 			auto& json_index_value = json_array_value[i];
-			if (json_index_value.IsArray())
-			{
-				auto sub_array_view = view.get_value(i).create_sequential_view();
-				extract_array_recursively(sub_array_view, json_index_value);
-		
-				view.set_value(i, sub_array_view);
-			}
-			else if (json_index_value.IsObject())
-			{
-				if(json_index_value.HasMember("Class"))
-				{
-					type objectType = type::get_by_name(json_index_value["Class"].GetString());
-					variant var_tmp = objectType.create();
-					from_json_recursively(var_tmp, objectType, json_index_value);
+			
+			rttr::variant element_var = view.get_value(i);
+			rttr::type element_type = element_var.get_type();
 
-					
-					//TODO Make it dynamic for all classes
-					const rttr::type baseComponentType = type::get_by_name("BaseComponent*");
-					if (objectType.is_derived_from(baseComponentType))
-					{
-						if (var_tmp.can_convert(baseComponentType))
-						{
-							var_tmp.convert(baseComponentType);
-						}
-					}
-					
-					if(!view.set_value(i, var_tmp))
-					{
-						DEBUG_LOG_TEMP("Unabe to set value to view");
-						return;
-					}
-					
-					//rttr::instance objectInstance = objectType.create();
-					//type objectTypeFromInstance = objectInstance.get_type();
-
-					// if (!objectType.get_base_classes().empty())
-					// {
-					// 	const rttr::type baseComponentType = *objectInstance.get_type().get_base_classes().begin();
-					// 	if (objectType.is_derived_from(baseComponentType))
-					// 	{
-					// 		if (var_tmp.can_convert(baseComponentType))
-					// 		{
-					// 			var_tmp.convert(baseComponentType);
-					// 		}
-					// 	}
-					// }
-					
-				}
-			}
-			else
+			from_json_recursively(element_var, element_type, json_index_value);
+			
+			if(!view.set_value(i, element_var))
 			{
-				variant extracted_value;
-				extract_atomic_types(extracted_value, json_index_value);
-				view.set_value(i, extracted_value);
+				DEBUG_LOG_TEMP("Unabe to set value to view");
+				return;
 			}
 		}
 	}
 
-	static void extract_associative_view_recursively(variant_associative_view& view, const Value& json_array_value)
+	void extract_associative_view_recursively(variant_associative_view& view, const Value& json_array_value)
 	{
 		if(!view.is_valid())
 		{
@@ -472,40 +406,36 @@ namespace
 			}
 
 			view.insert(key_variant, value_variant);
-			
-			// auto& json_index_value = json_array_value[i];
-			// if (json_index_value.IsObject()) // a key-value associative view
-			// {
-			// 	Value::ConstMemberIterator key_itr = json_index_value.FindMember("key");
-			// 	Value::ConstMemberIterator value_itr = json_index_value.FindMember("value");
-			//
-			// 	if (key_itr != json_index_value.MemberEnd() &&
-			// 		value_itr != json_index_value.MemberEnd())
-			// 	{
-			// 		auto key_var = extract_value(key_itr, view.get_key_type());
-			// 		auto value_var = extract_value(value_itr, view.get_value_type());
-			// 		if (key_var && value_var)
-			// 		{
-			// 			view.insert(key_var, value_var);
-			// 		}
-			// 	}
-			// }
-			// else // a key-only associative view
-			// {
-			// 	variant extracted_value;
-			// 	extract_basic_types(extracted_value, json_index_value);
-			// 	if (extracted_value && extracted_value.convert(view.get_key_type()))
-			// 	{
-			// 		view.insert(extracted_value);
-			// 	}
-			// }
 		}
 	}
 
-	/////////////////////////////////////////////////////////////////////////////////////////
+	
+	void from_json_recursively(rttr::variant& variant, const Value& json_object)
+	{
+		if (!json_object.HasMember("Class"))
+		{
+			DEBUG_LOG_TEMP("Couldn't find class member!");
+			return;
+		}
 
+		rttr::type type_from_json = type::get_by_name(json_object["Class"].GetString());
+		if (!type_from_json.is_valid())
+		{
+			DEBUG_LOG_TEMP("Invalid type");
+			return;
+		}
+	
+		from_json_recursively(variant, type_from_json, json_object);
+	}
+	
 	void from_json_recursively(rttr::variant& variant, const rttr::type& variant_type, const Value& json_object)
 	{
+		if(!variant_type.is_valid())
+		{
+			DEBUG_LOG_TEMP("Variant type is invalid");
+			return;
+		}
+		
 		const bool is_wrapper = variant_type.is_wrapper();
 		const rttr::type& value_type = is_wrapper ? variant_type.get_wrapped_type() : variant_type;
 
@@ -519,10 +449,10 @@ namespace
 					break;
 				}
 
-				rttr::type object_type = type::get_by_name(json_object["Class"].GetString());
-				variant = object_type.create();
+				rttr::type updated_variant_type = type::get_by_name(json_object["Class"].GetString());
+				variant = updated_variant_type.create();
 				
-				auto prop_list = value_type.get_properties();
+				auto prop_list = updated_variant_type.get_properties();
 				for (const rttr::property& prop : prop_list)
 				{
 					if (prop.is_readonly())
@@ -537,13 +467,22 @@ namespace
 
 					const auto& property_json_value = ret->value;
 					rttr::variant new_property_var = prop.get_value(variant);
-					rttr::type new_property_type = prop.get_type();
-					from_json_recursively(new_property_var, new_property_type, property_json_value);
+					rttr::type property_type = prop.get_type();
+					from_json_recursively(new_property_var, property_type, property_json_value);
 					
 					if (!prop.set_value(variant, new_property_var))
 					{
 						DEBUG_LOG_TEMP("Unable to set property");
 						return;
+					}
+				}
+
+				const rttr::type baseComponentType = type::get_by_name("BaseComponent*");
+				if (updated_variant_type.is_derived_from(baseComponentType))
+				{
+					if (variant.can_convert(baseComponentType))
+					{
+						variant.convert(baseComponentType);
 					}
 				}
 				break;
@@ -554,27 +493,22 @@ namespace
 				{
 					variant_sequential_view sequential_view = variant.create_sequential_view();
 					extract_array_recursively(sequential_view, json_object);
-					size_t ViewSize = sequential_view.get_size();
 				}
 				else if (value_type.is_associative_container())
 				{
 					rttr::variant_associative_view associative_view = variant.create_associative_view();
 					extract_associative_view_recursively(associative_view, json_object);
-					size_t ViewSize = associative_view.get_size();
 				}
 				break;
 			}
 		default:
 			{
-				extract_atomic_types(variant, json_object);
+				extract_atomic_types_from_type(variant, value_type, json_object);
 			}
 		}
 	}
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////////////////////////
 
 namespace Nx
 {
@@ -628,7 +562,7 @@ namespace Nx
 		//variant var = GameObjectType.create();
 		variant var;
 		
-		from_json_recursively(var, GameObjectType, jsonObjectValue);
+		from_json_recursively(var, jsonObjectValue);
 
 
 		//Testing
