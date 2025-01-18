@@ -4,38 +4,41 @@
 #include "Core/Physcis/iPhysicsFactory.h"
 #include "Core/Physcis/iDebugRenderer.h"
 
-namespace ECS
+class PhysicsSystem : public ECS::EntitySystem
 {
-	class PhysicsSystem : public EntitySystem
-	{
-	public:
-		PhysicsSystem();
+public:
+    PhysicsSystem();
 
-		virtual void tick(class World *world, float deltaTime);
-		~PhysicsSystem();
+    static void Initialize(ECS::World* ecsWorldIn);
 
-		inline nPhysics::iPhysicsWorld* GetWorld()
-		{
-			return physicsWorld;
-		}
+    static PhysicsSystem* Get();
 
-		inline nPhysics::iPhysicsFactory* GetFactory()
-		{
-			return physicsFactory;
-		}
+    virtual void tick(class ECS::World* world, float deltaTime);
+    ~PhysicsSystem();
 
-		inline void ToggleDebugDraw()
-		{
-			debugDrawMode = !debugDrawMode;
-			physicsWorld->SetDebugDrawerMode(static_cast<int>(debugDrawMode));
-		}
+    inline nPhysics::iPhysicsWorld* GetWorld()
+    {
+        return physicsWorld;
+    }
 
-	private:
-		nPhysics::iPhysicsFactory* physicsFactory;
-		nPhysics::iPhysicsWorld* physicsWorld;
+    inline nPhysics::iPhysicsFactory* GetFactory()
+    {
+        return physicsFactory;
+    }
 
-		nPhysics::iDebugRenderer* debugRenderer;
+    inline void ToggleDebugDraw()
+    {
+        debugDrawMode = !debugDrawMode;
+        physicsWorld->SetDebugDrawerMode(static_cast<int>(debugDrawMode));
+    }
 
-		bool debugDrawMode;
-	};
-}
+private:
+    static PhysicsSystem* singletonSystemInstance;
+    static ECS::World* ecsWorld;
+    static nPhysics::iPhysicsFactory* physicsFactory;
+    static nPhysics::iPhysicsWorld* physicsWorld;
+
+    static nPhysics::iDebugRenderer* debugRenderer;
+
+    static bool debugDrawMode;
+};

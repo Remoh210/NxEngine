@@ -153,8 +153,7 @@ public:
 	void DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 		const DrawParams& drawParams,
 		uint32 numVertecies);
-
-	//Draw Elements
+	
 	void GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
 		const DrawParams& drawParams, uint32 numElements, uint32 count, bool bUseMipLevel = false, uint32 mip = 0);
 

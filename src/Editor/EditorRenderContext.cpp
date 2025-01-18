@@ -371,7 +371,9 @@ void EditorRenderContext::DrawImpostors(RenderTarget* renderTarget)
 
 void EditorRenderContext::DrawEditorHelpers(RenderTarget* renderTarget)
 {
-	if (!bDrawGrid) { return; }
+	if (!bDrawGrid)
+		return;
+
     NxArray<mat4> transforms;
     transforms.push_back(editorGridTransform.ToMatrix());
 

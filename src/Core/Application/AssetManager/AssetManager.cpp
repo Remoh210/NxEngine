@@ -7,7 +7,7 @@
 #include "Core/Physcis/GL_Triangle.h"
 
 RenderDevice* AssetManager::renderDevice = nullptr;
-ECS::PhysicsSystem* AssetManager::physicsSystem = nullptr;
+PhysicsSystem* AssetManager::physicsSystem = nullptr;
 NxMap<NString, NxArray<MeshInfo*>> AssetManager::importedModels;
 NxMap<NString, Texture*>           AssetManager::importedTextures;
 NxMap<NString, SkinnedMeshInfo*>   AssetManager::importedSkinnedModels;
@@ -195,28 +195,9 @@ nPhysics::iShape* AssetManager::GenerateCollisionShapeFromModels(NxArray<Indexed
 
 		}
 
-
-		//for (int i = 0; i < indices.size() / 3; i += 3)
-		//{
-		//	GLTriangle[i].vertex1[0] = vertecies[indices[i]];
-		//	GLTriangle[i].vertex1[1] = vertecies[indices[i] + 1];
-		//	GLTriangle[i].vertex1[2] = vertecies[indices[i] + 2];
-
-		//	GLTriangle[i].vertex2[0] = vertecies[indices[i + 1]];
-		//	GLTriangle[i].vertex2[1] = vertecies[indices[i + 1] + 1];
-		//	GLTriangle[i].vertex2[2] = vertecies[indices[i + 1] + 2];
-
-		//	GLTriangle[i].vertex2[0] = vertecies[indices[i + 2]];
-		//	GLTriangle[i].vertex2[1] = vertecies[indices[i + 2] + 1];
-		//	GLTriangle[i].vertex2[2] = vertecies[indices[i + 2] + 2];
-
-		//}
-
 		GLTriangleCombinedArray.insert(GLTriangleCombinedArray.end(), GLTriangle.begin(), GLTriangle.end());
 	}
-
-
-
+	
 	return physicsSystem->GetFactory()->CreateMeshCollider(&GLTriangleCombinedArray[0], GLTriangleCombinedArray.size());
 }
 

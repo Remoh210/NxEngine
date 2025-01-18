@@ -4,6 +4,8 @@
 #include <rttr/registration>
 #include "Core/ECS/ECS.h"
 
+class GameObject;
+
 struct BaseComponent
 {
     BaseComponent()
@@ -22,6 +24,8 @@ struct BaseComponent
     virtual ~BaseComponent() = default;
     
     ECS::Entity* entity = nullptr;
+
+    GameObject* GameObject;
 
     //TODO Copy constructor?
     

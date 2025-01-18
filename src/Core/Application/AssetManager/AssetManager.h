@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Common/CommonTypes.h"
 #include "Common/dataStructs/NxArray.h"
 #include "Common/dataStructs/Map.h"
@@ -14,13 +16,13 @@
 class AssetManager 
 {
 public:
-    AssetManager() {};
+    AssetManager() {}
 
 	inline static void SetRenderDevice(RenderDevice* renderDeviceIn)
 	{
 		renderDevice = renderDeviceIn;
 	}
-	inline static void SetPhysicsSystem(ECS::PhysicsSystem* physSystemIn)
+	inline static void SetPhysicsSystem(PhysicsSystem* physSystemIn)
 	{
 		physicsSystem = physSystemIn;
 	}
@@ -36,12 +38,11 @@ public:
 
 	static nPhysics::iShape* GenerateCollisionConvexHullFromModels(NxArray<IndexedModel>& indexedModels);
 	static nPhysics::iShape* GenerateCollisionConvexHullFromModel(IndexedModel& indexedModel);
-	//static nPhysics
 
 
 private:
 	static RenderDevice* renderDevice;
-	static ECS::PhysicsSystem* physicsSystem;
+	static PhysicsSystem* physicsSystem;
 	static Material* LoadMaterial(MaterialSpec& matSpec);
 
 	static NxMap<NString, NxArray<MeshInfo*>> importedModels;

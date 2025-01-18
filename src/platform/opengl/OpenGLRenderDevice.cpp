@@ -113,12 +113,12 @@ void OpenGLRenderDevice::Draw(uint32 fbo, uint32 shader, uint32 vao,
 
 	if(numInstances == 1) 
 	{
-		glDrawElements(drawParams.primitiveType, (GLsizei)numElements, GL_UNSIGNED_INT, 0);
+		glDrawElements(drawParams.primitiveType, static_cast<GLsizei>(numElements), GL_UNSIGNED_INT, 0);
 	} 
 	else 
 	{
-		glDrawElementsInstanced(drawParams.primitiveType, (GLsizei)numElements, GL_UNSIGNED_INT, 0,
-				numInstances);
+		glDrawElementsInstanced(drawParams.primitiveType, static_cast<GLsizei>(numElements), GL_UNSIGNED_INT, 0,
+				static_cast<GLsizei>(numInstances));
 	}
 }
 
@@ -139,7 +139,7 @@ void OpenGLRenderDevice::DrawArrays(uint32 fbo, uint32 shader, uint32 vao,
 	SetVAO(vao);
 
 	glLineWidth(drawParams.lineThickness);
-	glDrawArrays(drawParams.primitiveType, 0, numVertecies);
+	glDrawArrays(drawParams.primitiveType, 0, static_cast<GLsizei>(numVertecies));
 }
 
 void OpenGLRenderDevice::GenerateCubemap(uint32 fbo, uint32 shader, uint32 textureId, uint32 vao,
@@ -821,7 +821,7 @@ static void AddShaderUniforms(GLuint shaderProgram, const NString& shaderText,
 
 	}
 
-	DEBUG_LOG_TEMP("UniformSize: %d", uniformMap.size());
+	//DEBUG_LOG_TEMP("UniformSize: %d", uniformMap.size());
 }
 
 static void AddAllAttributes(GLuint program, const NString& vertexShaderText, uint32 version)

@@ -37,6 +37,7 @@
 #include <type_traits>
 #include <cstddef>
 #include <cstdint>
+#include <string>
 #include <algorithm>
 
 namespace rttr

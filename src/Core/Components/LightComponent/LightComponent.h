@@ -15,6 +15,16 @@ enum class LightType
 
 struct LightComponent : public BaseComponent
 {
+	LightComponent()
+	{
+		color = vec3(1.0f);
+		intensity = 100.f;
+		relativePosition = vec3(0.0f);
+		direction = vec3(0.0f, -1.0f, 0.0f);
+		//Default is point light
+		lightType = LightType::Point;
+	}
+	
     LightComponent(ECS::Entity* entity)
 	    :BaseComponent(entity)
     {

@@ -31,6 +31,7 @@ void GameObject::Initialize(ECS::World* worldIn, const NString& name)
         if(component)
         {
             component->Initialize(entity);
+            component->GameObject = this;
         }
     }
 }

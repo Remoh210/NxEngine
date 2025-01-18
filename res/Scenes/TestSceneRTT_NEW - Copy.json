@@ -65,44 +65,7 @@
                     ]
                 },
                 {
-                    "Class": "RigidBodyComponent",
-                    "Is Static": false,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ]
-                        }
-                    },
-                    "Mass": 0.0,
-                    "Offset": {
-                        "Class": "vec3f",
-                        "InternalData": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
+                    "Class": "BaseComponent"
                 }
             ]
         },
@@ -126,7 +89,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                158.97421264648438,
+                                153.27792358398438,
                                 0.0
                             ]
                         },
@@ -232,7 +195,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                118.05010986328125,
+                                113.82030487060547,
                                 0.0
                             ]
                         },
@@ -301,44 +264,7 @@
                     ]
                 },
                 {
-                    "Class": "RigidBodyComponent",
-                    "Is Static": false,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ]
-                        }
-                    },
-                    "Mass": 0.0,
-                    "Offset": {
-                        "Class": "vec3f",
-                        "InternalData": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
+                    "Class": "BaseComponent"
                 }
             ]
         },
@@ -2543,44 +2469,7 @@
                     ]
                 },
                 {
-                    "Class": "RigidBodyComponent",
-                    "Is Static": true,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ]
-                        }
-                    },
-                    "Mass": 0.0,
-                    "Offset": {
-                        "Class": "vec3f",
-                        "InternalData": [
-                            0.0,
-                            0.0,
-                            0.0
-                        ]
-                    }
+                    "Class": "BaseComponent"
                 }
             ]
         },
@@ -2604,7 +2493,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                78.70014953613281,
+                                75.8801498413086,
                                 0.0
                             ]
                         },
@@ -2899,44 +2788,7 @@
                     "MovementSpeed": 10.0
                 },
                 {
-                    "Class": "RigidBodyComponent",
-                    "Is Static": false,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                1.0,
-                                1.0,
-                                1.0
-                            ]
-                        }
-                    },
-                    "Mass": 0.0,
-                    "Offset": {
-                        "Class": "vec3f",
-                        "InternalData": [
-                            0.0,
-                            -48.0,
-                            0.0
-                        ]
-                    }
+                    "Class": "BaseComponent"
                 }
             ]
         },

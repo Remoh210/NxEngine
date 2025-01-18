@@ -5,6 +5,7 @@
 RTTR_REGISTRATION
 {
 	rttr::registration::class_<LightComponent>("LightComponent")
+		.constructor<>()(rttr::policy::ctor::as_raw_ptr)
 		.property("LightType", &LightComponent::lightType)
 		.property("Intensity", &LightComponent::intensity)
 				  (

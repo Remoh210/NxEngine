@@ -132,7 +132,7 @@ void Application::DrawDebugWindow()
 		
 	if (ImGui::Button("Draw Collision"))
 	{
-		auto physicsSystemNx = (ECS::PhysicsSystem*)physicsSystem;
+		auto physicsSystemNx = PhysicsSystem::Get();
 		physicsSystemNx->ToggleDebugDraw();
 	}
 		
@@ -193,9 +193,9 @@ int Application::Run()
 	ECS::EntitySystem* renderSystem = world->registerSystem(new ECS::RenderableMeshSystem(editorRenderContext));
 	ECS::EntitySystem* animatorSystem = world->registerSystem(new ECS::AnimatorSystem());
 	ECS::EntitySystem* characterSystem = world->registerSystem(new ECS::CharacterSystem(MainCamera));
-	physicsSystem = world->registerSystem(new ECS::PhysicsSystem());
 
-	AssetManager::SetPhysicsSystem((ECS::PhysicsSystem*)physicsSystem);
+	PhysicsSystem::Initialize(world);
+	AssetManager::SetPhysicsSystem(PhysicsSystem::Get());
 	InputManager::Initialize(window);
 	DebugRenderer::SetContext(editorRenderContext);
 	DebugRenderer::SetShader(renderDevice);
@@ -424,8 +424,6 @@ void Application::ShutDown()
 
 void Application::CreateDefaultScene()
 {
-	ECS::PhysicsSystem* physSystem = (ECS::PhysicsSystem*)physicsSystem;
-	
 	NString TEST_MODEL_PISTOL = "res/models/pistol_test.glb";
 	NString TEST_MODEL_DUST_MAP = "res/models/dust/fbx/dust.fbx";
 	NString TEST_MODEL_FILE_PBR_TEST = "res/models/PBRTest.glb";
@@ -526,8 +524,8 @@ void Application::CreateDefaultScene()
 	dustMapRigidBodyDef.GameObjectName = "dust";
 	dustMapRigidBodyDef.Scale = dustTransformComp.transform.scale.ToVec();
 
-	dustMapRigidBodyComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(dustMapRigidBodyDef, CurShape6);
-	physSystem->GetWorld()->AddBody(dustMapRigidBodyComp.rigidBody);
+	dustMapRigidBodyComp.rigidBody = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(dustMapRigidBodyDef, CurShape6);
+	PhysicsSystem::Get()->GetWorld()->AddBody(dustMapRigidBodyComp.rigidBody);
 
 	SceneManager::currentScene.MakeNewObject("Dust Map", dustMapEntity);
 	
@@ -605,7 +603,6 @@ void Application::LoadDefaultScene()
 
 #pragma region loadMeshes
 	//model 1
-	ECS::PhysicsSystem* physSystem = (ECS::PhysicsSystem*)physicsSystem;
 
 
 	NxArray<IndexedModel> models;
@@ -710,9 +707,9 @@ void Application::LoadDefaultScene()
 	PistolRbdef.Scale = transformComp3.transform.scale.ToVec();
 	//PistolRbdef.AngularVelocity = vec3(10.1f, 12.5f, -11.1f);
 	PistolRbdef.quatOrientation = quat(transformComp3.transform.rotation.ToVec());
-	nPhysics::iRigidBody* PistolRB = physSystem->GetFactory()->CreateRigidBody(PistolRbdef, pistolShape);
+	nPhysics::iRigidBody* PistolRB = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(PistolRbdef, pistolShape);
 	//PistolRB->SetEulerRotation(transformComp3.transform.rotation.ToVec());
-	physSystem->GetWorld()->AddBody(PistolRB);
+	PhysicsSystem::Get()->GetWorld()->AddBody(PistolRB);
 
 
 	MeshInfo* pbrTestMesh = new MeshInfo();
@@ -766,9 +763,9 @@ void Application::LoadDefaultScene()
 
 	
 
-	CurShape5 = physSystem->GetFactory()->CreateSphereShape(5.2);
-	rb5.rigidBody = physSystem->GetFactory()->CreateRigidBody(def5, CurShape5);
-	physSystem->GetWorld()->AddBody(rb5.rigidBody);
+	CurShape5 = PhysicsSystem::Get()->GetFactory()->CreateSphereShape(5.2);
+	rb5.rigidBody = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(def5, CurShape5);
+	PhysicsSystem::Get()->GetWorld()->AddBody(rb5.rigidBody);
 
 
 	StaticMeshComponent renderableMesh6;
@@ -793,11 +790,11 @@ void Application::LoadDefaultScene()
 	def6.Mass = 0.0f;
 	def6.GameObjectName = "test6";
 	def6.Scale = transformComp6.transform.scale.ToVec();
-	//CurShape6 = physSystem->GetFactory()->CreatePlaneShape(vec3(0, 1, 0), 0);
+	//CurShape6 = PhysicsSystem::Get()->GetFactory()->CreatePlaneShape(vec3(0, 1, 0), 0);
 	//nPhysics::GL_Triangle* GLTriangle = new nPhysics::GL_Triangle[curModelInfo.pMeshData->numberOfTriangles];
 
-	rb6.rigidBody = physSystem->GetFactory()->CreateRigidBody(def6, CurShape6);
-	physSystem->GetWorld()->AddBody(rb6.rigidBody);
+	rb6.rigidBody = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(def6, CurShape6);
+	PhysicsSystem::Get()->GetWorld()->AddBody(rb6.rigidBody);
 
 
 
@@ -851,9 +848,9 @@ void Application::LoadDefaultScene()
 	def8.Position = transformCompSkinned.transform.position.ToVec();
 	def8.Mass = 1600.0f;
 	def8.isPlayer = true;
-	CurShape8 = physSystem->GetFactory()->CreateCapsuleShape(110.0f, 20.f, 1.0f);
-	charRbComp.rigidBody = physSystem->GetFactory()->CreateRigidBody(def8, CurShape8);
-	physSystem->GetWorld()->AddBody(charRbComp.rigidBody);
+	CurShape8 = PhysicsSystem::Get()->GetFactory()->CreateCapsuleShape(110.0f, 20.f, 1.0f);
+	charRbComp.rigidBody = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(def8, CurShape8);
+	PhysicsSystem::Get()->GetWorld()->AddBody(charRbComp.rigidBody);
 	AnimatorComponent animComp;
 	animComp.animations["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
 	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");

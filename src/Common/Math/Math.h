@@ -95,13 +95,13 @@ public:
 #pragma endregion
 
 #pragma region reflection
-	inline std::vector<float>& GetInternal()
+	inline std::vector<float> GetInternal()
 	{
 		InternalData = {data[0], data[1], data[2] };
 		return InternalData;
 	}
 	
-	inline void SetInternal(std::vector<float>& VectorIn)
+	inline void SetInternal(std::vector<float> VectorIn)
 	{
 		if (VectorIn.size() >= 3)
 		{

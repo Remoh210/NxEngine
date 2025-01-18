@@ -1,7 +1,11 @@
 #pragma once
+
+#include <rttr/registration.h>
+
 #include "Core/Engine/Component/BaseComponent.h"
 #include "Core/Physcis/iRigidBody.h"
 #include "Common/Math/Math.h"
+#include "Common/Transform/Transform.h"
 
 struct RigidBodyComponent : public BaseComponent
 {
@@ -29,8 +33,16 @@ struct RigidBodyComponent : public BaseComponent
 		offset = vec3f(0.f);
 	}
 
+	void Initialize(ECS::Entity* entityIn) override;
+
 	bool bIsStatic = false;
 	nPhysics::iRigidBody* rigidBody;
 	vec3f offset;
-	//bool bSimulatePhysics;
+
+	// Serialization for now is done without irb
+	Transform transform;
+	float mass = 0.0f;
+
+
+	RTTR_ENABLE(BaseComponent)
 };
