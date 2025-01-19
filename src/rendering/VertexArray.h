@@ -8,10 +8,11 @@
 class VertexArray
 {
 public:
-	inline VertexArray(RenderDevice* deviceIn, const IndexedModel& model,
+	inline VertexArray(RenderDevice* deviceIn, const IndexedModel& modelIn,
 			BufferUsage usage) :
 		device(deviceIn),
-		id(model.CreateVertexArray(deviceIn, usage)),
+		model(modelIn),
+		id(modelIn.CreateVertexArray(deviceIn, usage)),
 		numIndices(model.GetNumIndices()),
 		numVertices(model.GetElement(0).size())
 		{}
@@ -45,12 +46,14 @@ public:
     }
 
 	inline uint32 GetId() { return id; };
+	inline IndexedModel GetIndexedModel() const { return model; };
 	inline uint32 GetNumIndices() { return numIndices; };
 	inline uint32 GetNumVertices() { return numVertices; };
 
 private:
-    Shader* shader;
 	RenderDevice* device;
+	IndexedModel model;
+    Shader* shader;
 	uint32 id;
 	uint32 numIndices;
 	uint32 numVertices;

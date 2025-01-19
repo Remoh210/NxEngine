@@ -20,12 +20,15 @@ struct BaseComponent
     }
     
     virtual void Initialize(ECS::Entity* entityIn);
+
+    // Called after all componets are initialized
+    virtual void PostInitialize() {}
     
     virtual ~BaseComponent() = default;
     
     ECS::Entity* entity = nullptr;
 
-    GameObject* GameObject;
+    GameObject* GameObject = nullptr;
 
     //TODO Copy constructor?
     

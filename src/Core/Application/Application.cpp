@@ -690,11 +690,10 @@ void Application::LoadDefaultScene()
 	renderableMesh3.meshAssetFile = TEST_MODEL_FILE3;
 	renderableMesh3.bIsImported = true;
 	TransformComponent transformComp3;
-	//transformComp3.transform.position = vec3(0.0f, 5.0f, -30.0f);
 	transformComp3.transform.position = vec3(-30.1f, 20.0f, -40.0f);
 	transformComp3.transform.rotation = vec3(0 , 0.0f, 0.f);
 	transformComp3.rotSpeed = 15.0f;
-	transformComp3.transform.scale = vec3(0.9);
+	transformComp3.transform.scale = vec3(1.0);
 	RigidBodyComponent rbPistol;
 	NxArray<MeshInfo*> meshsesToAdd;
 	
@@ -909,10 +908,10 @@ void Application::LoadDefaultScene()
 	ent5->assign<StaticMeshComponent>(renderableMesh5);
 	ent5->assign<RigidBodyComponent>(rb5);
 
-	ECS::Entity* ent6 = world->create();
-	ent6->assign<TransformComponent>(transformComp6);
-	ent6->assign<StaticMeshComponent>(renderableMesh6);
-	ent6->assign<RigidBodyComponent>(rb6);
+	// ECS::Entity* ent6 = world->create();
+	// ent6->assign<TransformComponent>(transformComp6);
+	// ent6->assign<StaticMeshComponent>(renderableMesh6);
+	// ent6->assign<RigidBodyComponent>(rb6);
 
 	ECS::Entity* ent7 = world->create();
 	ent7->assign<TransformComponent>(transformComp7);
@@ -932,7 +931,7 @@ void Application::LoadDefaultScene()
 	SceneManager::currentScene.MakeNewObject("Red sphere", ent5);
 	SceneManager::currentScene.MakeNewObject("Rust", ent4);
 	SceneManager::currentScene.MakeNewObject("Pistol", ent3);
-	SceneManager::currentScene.MakeNewObject("Dust Map", ent6);
+	//SceneManager::currentScene.MakeNewObject("Dust Map", ent6);
 	SceneManager::currentScene.MakeNewObject("Bottle", ent7);
 	SceneManager::currentScene.MakeNewObject("SkinnedMesh", ent8);
 

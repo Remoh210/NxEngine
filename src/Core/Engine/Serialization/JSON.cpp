@@ -560,34 +560,6 @@ namespace Nx
 		GameObject* NewGameObject = outScene.sceneObjects[outScene.sceneObjects.size() - 1];
 		const Value& jsonObjectValue = GameObjects[0];
 		
-		// DEBUG_LOG_TEMP("SceneManager::LoadScene");
-		// const rapidjson::Value& GameObjects = doc["GameObjects"].GetArray();
-		
-		// const Value& jsonObjectValue = GameObjects[0];
-		// //variant var = GameObjectType.create();
-		// variant var;
-		//
-		// from_json_recursively(var, jsonObjectValue);
-
-
-		//Testing
-		// GameObject* obj = var.get_value<GameObject*>();
-		//
-		// obj->Initialize(World, "TESTING");
-		//
-		// rttr::variant var_obj = obj;
-		// variant ComponentsProp = var_obj.get_type().get_property_value("Components", var_obj);
-		// variant_sequential_view view = ComponentsProp.create_sequential_view();
-		//
-		// for(auto const& it : view)
-		// {
-		// 	BaseComponent* BS = it.get_value<BaseComponent*>();
-		// 	DEBUG_LOG_TEMP("var type: %s", it.get_type().get_name().to_string().c_str());
-		//
-		// 	TransformComponent* TC = it.get_value<TransformComponent*>();
-		// 	DEBUG_LOG_TEMP("var type: %s", it.get_type().get_name().to_string().c_str());
-		// }
-
 		return outScene;
 	}
 }

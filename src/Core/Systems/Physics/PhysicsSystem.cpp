@@ -4,6 +4,7 @@
 #include "Core/Components/TransformComponent/TransformComponent.h"
 #include "Core/Physcis/BulletPhysics/cBulletPhysicsFactory.h"
 #include "Core/Application/Application.h"
+#include "Core/Application/SceneManager/GameObject.h"
 
 PhysicsSystem* PhysicsSystem::singletonSystemInstance = nullptr;
 ECS::World* PhysicsSystem::ecsWorld = nullptr;
@@ -55,13 +56,11 @@ void PhysicsSystem::tick(class ECS::World *world, float deltaTime)
 
     world->each<TransformComponent, RigidBodyComponent>([&](ECS::Entity *ent, ECS::ComponentHandle<TransformComponent> transformComp, ECS::ComponentHandle<RigidBodyComponent> rbComponent) -> void
     {
-
         if (!rbComponent->bIsStatic)
         {
             transformComp->transform.position = rbComponent->rigidBody->GetPosition() + rbComponent->offset.ToVec();
             transformComp->transform.rotation = rbComponent->rigidBody->GetEulerRotation();
         }
-
     });
 }
 

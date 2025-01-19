@@ -67,32 +67,28 @@
                 {
                     "Class": "RigidBodyComponent",
                     "Is Static": false,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
+                    "Shape Def": {
+                        "Class": "shapeDef",
+                        "Half Extents": {
                             "Class": "vec3f",
                             "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
                             ]
-                        }
+                        },
+                        "Radius": 1.0,
+                        "Height": 1.0,
+                        "Axis": 1,
+                        "planeNormal": {
+                            "Class": "vec3f",
+                            "InternalData": [
+                                0.0,
+                                1.0,
+                                0.0
+                            ]
+                        },
+                        "planeConstant": 0.0
                     },
                     "Mass": 0.0,
                     "Offset": {
@@ -102,7 +98,8 @@
                             0.0,
                             0.0
                         ]
-                    }
+                    },
+                    "Shape Type": "Sphere"
                 }
             ]
         },
@@ -126,7 +123,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                158.97421264648438,
+                                755.0029907226563,
                                 0.0
                             ]
                         },
@@ -214,7 +211,7 @@
         },
         {
             "Class": "GameObject",
-            "Name": "Pistol",
+            "Name": "PistolTest",
             "Components": [
                 {
                     "Class": "TransformComponent",
@@ -232,7 +229,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                118.05010986328125,
+                                560.6468505859375,
                                 0.0
                             ]
                         },
@@ -245,7 +242,7 @@
                             ]
                         }
                     },
-                    "Rotation Speed": 15.0
+                    "Rotation Speed": 0.0
                 },
                 {
                     "Class": "StaticMeshComponent",
@@ -303,34 +300,30 @@
                 {
                     "Class": "RigidBodyComponent",
                     "Is Static": false,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
+                    "Shape Def": {
+                        "Class": "shapeDef",
+                        "Half Extents": {
                             "Class": "vec3f",
                             "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
                             ]
-                        }
+                        },
+                        "Radius": 20.0,
+                        "Height": 1.0,
+                        "Axis": 1,
+                        "planeNormal": {
+                            "Class": "vec3f",
+                            "InternalData": [
+                                0.0,
+                                1.0,
+                                0.0
+                            ]
+                        },
+                        "planeConstant": 0.0
                     },
-                    "Mass": 0.0,
+                    "Mass": 10.0,
                     "Offset": {
                         "Class": "vec3f",
                         "InternalData": [
@@ -338,7 +331,8 @@
                             0.0,
                             0.0
                         ]
-                    }
+                    },
+                    "Shape Type": "Sphere"
                 }
             ]
         },
@@ -2545,32 +2539,28 @@
                 {
                     "Class": "RigidBodyComponent",
                     "Is Static": true,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
+                    "Shape Def": {
+                        "Class": "shapeDef",
+                        "Half Extents": {
                             "Class": "vec3f",
                             "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
                             ]
-                        }
+                        },
+                        "Radius": 1.0,
+                        "Height": 1.0,
+                        "Axis": 1,
+                        "planeNormal": {
+                            "Class": "vec3f",
+                            "InternalData": [
+                                0.0,
+                                1.0,
+                                0.0
+                            ]
+                        },
+                        "planeConstant": 0.0
                     },
                     "Mass": 0.0,
                     "Offset": {
@@ -2580,7 +2570,8 @@
                             0.0,
                             0.0
                         ]
-                    }
+                    },
+                    "Shape Type": "Sphere"
                 }
             ]
         },
@@ -2604,7 +2595,7 @@
                             "Class": "vec3f",
                             "InternalData": [
                                 0.0,
-                                78.70014953613281,
+                                373.7643737792969,
                                 0.0
                             ]
                         },
@@ -2901,32 +2892,28 @@
                 {
                     "Class": "RigidBodyComponent",
                     "Is Static": false,
-                    "Transform": {
-                        "Class": "Transform",
-                        "position": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "rotation": {
-                            "Class": "vec3f",
-                            "InternalData": [
-                                0.0,
-                                0.0,
-                                0.0
-                            ]
-                        },
-                        "scale": {
+                    "Shape Def": {
+                        "Class": "shapeDef",
+                        "Half Extents": {
                             "Class": "vec3f",
                             "InternalData": [
                                 1.0,
                                 1.0,
                                 1.0
                             ]
-                        }
+                        },
+                        "Radius": 1.0,
+                        "Height": 1.0,
+                        "Axis": 1,
+                        "planeNormal": {
+                            "Class": "vec3f",
+                            "InternalData": [
+                                0.0,
+                                1.0,
+                                0.0
+                            ]
+                        },
+                        "planeConstant": 0.0
                     },
                     "Mass": 0.0,
                     "Offset": {
@@ -2936,7 +2923,8 @@
                             -48.0,
                             0.0
                         ]
-                    }
+                    },
+                    "Shape Type": "Sphere"
                 }
             ]
         },
