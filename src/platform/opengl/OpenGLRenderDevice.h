@@ -115,8 +115,8 @@ struct DrawParams
 {
 	PrimitiveType primitiveType = PRIMITIVE_TRIANGLES;
 	float lineThickness = 1.0;
-	FaceCulling faceCulling = FACE_CULL_NONE;
-	DrawFunc depthFunc = DRAW_FUNC_ALWAYS;
+	FaceCulling faceCulling = FACE_CULL_BACK;
+	DrawFunc depthFunc = DRAW_FUNC_LESS;
 	bool shouldWriteDepth = true;
 	bool useStencilTest = false;
 	DrawFunc stencilFunc = DRAW_FUNC_ALWAYS;

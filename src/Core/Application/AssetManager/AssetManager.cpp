@@ -28,12 +28,10 @@ NxArray<MeshInfo*> AssetManager::ImportModel(NString file)
 	AssetLoader::LoadModel(file, models, materialIndices, materials);
 	NxArray<MeshInfo*> loadedMeshes;
 
-	for (int i = 0; i < models.size(); i++)
+	for (size_t i = 0; i < models.size(); i++)
 	{
 		MeshInfo* curMesh = new MeshInfo();
 		curMesh->vertexArray = new VertexArray(renderDevice, models[i], USAGE_STATIC_DRAW);
-		loadedMeshes.push_back(curMesh);
-
 		curMesh->material = LoadMaterial(materials[i]);
 
 		loadedMeshes.push_back(curMesh);
@@ -243,7 +241,6 @@ nPhysics::iShape* AssetManager::GenerateCollisionConvexHullFromModels(NxArray<In
 		verteciesCombined.insert(verteciesCombined.end(), vertecies.begin(), vertecies.end());
 	}
 	return physicsSystem->GetFactory()->CreateConvexHullCollider(&verteciesCombined[0], verteciesCombined.size());
-	return nullptr;
 }
 
 nPhysics::iShape* AssetManager::GenerateCollisionConvexHullFromModel(IndexedModel& indexedModel)

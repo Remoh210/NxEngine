@@ -2,8 +2,6 @@
 #include "Core/Application/Settings/GlobalSettings.h"
 #define LOG_TYPE_WINDOW "Window"
 
-//Camera* GLFWPlatformWindow::MainCamera;
-
 std::function<void (int, int)> GLFWPlatformWindow::MouseCallbackFunc = [](int, int){};
 std::function<void (int, int)> GLFWPlatformWindow::FrameBufferResizeCallbackBackFunc = [](int, int){};
 std::function<void(float yoffset)> GLFWPlatformWindow::MouseScrollCallbackFunc = [](float) {};
@@ -153,8 +151,6 @@ void GLFWPlatformWindow::UpdateInput()
 
 void GLFWPlatformWindow::Present()
 {
-
-
     glfwSwapBuffers(window);
 }
 

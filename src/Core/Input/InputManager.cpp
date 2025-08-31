@@ -12,6 +12,11 @@ bool InputManager::GetKeyPressed(InputKey keyIn)
 	return window->GetKeyPressed(keyIn);
 }
 
+bool InputManager::GetKeyPressed(int32 keyIn)
+{
+	return window->GetKeyPressed(static_cast<InputKey>(keyIn));
+}
+
 float InputManager::GetAxis(NString axis)
 {
 	if (axis == "Horizontal")

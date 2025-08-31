@@ -544,6 +544,12 @@ namespace Nx
 		doc.ParseStream(ISW);
 
 		DEBUG_LOG_TEMP("SceneManager::LoadScene");
+		if(false == doc.HasMember("GameObjects"))
+		{
+			DEBUG_LOG_TEMP("SceneManager::LoadScene: No Game Objects in json");
+			
+			return outScene;
+		}
 		const rapidjson::Value& GameObjects = doc["GameObjects"].GetArray();
 		for (size_t i = 0; i < GameObjects.Size(); i++)
 		{

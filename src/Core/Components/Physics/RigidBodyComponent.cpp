@@ -28,6 +28,7 @@ RTTR_REGISTRATION
         rttr::policy::ctor::as_raw_ptr
     )
         .property("Is Static", &RigidBodyComponent::bIsStatic)
+        .property("Is Player", &RigidBodyComponent::bIsPlayer)
         .property("Shape Def", &RigidBodyComponent::shapeDef)
         .property("Mass", &RigidBodyComponent::mass)
         .property("Offset", &RigidBodyComponent::offset)
@@ -73,6 +74,8 @@ void RigidBodyComponent::Initialize(ECS::Entity* entityIn)
 
     cachedRigidBodyDef.Mass = mass;
     cachedRigidBodyDef.GameObjectName = GameObject ? GameObject->name : "None";
+    cachedRigidBodyDef.isPlayer = bIsPlayer;
+    
     
     nPhysics::iShape* newShape = nullptr;
     switch (shapeType)
@@ -125,22 +128,18 @@ void RigidBodyComponent::PostInitialize()
 {
     BaseComponent::PostInitialize();
 
-    if(rigidBody)
-    {
-        return;
-    }
-
     if(shapeType != nPhysics::SHAPE_TYPE_MESH)
     {
         return;
     }
 
     nPhysics::iShape* newShape = nullptr;
-    std::vector<ECS::ComponentHandle<StaticMeshComponent>> componentHandles = entity->getAllComponents<StaticMeshComponent>();
-    if(componentHandles.size() > 0)
+    
+    StaticMeshComponent& staticMeshComp = entity->get<StaticMeshComponent>().get();
+    if(staticMeshComp.meshes.size() > 0)
     {
         NxArray<IndexedModel> indexedModel;
-        StaticMeshComponent& staticMeshComp = componentHandles[0].get();
+        
 
         for(const MeshInfo* meshInfo : staticMeshComp.meshes)
         {
@@ -156,7 +155,11 @@ void RigidBodyComponent::PostInitialize()
         }
     }
    
+    if(newShape)
+    {
+        rigidBody = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(cachedRigidBodyDef, newShape);
+        PhysicsSystem::Get()->GetWorld()->AddBody(rigidBody);
 
-    rigidBody = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(cachedRigidBodyDef, newShape);
-    PhysicsSystem::Get()->GetWorld()->AddBody(rigidBody);
+        entity->assign<RigidBodyComponent>(*this);
+    }
 }

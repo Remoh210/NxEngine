@@ -53,6 +53,8 @@ public:
 	static AnimationInfo* LoadMeshAnimation(const std::string &friendlyName,
 		const std::string &filename, bool hasExitTime);
 
+	//static LoadAnimationScene(AnimationInfo* animationInfoIn);
+
 private:
 
 	static void ProcessNode(aiNode *node, const aiScene *scene, const NString& fileName,

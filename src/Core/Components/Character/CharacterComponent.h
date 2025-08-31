@@ -25,6 +25,8 @@ struct CharacterComponent : public BaseComponent
 
 	float movementSpeed = 10.0f;
 	vec3f cameraRelativePosition = vec3f(0.0f);
+
+	void Initialize(ECS::Entity* entityIn) override;
 	
-	RTTR_ENABLE()
+	RTTR_ENABLE(BaseComponent)
 };

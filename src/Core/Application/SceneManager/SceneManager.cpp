@@ -107,13 +107,6 @@ bool SceneManager::SaveScene(NString filename)
 	
 	const NString fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
 	
-	// std::ofstream os(fileToLoadFullPath);
-	// {
-	// 	cereal::JSONOutputArchive archiveOut(os);
-	// 	archiveOut(currentScene);
-	// }
-	// os.close();
-	
 	std::ofstream outputFile;
 	outputFile.open(fileToLoadFullPath.c_str());
 	
@@ -163,7 +156,7 @@ bool SceneManager::LoadScene(NString filename)
 	const NString fileToLoadFullPath = Nx::FileSystem::GetRoot() + "/res/Scenes/" + filename + ".json";
 	
 	
-	Scene scene = Nx::parse_scene(world, fileToLoadFullPath);
+	currentScene = Nx::parse_scene(world, fileToLoadFullPath);
 	
 
 	return true;

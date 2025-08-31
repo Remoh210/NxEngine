@@ -59,6 +59,7 @@ struct RigidBodyComponent : public BaseComponent
 	void PostInitialize() override;
 
 	bool bIsStatic = false;
+	bool bIsPlayer = false;
 
 	nPhysics::eShapeType shapeType = nPhysics::eShapeType::SHAPE_TYPE_SPHERE;
 	

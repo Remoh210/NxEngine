@@ -17,14 +17,14 @@ class GLFWPlatformWindow
 public:
 
     GLFWPlatformWindow(uint32 width, uint32 height, const char* title);
-    ~GLFWPlatformWindow() {};
+    ~GLFWPlatformWindow() {}
     void Resize(int width, int height);
     //void ChangeTitle(const char* title);
 
 	void UpdateInput();
     void Present();
-    inline bool ShouldClose() { return glfwWindowShouldClose(window); };
-    inline WindowHandle GetWindowHandle() { return window; };
+    inline bool ShouldClose() { return glfwWindowShouldClose(window); }
+    inline WindowHandle GetWindowHandle() { return window; }
     inline uint32 GetHeight() { return mHeight; }
     inline uint32 GetWidth() { return mWidth; }
 
@@ -37,7 +37,7 @@ public:
 		return verticalInputAxis; 
 	};
 
-	static bool GetKeyPressed(InputKey keyIn) { return keyIn == keyPressed; };
+	static bool GetKeyPressed(InputKey keyIn) { return keyIn == keyPressed; }
 
 	//inline void SetMSAA(uint32 numSamples) { glfwWindowHint(GLFW_SAMPLES, numSamples); }
 

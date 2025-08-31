@@ -550,6 +550,10 @@ void Application::CreateDefaultScene()
 
 void Application::LoadDefaultScene()
 {
+	SceneManager::LoadScene("TestSceneRTT_NEW");
+	
+	return;
+	
 	NString monkeyMesh = "res/models/monkey3.obj";
 	NString rockMesh = "res/models/rock/rock.obj";
 
@@ -827,6 +831,7 @@ void Application::LoadDefaultScene()
 
 #pragma region Skinned Mesh
 	SkinnedMeshComponent skinnedMesh;
+	skinnedMesh.meshAssetFile = "res/models/chan.fbx";
 	skinnedMesh.skinnedMeshInfo = AssetManager::ImportModelSkeletal("res/models/chan.fbx");
 	//skinnedMesh.skinnedMeshInfo->mesh->material->textures.clear();
 	skinnedMesh.skinnedMeshInfo->mesh->drawParams.faceCulling = FACE_CULL_BACK;
@@ -851,16 +856,23 @@ void Application::LoadDefaultScene()
 	charRbComp.rigidBody = PhysicsSystem::Get()->GetFactory()->CreateRigidBody(def8, CurShape8);
 	PhysicsSystem::Get()->GetWorld()->AddBody(charRbComp.rigidBody);
 	AnimatorComponent animComp;
-	animComp.animations["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
-	animComp.animations["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
-	animComp.animations["walk_left"] = AssetManager::ImportAnimation("res/models/animations/walk_left.fbx", "walk_left");
-	animComp.animations["walk_right"] = AssetManager::ImportAnimation("res/models/animations/walk_right.fbx", "walk_right");
-	animComp.animations["walk_forward"] = AssetManager::ImportAnimation("res/models/animations/walk_forward.fbx", "walk_forward");
+	
+	animComp.animNameToFileMap["idle"] =         "res/models/animations/sad_idle_anim.fbx";
+	animComp.animNameToFileMap["shoot"] =        "res/models/animations/shoot_anim.fbx";
+	animComp.animNameToFileMap["walk_left"] =    "res/models/animations/walk_left.fbx";
+	animComp.animNameToFileMap["walk_right"] =   "res/models/animations/walk_right.fbx";
+	animComp.animNameToFileMap["walk_forward"] = "res/models/animations/walk_forward.fbx";
+	
+	animComp.animationMap["idle"] = AssetManager::ImportAnimation("res/models/animations/sad_idle_anim.fbx", "idle");
+	animComp.animationMap["shoot"] = AssetManager::ImportAnimation("res/models/animations/shoot_anim.fbx", "shoot");
+	animComp.animationMap["walk_left"] = AssetManager::ImportAnimation("res/models/animations/walk_left.fbx", "walk_left");
+	animComp.animationMap["walk_right"] = AssetManager::ImportAnimation("res/models/animations/walk_right.fbx", "walk_right");
+	animComp.animationMap["walk_forward"] = AssetManager::ImportAnimation("res/models/animations/walk_forward.fbx", "walk_forward");
 	AnimationState idleState;
-	idleState.transitionMap["walk_forward"] = AnimationState::AnimTransition(InputKey::KEY_W);
-	idleState.transitionMap["walk_left"] = AnimationState::AnimTransition(InputKey::KEY_A);
-	idleState.transitionMap["walk_right"] = AnimationState::AnimTransition(InputKey::KEY_D);
-	idleState.transitionMap["shoot"] = AnimationState::AnimTransition(InputKey::KEY_SPACE);
+	idleState.transitionMap["walk_forward"] = AnimTransition(static_cast<int32>(InputKey::KEY_W));
+	idleState.transitionMap["walk_left"]    = AnimTransition(static_cast<int32>(InputKey::KEY_A));
+	idleState.transitionMap["walk_right"]   = AnimTransition(static_cast<int32>(InputKey::KEY_D));
+	idleState.transitionMap["shoot"]        = AnimTransition(static_cast<int32>(InputKey::KEY_SPACE));
 	idleState.activeAnimation.name = "idle";
 	idleState.activeAnimation.bHasExitTime = true;
 	animComp.animationStates["idle"] = idleState;
@@ -871,7 +883,7 @@ void Application::LoadDefaultScene()
 
 
 	animComp.currentState = idleState;
-	animComp.InitialState = idleState;
+	animComp.initialState = "idle";
 
 	AnimationState ShotState; 
 	ShotState.activeAnimation.bHasExitTime = true;
@@ -908,10 +920,10 @@ void Application::LoadDefaultScene()
 	ent5->assign<StaticMeshComponent>(renderableMesh5);
 	ent5->assign<RigidBodyComponent>(rb5);
 
-	// ECS::Entity* ent6 = world->create();
-	// ent6->assign<TransformComponent>(transformComp6);
-	// ent6->assign<StaticMeshComponent>(renderableMesh6);
-	// ent6->assign<RigidBodyComponent>(rb6);
+	ECS::Entity* ent6 = world->create();
+	ent6->assign<TransformComponent>(transformComp6);
+	ent6->assign<StaticMeshComponent>(renderableMesh6);
+	ent6->assign<RigidBodyComponent>(rb6);
 
 	ECS::Entity* ent7 = world->create();
 	ent7->assign<TransformComponent>(transformComp7);
@@ -931,7 +943,7 @@ void Application::LoadDefaultScene()
 	SceneManager::currentScene.MakeNewObject("Red sphere", ent5);
 	SceneManager::currentScene.MakeNewObject("Rust", ent4);
 	SceneManager::currentScene.MakeNewObject("Pistol", ent3);
-	//SceneManager::currentScene.MakeNewObject("Dust Map", ent6);
+	SceneManager::currentScene.MakeNewObject("Dust Map", ent6);
 	SceneManager::currentScene.MakeNewObject("Bottle", ent7);
 	SceneManager::currentScene.MakeNewObject("SkinnedMesh", ent8);
 

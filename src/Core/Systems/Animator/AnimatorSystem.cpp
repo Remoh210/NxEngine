@@ -20,7 +20,7 @@ namespace ECS
 			ComponentHandle<SkinnedMeshComponent> skinnedMesh, 
 			ComponentHandle<AnimatorComponent> animatorComp) -> void
 		{
-			AnimationInfo* curAnim = animatorComp->animations[animatorComp->currentState.activeAnimation.name];
+			AnimationInfo* curAnim = animatorComp->animationMap[animatorComp->currentState.activeAnimation.name];
 			animatorComp->currentState.activeAnimation.totalTime = GetDurationInSec(curAnim);
 
 			//if (animatorComp->currentState.activeAnimation.name != animatorComp->currentState.PrevAnimation.name)
@@ -37,9 +37,9 @@ namespace ECS
 			std::vector< glm::mat4x4 > vecOffsets;
 			BoneTransform(skinnedMesh->skinnedMeshInfo, curAnim, animatorComp->currentState, skinnedMesh->skinnedMeshInfo->vecFinalTransformation, skinnedMesh->skinnedMeshInfo->vecObjectBoneTransformation, vecOffsets);
 
-			if (animatorComp->currentState.transitionMap.size() > 0)
+			if (!animatorComp->currentState.transitionMap.empty())
 			{
-				for (auto it : animatorComp->currentState.transitionMap)
+				for (const auto& it : animatorComp->currentState.transitionMap)
 				{
 					if ((InputManager::GetKeyPressed(it.second.conditionKey)))
 					{
@@ -61,13 +61,13 @@ namespace ECS
 				}
 
 				NString NextState = animatorComp->currentState.nextAnimation.name;
-				if (NextState != "")
+				if (!NextState.empty())
 				{
 					animatorComp->currentState = animatorComp->animationStates[NextState];
 				}
 				else
 				{
-					animatorComp->currentState = animatorComp->InitialState;
+					animatorComp->currentState = animatorComp->animationStates.at(animatorComp->initialState);
 				}
 			}
 
@@ -84,6 +84,13 @@ namespace ECS
 		std::vector<glm::mat4> &Globals,
 		std::vector<glm::mat4> &Offsets)
 	{
+		if (nullptr == animationInfo)
+		{
+			DEBUG_LOG_TEMP("AnimationInfo is not valid");
+
+			return;
+		}
+		
 		glm::mat4 Identity(1.0f);
 
 		float TicksPerSecond = static_cast<float>(skinnedMesh->AiScene->mAnimations[0]->mTicksPerSecond != 0 ?
@@ -119,9 +126,7 @@ namespace ECS
 	{
 
 		aiString NodeName(pNode->mName.data);
-
-		// Original version picked the "main scene" animation...
-		//const aiAnimation* pAnimation = skinnedMesh->AiScene->mAnimations[0];
+		
 
 		//TODO: remoce Cast
 		const aiAnimation* pAnimation = reinterpret_cast<const aiAnimation*>(animationInfo->pAIScene->mAnimations[0]);
@@ -183,7 +188,10 @@ namespace ECS
 
 	float AnimatorSystem::GetDurationInSec(const AnimationInfo* animInfo)
 	{
-
+		if(nullptr == animInfo)
+		{
+			return 0.0f;
+		}
 		// This is scaling the animation from 0 to 1
 		return animInfo->pAIScene->mAnimations[0]->mDuration / (float)animInfo->pAIScene->mAnimations[0]->mTicksPerSecond;
 	}
@@ -197,7 +205,7 @@ namespace ECS
 				return pAnimation->mChannels[ChannelIndex];
 			}
 		}
-		return 0;
+		return nullptr;
 	}
 
 	unsigned int AnimatorSystem::FindRotation(float AnimationTime, const aiNodeAnim* pNodeAnim)

@@ -12,6 +12,7 @@ public:
 	static void Initialize(Window* windowIn);
 
 	static bool GetKeyPressed(InputKey keyIn);
+	static bool GetKeyPressed(int32 keyIn);
 	static float GetAxis(NString axis);
 
 private:

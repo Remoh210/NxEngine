@@ -2,7 +2,6 @@
 
 #include "Core/Graphics/Mesh/MeshInfo.h"
 
-#include "Common/Common.h"
 #include "Common/CommonTypes.h"
 #include "Common/dataStructs/NxArray.h"
 
@@ -16,7 +15,7 @@ struct BoneInfo
 	mat4 FinalTransformation;
 	mat4 ObjectBoneTransformation;
 
-	RTTR_ENABLE();
+	RTTR_ENABLE()
 };
 
 struct SkeletalData
@@ -43,7 +42,7 @@ struct SkinnedMeshInfo
 	glm::vec3 minXYZ_from_SM_Bones;
 	glm::vec3 maxXYZ_from_SM_Bones;
 	std::vector<glm::mat4> vecFinalTransformation;
-	std::vector< glm::mat4x4 > vecObjectBoneTransformation;
+	std::vector< glm::mat4x4> vecObjectBoneTransformation;
 
 	const aiScene* AiScene;	// mesh we update and draw
 

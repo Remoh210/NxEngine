@@ -25,7 +25,11 @@ struct SkinnedMeshComponent : public BaseComponent
 	{
 	}
 
-	SkinnedMeshInfo* skinnedMeshInfo;
+	NString meshAssetFile;
+	bool bIsVisible = true;
+	SkinnedMeshInfo* skinnedMeshInfo = nullptr;
+
+	void Initialize(ECS::Entity* entityIn);
 	
-	RTTR_ENABLE()
+	RTTR_ENABLE(BaseComponent)
 };
