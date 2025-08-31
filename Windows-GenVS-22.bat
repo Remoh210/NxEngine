@@ -8,14 +8,3 @@ mkdir Release
 copy ..\lib\_bin\ Debug
 copy ..\lib\_bin\ Release
 cd ..
-
-
-// Copyright 2020 Offworld Industries
-
-
-//#include "Player/TRPlayerAbility.h"
-//
-//UTRPlayerAbility::UTRPlayerAbility()
-//	: Super()
-//{
-//}
